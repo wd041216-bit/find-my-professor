@@ -6,7 +6,8 @@ import * as db from "../db";
 function calculateMatchScore(
   profile: any,
   activities: any[],
-  project: any
+  project: any,
+  university: any
 ): { score: number; reasons: string[] } {
   let score = 0;
   const reasons: string[] = [];
@@ -16,7 +17,7 @@ function calculateMatchScore(
   const projectAreas = project.researchAreas ? JSON.parse(project.researchAreas) : [];
   const projectRequirements = project.requirements ? JSON.parse(project.requirements) : [];
 
-  // 1. Major match (30 points)
+  // 1. Major match (30 points) - Current major
   if (profile && profile.currentMajor) {
     const majorMatch = projectMajors.some((major: string) =>
       profile.currentMajor.toLowerCase().includes(major.toLowerCase()) ||
@@ -28,7 +29,7 @@ function calculateMatchScore(
     }
   }
 
-  // 2. Target major match (15 points)
+  // 2. Target major match (30 points) - Increased weight for target majors
   if (profile && profile.targetMajors) {
     const targetMajors = JSON.parse(profile.targetMajors);
     const targetMatch = projectMajors.some((major: string) =>
@@ -38,12 +39,25 @@ function calculateMatchScore(
       )
     );
     if (targetMatch) {
-      score += 15;
+      score += 30;
       reasons.push("Project matches your target majors");
     }
   }
 
-  // 3. Research interest match (25 points)
+  // 3. Target university match (20 points) - New criterion
+  if (profile && profile.targetUniversities && university) {
+    const targetUniversities = JSON.parse(profile.targetUniversities);
+    const univMatch = targetUniversities.some((tu: string) =>
+      university.name.toLowerCase().includes(tu.toLowerCase()) ||
+      tu.toLowerCase().includes(university.name.toLowerCase())
+    );
+    if (univMatch) {
+      score += 20;
+      reasons.push(`Project is at your target university (${university.name})`);
+    }
+  }
+
+  // 4. Research interest match (20 points) - Reduced from 25
   if (profile && profile.interests) {
     const interests = JSON.parse(profile.interests);
     let interestMatchCount = 0;
@@ -56,13 +70,13 @@ function calculateMatchScore(
       }
     });
     if (interestMatchCount > 0) {
-      const interestScore = Math.min(25, interestMatchCount * 10);
+      const interestScore = Math.min(20, interestMatchCount * 8);
       score += interestScore;
       reasons.push(`${interestMatchCount} research interests match project areas`);
     }
   }
 
-  // 4. Skills match (20 points)
+  // 5. Skills match (15 points) - Reduced from 20
   if (profile && profile.skills) {
     const skills = JSON.parse(profile.skills);
     let skillMatchCount = 0;
@@ -75,13 +89,13 @@ function calculateMatchScore(
       }
     });
     if (skillMatchCount > 0) {
-      const skillScore = Math.min(20, skillMatchCount * 7);
+      const skillScore = Math.min(15, skillMatchCount * 5);
       score += skillScore;
       reasons.push(`${skillMatchCount} skills match project requirements`);
     }
   }
 
-  // 5. Relevant experience (10 points)
+  // 6. Relevant experience (5 points) - Reduced from 10
   const relevantActivities = activities.filter(activity => {
     const activitySkills = activity.skills ? JSON.parse(activity.skills) : [];
     return projectAreas.some((area: string) =>
@@ -93,7 +107,7 @@ function calculateMatchScore(
     );
   });
   if (relevantActivities.length > 0) {
-    const expScore = Math.min(10, relevantActivities.length * 5);
+    const expScore = Math.min(5, relevantActivities.length * 2);
     score += expScore;
     reasons.push(`${relevantActivities.length} relevant activities found`);
   }
@@ -110,7 +124,8 @@ export const matchingRouter = router({
 
     const matches = [];
     for (const project of projects) {
-      const { score, reasons } = calculateMatchScore(profile, activities, project);
+      const university = await db.getUniversityById(project.universityId);
+      const { score, reasons } = calculateMatchScore(profile, activities, project, university);
       
       if (score > 0) {
         // Save or update match

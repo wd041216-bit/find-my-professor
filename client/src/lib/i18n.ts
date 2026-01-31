@@ -14,6 +14,7 @@ export const translations = {
       notifications: "Notifications",
       contact: "Contact",
       admin: "Admin",
+      credits: "Credits",
       signIn: "Sign In",
       logout: "Logout",
     },
@@ -95,6 +96,7 @@ export const translations = {
       academicLevel: "Academic Level",
       gpa: "GPA",
       highSchool: "High School",
+      highSchoolName: "High School Name",
       undergraduate: "Undergraduate",
       graduate: "Graduate",
       targetPreferences: "Target Preferences",
@@ -227,7 +229,7 @@ export const translations = {
       amount: "Amount",
       balance: "Balance",
       noTransactions: "No transactions yet",
-      newUserBonus: "New users get 200 free credits!",
+      newUserBonus: "New users get 100 free credits!",
     },
     // Common
     common: {
@@ -264,9 +266,9 @@ export const translations = {
       notifications: "通知",
       contact: "联系我们",
       admin: "管理后台",
+      credits: "积分",
       signIn: "登录",
-      logout: "退出",
-    },
+      logout: "退出登录",   },
     // Home page
     home: {
       heroTitle: "找到你理想的",
@@ -344,9 +346,10 @@ export const translations = {
       currentMajor: "当前专业",
       academicLevel: "学术阶段",
       gpa: "GPA",
-      highSchool: "高中",
+       highSchool: "高中",
+      highSchoolName: "高中名称",
       undergraduate: "本科",
-      graduate: "研究生",
+      graduate: "硕士",
       targetPreferences: "目标偏好",
       targetUniversities: "目标大学",
       targetMajors: "目标专业",
@@ -477,7 +480,7 @@ export const translations = {
       amount: "数量",
       balance: "余额",
       noTransactions: "暂无交易记录",
-      newUserBonus: "新用户可获得200免费积分！",
+      newUserBonus: "新用户可获得100免费积分！",
     },
     // Common
     common: {
