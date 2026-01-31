@@ -213,6 +213,106 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  contact: router({
+    // Send a message to admin
+    send: protectedProcedure
+      .input(z.object({
+        subject: z.string().min(1, "Subject is required"),
+        message: z.string().min(1, "Message is required"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const messageId = await db.createContactMessage({
+          userId: ctx.user.id,
+          subject: input.subject,
+          message: input.message,
+        });
+        
+        // Create notification for admin users
+        const admins = await db.getAdminUsers();
+        for (const admin of admins) {
+          await db.createNotification({
+            userId: admin.id,
+            type: "system",
+            title: "New Contact Message",
+            message: `New message from ${ctx.user.name || ctx.user.email}: ${input.subject}`,
+          });
+        }
+        
+        return { success: true, messageId };
+      }),
+    
+    // Get user's own messages
+    myMessages: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserContactMessages(ctx.user.id);
+    }),
+    
+    // Admin: Get all messages
+    allMessages: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      const messages = await db.getAllContactMessages();
+      
+      // Get user info for each message
+      const messagesWithUser = await Promise.all(
+        messages.map(async (msg) => {
+          const user = await db.getUserById(msg.userId);
+          return {
+            ...msg,
+            userName: user?.name || "Unknown",
+            userEmail: user?.email || "Unknown",
+          };
+        })
+      );
+      
+      return messagesWithUser;
+    }),
+    
+    // Admin: Reply to a message
+    reply: protectedProcedure
+      .input(z.object({
+        messageId: z.number(),
+        reply: z.string().min(1, "Reply is required"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        
+        const message = await db.getContactMessageById(input.messageId);
+        if (!message) {
+          throw new Error("Message not found");
+        }
+        
+        await db.replyToContactMessage(input.messageId, input.reply);
+        
+        // Notify the user about the reply
+        await db.createNotification({
+          userId: message.userId,
+          type: "system",
+          title: "Reply to Your Message",
+          message: `Admin replied to your message: "${message.subject}"`,
+        });
+        
+        return { success: true };
+      }),
+    
+    // Admin: Update message status
+    updateStatus: protectedProcedure
+      .input(z.object({
+        messageId: z.number(),
+        status: z.enum(["pending", "read", "replied", "closed"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        
+        await db.updateContactMessageStatus(input.messageId, input.status);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

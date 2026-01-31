@@ -179,3 +179,21 @@ export const notifications = mysqlTable("notifications", {
 
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = typeof notifications.$inferInsert;
+
+/**
+ * Contact messages from users to admin
+ */
+export const contactMessages = mysqlTable("contact_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  status: mysqlEnum("status", ["pending", "read", "replied", "closed"]).default("pending").notNull(),
+  adminReply: text("admin_reply"),
+  repliedAt: timestamp("replied_at"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ContactMessage = typeof contactMessages.$inferSelect;
+export type InsertContactMessage = typeof contactMessages.$inferInsert;

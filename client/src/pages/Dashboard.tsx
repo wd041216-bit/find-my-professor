@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { User, FileText, Search, Bell, Plus, ArrowRight, GraduationCap } from "lucide-react";
+import { User, FileText, Search, Bell, Plus, ArrowRight, GraduationCap, MessageSquare, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function Dashboard() {
@@ -69,6 +69,14 @@ export default function Dashboard() {
                 )}
               </Button>
             </Link>
+            {user.role === "admin" && (
+              <Link href="/admin/messages">
+                <Button variant="ghost">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Admin
+                </Button>
+              </Link>
+            )}
             <Button variant="ghost" onClick={() => logout()}>
               Logout
             </Button>

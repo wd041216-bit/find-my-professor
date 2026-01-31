@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
 import { Search, BookOpen, FileText, Bell, ArrowRight, GraduationCap, Users, Target } from "lucide-react";
+import { ContactDialog } from "@/components/ContactDialog";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -26,6 +27,7 @@ export default function Home() {
             <span className="text-xl font-bold text-foreground">Find My Professor</span>
           </div>
           <div className="flex items-center gap-4">
+            <ContactDialog />
             {isAuthenticated ? (
               <>
                 <Link href="/dashboard">
@@ -235,6 +237,18 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <GraduationCap className="h-5 w-5 text-primary" />
               <span className="font-semibold">Find My Professor</span>
+            </div>
+            <div className="flex items-center gap-6">
+              <ContactDialog trigger={
+                <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Contact Us
+                </button>
+              } />
+              <Link href="/explore">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                  Explore Projects
+                </span>
+              </Link>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2026 Find My Professor. All rights reserved.
