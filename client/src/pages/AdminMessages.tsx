@@ -211,6 +211,15 @@ export default function AdminMessages() {
                       <div className="flex items-center gap-2 mb-2">
                         <CardTitle className="text-lg">{message.subject}</CardTitle>
                         {getStatusBadge(message.status)}
+                        {message.messageType === "business" ? (
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            Business
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                            Support
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
