@@ -1,11 +1,29 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, 
+  users,
+  studentProfiles,
+  InsertStudentProfile,
+  activities,
+  InsertActivity,
+  universities,
+  InsertUniversity,
+  professors,
+  InsertProfessor,
+  researchProjects,
+  InsertResearchProject,
+  projectMatches,
+  InsertProjectMatch,
+  applicationLetters,
+  InsertApplicationLetter,
+  notifications,
+  InsertNotification
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -17,6 +35,8 @@ export async function getDb() {
   }
   return _db;
 }
+
+// ===== User Management =====
 
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
@@ -85,8 +105,264 @@ export async function getUserByOpenId(openId: string) {
   }
 
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// ===== Student Profile Management =====
+
+export async function getStudentProfile(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(studentProfiles).where(eq(studentProfiles.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function upsertStudentProfile(profile: InsertStudentProfile) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const existing = await getStudentProfile(profile.userId);
+  
+  if (existing) {
+    await db.update(studentProfiles)
+      .set({ ...profile, updatedAt: new Date() })
+      .where(eq(studentProfiles.userId, profile.userId));
+    return getStudentProfile(profile.userId);
+  } else {
+    await db.insert(studentProfiles).values(profile);
+    return getStudentProfile(profile.userId);
+  }
+}
+
+// ===== Activity Management =====
+
+export async function createActivity(activity: InsertActivity) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(activities).values(activity);
+  const inserted = await db.select().from(activities).where(eq(activities.userId, activity.userId)).orderBy(desc(activities.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+export async function getUserActivities(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(activities).where(eq(activities.userId, userId)).orderBy(desc(activities.startDate));
+}
+
+export async function getActivityById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(activities).where(eq(activities.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateActivity(id: number, activity: Partial<InsertActivity>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(activities).set({ ...activity, updatedAt: new Date() }).where(eq(activities.id, id));
+  return getActivityById(id);
+}
+
+export async function deleteActivity(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(activities).where(eq(activities.id, id));
+}
+
+// ===== University Management =====
+
+export async function getAllUniversities() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(universities).orderBy(universities.ranking);
+}
+
+export async function getUniversityById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(universities).where(eq(universities.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createUniversity(university: InsertUniversity) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(universities).values(university);
+  const inserted = await db.select().from(universities).orderBy(desc(universities.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+// ===== Professor Management =====
+
+export async function getProfessorsByUniversity(universityId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(professors).where(eq(professors.universityId, universityId));
+}
+
+export async function getProfessorById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(professors).where(eq(professors.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createProfessor(professor: InsertProfessor) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(professors).values(professor);
+  const inserted = await db.select().from(professors).orderBy(desc(professors.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+// ===== Research Project Management =====
+
+export async function getAllResearchProjects() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(researchProjects)
+    .where(eq(researchProjects.status, "open"))
+    .orderBy(desc(researchProjects.createdAt));
+}
+
+export async function getResearchProjectById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(researchProjects).where(eq(researchProjects.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function searchResearchProjects(filters: {
+  universityIds?: number[];
+  majors?: string[];
+  researchAreas?: string[];
+}) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  let query = db.select().from(researchProjects).where(eq(researchProjects.status, "open"));
+  
+  // Note: For JSON array filtering, we'll need to handle this in application logic
+  // as MySQL JSON functions are complex. Return all open projects for now.
+  
+  return query.orderBy(desc(researchProjects.createdAt));
+}
+
+export async function createResearchProject(project: InsertResearchProject) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(researchProjects).values(project);
+  const inserted = await db.select().from(researchProjects).orderBy(desc(researchProjects.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+// ===== Project Match Management =====
+
+export async function getUserMatches(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectMatches)
+    .where(eq(projectMatches.userId, userId))
+    .orderBy(desc(projectMatches.matchScore));
+}
+
+export async function getMatchByUserAndProject(userId: number, projectId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(projectMatches)
+    .where(and(
+      eq(projectMatches.userId, userId),
+      eq(projectMatches.projectId, projectId)
+    ))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function upsertProjectMatch(match: InsertProjectMatch) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const existing = await getMatchByUserAndProject(match.userId, match.projectId);
+  
+  if (existing) {
+    await db.update(projectMatches)
+      .set({ ...match, updatedAt: new Date() })
+      .where(eq(projectMatches.id, existing.id));
+    return existing.id;
+  } else {
+    await db.insert(projectMatches).values(match);
+    const inserted = await db.select().from(projectMatches).orderBy(desc(projectMatches.id)).limit(1);
+    return inserted[0]?.id ?? 0;
+  }
+}
+
+export async function updateMatchStatus(id: number, updates: { viewed?: boolean; saved?: boolean; applied?: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(projectMatches).set({ ...updates, updatedAt: new Date() }).where(eq(projectMatches.id, id));
+}
+
+// ===== Application Letter Management =====
+
+export async function createApplicationLetter(letter: InsertApplicationLetter) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(applicationLetters).values(letter);
+  const inserted = await db.select().from(applicationLetters).orderBy(desc(applicationLetters.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+export async function getUserApplicationLetters(userId: number, projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(applicationLetters)
+    .where(and(
+      eq(applicationLetters.userId, userId),
+      eq(applicationLetters.projectId, projectId)
+    ))
+    .orderBy(desc(applicationLetters.version));
+}
+
+// ===== Notification Management =====
+
+export async function createNotification(notification: InsertNotification) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(notifications).values(notification);
+  const inserted = await db.select().from(notifications).orderBy(desc(notifications.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+export async function getUserNotifications(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt));
+}
+
+export async function markNotificationAsRead(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(notifications).set({ read: true }).where(eq(notifications.id, id));
+}
+
+export async function getUnreadNotificationCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ count: sql<number>`count(*)` })
+    .from(notifications)
+    .where(and(
+      eq(notifications.userId, userId),
+      eq(notifications.read, false)
+    ));
+  return result[0]?.count ?? 0;
+}
