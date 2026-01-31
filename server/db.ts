@@ -90,9 +90,37 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
+    // Check if user exists
+    const existingUser = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
+    const isNewUser = existingUser.length === 0;
+    
     await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });
+    
+    // Grant 200 free credits to new users
+    if (isNewUser) {
+      const newUser = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
+      if (newUser.length > 0) {
+        const userId = newUser[0].id;
+        // Create user credits with 200 free credits
+        await db.insert(userCredits).values({
+          userId,
+          balance: 200,
+          totalPurchased: 0,
+          totalConsumed: 0,
+        });
+        // Record the free credit transaction
+        await db.insert(creditTransactions).values({
+          userId,
+          type: 'purchase',
+          amount: 200,
+          balanceAfter: 200,
+          description: 'Welcome bonus - Free 200 credits for new users',
+          metadata: JSON.stringify({ source: 'signup_bonus' }),
+        });
+      }
+    }
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;

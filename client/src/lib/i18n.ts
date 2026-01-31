@@ -227,6 +227,7 @@ export const translations = {
       amount: "Amount",
       balance: "Balance",
       noTransactions: "No transactions yet",
+      newUserBonus: "New users get 200 free credits!",
     },
     // Common
     common: {
@@ -476,6 +477,7 @@ export const translations = {
       amount: "数量",
       balance: "余额",
       noTransactions: "暂无交易记录",
+      newUserBonus: "新用户可获得200免费积分！",
     },
     // Common
     common: {

@@ -118,6 +118,9 @@ export default function Credits() {
                 <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
                   {balance?.balance.toLocaleString() || "0"}
                 </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {t.credits.newUserBonus || "New users get 200 free credits!"}
+                </p>
                 <div className="text-sm text-muted-foreground">{t.credits.credits || "Credits"}</div>
               </div>
               <div className="space-y-2 text-sm">
