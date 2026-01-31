@@ -14,6 +14,7 @@ import Explore from "./pages/Explore";
 import ProjectDetail from "./pages/ProjectDetail";
 import Notifications from "./pages/Notifications";
 import AdminMessages from "./pages/AdminMessages";
+import Credits from "./pages/Credits";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
       <Route path={"/project/:id"} component={ProjectDetail} />
       <Route path={"/notifications"} component={Notifications} />
       <Route path={"/admin/messages"} component={AdminMessages} />
+      <Route path={"/credits"} component={Credits} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -197,3 +197,39 @@ export const contactMessages = mysqlTable("contact_messages", {
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = typeof contactMessages.$inferInsert;
+
+/**
+ * User credits balance
+ */
+export const userCredits = mysqlTable("user_credits", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().unique(),
+  balance: int("balance").notNull().default(0), // Current credit balance
+  totalPurchased: int("total_purchased").notNull().default(0), // Total credits ever purchased
+  totalConsumed: int("total_consumed").notNull().default(0), // Total credits ever consumed
+  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }), // Stripe customer ID
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserCredit = typeof userCredits.$inferSelect;
+export type InsertUserCredit = typeof userCredits.$inferInsert;
+
+/**
+ * Credit transactions (purchases and consumptions)
+ */
+export const creditTransactions = mysqlTable("credit_transactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull(),
+  type: mysqlEnum("type", ["purchase", "consumption", "refund"]).notNull(),
+  amount: int("amount").notNull(), // Positive for purchase/refund, negative for consumption
+  balanceAfter: int("balance_after").notNull(), // Balance after this transaction
+  description: text("description"), // Description of the transaction
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }), // For purchases
+  relatedFeature: varchar("related_feature", { length: 100 }), // e.g., "resume_parse", "letter_generation"
+  metadata: text("metadata"), // JSON for additional data
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CreditTransaction = typeof creditTransactions.$inferSelect;
+export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
