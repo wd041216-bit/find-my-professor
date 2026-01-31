@@ -15,6 +15,13 @@
       "when": 1769846353248,
       "tag": "0001_quick_doctor_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769849100786,
+      "tag": "0002_lying_micromax",
+      "breakpoints": true
     }
   ]
 }

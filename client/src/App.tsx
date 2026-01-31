@@ -12,6 +12,7 @@ import UploadResume from "./pages/UploadResume";
 import Explore from "./pages/Explore";
 import ProjectDetail from "./pages/ProjectDetail";
 import Notifications from "./pages/Notifications";
+import AdminMessages from "./pages/AdminMessages";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path={"/explore"} component={Explore} />
       <Route path={"/project/:id"} component={ProjectDetail} />
       <Route path={"/notifications"} component={Notifications} />
+      <Route path={"/admin/messages"} component={AdminMessages} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

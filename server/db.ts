@@ -366,3 +366,61 @@ export async function getUnreadNotificationCount(userId: number) {
     ));
   return result[0]?.count ?? 0;
 }
+
+
+// ===== Contact Message Management =====
+
+import { contactMessages, InsertContactMessage } from "../drizzle/schema";
+
+export async function createContactMessage(message: InsertContactMessage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(contactMessages).values(message);
+  const inserted = await db.select().from(contactMessages).orderBy(desc(contactMessages.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+export async function getUserContactMessages(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(contactMessages)
+    .where(eq(contactMessages.userId, userId))
+    .orderBy(desc(contactMessages.createdAt));
+}
+
+export async function getAllContactMessages() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(contactMessages)
+    .orderBy(desc(contactMessages.createdAt));
+}
+
+export async function getContactMessageById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(contactMessages).where(eq(contactMessages.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateContactMessageStatus(id: number, status: "pending" | "read" | "replied" | "closed") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(contactMessages).set({ status, updatedAt: new Date() }).where(eq(contactMessages.id, id));
+}
+
+export async function replyToContactMessage(id: number, adminReply: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(contactMessages).set({ 
+    adminReply, 
+    status: "replied",
+    repliedAt: new Date(),
+    updatedAt: new Date() 
+  }).where(eq(contactMessages.id, id));
+}
+
+export async function getAdminUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(users).where(eq(users.role, "admin"));
+}
