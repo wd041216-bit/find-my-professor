@@ -186,6 +186,7 @@ export type InsertNotification = typeof notifications.$inferInsert;
 export const contactMessages = mysqlTable("contact_messages", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("user_id").notNull(),
+  messageType: mysqlEnum("message_type", ["business", "support"]).default("support").notNull(),
   subject: text("subject").notNull(),
   message: text("message").notNull(),
   status: mysqlEnum("status", ["pending", "read", "replied", "closed"]).default("pending").notNull(),

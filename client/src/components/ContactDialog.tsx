@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2, MessageSquare, Send } from "lucide-react";
@@ -24,6 +25,7 @@ interface ContactDialogProps {
 export function ContactDialog({ trigger }: ContactDialogProps) {
   const { user, isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
+  const [messageType, setMessageType] = useState<"business" | "support">("support");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
@@ -45,7 +47,7 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
       toast.error("Please fill in all fields");
       return;
     }
-    sendMutation.mutate({ subject, message });
+    sendMutation.mutate({ messageType, subject, message });
   };
 
   if (!isAuthenticated) {
@@ -94,6 +96,18 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="messageType">Message Type</Label>
+            <Select value={messageType} onValueChange={(value: "business" | "support") => setMessageType(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="support">Problem / Question</SelectItem>
+                <SelectItem value="business">Business Cooperation</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
             <Input
