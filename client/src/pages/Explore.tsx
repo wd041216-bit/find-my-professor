@@ -7,11 +7,15 @@ import { Link, useLocation } from "wouter";
 import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Target, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { MobileNav } from "@/components/MobileNav";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Explore() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [calculating, setCalculating] = useState(false);
+  const { t } = useLanguage();
 
   const { data: matchesWithDetails = [], refetch, isLoading } = trpc.matching.getMatchesWithDetails.useQuery(undefined, {
     enabled: !!user,
@@ -51,55 +55,62 @@ export default function Explore() {
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </Link>
+        <div className="container flex h-14 md:h-16 items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MobileNav />
+            <Link href="/dashboard" className="hidden md:block">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t.common.back}
+              </Button>
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
             <GraduationCap className="h-5 w-5 text-primary" />
-            <span className="font-semibold">Find My Professor</span>
+            <span className="font-semibold text-sm md:text-base">Find My Professor</span>
+          </div>
+          <div className="flex items-center">
+            <LanguageSwitcher />
           </div>
         </div>
       </nav>
 
-      <div className="container py-8 max-w-6xl">
+      <div className="container px-4 py-4 md:py-8 max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Explore Research Projects</h1>
-          <p className="text-muted-foreground text-lg">
-            Discover research opportunities matched to your profile
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">{t.explore.title}</h1>
+          <p className="text-muted-foreground text-sm md:text-lg">
+            {t.explore.subtitle}
           </p>
         </div>
 
         {/* Calculate Matches Button */}
-        <Card className="mb-8 border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-              Smart Matching
+        <Card className="mb-6 md:mb-8 border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+              <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              {t.home.smartMatching}
             </CardTitle>
-            <CardDescription>
-              Calculate your match scores with available research projects based on your profile, skills, and interests
+            <CardDescription className="text-sm">
+              {t.home.smartMatchingDesc}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
             <Button
               onClick={handleCalculateMatches}
               disabled={calculating || calculateMutation.isPending}
-              size="lg"
+              size="default"
+              className="w-full sm:w-auto"
             >
               {calculating || calculateMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Calculating Matches...
+                  <Loader2 className="mr-2 h-4 w-4 md:h-5 md:w-5 animate-spin" />
+                  <span className="text-sm md:text-base">{t.common.loading}</span>
                 </>
               ) : (
                 <>
-                  <Target className="mr-2 h-5 w-5" />
-                  Calculate My Matches
+                  <Target className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                  <span className="text-sm md:text-base">{t.explore.calculateMatch}</span>
                 </>
               )}
             </Button>
@@ -108,131 +119,124 @@ export default function Explore() {
 
         {/* Matches List */}
         {isLoading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <div className="flex justify-center py-12 md:py-16">
+            <Loader2 className="h-10 w-10 md:h-12 md:w-12 animate-spin text-primary" />
           </div>
         ) : matchesWithDetails.length === 0 ? (
           <Card>
-            <CardContent className="py-16 text-center">
-              <Target className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No matches yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Click "Calculate My Matches" to find research projects that align with your profile
+            <CardContent className="py-12 md:py-16 text-center">
+              <Target className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-3 md:mb-4" />
+              <h3 className="text-lg md:text-xl font-semibold mb-2">{t.explore.noProjects}</h3>
+              <p className="text-muted-foreground text-sm md:text-base mb-4 md:mb-6">
+                {t.explore.tryDifferentFilters}
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">Your Matches ({matchesWithDetails.length})</h2>
+          <div className="space-y-4 md:space-y-6">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h2 className="text-xl md:text-2xl font-bold">{t.explore.match} ({matchesWithDetails.length})</h2>
             </div>
 
             {matchesWithDetails.map((match) => (
               <Card key={match.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <CardTitle className="text-2xl">{match.project?.title}</CardTitle>
-                        <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full">
-                          <Target className="h-4 w-4" />
-                          <span className="font-bold">{match.matchScore}%</span>
+                <CardHeader className="p-4 md:p-6">
+                  <div className="flex flex-col gap-3 md:gap-4">
+                    {/* Title and Score */}
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                      <CardTitle className="text-lg md:text-2xl">{match.project?.title}</CardTitle>
+                      <div className="flex items-center gap-2 bg-primary/10 text-primary px-2.5 py-1 rounded-full self-start">
+                        <Target className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        <span className="font-bold text-sm md:text-base">{match.matchScore}%</span>
+                      </div>
+                    </div>
+                    
+                    {/* University Info */}
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <GraduationCap className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        <span>{match.university?.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        <span>{match.university?.country}</span>
+                      </div>
+                    </div>
+
+                    <CardDescription className="text-sm md:text-base line-clamp-3 md:line-clamp-none">
+                      {match.project?.description}
+                    </CardDescription>
+
+                    {/* Match Reasons */}
+                    {match.matchReasons && match.matchReasons.length > 0 && (
+                      <div>
+                        <p className="text-xs md:text-sm font-medium mb-1.5 md:mb-2">Why this matches:</p>
+                        <div className="space-y-0.5 md:space-y-1">
+                          {match.matchReasons.slice(0, 3).map((reason: string, index: number) => (
+                            <div key={index} className="flex items-start gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
+                              <span className="text-primary mt-0.5">•</span>
+                              <span>{reason}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                      
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-                        <div className="flex items-center gap-1">
-                          <GraduationCap className="h-4 w-4" />
-                          <span>{match.university?.name}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          <span>{match.university?.country}</span>
-                        </div>
-                      </div>
+                    )}
 
-                      <CardDescription className="text-base mb-4">
-                        {match.project?.description}
-                      </CardDescription>
-
-                      {/* Match Reasons */}
-                      {match.matchReasons && match.matchReasons.length > 0 && (
-                        <div className="mb-4">
-                          <p className="text-sm font-medium mb-2">Why this matches:</p>
-                          <div className="space-y-1">
-                            {match.matchReasons.map((reason: string, index: number) => (
-                              <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                <span className="text-primary mt-1">•</span>
-                                <span>{reason}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Professor Info */}
-                      {match.professor && (
-                        <div className="mb-4 p-3 bg-muted/30 rounded-lg">
-                          <p className="font-semibold">{match.professor.name}</p>
-                          <p className="text-sm text-muted-foreground">{match.professor.title} • {match.professor.department}</p>
-                          {match.professor.labWebsite && (
-                            <a href={match.professor.labWebsite} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1 mt-1">
-                              <Globe className="h-3 w-3" />
-                              {match.professor.labName || "Lab Website"}
-                            </a>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Project Details */}
-                      <div className="flex flex-wrap gap-4 text-sm mb-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span>{match.project?.duration}</span>
-                        </div>
-                        {match.project?.isPaid && (
-                          <div className="flex items-center gap-1 text-green-600">
-                            <DollarSign className="h-4 w-4" />
-                            <span>Paid Position</span>
-                          </div>
-                        )}
-                        {match.project?.isRemote && (
-                          <Badge variant="secondary">Remote Available</Badge>
+                    {/* Professor Info */}
+                    {match.professor && (
+                      <div className="p-2.5 md:p-3 bg-muted/30 rounded-lg">
+                        <p className="font-semibold text-sm md:text-base">{match.professor.name}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{match.professor.title} • {match.professor.department}</p>
+                        {match.professor.labWebsite && (
+                          <a href={match.professor.labWebsite} target="_blank" rel="noopener noreferrer" className="text-xs md:text-sm text-primary hover:underline flex items-center gap-1 mt-1">
+                            <Globe className="h-3 w-3" />
+                            {match.professor.labName || "Lab Website"}
+                          </a>
                         )}
                       </div>
+                    )}
 
-                      {/* Research Areas */}
-                      {match.project?.researchAreas && match.project.researchAreas.length > 0 && (
-                        <div className="mb-4">
-                          <p className="text-sm font-medium mb-2">Research Areas:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {match.project.researchAreas.map((area: string, index: number) => (
-                              <Badge key={index} variant="outline">{area}</Badge>
-                            ))}
-                          </div>
+                    {/* Project Details */}
+                    <div className="flex flex-wrap gap-2 md:gap-4 text-xs md:text-sm">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground" />
+                        <span>{match.project?.duration}</span>
+                      </div>
+                      {match.project?.isPaid && (
+                        <div className="flex items-center gap-1 text-green-600">
+                          <DollarSign className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                          <span>{t.projectDetail.paid}</span>
                         </div>
                       )}
-
-                      {/* Requirements */}
-                      {match.project?.requirements && match.project.requirements.length > 0 && (
-                        <div>
-                          <p className="text-sm font-medium mb-2">Requirements:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {match.project.requirements.map((req: string, index: number) => (
-                              <Badge key={index} className="bg-accent/10 text-accent-foreground">{req}</Badge>
-                            ))}
-                          </div>
-                        </div>
+                      {match.project?.isRemote && (
+                        <Badge variant="secondary" className="text-xs">{t.projectDetail.remote}</Badge>
                       )}
                     </div>
+
+                    {/* Research Areas */}
+                    {match.project?.researchAreas && match.project.researchAreas.length > 0 && (
+                      <div>
+                        <p className="text-xs md:text-sm font-medium mb-1.5 md:mb-2">{t.projectDetail.researchAreas}:</p>
+                        <div className="flex flex-wrap gap-1.5 md:gap-2">
+                          {match.project.researchAreas.slice(0, 4).map((area: string, index: number) => (
+                            <Badge key={index} variant="outline" className="text-xs">{area}</Badge>
+                          ))}
+                          {match.project.researchAreas.length > 4 && (
+                            <Badge variant="outline" className="text-xs">+{match.project.researchAreas.length - 4}</Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex gap-2">
-                    <Link href={`/project/${match.projectId}`}>
-                      <Button>View Details</Button>
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Link href={`/project/${match.projectId}`} className="flex-1 sm:flex-none">
+                      <Button size="sm" className="w-full sm:w-auto">{t.explore.viewDetails}</Button>
                     </Link>
-                    <Button variant="outline">Save Project</Button>
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => toast.info("Feature coming soon")}>
+                      Save Project
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
