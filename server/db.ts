@@ -18,7 +18,9 @@ import {
   applicationLetters,
   InsertApplicationLetter,
   notifications,
-  InsertNotification
+  InsertNotification,
+  userCredits,
+  creditTransactions
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -423,4 +425,88 @@ export async function getAdminUsers() {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(users).where(eq(users.role, "admin"));
+}
+
+// ===== Credits Management =====
+
+export async function getUserCredits(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.select().from(userCredits).where(eq(userCredits.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function createUserCredits(userId: number, stripeCustomerId?: string) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db.insert(userCredits).values({
+    userId,
+    balance: 0,
+    totalPurchased: 0,
+    totalConsumed: 0,
+    stripeCustomerId: stripeCustomerId || null,
+  });
+  
+  return getUserCredits(userId);
+}
+
+export async function updateUserCreditsBalance(userId: number, amount: number, type: 'purchase' | 'consumption' | 'refund', description: string, metadata?: any) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  // Get current credits
+  let credits = await getUserCredits(userId);
+  if (!credits) {
+    credits = await createUserCredits(userId);
+    if (!credits) return null;
+  }
+  
+  const newBalance = credits.balance + amount;
+  
+  if (newBalance < 0) {
+    throw new Error("Insufficient credits");
+  }
+  
+  // Update balance
+  await db.update(userCredits)
+    .set({
+      balance: newBalance,
+      totalPurchased: type === 'purchase' ? credits.totalPurchased + amount : credits.totalPurchased,
+      totalConsumed: type === 'consumption' ? credits.totalConsumed + Math.abs(amount) : credits.totalConsumed,
+    })
+    .where(eq(userCredits.userId, userId));
+  
+  // Record transaction
+  await db.insert(creditTransactions).values({
+    userId,
+    type,
+    amount,
+    balanceAfter: newBalance,
+    description,
+    metadata: metadata ? JSON.stringify(metadata) : null,
+  });
+  
+  return getUserCredits(userId);
+}
+
+export async function getCreditTransactions(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select()
+    .from(creditTransactions)
+    .where(eq(creditTransactions.userId, userId))
+    .orderBy(desc(creditTransactions.createdAt))
+    .limit(limit);
+}
+
+export async function updateStripeCustomerId(userId: number, stripeCustomerId: string) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(userCredits)
+    .set({ stripeCustomerId })
+    .where(eq(userCredits.userId, userId));
 }

@@ -7,6 +7,7 @@ import * as db from "./db";
 import { resumeRouter } from "./routers/resume";
 import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
+import { creditsRouter } from "./routers/credits";
 
 export const appRouter = router({
   system: systemRouter,
@@ -196,6 +197,7 @@ export const appRouter = router({
   resume: resumeRouter,
   matching: matchingRouter,
   application: applicationRouter,
+  credits: creditsRouter,
 
   notifications: router({
     list: protectedProcedure.query(async ({ ctx }) => {

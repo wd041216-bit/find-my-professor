@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { User, FileText, Search, Bell, Plus, ArrowRight, GraduationCap, Shield } from "lucide-react";
+import { User, FileText, Search, Bell, Plus, ArrowRight, GraduationCap, Shield, Coins } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -27,6 +27,10 @@ export default function Dashboard() {
   });
 
   const { data: unreadCount = 0 } = trpc.notifications.unreadCount.useQuery(undefined, {
+    enabled: !!user,
+  });
+
+  const { data: balance } = trpc.credits.getBalance.useQuery(undefined, {
     enabled: !!user,
   });
 
@@ -64,6 +68,12 @@ export default function Dashboard() {
               <Button variant="ghost" size="sm">
                 <Search className="mr-2 h-4 w-4" />
                 {t.nav.explore}
+              </Button>
+            </Link>
+            <Link href="/credits">
+              <Button variant="ghost" size="sm" className="gap-1">
+                <Coins className="h-4 w-4 text-amber-500" />
+                <span className="font-medium">{balance?.balance.toLocaleString() || "0"}</span>
               </Button>
             </Link>
             <Link href="/notifications">
