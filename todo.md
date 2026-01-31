@@ -94,3 +94,10 @@
 ## 新用户免费积分
 - [x] 新用户注册时自动赠送200积分
 - [x] 在Credits页面显示免费额度说明
+
+## SEO优化
+- [x] 生成网站封面图（OG Image）
+- [x] 添加meta description
+- [x] 添加Open Graph标签
+- [x] 添加Twitter Card标签
+- [x] 优化网站标题和描述
