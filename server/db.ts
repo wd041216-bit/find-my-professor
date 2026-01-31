@@ -98,15 +98,15 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       set: updateSet,
     });
     
-    // Grant 200 free credits to new users
+    // Grant 100 free credits to new users
     if (isNewUser) {
       const newUser = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
       if (newUser.length > 0) {
         const userId = newUser[0].id;
-        // Create user credits with 200 free credits
+        // Create user credits with 100 free credits
         await db.insert(userCredits).values({
           userId,
-          balance: 200,
+          balance: 100,
           totalPurchased: 0,
           totalConsumed: 0,
         });
@@ -114,9 +114,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
         await db.insert(creditTransactions).values({
           userId,
           type: 'purchase',
-          amount: 200,
-          balanceAfter: 200,
-          description: 'Welcome bonus - Free 200 credits for new users',
+          amount: 100,
+          balanceAfter: 100,
+          description: 'Welcome bonus - Free 100 credits for new users',
           metadata: JSON.stringify({ source: 'signup_bonus' }),
         });
       }

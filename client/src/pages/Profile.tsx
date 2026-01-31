@@ -146,63 +146,75 @@ export default function Profile() {
               <div className="space-y-3 md:space-y-4">
                 <h3 className="text-base md:text-lg font-semibold">{t.profile.academicInfo}</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                  <div className="space-y-1.5 md:space-y-2">
-                    <Label htmlFor="currentUniversity" className="text-sm">{t.profile.currentUniversity}</Label>
-                    <Input
-                      id="currentUniversity"
-                      value={formData.currentUniversity}
-                      onChange={(e) => setFormData(prev => ({ ...prev, currentUniversity: e.target.value }))}
-                      placeholder="e.g., Stanford University"
-                      className="h-9 md:h-10"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 md:space-y-2">
-                    <Label htmlFor="currentMajor" className="text-sm">{t.profile.currentMajor}</Label>
-                    <Input
-                      id="currentMajor"
-                      value={formData.currentMajor}
-                      onChange={(e) => setFormData(prev => ({ ...prev, currentMajor: e.target.value }))}
-                      placeholder="e.g., Computer Science"
-                      className="h-9 md:h-10"
-                    />
-                  </div>
+                {/* Academic Level - First */}
+                <div className="space-y-1.5 md:space-y-2">
+                  <Label htmlFor="academicLevel" className="text-sm">{t.profile.academicLevel}</Label>
+                  <Select
+                    value={formData.academicLevel}
+                    onValueChange={(value: "high_school" | "undergraduate" | "graduate") => 
+                      setFormData(prev => ({ ...prev, academicLevel: value }))
+                    }
+                  >
+                    <SelectTrigger className="h-9 md:h-10">
+                      <SelectValue placeholder="Select your academic level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high_school">{t.profile.highSchool}</SelectItem>
+                      <SelectItem value="undergraduate">{t.profile.undergraduate}</SelectItem>
+                      <SelectItem value="graduate">{t.profile.graduate}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                  <div className="space-y-1.5 md:space-y-2">
-                    <Label htmlFor="academicLevel" className="text-sm">{t.profile.academicLevel}</Label>
-                    <Select
-                      value={formData.academicLevel}
-                      onValueChange={(value: "high_school" | "undergraduate" | "graduate") => 
-                        setFormData(prev => ({ ...prev, academicLevel: value }))
-                      }
-                    >
-                      <SelectTrigger className="h-9 md:h-10">
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="high_school">{t.profile.highSchool}</SelectItem>
-                        <SelectItem value="undergraduate">{t.profile.undergraduate}</SelectItem>
-                        <SelectItem value="graduate">{t.profile.graduate}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Conditional School Input based on Academic Level */}
+                {formData.academicLevel && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                    <div className="space-y-1.5 md:space-y-2">
+                      <Label htmlFor="currentUniversity" className="text-sm">
+                        {formData.academicLevel === "high_school" 
+                          ? t.profile.highSchoolName || "High School Name"
+                          : t.profile.currentUniversity}
+                      </Label>
+                      <Input
+                        id="currentUniversity"
+                        value={formData.currentUniversity}
+                        onChange={(e) => setFormData(prev => ({ ...prev, currentUniversity: e.target.value }))}
+                        placeholder={
+                          formData.academicLevel === "high_school"
+                            ? "e.g., Lincoln High School"
+                            : "e.g., Stanford University"
+                        }
+                        className="h-9 md:h-10"
+                      />
+                    </div>
 
-                  <div className="space-y-1.5 md:space-y-2">
-                    <Label htmlFor="gpa" className="text-sm">{t.profile.gpa}</Label>
-                    <Input
-                      id="gpa"
-                      type="number"
-                      step="0.01"
-                      value={formData.gpa}
-                      onChange={(e) => setFormData(prev => ({ ...prev, gpa: e.target.value }))}
-                      placeholder="e.g., 3.85"
-                      className="h-9 md:h-10"
-                    />
+                    {formData.academicLevel !== "high_school" && (
+                      <div className="space-y-1.5 md:space-y-2">
+                        <Label htmlFor="currentMajor" className="text-sm">{t.profile.currentMajor}</Label>
+                        <Input
+                          id="currentMajor"
+                          value={formData.currentMajor}
+                          onChange={(e) => setFormData(prev => ({ ...prev, currentMajor: e.target.value }))}
+                          placeholder="e.g., Computer Science"
+                          className="h-9 md:h-10"
+                        />
+                      </div>
+                    )}
+
+                    <div className="space-y-1.5 md:space-y-2">
+                      <Label htmlFor="gpa" className="text-sm">{t.profile.gpa}</Label>
+                      <Input
+                        id="gpa"
+                        type="number"
+                        step="0.01"
+                        value={formData.gpa}
+                        onChange={(e) => setFormData(prev => ({ ...prev, gpa: e.target.value }))}
+                        placeholder="e.g., 3.85"
+                        className="h-9 md:h-10"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Target Universities */}

@@ -256,12 +256,6 @@ export default function Dashboard() {
                     {t.dashboard.searchProjects}
                   </Button>
                 </Link>
-                <Link href="/profile">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
-                    <User className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
-                    {t.dashboard.editProfile}
-                  </Button>
-                </Link>
                 <Link href="/activities">
                   <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
                     <Plus className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
@@ -272,6 +266,12 @@ export default function Dashboard() {
                   <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
                     <FileText className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
                     {t.dashboard.uploadResume}
+                  </Button>
+                </Link>
+                <Link href="/credits">
+                  <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
+                    <Coins className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4 text-amber-500" />
+                    {t.nav.credits || "Credits"}
                   </Button>
                 </Link>
               </CardContent>
