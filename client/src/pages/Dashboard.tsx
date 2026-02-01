@@ -101,6 +101,12 @@ export default function Dashboard() {
           </div>
           {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-1">
+            <Link href="/credits">
+              <Button variant="ghost" size="icon" className="gap-1">
+                <Coins className="h-4 w-4 text-amber-500" />
+                <span className="text-xs font-medium">{balance?.balance.toLocaleString() || "0"}</span>
+              </Button>
+            </Link>
             <Link href="/notifications">
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
@@ -116,7 +122,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <div className="container px-4 py-4 md:py-8">
+      <div className="container px-4 py-4 md:py-8 max-w-4xl">
         {/* Welcome Section */}
         <div className="mb-6 md:mb-8">
           <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">{t.dashboard.welcomeBack}, {user.name}!</h1>
@@ -148,189 +154,128 @@ export default function Dashboard() {
           </Card>
         )}
 
-        {/* Quick Stats - Scrollable on mobile */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-          <Card>
-            <CardHeader className="p-3 md:pb-3 md:p-6">
-              <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">{t.dashboard.activities}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
-              <div className="text-2xl md:text-3xl font-bold">{activities.length}</div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{t.dashboard.totalExperiences}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="p-3 md:pb-3 md:p-6">
-              <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">{t.dashboard.matches}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
-              <div className="text-2xl md:text-3xl font-bold">0</div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{t.dashboard.researchProjects}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="p-3 md:pb-3 md:p-6">
-              <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">{t.dashboard.applications}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
-              <div className="text-2xl md:text-3xl font-bold">0</div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{t.dashboard.lettersGenerated}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="p-3 md:pb-3 md:p-6">
-              <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">{t.nav.notifications}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
-              <div className="text-2xl md:text-3xl font-bold">{unreadCount}</div>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">{t.dashboard.unreadMessages}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
-          {/* Left Column - Activities */}
-          <div className="lg:col-span-2 space-y-4 md:space-y-6">
-            <Card>
-              <CardHeader className="p-4 md:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-                <div>
-                  <CardTitle className="text-base md:text-lg">{t.dashboard.yourActivities}</CardTitle>
-                  <CardDescription className="text-sm">{t.dashboard.manageExperiences}</CardDescription>
+        {/* Smart Matching - Hero CTA */}
+        <Card className="mb-6 md:mb-8 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
+          <CardContent className="p-6 md:p-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+              <div className="flex-shrink-0">
+                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Search className="h-8 w-8 md:h-10 md:w-10 text-primary" />
                 </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="text-xl md:text-2xl font-bold mb-2">
+                  {t.dashboard.smartMatching || "Smart Matching"}
+                </h2>
+                <p className="text-muted-foreground text-sm md:text-base">
+                  {t.dashboard.smartMatchingDesc || "Find research opportunities that match your profile and interests"}
+                </p>
+              </div>
+              <Link href="/explore">
+                <Button size="lg" className="w-full md:w-auto">
+                  {t.dashboard.searchProjects}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card className="mb-6 md:mb-8">
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg">{t.dashboard.quickActions}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 grid grid-cols-2 gap-3 md:gap-4">
+            <Link href="/activities">
+              <Button variant="outline" size="lg" className="w-full h-auto py-4 flex-col gap-2">
+                <Plus className="h-6 w-6" />
+                <span className="text-sm">{t.dashboard.addActivity}</span>
+              </Button>
+            </Link>
+            <Link href="/upload-resume">
+              <Button variant="outline" size="lg" className="w-full h-auto py-4 flex-col gap-2">
+                <FileText className="h-6 w-6" />
+                <span className="text-sm">{t.dashboard.uploadResume}</span>
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Activities */}
+        <Card className="mb-6 md:mb-8">
+          <CardHeader className="p-4 md:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+            <div>
+              <CardTitle className="text-base md:text-lg">{t.dashboard.yourActivities}</CardTitle>
+              <CardDescription className="text-sm">{activities.length} {t.dashboard.totalExperiences}</CardDescription>
+            </div>
+            <Link href="/activities">
+              <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                {t.dashboard.viewAllActivities}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+            {activities.length === 0 ? (
+              <div className="text-center py-8 md:py-12">
+                <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mx-auto mb-3 md:mb-4" />
+                <p className="text-muted-foreground mb-3 md:mb-4 text-sm">{t.dashboard.noActivities}</p>
                 <Link href="/activities">
-                  <Button size="sm" className="w-full sm:w-auto">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t.dashboard.addActivity}
-                  </Button>
+                  <Button variant="outline" size="sm">{t.dashboard.addFirstActivity}</Button>
                 </Link>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-                {activities.length === 0 ? (
-                  <div className="text-center py-8 md:py-12">
-                    <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mx-auto mb-3 md:mb-4" />
-                    <p className="text-muted-foreground mb-3 md:mb-4 text-sm">{t.dashboard.noActivities}</p>
-                    <Link href="/activities">
-                      <Button variant="outline" size="sm">{t.dashboard.addFirstActivity}</Button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-3 md:space-y-4">
-                    {activities.slice(0, 3).map((activity) => (
-                      <div key={activity.id} className="border rounded-lg p-3 md:p-4 hover:bg-accent/5 transition-colors">
-                        <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
-                          <div className="min-w-0 flex-1">
-                            <h4 className="font-semibold text-sm md:text-base truncate">{activity.title}</h4>
-                            <p className="text-xs md:text-sm text-muted-foreground truncate">{activity.organization}</p>
-                          </div>
-                          <Badge variant="secondary" className="text-xs flex-shrink-0">{activity.category}</Badge>
-                        </div>
-                        <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
+              </div>
+            ) : (
+              <div className="space-y-3 md:space-y-4">
+                {activities.slice(0, 3).map((activity) => (
+                  <div key={activity.id} className="border rounded-lg p-3 md:p-4 hover:bg-accent/5 transition-colors">
+                    <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm md:text-base truncate">{activity.title}</h4>
+                        <p className="text-xs md:text-sm text-muted-foreground truncate">{activity.organization}</p>
                       </div>
-                    ))}
-                    {activities.length > 3 && (
-                      <Link href="/activities">
-                        <Button variant="ghost" size="sm" className="w-full">
-                          {t.dashboard.viewAllActivities}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </Link>
-                    )}
+                      <Badge variant="secondary" className="text-xs flex-shrink-0">{activity.category}</Badge>
+                    </div>
+                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader className="p-4 md:p-6">
-                <CardTitle className="text-base md:text-lg">{t.dashboard.quickActions}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 md:p-6 md:pt-0 grid grid-cols-2 gap-2 md:gap-4">
-                <Link href="/explore">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
-                    <Search className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
-                    {t.dashboard.searchProjects}
-                  </Button>
-                </Link>
-                <Link href="/activities">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
-                    <Plus className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
-                    {t.dashboard.addActivity}
-                  </Button>
-                </Link>
-                <Link href="/upload-resume">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
-                    <FileText className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
-                    {t.dashboard.uploadResume}
-                  </Button>
-                </Link>
-                <Link href="/credits">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-xs md:text-sm h-9 md:h-10">
-                    <Coins className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4 text-amber-500" />
-                    {t.nav.credits || "Credits"}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Profile & Notifications */}
-          <div className="space-y-4 md:space-y-6">
-            {/* Profile Summary */}
-            <Card>
-              <CardHeader className="p-4 md:p-6">
-                <CardTitle className="text-base md:text-lg">{t.dashboard.profileSummary}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 md:p-6 md:pt-0 space-y-3 md:space-y-4">
-                <div>
-                  <p className="text-xs md:text-sm text-muted-foreground mb-0.5 md:mb-1">{t.dashboard.currentUniversity}</p>
-                  <p className="font-medium text-sm md:text-base">{profile?.currentUniversity || t.dashboard.notSet}</p>
-                </div>
-                <div>
-                  <p className="text-xs md:text-sm text-muted-foreground mb-0.5 md:mb-1">{t.dashboard.major}</p>
-                  <p className="font-medium text-sm md:text-base">{profile?.currentMajor || t.dashboard.notSet}</p>
-                </div>
-                <div>
-                  <p className="text-xs md:text-sm text-muted-foreground mb-0.5 md:mb-1">{t.dashboard.academicLevel}</p>
-                  <p className="font-medium text-sm md:text-base capitalize">{profile?.academicLevel?.replace("_", " ") || t.dashboard.notSet}</p>
-                </div>
-                <Link href="/profile">
-                  <Button variant="outline" size="sm" className="w-full">
-                    {t.dashboard.editProfile}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Recent Notifications */}
-            <Card>
-              <CardHeader className="p-4 md:p-6">
-                <CardTitle className="text-base md:text-lg">{t.dashboard.recentNotifications}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-                {notifications.length === 0 ? (
-                  <div className="text-center py-6 md:py-8">
-                    <Bell className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-xs md:text-sm text-muted-foreground">{t.dashboard.noNotifications}</p>
+        {/* Recent Notifications */}
+        <Card>
+          <CardHeader className="p-4 md:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+            <div>
+              <CardTitle className="text-base md:text-lg">{t.dashboard.recentNotifications}</CardTitle>
+              <CardDescription className="text-sm">{unreadCount} {t.dashboard.unreadMessages}</CardDescription>
+            </div>
+            <Link href="/notifications">
+              <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                {t.dashboard.viewAll || "View All"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+            {notifications.length === 0 ? (
+              <div className="text-center py-6 md:py-8">
+                <Bell className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-xs md:text-sm text-muted-foreground">{t.dashboard.noNotifications}</p>
+              </div>
+            ) : (
+              <div className="space-y-2 md:space-y-3">
+                {notifications.slice(0, 3).map((notification) => (
+                  <div key={notification.id} className={`text-sm p-2.5 md:p-3 rounded-lg ${notification.read ? "bg-muted/30" : "bg-accent/10"}`}>
+                    <p className="font-medium mb-0.5 md:mb-1 text-xs md:text-sm">{notification.title}</p>
+                    <p className="text-muted-foreground text-[10px] md:text-xs">{notification.message}</p>
                   </div>
-                ) : (
-                  <div className="space-y-2 md:space-y-3">
-                    {notifications.slice(0, 5).map((notification) => (
-                      <div key={notification.id} className={`text-sm p-2.5 md:p-3 rounded-lg ${notification.read ? "bg-muted/30" : "bg-accent/10"}`}>
-                        <p className="font-medium mb-0.5 md:mb-1 text-xs md:text-sm">{notification.title}</p>
-                        <p className="text-muted-foreground text-[10px] md:text-xs">{notification.message}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

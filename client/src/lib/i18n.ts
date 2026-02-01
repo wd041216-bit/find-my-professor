@@ -82,6 +82,9 @@ export const translations = {
       notSet: "Not set",
       recentNotifications: "Recent Notifications",
       noNotifications: "No notifications",
+      smartMatching: "Smart Matching",
+      smartMatchingDesc: "Find research opportunities that match your profile and interests",
+      viewAll: "View All",
     },
     // Profile
     profile: {
@@ -333,6 +336,9 @@ export const translations = {
       notSet: "未设置",
       recentNotifications: "最近通知",
       noNotifications: "暂无通知",
+      smartMatching: "智能匹配",
+      smartMatchingDesc: "找到与你的背景和兴趣相匹配的研究机会",
+      viewAll: "查看全部",
     },
     // Profile
     profile: {

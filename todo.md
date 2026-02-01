@@ -122,5 +122,12 @@
 
 ## Logo更换
 - [x] 生成新的应用logo图标
-- [x] 更新VITE_APP_LOGO环境变量
-- [x] 验证登录界面显示效果
+- [ ] 通过webdev_edit_secrets更新VITE_APP_LOGO为CDN URL
+- [ ] 验证Manus OAuth登录页面logo显示
+
+## Dashboard UI优化
+- [x] 设计统一的顶部导航栏，整合个人信息、通知、积分显示
+- [x] 移除重复的Profile Summary卡片
+- [x] 突出Smart Matching功能，作为主要CTA
+- [x] 简化Dashboard布局，减少垂直滚动
+- [x] 优化移动端响应式设计
