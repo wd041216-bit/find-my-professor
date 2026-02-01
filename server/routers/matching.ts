@@ -178,8 +178,10 @@ export const matchingRouter = router({
     };
   }),
 
-  // Get matches with full project details
-  getMatchesWithDetails: protectedProcedure.query(async ({ ctx }) => {
+  // Get matches with full project details (with optional randomization)
+  getMatchesWithDetails: protectedProcedure
+    .input(z.object({ randomize: z.boolean().optional() }).optional())
+    .query(async ({ ctx, input }) => {
     const matches = await db.getUserMatches(ctx.user.id);
     
     const matchesWithDetails = await Promise.all(
@@ -205,6 +207,22 @@ export const matchingRouter = router({
         };
       })
     );
+
+    // If randomize is true, shuffle the results
+    if (input?.randomize) {
+      // Fisher-Yates shuffle algorithm
+      for (let i = matchesWithDetails.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [matchesWithDetails[i], matchesWithDetails[j]] = [matchesWithDetails[j], matchesWithDetails[i]];
+      }
+    } else {
+      // Sort by match score (descending)
+      matchesWithDetails.sort((a, b) => {
+        const scoreA = parseFloat(a.matchScore || "0");
+        const scoreB = parseFloat(b.matchScore || "0");
+        return scoreB - scoreA;
+      });
+    }
 
     return matchesWithDetails;
   }),
