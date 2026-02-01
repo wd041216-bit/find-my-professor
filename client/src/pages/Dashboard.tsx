@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { t } = useLanguage();
 
-  const { data: profile } = trpc.profile.get.useQuery(undefined, {
+  const { data: profile, isLoading: profileLoading } = trpc.profile.get.useQuery(undefined, {
     enabled: !!user,
   });
 
@@ -47,7 +47,8 @@ export default function Dashboard() {
     return null;
   }
 
-  const profileComplete = profile && profile.currentUniversity && profile.currentMajor && profile.academicLevel;
+  // Only check profile completeness after data is loaded to avoid flashing
+  const profileComplete = profileLoading ? true : (profile && profile.currentUniversity && profile.currentMajor && profile.academicLevel);
 
   return (
     <div className="min-h-screen bg-background">
