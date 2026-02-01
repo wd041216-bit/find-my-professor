@@ -234,6 +234,24 @@ export const translations = {
       noTransactions: "No transactions yet",
       newUserBonus: "New users get 100 free credits!",
     },
+    // Skills
+    skills: {
+      title: "Skills Management",
+      description: "Manage your technical and soft skills to improve project matching",
+      yourSkills: "Your Skills",
+      addSkill: "Add Skill",
+      enterSkill: "Enter skill name...",
+      noSkills: "No skills added yet",
+      addSkillPrompt: "Add skills to improve your project matches",
+      updateSuccess: "Skills updated",
+      updateSuccessDesc: "Your skills have been updated successfully",
+      duplicateSkill: "Duplicate skill",
+      duplicateSkillDesc: "This skill already exists in your profile",
+      tips: "Tips",
+      tip1: "Add specific technical skills (e.g., Python, Machine Learning)",
+      tip2: "Include soft skills (e.g., Communication, Leadership)",
+      tip3: "Skills help match you with relevant research projects",
+    },
     // Common
     common: {
       loading: "Loading...",
@@ -256,6 +274,7 @@ export const translations = {
       loginToAccess: "Please login to access this page",
       goHome: "Go to Home",
       processing: "Processing...",
+      add: "Add",
     },
   },
   zh: {
@@ -488,6 +507,24 @@ export const translations = {
       noTransactions: "暂无交易记录",
       newUserBonus: "新用户可获得100免费积分！",
     },
+    // Skills
+    skills: {
+      title: "技能管理",
+      description: "管理你的技术和软技能，提升项目匹配度",
+      yourSkills: "你的技能",
+      addSkill: "添加技能",
+      enterSkill: "输入技能名称...",
+      noSkills: "暂未添加技能",
+      addSkillPrompt: "添加技能以提升项目匹配度",
+      updateSuccess: "技能已更新",
+      updateSuccessDesc: "你的技能已成功更新",
+      duplicateSkill: "重复的技能",
+      duplicateSkillDesc: "此技能已存在于你的档案中",
+      tips: "提示",
+      tip1: "添加具体的技术技能（如Python、机器学习）",
+      tip2: "包含软技能（如沟通能力、领导力）",
+      tip3: "技能有助于匹配相关的研究项目",
+    },
     // Common
     common: {
       loading: "加载中...",
@@ -510,6 +547,7 @@ export const translations = {
       loginToAccess: "请登录以访问此页面",
       goHome: "返回首页",
       processing: "处理中...",
+      add: "添加",
     },
   },
 };

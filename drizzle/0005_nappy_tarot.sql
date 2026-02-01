@@ -1,0 +1,1 @@
+ALTER TABLE `research_projects` ADD `academic_level` enum('high_school','undergraduate','graduate','all') DEFAULT 'all';

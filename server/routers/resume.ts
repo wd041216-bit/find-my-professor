@@ -61,7 +61,7 @@ export const resumeRouter = router({
             type: "json_schema",
             json_schema: {
               name: "resume_data",
-              strict: true,
+              strict: false,
               schema: {
                 type: "object",
                 properties: {
@@ -75,11 +75,11 @@ export const resumeRouter = router({
                           type: "string",
                           enum: ["research", "volunteer", "competition", "internship", "project", "leadership", "other"],
                         },
-                        organization: { type: ["string", "null"] },
-                        role: { type: ["string", "null"] },
-                        description: { type: ["string", "null"] },
-                        startDate: { type: ["string", "null"] },
-                        endDate: { type: ["string", "null"] },
+                        organization: { type: "string" },
+                        role: { type: "string" },
+                        description: { type: "string" },
+                        startDate: { type: "string" },
+                        endDate: { type: "string" },
                         isCurrent: { type: "boolean" },
                         skills: {
                           type: "array",
@@ -90,8 +90,7 @@ export const resumeRouter = router({
                           items: { type: "string" },
                         },
                       },
-                      required: ["title", "category", "isCurrent", "skills", "achievements"],
-                      additionalProperties: false,
+                      required: ["title", "category"],
                     },
                   },
                   skills: {
@@ -100,7 +99,6 @@ export const resumeRouter = router({
                   },
                 },
                 required: ["activities", "skills"],
-                additionalProperties: false,
               },
             },
           },
@@ -248,7 +246,7 @@ export const resumeRouter = router({
             type: "json_schema",
             json_schema: {
               name: "resume_data",
-              strict: true,
+              strict: false,
               schema: {
                 type: "object",
                 properties: {
@@ -262,11 +260,11 @@ export const resumeRouter = router({
                           type: "string",
                           enum: ["research", "volunteer", "competition", "internship", "project", "leadership", "other"],
                         },
-                        organization: { type: ["string", "null"] },
-                        role: { type: ["string", "null"] },
-                        description: { type: ["string", "null"] },
-                        startDate: { type: ["string", "null"] },
-                        endDate: { type: ["string", "null"] },
+                        organization: { type: "string" },
+                        role: { type: "string" },
+                        description: { type: "string" },
+                        startDate: { type: "string" },
+                        endDate: { type: "string" },
                         isCurrent: { type: "boolean" },
                         skills: {
                           type: "array",
@@ -277,8 +275,7 @@ export const resumeRouter = router({
                           items: { type: "string" },
                         },
                       },
-                      required: ["title", "category", "isCurrent", "skills", "achievements"],
-                      additionalProperties: false,
+                      required: ["title", "category"],
                     },
                   },
                   skills: {
@@ -287,7 +284,6 @@ export const resumeRouter = router({
                   },
                 },
                 required: ["activities", "skills"],
-                additionalProperties: false,
               },
             },
           },
