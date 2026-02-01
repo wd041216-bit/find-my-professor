@@ -161,3 +161,8 @@
 - [x] 在项目数据中添加academicLevel字段（high_school/undergraduate/graduate/all）
 - [x] 修改匹配算法，考虑用户学历与项目学历要求的匹配度
 - [x] 为不同学历的项目设置不同的权重
+## Stripe支付系统修复
+- [x] 检查Stripe环境变量配置
+- [x] 检查Checkout Session创庺逻辑
+- [x] 修复前端跳转到Stripe页面的逻辑
+- [x] 测试完整支付流程
