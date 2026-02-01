@@ -106,13 +106,34 @@ export const resumeRouter = router({
           },
         });
 
+        // Validate LLM response
+        console.log("LLM Response:", JSON.stringify(llmResponse, null, 2));
+        
+        if (!llmResponse || !llmResponse.choices || llmResponse.choices.length === 0) {
+          console.error("Invalid LLM response structure:", llmResponse);
+          throw new Error("Invalid response from AI service. Please try again.");
+        }
+        
         const content = llmResponse.choices[0]?.message?.content;
         if (!content) {
-          throw new Error("No response from LLM");
+          console.error("No content in LLM response:", llmResponse.choices[0]);
+          throw new Error("AI service returned empty response. Please try again.");
         }
 
         const contentStr = typeof content === "string" ? content : JSON.stringify(content);
-        const parsedData = JSON.parse(contentStr);
+        let parsedData;
+        try {
+          parsedData = JSON.parse(contentStr);
+        } catch (parseError) {
+          console.error("Failed to parse LLM response:", contentStr);
+          throw new Error("Failed to parse AI response. Please try again.");
+        }
+        
+        // Validate parsed data structure
+        if (!parsedData || !Array.isArray(parsedData.activities) || !Array.isArray(parsedData.skills)) {
+          console.error("Invalid parsed data structure:", parsedData);
+          throw new Error("AI returned invalid data format. Please try again.");
+        }
 
         // Save activities to database
         const savedActivities = [];
@@ -272,13 +293,34 @@ export const resumeRouter = router({
           },
         });
 
+        // Validate LLM response
+        console.log("LLM Response:", JSON.stringify(llmResponse, null, 2));
+        
+        if (!llmResponse || !llmResponse.choices || llmResponse.choices.length === 0) {
+          console.error("Invalid LLM response structure:", llmResponse);
+          throw new Error("Invalid response from AI service. Please try again.");
+        }
+        
         const content = llmResponse.choices[0]?.message?.content;
         if (!content) {
-          throw new Error("No response from LLM");
+          console.error("No content in LLM response:", llmResponse.choices[0]);
+          throw new Error("AI service returned empty response. Please try again.");
         }
 
         const contentStr = typeof content === "string" ? content : JSON.stringify(content);
-        const parsedData = JSON.parse(contentStr);
+        let parsedData;
+        try {
+          parsedData = JSON.parse(contentStr);
+        } catch (parseError) {
+          console.error("Failed to parse LLM response:", contentStr);
+          throw new Error("Failed to parse AI response. Please try again.");
+        }
+        
+        // Validate parsed data structure
+        if (!parsedData || !Array.isArray(parsedData.activities) || !Array.isArray(parsedData.skills)) {
+          console.error("Invalid parsed data structure:", parsedData);
+          throw new Error("AI returned invalid data format. Please try again.");
+        }
 
         // Save activities to database
         const savedActivities = [];
