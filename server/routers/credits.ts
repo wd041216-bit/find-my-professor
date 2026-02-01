@@ -58,7 +58,12 @@ export const creditsRouter = router({
       // Create checkout session
       const session = await stripe.checkout.sessions.create({
         customer: stripeCustomerId,
-        payment_method_types: ["card"],
+        payment_method_types: ["card", "alipay", "wechat_pay"],
+        payment_method_options: {
+          wechat_pay: {
+            client: "web",
+          },
+        },
         line_items: [
           {
             price_data: {
