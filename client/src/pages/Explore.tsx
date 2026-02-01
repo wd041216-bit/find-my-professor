@@ -15,11 +15,15 @@ export default function Explore() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [calculating, setCalculating] = useState(false);
+  const [randomize, setRandomize] = useState(false);
   const { t } = useLanguage();
 
-  const { data: matchesWithDetails = [], refetch, isLoading } = trpc.matching.getMatchesWithDetails.useQuery(undefined, {
-    enabled: !!user,
-  });
+  const { data: matchesWithDetails = [], refetch, isLoading } = trpc.matching.getMatchesWithDetails.useQuery(
+    { randomize },
+    {
+      enabled: !!user,
+    }
+  );
 
   const calculateMutation = trpc.matching.calculateMatches.useMutation({
     onSuccess: (data) => {
@@ -35,7 +39,13 @@ export default function Explore() {
 
   const handleCalculateMatches = () => {
     setCalculating(true);
+    setRandomize(false); // Reset to sorted view when recalculating
     calculateMutation.mutate();
+  };
+
+  const handleRefreshMatches = () => {
+    setRandomize(prev => !prev); // Toggle randomization
+    refetch();
   };
 
   if (authLoading) {
@@ -95,7 +105,7 @@ export default function Explore() {
               {t.home.smartMatchingDesc}
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 flex flex-col sm:flex-row gap-3">
             <Button
               onClick={handleCalculateMatches}
               disabled={calculating || calculateMutation.isPending}
@@ -114,6 +124,17 @@ export default function Explore() {
                 </>
               )}
             </Button>
+            {matchesWithDetails.length > 0 && (
+              <Button
+                onClick={handleRefreshMatches}
+                variant="outline"
+                size="default"
+                className="w-full sm:w-auto"
+              >
+                <Sparkles className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                <span className="text-sm md:text-base">{t.explore.refreshMatches}</span>
+              </Button>
+            )}
           </CardContent>
         </Card>
 

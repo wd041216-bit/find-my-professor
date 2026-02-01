@@ -164,6 +164,7 @@ export const translations = {
       match: "Match",
       viewDetails: "View Details",
       calculateMatch: "Calculate Match",
+      refreshMatches: "Refresh Results",
       loginToMatch: "Login to see match",
     },
     // Project Detail
@@ -437,6 +438,7 @@ export const translations = {
       match: "匹配度",
       viewDetails: "查看详情",
       calculateMatch: "计算匹配度",
+      refreshMatches: "换一批",
       loginToMatch: "登录查看匹配度",
     },
     // Project Detail
