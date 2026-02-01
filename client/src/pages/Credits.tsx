@@ -28,8 +28,10 @@ export default function Credits() {
   const createCheckout = trpc.credits.createCheckoutSession.useMutation({
     onSuccess: (data) => {
       if (data.url) {
-        window.open(data.url, "_blank");
-        toast.success(t.credits.redirecting || "Redirecting to checkout...");
+        // Redirect to Stripe Checkout in the same window
+        window.location.href = data.url;
+      } else {
+        toast.error("Failed to create checkout session");
         setIsProcessing(false);
       }
     },
