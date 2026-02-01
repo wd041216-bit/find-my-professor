@@ -36,6 +36,13 @@
       "when": 1769857407213,
       "tag": "0004_stormy_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769959032653,
+      "tag": "0005_nappy_tarot",
+      "breakpoints": true
     }
   ]
 }

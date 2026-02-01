@@ -116,6 +116,7 @@ export const researchProjects = mysqlTable("research_projects", {
   requirements: text("requirements"), // JSON array
   researchAreas: text("research_areas"), // JSON array
   majors: text("majors"), // JSON array - target majors
+  academicLevel: mysqlEnum("academic_level", ["high_school", "undergraduate", "graduate", "all"]).default("all"), // Target academic level
   duration: text("duration"),
   isPaid: boolean("is_paid").default(false),
   isRemote: boolean("is_remote").default(false),

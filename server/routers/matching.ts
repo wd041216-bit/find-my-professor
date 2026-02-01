@@ -17,7 +17,29 @@ function calculateMatchScore(
   const projectAreas = project.researchAreas ? JSON.parse(project.researchAreas) : [];
   const projectRequirements = project.requirements ? JSON.parse(project.requirements) : [];
 
-  // 1. Major match (30 points) - Current major
+  // 1. Academic level match (15 points) - New criterion
+  if (profile && profile.academicLevel && project.academicLevel) {
+    if (project.academicLevel === "all") {
+      // Project accepts all levels
+      score += 15;
+      reasons.push("Project is open to all academic levels");
+    } else if (project.academicLevel === profile.academicLevel) {
+      // Exact match
+      score += 15;
+      reasons.push(`Project is suitable for ${profile.academicLevel} students`);
+    } else {
+      // Partial credit for adjacent levels
+      const levelOrder = ["high_school", "undergraduate", "graduate"];
+      const profileIndex = levelOrder.indexOf(profile.academicLevel);
+      const projectIndex = levelOrder.indexOf(project.academicLevel);
+      if (Math.abs(profileIndex - projectIndex) === 1) {
+        score += 5;
+        reasons.push("Project may be suitable for your academic level");
+      }
+    }
+  }
+
+  // 2. Major match (25 points) - Current major (reduced from 30)
   if (profile && profile.currentMajor) {
     const majorMatch = projectMajors.some((major: string) =>
       profile.currentMajor.toLowerCase().includes(major.toLowerCase()) ||
@@ -29,7 +51,7 @@ function calculateMatchScore(
     }
   }
 
-  // 2. Target major match (30 points) - Increased weight for target majors
+  // 3. Target major match (25 points) - Target majors (reduced from 30)
   if (profile && profile.targetMajors) {
     const targetMajors = JSON.parse(profile.targetMajors);
     const targetMatch = projectMajors.some((major: string) =>
@@ -44,7 +66,7 @@ function calculateMatchScore(
     }
   }
 
-  // 3. Target university match (20 points) - New criterion
+  // 4. Target university match (20 points)
   if (profile && profile.targetUniversities && university) {
     const targetUniversities = JSON.parse(profile.targetUniversities);
     const univMatch = targetUniversities.some((tu: string) =>
@@ -57,7 +79,7 @@ function calculateMatchScore(
     }
   }
 
-  // 4. Research interest match (20 points) - Reduced from 25
+  // 5. Research interest match (15 points) - Reduced from 20
   if (profile && profile.interests) {
     const interests = JSON.parse(profile.interests);
     let interestMatchCount = 0;
@@ -70,13 +92,13 @@ function calculateMatchScore(
       }
     });
     if (interestMatchCount > 0) {
-      const interestScore = Math.min(20, interestMatchCount * 8);
+      const interestScore = Math.min(15, interestMatchCount * 6);
       score += interestScore;
       reasons.push(`${interestMatchCount} research interests match project areas`);
     }
   }
 
-  // 5. Skills match (15 points) - Reduced from 20
+  // 6. Skills match (10 points) - Reduced from 15
   if (profile && profile.skills) {
     const skills = JSON.parse(profile.skills);
     let skillMatchCount = 0;
@@ -89,13 +111,13 @@ function calculateMatchScore(
       }
     });
     if (skillMatchCount > 0) {
-      const skillScore = Math.min(15, skillMatchCount * 5);
+      const skillScore = Math.min(10, skillMatchCount * 4);
       score += skillScore;
       reasons.push(`${skillMatchCount} skills match project requirements`);
     }
   }
 
-  // 6. Relevant experience (5 points) - Reduced from 10
+  // 7. Relevant experience (5 points)
   const relevantActivities = activities.filter(activity => {
     const activitySkills = activity.skills ? JSON.parse(activity.skills) : [];
     return projectAreas.some((area: string) =>
