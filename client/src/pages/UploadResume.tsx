@@ -11,12 +11,10 @@ export default function UploadResume() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [parseResult, setParseResult] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const parseMutation = trpc.resume.parse.useMutation({
+  const uploadAndParseMutation = trpc.resume.uploadAndParse.useMutation({
     onSuccess: (data) => {
       setParseResult(data);
       toast.success(`Successfully extracted ${data.activitiesCreated} activities and ${data.skillsExtracted} skills!`);
@@ -51,43 +49,39 @@ export default function UploadResume() {
       return;
     }
 
-    setUploading(true);
-    setUploadProgress(0);
-
     try {
-      // Upload file to S3 using storage API
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Simulate progress for better UX
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => Math.min(prev + 10, 90));
-      }, 200);
-
-      // Upload to storage
-      const uploadResponse = await fetch("/api/storage/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      clearInterval(progressInterval);
-      setUploadProgress(95);
-
-      if (!uploadResponse.ok) {
-        throw new Error("Failed to upload file");
-      }
-
-      const { url } = await uploadResponse.json();
-      setUploadProgress(100);
-
-      // Parse the uploaded resume
-      await parseMutation.mutateAsync({ fileUrl: url });
+      // Read file as base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64Content = e.target?.result as string;
+        // Remove data URL prefix (e.g., "data:application/pdf;base64,")
+        const base64Data = base64Content.split(",")[1];
+        
+        // Determine MIME type
+        let mimeType = "application/pdf";
+        const fileExtension = file.name.split(".").pop()?.toLowerCase();
+        if (fileExtension === "doc") {
+          mimeType = "application/msword";
+        } else if (fileExtension === "docx") {
+          mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        }
+        
+        // Upload and parse
+        await uploadAndParseMutation.mutateAsync({
+          fileName: file.name,
+          fileContent: base64Data,
+          mimeType,
+        });
+      };
+      
+      reader.onerror = () => {
+        toast.error("Failed to read file");
+      };
+      
+      reader.readAsDataURL(file);
     } catch (error) {
       console.error("Upload error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to upload file");
-    } finally {
-      setUploading(false);
-      setUploadProgress(0);
     }
   };
 
@@ -154,11 +148,11 @@ export default function UploadResume() {
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                   <div className="flex gap-2 justify-center">
-                    <Button onClick={handleUpload} disabled={uploading || parseMutation.isPending}>
-                      {uploading || parseMutation.isPending ? (
+                    <Button onClick={handleUpload} disabled={uploadAndParseMutation.isPending}>
+                      {uploadAndParseMutation.isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {uploading ? "Uploading..." : "Parsing..."}
+                          Processing...
                         </>
                       ) : (
                         <>
@@ -174,23 +168,11 @@ export default function UploadResume() {
                         setParseResult(null);
                         if (fileInputRef.current) fileInputRef.current.value = "";
                       }}
-                      disabled={uploading || parseMutation.isPending}
+                      disabled={uploadAndParseMutation.isPending}
                     >
                       Cancel
                     </Button>
                   </div>
-                  
-                  {uploading && uploadProgress > 0 && (
-                    <div className="mt-4">
-                      <div className="w-full bg-secondary rounded-full h-2">
-                        <div
-                          className="bg-primary h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        />
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-2">{uploadProgress}% uploaded</p>
-                    </div>
-                  )}
                 </>
               )}
             </div>
