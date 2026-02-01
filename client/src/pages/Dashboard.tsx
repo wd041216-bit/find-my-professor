@@ -188,10 +188,10 @@ export default function Dashboard() {
             <CardTitle className="text-base md:text-lg">{t.dashboard.quickActions}</CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0 md:p-6 md:pt-0 grid grid-cols-2 gap-3 md:gap-4">
-            <Link href="/activities">
+            <Link href="/profile">
               <Button variant="outline" size="lg" className="w-full h-auto py-4 flex-col gap-2">
-                <Plus className="h-6 w-6" />
-                <span className="text-sm">{t.dashboard.addActivity}</span>
+                <User className="h-6 w-6" />
+                <span className="text-sm">{t.dashboard.editProfile || "Edit Profile"}</span>
               </Button>
             </Link>
             <Link href="/upload-resume">
@@ -210,12 +210,20 @@ export default function Dashboard() {
               <CardTitle className="text-base md:text-lg">{t.dashboard.yourActivities}</CardTitle>
               <CardDescription className="text-sm">{activities.length} {t.dashboard.totalExperiences}</CardDescription>
             </div>
-            <Link href="/activities">
-              <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                {t.dashboard.viewAllActivities}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Link href="/activities" className="flex-1 sm:flex-initial">
+                <Button size="sm" variant="default" className="w-full">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t.dashboard.addActivity}
+                </Button>
+              </Link>
+              <Link href="/activities" className="flex-1 sm:flex-initial">
+                <Button size="sm" variant="outline" className="w-full">
+                  {t.dashboard.viewAllActivities}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
             {activities.length === 0 ? (
