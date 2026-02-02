@@ -2,6 +2,40 @@ import { router, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import * as db from "../db";
 
+// Helper function to normalize university names for comparison
+function normalizeUniversityName(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/university|college|institute|lab|center|school/gi, "")
+    .trim();
+}
+
+// Helper function to check if two university names match
+function universitiesMatch(name1: string, name2: string): boolean {
+  const normalized1 = normalizeUniversityName(name1);
+  const normalized2 = normalizeUniversityName(name2);
+  
+  // Exact match after normalization
+  if (normalized1 === normalized2) return true;
+  
+  // One contains the other (but not just substrings)
+  const words1 = normalized1.split(" ").filter(w => w.length > 0);
+  const words2 = normalized2.split(" ").filter(w => w.length > 0);
+  
+  // If one is significantly shorter, check if it's a substring
+  if (words1.length > 0 && words2.length > 0) {
+    const shorter = words1.length < words2.length ? words1 : words2;
+    const longer = words1.length < words2.length ? words2 : words1;
+    
+    // Check if all words in shorter are in longer
+    return shorter.every(word => longer.some(lword => lword.includes(word) || word.includes(lword)));
+  }
+  
+  return false;
+}
+
 // Calculate match score between student profile and research project
 function calculateMatchScore(
   profile: any,
@@ -67,8 +101,7 @@ function calculateMatchScore(
   if (profile && profile.targetUniversities && university) {
     const targetUniversities = JSON.parse(profile.targetUniversities);
     const univMatch = targetUniversities.some((tu: string) =>
-      university.name.toLowerCase().includes(tu.toLowerCase()) ||
-      tu.toLowerCase().includes(university.name.toLowerCase())
+      universitiesMatch(university.name, tu)
     );
     if (univMatch) {
       score += 20;
@@ -128,7 +161,6 @@ function calculateMatchScore(
       reasons.push(`Your GPA is close to project requirements`);
     }
   }
-  // If user has not filled in GPA, skip GPA matching (no penalty)
 
   // 8. Enhanced relevant experience (10 points)
   const relevantActivities = activities.filter(activity => {
@@ -168,27 +200,35 @@ export const matchingRouter = router({
     const activities = await db.getUserActivities(ctx.user.id);
     let projects = await db.getAllResearchProjects();
 
-    // PRIORITY: If user has target universities, ONLY search in those universities
+    // STRICT PRIORITY: If user has target universities, ONLY search in those universities
     if (profile && profile.targetUniversities) {
       try {
         const targetUniversities = JSON.parse(profile.targetUniversities);
-        if (targetUniversities && targetUniversities.length > 0) {
+        if (targetUniversities && Array.isArray(targetUniversities) && targetUniversities.length > 0) {
+          console.log(`[Matching] User has ${targetUniversities.length} target universities:`, targetUniversities);
+          
           // Filter projects to only include those from target universities
           const filteredProjects = [];
           for (const project of projects) {
             const university = await db.getUniversityById(project.universityId);
-            if (university && targetUniversities.some((tu: string) =>
-              university.name.toLowerCase().includes(tu.toLowerCase()) ||
-              tu.toLowerCase().includes(university.name.toLowerCase())
-            )) {
-              filteredProjects.push(project);
+            if (university) {
+              const isMatch = targetUniversities.some((tu: string) => universitiesMatch(university.name, tu));
+              if (isMatch) {
+                console.log(`[Matching] Project matched: ${project.title} at ${university.name}`);
+                filteredProjects.push(project);
+              }
             }
           }
+          
+          console.log(`[Matching] Filtered ${filteredProjects.length} projects from ${projects.length} total`);
           projects = filteredProjects;
         }
       } catch (e) {
+        console.error("[Matching] Error parsing targetUniversities:", e);
         // If parsing fails, use all projects
       }
+    } else {
+      console.log("[Matching] No target universities set, using all projects");
     }
 
     const matches = [];
@@ -228,7 +268,42 @@ export const matchingRouter = router({
   getMatchesWithDetails: protectedProcedure
     .input(z.object({ randomize: z.boolean().optional() }).optional())
     .query(async ({ ctx, input }) => {
-    const matches = await db.getUserMatches(ctx.user.id);
+    const profile = await db.getStudentProfile(ctx.user.id);
+    let matches = await db.getUserMatches(ctx.user.id);
+    
+    // STRICT PRIORITY: If user has target universities, ONLY show matches from those universities
+    if (profile && profile.targetUniversities) {
+      try {
+        const targetUniversities = JSON.parse(profile.targetUniversities);
+        if (targetUniversities && Array.isArray(targetUniversities) && targetUniversities.length > 0) {
+          console.log(`[Matching] Filtering matches for ${targetUniversities.length} target universities`);
+          
+          // Filter matches to only include those from target universities
+          const filteredMatches = [];
+          for (const match of matches) {
+            const project = await db.getResearchProjectById(match.projectId);
+            if (project) {
+              const university = await db.getUniversityById(project.universityId);
+              if (university) {
+                const isMatch = targetUniversities.some((tu: string) => universitiesMatch(university.name, tu));
+                if (isMatch) {
+                  console.log(`[Matching] Match kept: ${project.title} at ${university.name}`);
+                  filteredMatches.push(match);
+                } else {
+                  console.log(`[Matching] Match filtered out: ${project.title} at ${university.name}`);
+                }
+              }
+            }
+          }
+          
+          console.log(`[Matching] Filtered ${filteredMatches.length} matches from ${matches.length} total`);
+          matches = filteredMatches;
+        }
+      } catch (e) {
+        console.error("[Matching] Error parsing targetUniversities in getMatchesWithDetails:", e);
+        // If parsing fails, use all matches
+      }
+    }
     
     const matchesWithDetails = await Promise.all(
       matches.map(async (match) => {

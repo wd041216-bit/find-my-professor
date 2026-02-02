@@ -28,12 +28,22 @@ export const creditsRouter = router({
   createCheckoutSession: protectedProcedure
     .input(
       z.object({
-        credits: z.number().min(100).max(100000), // Min 100 credits ($1), max 100000 credits ($1000)
+        credits: z.number().min(100).max(100000), // Min 100 credits, max 100000 credits
+        currency: z.enum(["usd", "cny"]).default("usd"), // Support USD and CNY only
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { credits } = input;
-      const amountInCents = Math.round((credits / 100) * 100); // $1 = 100 credits
+      const { credits, currency } = input;
+      
+      // Calculate amount based on currency
+      // USD: $1 = 100 credits
+      // CNY: ¥7 = 100 credits (approximately $1 USD = ¥7 CNY)
+      let amountInCents: number;
+      if (currency === "cny") {
+        amountInCents = Math.round((credits / 100) * 700); // ¥7 = 100 credits
+      } else {
+        amountInCents = Math.round((credits / 100) * 100); // $1 = 100 credits
+      }
 
       // Get or create Stripe customer
       let stripeCustomerId: string | undefined;
@@ -67,7 +77,7 @@ export const creditsRouter = router({
         line_items: [
           {
             price_data: {
-              currency: "usd",
+              currency: currency,
               product_data: {
                 name: `${credits} Credits`,
                 description: `Purchase ${credits} credits for Find My Professor`,
@@ -84,6 +94,7 @@ export const creditsRouter = router({
         metadata: {
           userId: ctx.user.id.toString(),
           credits: credits.toString(),
+          currency: currency,
           customerEmail: ctx.user.email || "",
           customerName: ctx.user.name || "",
         },
