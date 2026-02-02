@@ -22,13 +22,18 @@ export default function Explore() {
     { randomize },
     {
       enabled: !!user,
+      refetchOnMount: true,
+      staleTime: 0, // Always consider data stale to force refetch
     }
   );
 
+  const utils = trpc.useUtils();
+
   const calculateMutation = trpc.matching.calculateMatches.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(`Found ${data.totalMatches} matching projects!`);
-      refetch();
+      // Invalidate the query cache to force a fresh fetch
+      await utils.matching.getMatchesWithDetails.invalidate();
       setCalculating(false);
     },
     onError: (error) => {
@@ -43,9 +48,12 @@ export default function Explore() {
     calculateMutation.mutate();
   };
 
-  const handleRefreshMatches = () => {
+  const handleRefreshMatches = async () => {
     setRandomize(prev => !prev); // Toggle randomization
-    refetch();
+    // Wait a bit for state to update, then refetch
+    setTimeout(() => {
+      refetch();
+    }, 50);
   };
 
   if (authLoading) {

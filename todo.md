@@ -69,3 +69,22 @@
 - [x] 测试支付宝支付流程
 - [x] 测试微信支付流程
 - [x] 准备生产模式部署文档
+
+## PayPal支付系统集成
+- [ ] 安装PayPal SDK依赖
+- [ ] 配置PayPal环境变量（Client ID和Secret）
+- [ ] 创建PayPal支付router
+- [ ] 实现创建订单API
+- [ ] 实现捕获支付API
+- [ ] 更新Credits页面UI添加PayPal按钮
+- [ ] 实现支付成功后积分充值
+- [ ] 移除Stripe相关代码
+- [ ] 测试PayPal支付流程（USD和CNY）
+
+## 智能匹配结果更新问题修复
+- [x] 诊断匹配结果不更新的问题
+- [x] 修复React Query缓存问题（使用invalidate和staleTime）
+- [x] 测试Calculate Match功能
+- [x] 测试Refresh Results功能
+- [x] 测试Profile修改后结果自动更新
+- [x] 运行所有单元测试验证修复

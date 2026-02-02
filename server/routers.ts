@@ -8,6 +8,7 @@ import { resumeRouter } from "./routers/resume";
 import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
 import { creditsRouter } from "./routers/credits";
+// import { paypalRouter } from "./routers/paypal";
 
 export const appRouter = router({
   system: systemRouter,
@@ -198,6 +199,7 @@ export const appRouter = router({
   matching: matchingRouter,
   application: applicationRouter,
   credits: creditsRouter,
+  // paypal: paypalRouter,
 
   notifications: router({
     list: protectedProcedure.query(async ({ ctx }) => {
