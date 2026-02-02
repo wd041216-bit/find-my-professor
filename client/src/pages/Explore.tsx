@@ -193,7 +193,7 @@ export default function Explore() {
                       <div>
                         <p className="text-xs md:text-sm font-medium mb-1.5 md:mb-2">Why this matches:</p>
                         <div className="space-y-0.5 md:space-y-1">
-                          {match.matchReasons.slice(0, 3).map((reason: string, index: number) => (
+                          {match.matchReasons.slice(0, 5).map((reason: string, index: number) => (
                             <div key={index} className="flex items-start gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
                               <span className="text-primary mt-0.5">•</span>
                               <span>{reason}</span>

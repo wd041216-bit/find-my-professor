@@ -117,21 +117,53 @@ function calculateMatchScore(
     }
   }
 
-  // 7. Relevant experience (5 points)
+  // 7. GPA match (10 points) - NEW
+  if (profile && profile.gpa && project.minGPA) {
+    const studentGPA = parseFloat(profile.gpa);
+    const minGPA = parseFloat(project.minGPA);
+    const maxGPA = project.maxGPA ? parseFloat(project.maxGPA) : 4.0;
+    
+    if (studentGPA >= minGPA && studentGPA <= maxGPA) {
+      score += 10;
+      reasons.push(`Your GPA (${profile.gpa}) meets project requirements`);
+    } else if (studentGPA >= minGPA - 0.3) {
+      // Partial credit if close to minimum
+      score += 5;
+      reasons.push(`Your GPA is close to project requirements`);
+    }
+  }
+
+  // 8. Enhanced relevant experience (10 points) - Increased from 5
   const relevantActivities = activities.filter(activity => {
     const activitySkills = activity.skills ? JSON.parse(activity.skills) : [];
-    return projectAreas.some((area: string) =>
-      activity.title.toLowerCase().includes(area.toLowerCase()) ||
-      activity.description?.toLowerCase().includes(area.toLowerCase()) ||
-      activitySkills.some((skill: string) =>
-        area.toLowerCase().includes(skill.toLowerCase())
+    const activityTitle = activity.title?.toLowerCase() || "";
+    const activityDesc = activity.description?.toLowerCase() || "";
+    
+    // Check if activity relates to project areas
+    const areaMatch = projectAreas.some((area: string) =>
+      activityTitle.includes(area.toLowerCase()) ||
+      activityDesc.includes(area.toLowerCase())
+    );
+    
+    // Check if activity skills match project requirements
+    const skillMatch = activitySkills.some((skill: string) =>
+      projectRequirements.some((req: string) =>
+        skill.toLowerCase().includes(req.toLowerCase()) ||
+        req.toLowerCase().includes(skill.toLowerCase())
       )
     );
+    
+    return areaMatch || skillMatch;
   });
+  
   if (relevantActivities.length > 0) {
-    const expScore = Math.min(5, relevantActivities.length * 2);
+    // Score based on number of relevant activities
+    const expScore = Math.min(10, relevantActivities.length * 3);
     score += expScore;
-    reasons.push(`${relevantActivities.length} relevant activities found`);
+    
+    // Build detailed reason
+    const activityReasons = relevantActivities.map(a => a.title).join(", ");
+    reasons.push(`${relevantActivities.length} relevant activities: ${activityReasons}`);
   }
 
   return { score: Math.min(100, score), reasons };

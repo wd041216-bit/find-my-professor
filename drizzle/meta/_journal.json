@@ -43,6 +43,13 @@
       "when": 1769959032653,
       "tag": "0005_nappy_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1770041953407,
+      "tag": "0006_worthless_psylocke",
+      "breakpoints": true
     }
   ]
 }
