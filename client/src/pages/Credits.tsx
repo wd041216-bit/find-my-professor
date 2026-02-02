@@ -9,11 +9,13 @@ import { Loader2, CreditCard, History, DollarSign, Coins } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Credits() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [credits, setCredits] = useState<string>("1000");
+  const [currency, setCurrency] = useState<"usd" | "cny">("usd");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { data: balance, isLoading: balanceLoading, refetch } = trpc.credits.getBalance.useQuery(undefined, {
@@ -44,21 +46,24 @@ export default function Credits() {
   const handlePurchase = () => {
     const creditAmount = parseInt(credits);
     if (isNaN(creditAmount) || creditAmount < 100) {
-      toast.error(t.credits.minCredits || "Minimum purchase is 100 credits ($1)");
+      toast.error(t.credits.minCredits || "Minimum purchase is 100 credits");
       return;
     }
     if (creditAmount > 100000) {
-      toast.error(t.credits.maxCredits || "Maximum purchase is 100,000 credits ($1,000)");
+      toast.error(t.credits.maxCredits || "Maximum purchase is 100,000 credits");
       return;
     }
 
     setIsProcessing(true);
-    createCheckout.mutate({ credits: creditAmount });
+    createCheckout.mutate({ credits: creditAmount, currency });
   };
 
   const calculatePrice = () => {
     const creditAmount = parseInt(credits);
-    if (isNaN(creditAmount)) return "$0.00";
+    if (isNaN(creditAmount)) return currency === "cny" ? "¥0.00" : "$0.00";
+    if (currency === "cny") {
+      return `¥${(creditAmount / 100 * 7).toFixed(2)}`;
+    }
     return `$${(creditAmount / 100).toFixed(2)}`;
   };
 
@@ -151,6 +156,19 @@ export default function Credits() {
             </CardHeader>
             <CardContent className="space-y-4 md:space-y-6">
               <div className="space-y-2">
+                <Label htmlFor="currency">{t.credits.selectCurrency || "Select Currency"}</Label>
+                <Select value={currency} onValueChange={(value) => setCurrency(value as "usd" | "cny")}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="usd">🇺🇸 USD (US Dollar)</SelectItem>
+                    <SelectItem value="cny">🇨🇳 CNY (Chinese Yuan)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
                 <Label htmlFor="credits">{t.credits.enterAmount || "Enter Credit Amount"}</Label>
                 <Input
                   id="credits"
@@ -167,6 +185,9 @@ export default function Credits() {
                   <span className="text-muted-foreground">{t.credits.price || "Price"}:</span>
                   <span className="text-2xl font-bold text-primary">{calculatePrice()}</span>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  {currency === "usd" ? "1 credit = $0.01 USD" : "1 credit = ¥0.07 CNY"}
+                </p>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -179,7 +200,9 @@ export default function Credits() {
                     className="h-auto py-3 flex flex-col items-center gap-1"
                   >
                     <span className="font-bold">{amount}</span>
-                    <span className="text-xs text-muted-foreground">${(amount / 100).toFixed(2)}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {currency === "cny" ? `¥${(amount / 100 * 7).toFixed(2)}` : `$${(amount / 100).toFixed(2)}`}
+                    </span>
                   </Button>
                 ))}
               </div>

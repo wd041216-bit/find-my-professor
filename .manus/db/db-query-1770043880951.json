@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, user_id, target_universities, target_majors FROM student_profiles LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, user_id, target_universities, target_majors FROM student_profiles LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "user_id": "1",
+      "target_universities": "[]",
+      "target_majors": "[\"computer science\",\"artificial intellegince\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuser_id\ttarget_universities\ttarget_majors\n1\t1\t[]\t[\"computer science\",\"artificial intellegince\"]\n",
+  "stderr": "",
+  "execution_time_ms": 1628
+}
