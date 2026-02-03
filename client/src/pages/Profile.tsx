@@ -56,13 +56,9 @@ export default function Profile() {
     }
   }, [profile]);
 
-  const utils = trpc.useUtils();
-
   const upsertMutation = trpc.profile.upsert.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       toast.success(t.common.success);
-      // Invalidate matching cache so Explore page shows updated results
-      await utils.matching.getMatchesWithDetails.invalidate();
     },
     onError: (error) => {
       toast.error(`${t.common.error}: ${error.message}`);
@@ -139,32 +135,10 @@ export default function Profile() {
       <div className="container px-4 py-4 md:py-8 max-w-4xl">
         <Card>
           <CardHeader className="p-4 md:p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <CardTitle className="text-xl md:text-3xl">{t.profile.title}</CardTitle>
-                <CardDescription className="text-sm md:text-base">
-                  {t.profile.subtitle}
-                </CardDescription>
-              </div>
-              <Button 
-                type="submit" 
-                disabled={upsertMutation.isPending}
-                onClick={handleSubmit}
-                className="shrink-0"
-              >
-                {upsertMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    {t.common.save}
-                  </>
-                )}
-              </Button>
-            </div>
+            <CardTitle className="text-xl md:text-3xl">{t.profile.title}</CardTitle>
+            <CardDescription className="text-sm md:text-base">
+              {t.profile.subtitle}
+            </CardDescription>
           </CardHeader>
           <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
             <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
