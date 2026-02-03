@@ -2,10 +2,11 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Target, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Target, Sparkles, Filter } from "lucide-react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -15,24 +16,34 @@ export default function Explore() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [calculating, setCalculating] = useState(false);
-  const [randomize, setRandomize] = useState(false);
+  const [minMatchScore, setMinMatchScore] = useState(0);
   const { t } = useLanguage();
 
-  const { data: matchesWithDetails = [], refetch, isLoading } = trpc.matching.getMatchesWithDetails.useQuery(
-    { randomize },
+  const { data: allMatches = [], isLoading } = trpc.matching.getMatchesWithDetails.useQuery(
+    { randomize: false },
     {
       enabled: !!user,
       refetchOnMount: true,
-      staleTime: 0, // Always consider data stale to force refetch
+      staleTime: 0,
     }
   );
 
   const utils = trpc.useUtils();
 
+  // Filter matches based on minimum score
+  const matchesWithDetails = useMemo(() => {
+    if (minMatchScore === 0) return allMatches;
+    return allMatches.filter((match) => {
+      const scoreStr = match.matchScore || "0";
+      // Parse score - handle both "85.00" and "85.00%" formats
+      const score = parseFloat(scoreStr.toString().replace("%", ""));
+      return score >= minMatchScore;
+    });
+  }, [allMatches, minMatchScore]);
+
   const calculateMutation = trpc.matching.calculateMatches.useMutation({
     onSuccess: async (data) => {
       toast.success(`Found ${data.totalMatches} matching projects!`);
-      // Invalidate the query cache to force a fresh fetch
       await utils.matching.getMatchesWithDetails.invalidate();
       setCalculating(false);
     },
@@ -44,16 +55,13 @@ export default function Explore() {
 
   const handleCalculateMatches = () => {
     setCalculating(true);
-    setRandomize(false); // Reset to sorted view when recalculating
+    setMinMatchScore(0); // Reset filter when recalculating
     calculateMutation.mutate();
   };
 
-  const handleRefreshMatches = async () => {
-    setRandomize(prev => !prev); // Toggle randomization
-    // Wait a bit for state to update, then refetch
-    setTimeout(() => {
-      refetch();
-    }, 50);
+  const handleFilterChange = (value: string) => {
+    const newMinScore = parseInt(value, 10);
+    setMinMatchScore(newMinScore);
   };
 
   if (authLoading) {
@@ -113,7 +121,7 @@ export default function Explore() {
               {t.home.smartMatchingDesc}
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 flex flex-col sm:flex-row gap-3">
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <Button
               onClick={handleCalculateMatches}
               disabled={calculating || calculateMutation.isPending}
@@ -132,16 +140,26 @@ export default function Explore() {
                 </>
               )}
             </Button>
-            {matchesWithDetails.length > 0 && (
-              <Button
-                onClick={handleRefreshMatches}
-                variant="outline"
-                size="default"
-                className="w-full sm:w-auto"
-              >
-                <Sparkles className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                <span className="text-sm md:text-base">{t.explore.refreshMatches}</span>
-              </Button>
+            
+            {/* Match Score Filter */}
+            {allMatches.length > 0 && (
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground whitespace-nowrap">匹配度 ≥</span>
+                <Select value={minMatchScore.toString()} onValueChange={handleFilterChange}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">全部 (0%)</SelectItem>
+                    <SelectItem value="50">50%+</SelectItem>
+                    <SelectItem value="60">60%+</SelectItem>
+                    <SelectItem value="70">70%+</SelectItem>
+                    <SelectItem value="80">80%+</SelectItem>
+                    <SelectItem value="90">90%+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -157,14 +175,26 @@ export default function Explore() {
               <Target className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-3 md:mb-4" />
               <h3 className="text-lg md:text-xl font-semibold mb-2">{t.explore.noProjects}</h3>
               <p className="text-muted-foreground text-sm md:text-base mb-4 md:mb-6">
-                {t.explore.tryDifferentFilters}
+                {minMatchScore > 0 ? "尝试降低匹配度筛选条件，或点击计算匹配度重新搜索" : t.explore.tryDifferentFilters}
               </p>
+              {minMatchScore > 0 && (
+                <Button variant="outline" onClick={() => setMinMatchScore(0)}>
+                  清除筛选条件
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h2 className="text-xl md:text-2xl font-bold">{t.explore.match} ({matchesWithDetails.length})</h2>
+              <h2 className="text-xl md:text-2xl font-bold">
+                {t.explore.match} ({matchesWithDetails.length})
+                {minMatchScore > 0 && (
+                  <span className="text-sm font-normal text-muted-foreground ml-2">
+                    (筛选: ≥{minMatchScore}%)
+                  </span>
+                )}
+              </h2>
             </div>
 
             {matchesWithDetails.map((match) => (
