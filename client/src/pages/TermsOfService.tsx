@@ -1,5 +1,6 @@
-export default function TermsOfService() {
+import { Footer } from "@/components/Footer";
 
+export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -160,6 +161,7 @@ export default function TermsOfService() {
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

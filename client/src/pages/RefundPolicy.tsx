@@ -1,3 +1,5 @@
+import { Footer } from "@/components/Footer";
+
 export default function RefundPolicy() {
   return (
     <div className="min-h-screen bg-background">
@@ -127,6 +129,7 @@ export default function RefundPolicy() {
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Footer } from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -295,6 +296,7 @@ export default function Credits() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 }

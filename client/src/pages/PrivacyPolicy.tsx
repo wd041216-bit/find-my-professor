@@ -1,3 +1,5 @@
+import { Footer } from "@/components/Footer";
+
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-background">
@@ -144,6 +146,7 @@ export default function PrivacyPolicy() {
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
