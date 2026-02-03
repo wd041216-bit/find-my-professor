@@ -46,17 +46,27 @@ function calculateMatchScore(
   let score = 0;
   const reasons: string[] = [];
 
+  // BASE SCORE: Give every project a base score so new users can see results
+  // This ensures users without profile data still get recommendations
+  const hasProfile = profile && (profile.targetMajors || profile.targetUniversities || profile.skills || profile.interests);
+  if (!hasProfile) {
+    // New user without profile - give base score based on project quality
+    score = 50; // Base score for all projects
+    reasons.push("Project is open to all academic levels");
+    return { score, reasons };
+  }
+
   // Parse project requirements
   const projectMajors = project.majors ? JSON.parse(project.majors) : [];
   const projectAreas = project.researchAreas ? JSON.parse(project.researchAreas) : [];
   const projectRequirements = project.requirements ? JSON.parse(project.requirements) : [];
 
   // 1. Academic level match (15 points)
-  if (profile && profile.academicLevel && project.academicLevel) {
-    if (project.academicLevel === "all") {
-      score += 15;
-      reasons.push("Project is open to all academic levels");
-    } else if (project.academicLevel === profile.academicLevel) {
+  if (project.academicLevel === "all") {
+    score += 15;
+    reasons.push("Project is open to all academic levels");
+  } else if (profile && profile.academicLevel && project.academicLevel) {
+    if (project.academicLevel === profile.academicLevel) {
       score += 15;
       reasons.push(`Project is suitable for ${profile.academicLevel} students`);
     } else {
@@ -68,6 +78,10 @@ function calculateMatchScore(
         reasons.push("Project may be suitable for your academic level");
       }
     }
+  } else {
+    // No academic level specified by user, give partial credit
+    score += 10;
+    reasons.push("Project may be suitable for your academic level");
   }
 
   // 2. Major match (30 points)
