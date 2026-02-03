@@ -253,7 +253,7 @@ export default function Home() {
               <GraduationCap className="h-5 w-5 text-primary" />
               <span className="font-semibold">Find My Professor</span>
             </div>
-            <div className="flex items-center gap-4 md:gap-6 justify-center">
+            <div className="flex items-center gap-4 md:gap-6 justify-center flex-wrap">
               <ContactDialog trigger={
                 <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t.home.contactUs}
@@ -262,6 +262,21 @@ export default function Home() {
               <Link href="/explore">
                 <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                   {t.home.exploreProjects}
+                </span>
+              </Link>
+              <Link href="/terms">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                  Terms of Service
+                </span>
+              </Link>
+              <Link href="/privacy">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                  Privacy Policy
+                </span>
+              </Link>
+              <Link href="/refund">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+                  Refund Policy
                 </span>
               </Link>
             </div>
