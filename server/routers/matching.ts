@@ -214,7 +214,9 @@ export const matchingRouter = router({
     const activities = await db.getUserActivities(ctx.user.id);
     let projects = await db.getAllResearchProjects();
 
-    // STRICT PRIORITY: If user has target universities, ONLY search in those universities
+    // SOFT PRIORITY: If user has target universities, try to filter projects from those universities
+    // But if no projects found, use all projects instead of empty results
+    let filteredByUniversity = false;
     if (profile && profile.targetUniversities) {
       try {
         const targetUniversities = JSON.parse(profile.targetUniversities);
@@ -235,7 +237,15 @@ export const matchingRouter = router({
           }
           
           console.log(`[Matching] Filtered ${filteredProjects.length} projects from ${projects.length} total`);
-          projects = filteredProjects;
+          
+          // IMPORTANT: Only use filtered projects if we found some
+          // If no projects found from target universities, use all projects
+          if (filteredProjects.length > 0) {
+            projects = filteredProjects;
+            filteredByUniversity = true;
+          } else {
+            console.log(`[Matching] No projects found from target universities, using all ${projects.length} projects`);
+          }
         }
       } catch (e) {
         console.error("[Matching] Error parsing targetUniversities:", e);
@@ -285,7 +295,8 @@ export const matchingRouter = router({
     const profile = await db.getStudentProfile(ctx.user.id);
     let matches = await db.getUserMatches(ctx.user.id);
     
-    // STRICT PRIORITY: If user has target universities, ONLY show matches from those universities
+    // SOFT PRIORITY: If user has target universities, try to filter matches from those universities
+    // But if no matches found, show all available matches instead of empty results
     if (profile && profile.targetUniversities) {
       try {
         const targetUniversities = JSON.parse(profile.targetUniversities);
@@ -311,7 +322,15 @@ export const matchingRouter = router({
           }
           
           console.log(`[Matching] Filtered ${filteredMatches.length} matches from ${matches.length} total`);
-          matches = filteredMatches;
+          
+          // IMPORTANT: Only use filtered matches if we found some
+          // If no matches found from target universities, show all matches instead of empty results
+          if (filteredMatches.length > 0) {
+            matches = filteredMatches;
+          } else {
+            console.log(`[Matching] No matches found from target universities, showing all ${matches.length} matches`);
+            // Keep all matches - don't filter
+          }
         }
       } catch (e) {
         console.error("[Matching] Error parsing targetUniversities in getMatchesWithDetails:", e);

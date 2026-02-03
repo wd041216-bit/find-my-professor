@@ -1,0 +1,42 @@
+{
+  "query": "SELECT u.name as university_name, COUNT(p.id) as project_count \nFROM universities u \nLEFT JOIN research_projects p ON u.id = p.university_id \nGROUP BY u.id, u.name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT u.name as university_name, COUNT(p.id) as project_count \nFROM universities u \nLEFT JOIN research_projects p ON u.id = p.university_id \nGROUP BY u.id, u.name;",
+  "rows": [
+    {
+      "university_name": "UC Berkeley",
+      "project_count": "1"
+    },
+    {
+      "university_name": "Oxford University",
+      "project_count": "1"
+    },
+    {
+      "university_name": "University of Tokyo",
+      "project_count": "0"
+    },
+    {
+      "university_name": "Stanford University",
+      "project_count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "project_count": "1"
+    },
+    {
+      "university_name": "Cambridge University",
+      "project_count": "0"
+    },
+    {
+      "university_name": "ETH Zurich",
+      "project_count": "0"
+    },
+    {
+      "university_name": "Harvard University",
+      "project_count": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_name\tproject_count\nUC Berkeley\t1\nOxford University\t1\nUniversity of Tokyo\t0\nStanford University\t3\nMIT\t1\nCambridge University\t0\nETH Zurich\t0\nHarvard University\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1509
+}
