@@ -16,6 +16,9 @@ import Notifications from "./pages/Notifications";
 import AdminMessages from "./pages/AdminMessages";
 import Credits from "./pages/Credits";
 import Skills from "./pages/Skills";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 
 function Router() {
   return (
@@ -31,6 +34,9 @@ function Router() {
       <Route path={"/admin/messages"} component={AdminMessages} />
       <Route path={"/credits"} component={Credits} />
       <Route path={"/skills"} component={Skills} />
+      <Route path={"/terms"} component={TermsOfService} />
+      <Route path={"/privacy"} component={PrivacyPolicy} />
+      <Route path={"/refund"} component={RefundPolicy} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
