@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import {
   Accordion,
   AccordionContent,
@@ -1432,6 +1433,7 @@ export default function ComponentsShowcase() {
           <p>Shadcn/ui Component Showcase</p>
         </div>
       </footer>
+      <Footer />
     </div>
   );
 }

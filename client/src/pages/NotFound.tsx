@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, Home } from "lucide-react";
@@ -47,6 +48,7 @@ export default function NotFound() {
           </div>
         </CardContent>
       </Card>
+      <Footer />
     </div>
   );
 }

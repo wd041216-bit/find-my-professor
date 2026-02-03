@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Footer } from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Target, Sparkles, Filter } from "lucide-react";
@@ -303,6 +304,7 @@ export default function Explore() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

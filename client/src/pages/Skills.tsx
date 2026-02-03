@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -150,6 +151,7 @@ export default function Skills() {
           </ul>
         </div>
       </Card>
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
@@ -286,6 +287,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 }

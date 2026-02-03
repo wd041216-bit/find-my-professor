@@ -120,3 +120,12 @@
 - [x] 创建Refund Policy独立页面
 - [x] 在网站页脚添加三个法律文档链接
 - [x] 测试所有页面和链接
+
+## 为所有页面添加统一页脚
+- [x] 创建可复用的Footer组件
+- [x] 在Dashboard页面添加Footer
+- [x] 在Profile页面添加Footer
+- [x] 在Explore页面添加Footer
+- [x] 在法律文档页面（Terms、Privacy、Refund）添加Footer
+- [x] 在所有16个页面添加Footer组件
+- [x] 测试所有页面的Footer显示和链接功能
