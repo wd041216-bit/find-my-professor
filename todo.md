@@ -88,3 +88,10 @@
 - [x] 测试Refresh Results功能
 - [x] 测试Profile修改后结果自动更新
 - [x] 运行所有单元测试验证修复
+
+## 智能匹配功能全局修复（回滚后恢复正常）
+- [x] 诊断智能匹配页面无限loading问题
+- [x] 回滚到工作正常的checkpoint 450e85ac
+- [x] 验证回滚后功能恢复正常
+- [x] 测试Calculate Match功能正常工作
+- [x] 测试Refresh Results功能正常工作
