@@ -2,6 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Target, Sparkles } from "lucide-react";
@@ -15,15 +16,24 @@ export default function Explore() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [calculating, setCalculating] = useState(false);
-  const [randomize, setRandomize] = useState(false);
+  const [minMatchScore, setMinMatchScore] = useState(0); // Minimum match score filter
   const { t } = useLanguage();
 
-  const { data: matchesWithDetails = [], refetch, isLoading } = trpc.matching.getMatchesWithDetails.useQuery(
-    { randomize },
+  const { data: allMatches = [], refetch, isLoading } = trpc.matching.getMatchesWithDetails.useQuery(
+    { randomize: false },
     {
       enabled: !!user,
       refetchOnMount: true,
       staleTime: 0, // Always consider data stale to force refetch
+    }
+  );
+
+  // Filter matches based on minimum score
+  const matchesWithDetails = allMatches.filter(
+    match => {
+      const scoreStr = (match.matchScore || "0").toString();
+      const score = parseFloat(scoreStr.replace('%', ''));
+      return score >= minMatchScore;
     }
   );
 
@@ -44,16 +54,12 @@ export default function Explore() {
 
   const handleCalculateMatches = () => {
     setCalculating(true);
-    setRandomize(false); // Reset to sorted view when recalculating
+    setMinMatchScore(0); // Reset filter when recalculating
     calculateMutation.mutate();
   };
 
-  const handleRefreshMatches = async () => {
-    setRandomize(prev => !prev); // Toggle randomization
-    // Wait a bit for state to update, then refetch
-    setTimeout(() => {
-      refetch();
-    }, 50);
+  const handleFilterChange = (value: string) => {
+    setMinMatchScore(Number(value));
   };
 
   if (authLoading) {
@@ -132,16 +138,25 @@ export default function Explore() {
                 </>
               )}
             </Button>
-            {matchesWithDetails.length > 0 && (
-              <Button
-                onClick={handleRefreshMatches}
-                variant="outline"
-                size="default"
-                className="w-full sm:w-auto"
-              >
-                <Sparkles className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                <span className="text-sm md:text-base">{t.explore.refreshMatches}</span>
-              </Button>
+            {allMatches.length > 0 && (
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <label className="text-sm whitespace-nowrap">
+                  Match Score ≥
+                </label>
+                <Select value={minMatchScore.toString()} onValueChange={(value) => handleFilterChange(value)}>
+                  <SelectTrigger className="w-full sm:w-32">
+                    <SelectValue placeholder="All (0%)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">All (0%)</SelectItem>
+                    <SelectItem value="50">50%+</SelectItem>
+                    <SelectItem value="60">60%+</SelectItem>
+                    <SelectItem value="70">70%+</SelectItem>
+                    <SelectItem value="80">80%+</SelectItem>
+                    <SelectItem value="90">90%+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </CardContent>
         </Card>
