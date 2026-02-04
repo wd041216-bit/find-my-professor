@@ -61,11 +61,6 @@ export class ScrapingService {
     majorName: string,
     degreeLevel: string = 'all'
   ): Promise<{ cached: boolean; projects: ScrapedProject[]; cacheAge?: number }> {
-    // TEMPORARY: Disable cache for testing filter logic
-    console.log(`[Scraping] Cache DISABLED for testing - forcing re-scrape`);
-    return { cached: false, projects: [] };
-    
-    /* Original cache logic (commented out for testing)
     try {
       const pool = getConnectionPool();
       
@@ -125,7 +120,6 @@ export class ScrapingService {
       console.error('[Scraping] Error getting cached projects:', error);
       return { cached: false, projects: [] };
     }
-    */
   }
 
   /**
