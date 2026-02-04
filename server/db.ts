@@ -104,10 +104,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       if (newUser.length > 0) {
         const userId = newUser[0].id;
         // Create user credits with 100 free credits
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
         await db.insert(userCredits).values({
           userId,
-          balance: 100,
-          totalPurchased: 0,
+          credits: 100,
+          lastResetDate: today,
           totalConsumed: 0,
         });
         // Record the free credit transaction
@@ -465,16 +466,16 @@ export async function getUserCredits(userId: number) {
   return result.length > 0 ? result[0] : null;
 }
 
-export async function createUserCredits(userId: number, stripeCustomerId?: string) {
+export async function createUserCredits(userId: number) {
   const db = await getDb();
   if (!db) return null;
   
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   await db.insert(userCredits).values({
     userId,
-    balance: 0,
-    totalPurchased: 0,
+    credits: 100,
+    lastResetDate: today,
     totalConsumed: 0,
-    stripeCustomerId: stripeCustomerId || null,
   });
   
   return getUserCredits(userId);
@@ -491,17 +492,16 @@ export async function updateUserCreditsBalance(userId: number, amount: number, t
     if (!credits) return null;
   }
   
-  const newBalance = credits.balance + amount;
+  const newBalance = credits.credits + amount;
   
   if (newBalance < 0) {
     throw new Error("Insufficient credits");
   }
   
-  // Update balance
+  // Update credits
   await db.update(userCredits)
     .set({
-      balance: newBalance,
-      totalPurchased: type === 'purchase' ? credits.totalPurchased + amount : credits.totalPurchased,
+      credits: newBalance,
       totalConsumed: type === 'consumption' ? credits.totalConsumed + Math.abs(amount) : credits.totalConsumed,
     })
     .where(eq(userCredits.userId, userId));
@@ -530,11 +530,4 @@ export async function getCreditTransactions(userId: number, limit: number = 50) 
     .limit(limit);
 }
 
-export async function updateStripeCustomerId(userId: number, stripeCustomerId: string) {
-  const db = await getDb();
-  if (!db) return;
-  
-  await db.update(userCredits)
-    .set({ stripeCustomerId })
-    .where(eq(userCredits.userId, userId));
-}
+// updateStripeCustomerId removed - payment feature not yet launched

@@ -16,7 +16,7 @@ export const applicationRouter = router({
       const estimatedCost = 30;
       if (!isAdmin) {
         const userCredits = await db.getUserCredits(ctx.user.id);
-        if (!userCredits || userCredits.balance < estimatedCost) {
+        if (!userCredits || userCredits.credits < estimatedCost) {
           throw new Error("Insufficient credits. Please purchase more credits to use this feature.");
         }
       }

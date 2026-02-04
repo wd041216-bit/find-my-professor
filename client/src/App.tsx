@@ -14,7 +14,7 @@ import Explore from "./pages/Explore";
 import ProjectDetail from "./pages/ProjectDetail";
 import Notifications from "./pages/Notifications";
 import AdminMessages from "./pages/AdminMessages";
-import Credits from "./pages/Credits";
+// Credits page removed - payment feature not yet launched
 import Skills from "./pages/Skills";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -32,7 +32,7 @@ function Router() {
       <Route path={"/project/:id"} component={ProjectDetail} />
       <Route path={"/notifications"} component={Notifications} />
       <Route path={"/admin/messages"} component={AdminMessages} />
-      <Route path={"/credits"} component={Credits} />
+      {/* Credits page removed - payment feature not yet launched */}
       <Route path={"/skills"} component={Skills} />
       <Route path={"/terms"} component={TermsOfService} />
       <Route path={"/privacy"} component={PrivacyPolicy} />

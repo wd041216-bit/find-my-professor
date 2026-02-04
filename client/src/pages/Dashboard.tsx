@@ -31,9 +31,8 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
-  const { data: balance } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: !!user,
-  });
+  // Credits balance removed - payment feature not yet launched
+  // TODO: Implement daily free credits display
 
   if (authLoading) {
     return (
@@ -72,12 +71,7 @@ export default function Dashboard() {
                 {t.nav.explore}
               </Button>
             </Link>
-            <Link href="/credits">
-              <Button variant="ghost" size="sm" className="gap-1">
-                <Coins className="h-4 w-4 text-amber-500" />
-                <span className="font-medium">{balance?.balance.toLocaleString() || "0"}</span>
-              </Button>
-            </Link>
+            {/* Credits button removed - payment feature not yet launched */}
             <Link href="/notifications">
               <Button variant="ghost" size="sm" className="relative">
                 <Bell className="h-4 w-4" />
@@ -103,12 +97,7 @@ export default function Dashboard() {
           </div>
           {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-1">
-            <Link href="/credits">
-              <Button variant="ghost" size="icon" className="gap-1">
-                <Coins className="h-4 w-4 text-amber-500" />
-                <span className="text-xs font-medium">{balance?.balance.toLocaleString() || "0"}</span>
-              </Button>
-            </Link>
+            {/* Credits button removed - payment feature not yet launched */}
             <Link href="/notifications">
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
@@ -254,38 +243,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Recent Notifications */}
-        <Card>
-          <CardHeader className="p-4 md:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-            <div>
-              <CardTitle className="text-base md:text-lg">{t.dashboard.recentNotifications}</CardTitle>
-              <CardDescription className="text-sm">{unreadCount} {t.dashboard.unreadMessages}</CardDescription>
-            </div>
-            <Link href="/notifications">
-              <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                {t.dashboard.viewAll || "View All"}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-            {notifications.length === 0 ? (
-              <div className="text-center py-6 md:py-8">
-                <Bell className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-xs md:text-sm text-muted-foreground">{t.dashboard.noNotifications}</p>
-              </div>
-            ) : (
-              <div className="space-y-2 md:space-y-3">
-                {notifications.slice(0, 3).map((notification) => (
-                  <div key={notification.id} className={`text-sm p-2.5 md:p-3 rounded-lg ${notification.read ? "bg-muted/30" : "bg-accent/10"}`}>
-                    <p className="font-medium mb-0.5 md:mb-1 text-xs md:text-sm">{notification.title}</p>
-                    <p className="text-muted-foreground text-[10px] md:text-xs">{notification.message}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Recent Notifications removed - notification bar in header is sufficient */}
       </div>
       <Footer />
     </div>

@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, date } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -203,15 +203,18 @@ export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = typeof contactMessages.$inferInsert;
 
 /**
- * User credits balance
+ * User credits for daily free quota system
+ * - Each user gets 100 credits per day
+ * - Credits reset daily at midnight (UTC)
+ * - Credits do not accumulate across days
+ * - Admins are exempt from credit deductions
  */
 export const userCredits = mysqlTable("user_credits", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("user_id").notNull().unique(),
-  balance: int("balance").notNull().default(0), // Current credit balance
-  totalPurchased: int("total_purchased").notNull().default(0), // Total credits ever purchased
-  totalConsumed: int("total_consumed").notNull().default(0), // Total credits ever consumed
-  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }), // Stripe customer ID
+  credits: int("credits").notNull().default(100), // Current available credits (max 100)
+  lastResetDate: varchar("last_reset_date", { length: 10 }).notNull(), // Date of last credit reset (YYYY-MM-DD)
+  totalConsumed: int("total_consumed").notNull().default(0), // Total credits ever consumed (for statistics)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
