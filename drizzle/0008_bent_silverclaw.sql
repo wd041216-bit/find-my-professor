@@ -1,0 +1,1 @@
+ALTER TABLE `contact_messages` MODIFY COLUMN `message_type` enum('business','support','purchase') NOT NULL DEFAULT 'support';

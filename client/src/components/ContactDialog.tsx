@@ -25,9 +25,11 @@ interface ContactDialogProps {
 export function ContactDialog({ trigger }: ContactDialogProps) {
   const { user, isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
-  const [messageType, setMessageType] = useState<"business" | "support">("support");
+  const [messageType, setMessageType] = useState<"business" | "support" | "purchase">("support");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [paymentAccount, setPaymentAccount] = useState("");
+  const [creditAmount, setCreditAmount] = useState("");
 
   const sendMutation = trpc.contact.send.useMutation({
     onSuccess: () => {
@@ -43,11 +45,22 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject.trim() || !message.trim()) {
-      toast.error("Please fill in all fields");
-      return;
+    
+    if (messageType === "purchase") {
+      if (!paymentAccount.trim() || !creditAmount.trim()) {
+        toast.error("Please provide your payment account and credit amount");
+        return;
+      }
+      const purchaseSubject = `Credit Purchase Request: ${creditAmount} credits`;
+      const purchaseMessage = `Payment Account: ${paymentAccount}\nCredits Requested: ${creditAmount}\n\nAdditional Notes:\n${message || "None"}`;
+      sendMutation.mutate({ messageType, subject: purchaseSubject, message: purchaseMessage });
+    } else {
+      if (!subject.trim() || !message.trim()) {
+        toast.error("Please fill in all fields");
+        return;
+      }
+      sendMutation.mutate({ messageType, subject, message });
     }
-    sendMutation.mutate({ messageType, subject, message });
   };
 
   if (!isAuthenticated) {
@@ -98,37 +111,80 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="messageType">Message Type</Label>
-            <Select value={messageType} onValueChange={(value: "business" | "support") => setMessageType(value)}>
+            <Select value={messageType} onValueChange={(value: "business" | "support" | "purchase") => setMessageType(value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="support">Problem / Question</SelectItem>
                 <SelectItem value="business">Business Cooperation</SelectItem>
+                <SelectItem value="purchase">Purchase Credits (China Only)</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
-            <Input
-              id="subject"
-              placeholder="What's this about?"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              disabled={sendMutation.isPending}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
-            <Textarea
-              id="message"
-              placeholder="Tell us more..."
-              rows={5}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              disabled={sendMutation.isPending}
-            />
-          </div>
+          {messageType === "purchase" ? (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="paymentAccount">WeChat / Alipay Account</Label>
+                <Input
+                  id="paymentAccount"
+                  placeholder="Your WeChat ID or Alipay account"
+                  value={paymentAccount}
+                  onChange={(e) => setPaymentAccount(e.target.value)}
+                  disabled={sendMutation.isPending}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="creditAmount">Credits to Purchase</Label>
+                <Input
+                  id="creditAmount"
+                  type="number"
+                  placeholder="e.g., 500"
+                  value={creditAmount}
+                  onChange={(e) => setCreditAmount(e.target.value)}
+                  disabled={sendMutation.isPending}
+                />
+                <p className="text-xs text-muted-foreground">
+                  We'll contact you with pricing and payment details.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Additional Notes (Optional)</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Any special requirements or questions..."
+                  rows={3}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  disabled={sendMutation.isPending}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input
+                  id="subject"
+                  placeholder="What's this about?"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  disabled={sendMutation.isPending}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Tell us more..."
+                  rows={5}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  disabled={sendMutation.isPending}
+                />
+              </div>
+            </>
+          )}
           <div className="flex justify-end gap-2">
             <Button
               type="button"
