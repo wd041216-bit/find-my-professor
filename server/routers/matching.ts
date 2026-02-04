@@ -84,19 +84,7 @@ function calculateMatchScore(
     reasons.push("Project may be suitable for your academic level");
   }
 
-  // 2. Major match (30 points)
-  if (profile && profile.currentMajor) {
-    const majorMatch = projectMajors.some((major: string) =>
-      profile.currentMajor.toLowerCase().includes(major.toLowerCase()) ||
-      major.toLowerCase().includes(profile.currentMajor.toLowerCase())
-    );
-    if (majorMatch) {
-      score += 30;
-      reasons.push(`Your major (${profile.currentMajor}) aligns with project requirements`);
-    }
-  }
-
-  // 3. Target major match (30 points)
+  // 2. Target major match (30 points) - Increased weight since currentMajor is removed
   if (profile && profile.targetMajors) {
     const targetMajors = JSON.parse(profile.targetMajors);
     const targetMatch = projectMajors.some((major: string) =>
