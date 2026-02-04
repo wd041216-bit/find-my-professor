@@ -12,6 +12,21 @@ import { ArrowLeft, Loader2, MessageSquare, Mail, Clock, User, Send, CheckCircle
 import { useState } from "react";
 import { toast } from "sonner";
 
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case "pending":
+      return <Badge variant="secondary">Pending</Badge>;
+    case "read":
+      return <Badge variant="outline">Read</Badge>;
+    case "replied":
+      return <Badge className="bg-green-500">Replied</Badge>;
+    case "closed":
+      return <Badge variant="destructive">Closed</Badge>;
+    default:
+      return <Badge variant="secondary">{status}</Badge>;
+  }
+};
+
 export default function AdminMessages() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
@@ -101,21 +116,6 @@ export default function AdminMessages() {
       </div>
     );
   }
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Badge variant="secondary">Pending</Badge>;
-      case "read":
-        return <Badge variant="outline">Read</Badge>;
-      case "replied":
-        return <Badge className="bg-green-500">Replied</Badge>;
-      case "closed":
-        return <Badge variant="destructive">Closed</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
