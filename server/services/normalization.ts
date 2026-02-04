@@ -1,4 +1,6 @@
 import { invokeLLM } from "../_core/llm";
+import mysql from 'mysql2/promise';
+import { ENV } from '../_core/env';
 
 /**
  * University identification result from LLM
@@ -25,28 +27,252 @@ export interface MajorIdentification {
   reasoning: string;
 }
 
+// Database connection pool
+let connectionPool: mysql.Pool | null = null;
+
+function getConnectionPool(): mysql.Pool {
+  if (!connectionPool && process.env.DATABASE_URL) {
+    connectionPool = mysql.createPool(process.env.DATABASE_URL);
+  }
+  if (!connectionPool) {
+    throw new Error('Database connection not available');
+  }
+  return connectionPool;
+}
+
 /**
  * Normalization Service
  * 
  * Handles AI-driven identification and normalization of university and major names.
- * Phase 1: Core LLM identification (database caching to be implemented later)
+ * Implements "one LLM call, permanent reuse" strategy with database caching.
  */
 export class NormalizationService {
   
   /**
-   * Normalize university name using LLM
-   * TODO: Add database caching in Phase 2
+   * Normalize university name with database caching
+   * Strategy: Check cache first, call LLM only if cache miss, then store result
    */
-  static async normalizeUniversity(rawInput: string): Promise<UniversityIdentification> {
-    return await this.identifyUniversity(rawInput);
+  static async normalizeUniversity(rawInput: string, userId?: number): Promise<UniversityIdentification> {
+    const normalizedInput = rawInput.trim().toLowerCase();
+    
+    // Step 1: Check cache
+    const cached = await this.getCachedUniversity(normalizedInput);
+    if (cached) {
+      console.log(`[Normalization] Cache HIT for university: "${rawInput}"`);
+      
+      // Update usage count and last used timestamp
+      await this.updateUniversityCacheUsage(cached.id);
+      
+      // Log user input history
+      if (userId) {
+        await this.logUserInput(userId, 'university', rawInput, cached.id);
+      }
+      
+      return {
+        normalizedName: cached.normalized_name,
+        aliases: JSON.parse(cached.aliases),
+        country: cached.country,
+        region: cached.region,
+        confidence: parseFloat(cached.confidence),
+        reasoning: cached.reasoning
+      };
+    }
+    
+    // Step 2: Cache MISS - Call LLM
+    console.log(`[Normalization] Cache MISS for university: "${rawInput}" - calling LLM`);
+    const result = await this.identifyUniversity(rawInput);
+    
+    // Step 3: Store result in cache
+    const cacheId = await this.cacheUniversityResult(normalizedInput, result);
+    
+    // Step 4: Log user input history
+    if (userId) {
+      await this.logUserInput(userId, 'university', rawInput, cacheId);
+    }
+    
+    return result;
   }
 
   /**
-   * Normalize major name using LLM
-   * TODO: Add database caching in Phase 2
+   * Normalize major name with database caching
+   * Strategy: Check cache first, call LLM only if cache miss, then store result
    */
-  static async normalizeMajor(rawInput: string): Promise<MajorIdentification> {
-    return await this.identifyMajor(rawInput);
+  static async normalizeMajor(rawInput: string, userId?: number): Promise<MajorIdentification> {
+    const normalizedInput = rawInput.trim().toLowerCase();
+    
+    // Step 1: Check cache
+    const cached = await this.getCachedMajor(normalizedInput);
+    if (cached) {
+      console.log(`[Normalization] Cache HIT for major: "${rawInput}"`);
+      
+      // Update usage count and last used timestamp
+      await this.updateMajorCacheUsage(cached.id);
+      
+      // Log user input history
+      if (userId) {
+        await this.logUserInput(userId, 'major', rawInput, cached.id);
+      }
+      
+      return {
+        normalizedName: cached.normalized_name,
+        aliases: JSON.parse(cached.aliases),
+        category: cached.category,
+        field: cached.field,
+        relatedMajors: JSON.parse(cached.related_majors),
+        confidence: parseFloat(cached.confidence),
+        reasoning: cached.reasoning
+      };
+    }
+    
+    // Step 2: Cache MISS - Call LLM
+    console.log(`[Normalization] Cache MISS for major: "${rawInput}" - calling LLM`);
+    const result = await this.identifyMajor(rawInput);
+    
+    // Step 3: Store result in cache
+    const cacheId = await this.cacheMajorResult(normalizedInput, result);
+    
+    // Step 4: Log user input history
+    if (userId) {
+      await this.logUserInput(userId, 'major', rawInput, cacheId);
+    }
+    
+    return result;
+  }
+
+  /**
+   * Get cached university normalization result
+   */
+  private static async getCachedUniversity(normalizedInput: string): Promise<any | null> {
+    try {
+      const pool = getConnectionPool();
+      const [rows] = await pool.execute(
+        'SELECT * FROM university_normalization WHERE raw_input = ? LIMIT 1',
+        [normalizedInput]
+      );
+      return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+    } catch (error) {
+      console.error('[Normalization] Error getting cached university:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get cached major normalization result
+   */
+  private static async getCachedMajor(normalizedInput: string): Promise<any | null> {
+    try {
+      const pool = getConnectionPool();
+      const [rows] = await pool.execute(
+        'SELECT * FROM major_normalization WHERE raw_input = ? LIMIT 1',
+        [normalizedInput]
+      );
+      return (rows as any[]).length > 0 ? (rows as any[])[0] : null;
+    } catch (error) {
+      console.error('[Normalization] Error getting cached major:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Cache university normalization result
+   */
+  private static async cacheUniversityResult(rawInput: string, result: UniversityIdentification): Promise<number> {
+    try {
+      const pool = getConnectionPool();
+      const [insertResult] = await pool.execute(
+        `INSERT INTO university_normalization 
+         (raw_input, normalized_name, aliases, country, region, confidence, reasoning, usage_count, last_used_at, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW(), NOW())`,
+        [
+          rawInput,
+          result.normalizedName,
+          JSON.stringify(result.aliases),
+          result.country,
+          result.region,
+          result.confidence.toString(),
+          result.reasoning
+        ]
+      );
+      return (insertResult as any).insertId;
+    } catch (error) {
+      console.error('[Normalization] Error caching university result:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Cache major normalization result
+   */
+  private static async cacheMajorResult(rawInput: string, result: MajorIdentification): Promise<number> {
+    try {
+      const pool = getConnectionPool();
+      const [insertResult] = await pool.execute(
+        `INSERT INTO major_normalization 
+         (raw_input, normalized_name, aliases, category, field, related_majors, confidence, reasoning, usage_count, last_used_at, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW(), NOW())`,
+        [
+          rawInput,
+          result.normalizedName,
+          JSON.stringify(result.aliases),
+          result.category,
+          result.field,
+          JSON.stringify(result.relatedMajors),
+          result.confidence.toString(),
+          result.reasoning
+        ]
+      );
+      return (insertResult as any).insertId;
+    } catch (error) {
+      console.error('[Normalization] Error caching major result:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Update university cache usage statistics
+   */
+  private static async updateUniversityCacheUsage(cacheId: number): Promise<void> {
+    try {
+      const pool = getConnectionPool();
+      await pool.execute(
+        'UPDATE university_normalization SET usage_count = usage_count + 1, last_used_at = NOW() WHERE id = ?',
+        [cacheId]
+      );
+    } catch (error) {
+      console.error('[Normalization] Error updating university cache usage:', error);
+    }
+  }
+
+  /**
+   * Update major cache usage statistics
+   */
+  private static async updateMajorCacheUsage(cacheId: number): Promise<void> {
+    try {
+      const pool = getConnectionPool();
+      await pool.execute(
+        'UPDATE major_normalization SET usage_count = usage_count + 1, last_used_at = NOW() WHERE id = ?',
+        [cacheId]
+      );
+    } catch (error) {
+      console.error('[Normalization] Error updating major cache usage:', error);
+    }
+  }
+
+  /**
+   * Log user input history
+   */
+  private static async logUserInput(userId: number, inputType: 'university' | 'major', rawInput: string, normalizationId: number): Promise<void> {
+    try {
+      const pool = getConnectionPool();
+      await pool.execute(
+        `INSERT INTO user_input_history 
+         (user_id, input_type, raw_input, normalization_id, created_at) 
+         VALUES (?, ?, ?, ?, NOW())`,
+        [userId, inputType, rawInput, normalizationId]
+      );
+    } catch (error) {
+      console.error('[Normalization] Error logging user input:', error);
+    }
   }
 
   /**
@@ -204,10 +430,10 @@ Respond in JSON format:
   /**
    * Batch normalize universities
    */
-  static async normalizeUniversities(rawInputs: string[]): Promise<UniversityIdentification[]> {
+  static async normalizeUniversities(rawInputs: string[], userId?: number): Promise<UniversityIdentification[]> {
     const results = [];
     for (const rawInput of rawInputs) {
-      const result = await this.normalizeUniversity(rawInput);
+      const result = await this.normalizeUniversity(rawInput, userId);
       results.push(result);
     }
     return results;
@@ -216,12 +442,41 @@ Respond in JSON format:
   /**
    * Batch normalize majors
    */
-  static async normalizeMajors(rawInputs: string[]): Promise<MajorIdentification[]> {
+  static async normalizeMajors(rawInputs: string[], userId?: number): Promise<MajorIdentification[]> {
     const results = [];
     for (const rawInput of rawInputs) {
-      const result = await this.normalizeMajor(rawInput);
+      const result = await this.normalizeMajor(rawInput, userId);
       results.push(result);
     }
     return results;
+  }
+
+  /**
+   * Get cache statistics
+   */
+  static async getCacheStats(): Promise<{ universities: number; majors: number; totalUsage: number }> {
+    try {
+      const pool = getConnectionPool();
+      
+      const [univRows] = await pool.execute('SELECT COUNT(*) as count, SUM(usage_count) as total_usage FROM university_normalization');
+      const [majorRows] = await pool.execute('SELECT COUNT(*) as count, SUM(usage_count) as total_usage FROM major_normalization');
+      
+      const univData = (univRows as any)[0];
+      const majorData = (majorRows as any)[0];
+      
+      const univCount = univData?.count || 0;
+      const majorCount = majorData?.count || 0;
+      const univUsage = univData?.total_usage || 0;
+      const majorUsage = majorData?.total_usage || 0;
+      
+      return {
+        universities: univCount,
+        majors: majorCount,
+        totalUsage: univUsage + majorUsage
+      };
+    } catch (error) {
+      console.error('[Normalization] Error getting cache stats:', error);
+      return { universities: 0, majors: 0, totalUsage: 0 };
+    }
   }
 }

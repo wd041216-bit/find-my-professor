@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `scraped_projects` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `university_name` VARCHAR(255) NOT NULL,\n  `major_name` VARCHAR(255) NOT NULL,\n  `degree_level` VARCHAR(50) NOT NULL DEFAULT 'all',\n  `professor_name` VARCHAR(255),\n  `lab_name` VARCHAR(255),\n  `research_area` VARCHAR(255),\n  `project_title` VARCHAR(500) NOT NULL,\n  `project_description` TEXT,\n  `requirements` TEXT,\n  `contact_email` VARCHAR(255),\n  `source_url` VARCHAR(500),\n  `scraped_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  `expires_at` TIMESTAMP NULL,\n  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX `idx_university_major` (`university_name`, `major_name`),\n  INDEX `idx_expires_at` (`expires_at`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute CREATE TABLE IF NOT EXISTS `scraped_projects` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `university_name` VARCHAR(255) NOT NULL,\n  `major_name` VARCHAR(255) NOT NULL,\n  `degree_level` VARCHAR(50) NOT NULL DEFAULT 'all',\n  `professor_name` VARCHAR(255),\n  `lab_name` VARCHAR(255),\n  `research_area` VARCHAR(255),\n  `project_title` VARCHAR(500) NOT NULL,\n  `project_description` TEXT,\n  `requirements` TEXT,\n  `contact_email` VARCHAR(255),\n  `source_url` VARCHAR(500),\n  `scraped_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  `expires_at` TIMESTAMP NULL,\n  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX `idx_university_major` (`university_name`, `major_name`),\n  INDEX `idx_expires_at` (`expires_at`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1767
+}
