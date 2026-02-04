@@ -271,6 +271,18 @@ export const translations = {
       tip2: "Include soft skills (e.g., Communication, Leadership)",
       tip3: "Skills help match you with relevant research projects",
     },
+    // Credits System
+    creditsSystem: {
+      insufficientCredits: "Insufficient Credits",
+      dailyLimitTitle: "Daily Credit Limit Reached",
+      dailyLimitMessage: "You've used all 100 free credits for today. Our platform uses AI (LLM) to provide intelligent matching and personalized services, which incurs real costs per request. To ensure fair access for all users, we currently offer 100 free credits daily while our payment system is being finalized.",
+      resetInfo: "Your credits will automatically reset to 100 tomorrow.",
+      purchaseOption: "Need more credits today? You can purchase additional credits through our Contact page (currently available for users in China only).",
+      contactButton: "Purchase Credits",
+      understandButton: "Got it",
+      creditsRemaining: "Credits Remaining",
+      creditsUsed: "Credits Used Today",
+    },
     // Common
     common: {
       loading: "Loading...",
@@ -562,6 +574,18 @@ export const translations = {
       tip1: "添加具体的技术技能（如Python、机器学习）",
       tip2: "包含软技能（如沟通能力、领导力）",
       tip3: "技能有助于匹配相关的研究项目",
+    },
+    // Credits System
+    creditsSystem: {
+      insufficientCredits: "积分不足",
+      dailyLimitTitle: "今日免费积分已用完",
+      dailyLimitMessage: "您已使用完今日的100免费积分。我们的平台使用AI（大语言模型）提供智能匹配和个性化服务，每次请求都会产生实际成本。为了确保所有用户公平使用，我们目前每天提供100免费积分体验，付费功能正在完善中。",
+      resetInfo: "您的积分将在明天自动重置为100。",
+      purchaseOption: "需要更多积分？您可以通过联系我们页面购买额外积分（目前仅限中国用户）。",
+      contactButton: "购买积分",
+      understandButton: "我知道了",
+      creditsRemaining: "剩余积分",
+      creditsUsed: "今日已用",
     },
     // Common
     common: {

@@ -57,6 +57,13 @@
       "when": 1770219092833,
       "tag": "0007_deep_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1770223718659,
+      "tag": "0008_bent_silverclaw",
+      "breakpoints": true
     }
   ]
 }

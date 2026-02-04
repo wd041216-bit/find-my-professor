@@ -338,7 +338,7 @@ export const appRouter = router({
     // Send a message to admin
     send: protectedProcedure
       .input(z.object({
-        messageType: z.enum(["business", "support"]).default("support"),
+        messageType: z.enum(["business", "support", "purchase"]).default("support"),
         subject: z.string().min(1, "Subject is required"),
         message: z.string().min(1, "Message is required"),
       }))
