@@ -122,19 +122,20 @@ export class GenericUniversityScraper extends UniversityScraper {
   
   /**
    * Generate possible URLs to search for research opportunities
+   * Prioritize URLs that are more likely to contain research labs/projects
    */
   private generateSearchUrls(major: string): string[] {
     const majorSlug = major.toLowerCase().replace(/\s+/g, '-');
     const baseUrl = this.baseUrl.replace(/\/$/, ''); // Remove trailing slash
     
     return [
-      `${baseUrl}/research`,
-      `${baseUrl}/research/${majorSlug}`,
-      `${baseUrl}/faculty`,
-      `${baseUrl}/labs`,
-      `${baseUrl}/opportunities`,
-      `${baseUrl}/positions`,
-      baseUrl, // Homepage as fallback
+      `${baseUrl}/labs`,              // Research labs (highest priority)
+      `${baseUrl}/research`,          // Research page
+      `${baseUrl}/research-groups`,   // Research groups
+      `${baseUrl}/faculty/research`,  // Faculty research
+      `${baseUrl}/opportunities`,     // Research opportunities
+      `${baseUrl}/positions`,         // Research positions
+      // Note: Removed /faculty alone as it often links to course pages
     ];
   }
   
@@ -203,6 +204,7 @@ export class GenericUniversityScraper extends UniversityScraper {
   
   /**
    * Find potential project/lab containers in the page
+   * Filter out course-related content
    */
   private findContainers($: cheerio.CheerioAPI): any[] {
     const containerSelectors = [
@@ -219,8 +221,25 @@ export class GenericUniversityScraper extends UniversityScraper {
       'div[class*="research"]',
     ];
     
+    // Course-related keywords to filter out
+    const courseKeywords = [
+      'course',
+      'syllabus',
+      'lecture',
+      'homework',
+      'assignment',
+      'exam',
+      'textbook',
+      'grading',
+    ];
+    
     for (const selector of containerSelectors) {
-      const elements = $(selector).toArray();
+      const elements = $(selector).toArray().filter(el => {
+        const text = $(el).text().toLowerCase();
+        // Filter out elements with course keywords
+        return !courseKeywords.some(keyword => text.includes(keyword));
+      });
+      
       if (elements.length > 0 && elements.length < 50) { // Not too many to avoid noise
         return elements;
       }
@@ -229,8 +248,15 @@ export class GenericUniversityScraper extends UniversityScraper {
     // If no specific containers found, try to find sections with headings
     const sections = $('section, div').filter((i, el) => {
       const $el = $(el);
+      const text = $el.text().toLowerCase();
+      
+      // Filter out course-related sections
+      if (courseKeywords.some(keyword => text.includes(keyword))) {
+        return false;
+      }
+      
       const hasHeading = $el.find('h2, h3, h4').length > 0;
-      const hasText = $el.text().trim().length > 100;
+      const hasText = text.trim().length > 100;
       return hasHeading && hasText;
     }).toArray();
     

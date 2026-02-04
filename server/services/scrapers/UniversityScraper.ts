@@ -143,13 +143,19 @@ export abstract class UniversityScraper {
       ? cleanedHTML.substring(0, 8000) + '...[truncated]'
       : cleanedHTML;
     
-    const prompt = `You are a web scraping assistant. Extract research project information from the following HTML content from ${context.universityName} in the field of ${context.major}.
+    const prompt = `You are a web scraping assistant. Extract REAL RESEARCH PROJECT/LAB information from the following HTML content from ${context.universityName} in the field of ${context.major}.
+
+**IMPORTANT FILTERING RULES:**
+- ONLY extract information about research labs, research groups, or research opportunities
+- IGNORE course descriptions, class syllabi, or academic courses (even if they mention "research")
+- IGNORE teaching-related content
+- Focus on faculty research labs, ongoing research projects, or research assistant positions
 
 HTML Content:
 ${truncatedHTML}
 
 Extract the following information (if available):
-1. Professor name
+1. Professor name (principal investigator)
 2. Lab/Research group name
 3. Research area/focus
 4. Project title (if mentioned)
@@ -157,7 +163,9 @@ Extract the following information (if available):
 6. Requirements (GPA, skills, experience)
 7. Contact email
 
-Return ONLY a JSON object with these fields (use "Not specified" if information is not found):
+If the content is about a COURSE (not a research lab/project), return all fields as "Not a research project".
+
+Return ONLY a JSON object with these fields:
 {
   "professorName": "...",
   "labName": "...",
@@ -212,9 +220,39 @@ Return ONLY a JSON object with these fields (use "Not specified" if information 
   }
   
   /**
-   * Validate extracted data
+   * Validate extracted data and filter out courses
    */
   protected validateProject(project: Partial<ScrapedProject>): boolean {
+    // Filter out courses (LLM returns "Not a research project" for courses)
+    if (project.professorName === 'Not a research project' || 
+        project.labName === 'Not a research project') {
+      console.log(`[Scraper] Filtered out course content`);
+      return false;
+    }
+    
+    // Filter out content with course-related keywords
+    const text = `${project.projectTitle} ${project.projectDescription} ${project.labName}`.toLowerCase();
+    const courseKeywords = [
+      'course syllabus',
+      'class schedule',
+      'lecture notes',
+      'homework',
+      'assignment',
+      'midterm',
+      'final exam',
+      'course description',
+      'prerequisites:',
+      'textbook',
+      'grading policy',
+    ];
+    
+    for (const keyword of courseKeywords) {
+      if (text.includes(keyword)) {
+        console.log(`[Scraper] Filtered out course content (keyword: ${keyword})`);
+        return false;
+      }
+    }
+    
     // At minimum, we need professor name or lab name, and some description
     const hasIdentity = !!(project.professorName || project.labName);
     const hasDescription = !!(project.projectDescription || project.researchArea);

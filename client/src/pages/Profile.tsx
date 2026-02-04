@@ -25,8 +25,6 @@ export default function Profile() {
   });
 
   const [formData, setFormData] = useState({
-    currentUniversity: "",
-    currentMajor: "",
     academicLevel: "" as "high_school" | "undergraduate" | "graduate" | "",
     gpa: "",
     targetUniversities: [] as string[],
@@ -44,8 +42,6 @@ export default function Profile() {
   useEffect(() => {
     if (profile) {
       setFormData({
-        currentUniversity: profile.currentUniversity || "",
-        currentMajor: profile.currentMajor || "",
         academicLevel: profile.academicLevel || "",
         gpa: profile.gpa || "",
         targetUniversities: profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [],
@@ -167,53 +163,17 @@ export default function Profile() {
                   </Select>
                 </div>
 
-                {/* Conditional School Input based on Academic Level */}
+                {/* GPA Input */}
                 {formData.academicLevel && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                    <div className="space-y-1.5 md:space-y-2">
-                      <Label htmlFor="currentUniversity" className="text-sm">
-                        {formData.academicLevel === "high_school" 
-                          ? t.profile.highSchoolName || "High School Name"
-                          : t.profile.currentUniversity}
-                      </Label>
-                      <Input
-                        id="currentUniversity"
-                        value={formData.currentUniversity}
-                        onChange={(e) => setFormData(prev => ({ ...prev, currentUniversity: e.target.value }))}
-                        placeholder={
-                          formData.academicLevel === "high_school"
-                            ? "e.g., Lincoln High School"
-                            : "e.g., Stanford University"
-                        }
-                        className="h-9 md:h-10"
-                      />
-                    </div>
-
-                    {formData.academicLevel !== "high_school" && (
-                      <div className="space-y-1.5 md:space-y-2">
-                        <Label htmlFor="currentMajor" className="text-sm">{t.profile.currentMajor}</Label>
-                        <Input
-                          id="currentMajor"
-                          value={formData.currentMajor}
-                          onChange={(e) => setFormData(prev => ({ ...prev, currentMajor: e.target.value }))}
-                          placeholder="e.g., Computer Science"
-                          className="h-9 md:h-10"
-                        />
-                      </div>
-                    )}
-
-                    <div className="space-y-1.5 md:space-y-2">
-                      <Label htmlFor="gpa" className="text-sm">{t.profile.gpa}</Label>
-                      <Input
-                        id="gpa"
-                        type="number"
-                        step="0.01"
-                        value={formData.gpa}
-                        onChange={(e) => setFormData(prev => ({ ...prev, gpa: e.target.value }))}
-                        placeholder="e.g., 3.85"
-                        className="h-9 md:h-10"
-                      />
-                    </div>
+                  <div className="space-y-1.5 md:space-y-2">
+                    <Label htmlFor="gpa" className="text-sm">{t.profile.gpa}</Label>
+                    <Input
+                      id="gpa"
+                      value={formData.gpa}
+                      onChange={(e) => setFormData(prev => ({ ...prev, gpa: e.target.value }))}
+                      placeholder="e.g., 3.8/4.0"
+                      className="h-9 md:h-10"
+                    />
                   </div>
                 )}
               </div>
