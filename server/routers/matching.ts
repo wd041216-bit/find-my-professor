@@ -1,6 +1,8 @@
-import { router, protectedProcedure } from "../_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import * as db from "../db";
+import { analyzeUserProfile, recommendProjectsWithLLM } from "../services/intelligentMatching";
+import { ScrapingService } from "../services/scraping";
 
 // Helper function to normalize university names for comparison
 function normalizeUniversityName(name: string): string {
@@ -196,8 +198,55 @@ function calculateMatchScore(
 }
 
 export const matchingRouter = router({
-  // Calculate matches for current user
+  // Calculate matches for current user with intelligent routing
   calculateMatches: protectedProcedure.mutation(async ({ ctx }) => {
+    // Step 1: Analyze user profile to determine matching strategy
+    const analysis = await analyzeUserProfile(ctx.user.id);
+    
+    console.log(`[Matching] Profile analysis: completeness=${analysis.profileCompleteness}%, rich=${analysis.hasRichProfile}`);
+    
+    // Step 2: Choose matching strategy
+    if (analysis.hasRichProfile && analysis.targetUniversities.length > 0 && analysis.targetMajors.length > 0) {
+      // Strategy A: Rich profile → LLM recommendation from database
+      console.log('[Matching] Using Strategy A: LLM recommendation from database');
+      
+      const recommendation = await recommendProjectsWithLLM(ctx.user.id, analysis);
+      
+      if (recommendation.projectIds.length > 0) {
+        // Save matches to database
+        const matches = [];
+        for (const projectId of recommendation.projectIds) {
+          await db.upsertProjectMatch({
+            userId: ctx.user.id,
+            projectId,
+            matchScore: '85', // High score for LLM recommendations
+            matchReasons: JSON.stringify([recommendation.reasoning]),
+            viewed: false,
+            saved: false,
+            applied: false,
+          });
+          
+          matches.push({
+            projectId,
+            score: 85,
+            reasons: [recommendation.reasoning],
+          });
+        }
+        
+        return {
+          totalMatches: matches.length,
+          matches,
+          strategy: 'llm_recommendation',
+          reasoning: recommendation.reasoning,
+        };
+      }
+      
+      console.log('[Matching] LLM recommendation returned no results, falling back to traditional matching');
+    }
+    
+    // Strategy B: Minimal profile or no LLM results → Traditional matching
+    console.log('[Matching] Using Strategy B: Traditional matching with crawler support');
+    
     const profile = await db.getStudentProfile(ctx.user.id);
     const activities = await db.getUserActivities(ctx.user.id);
     let projects = await db.getAllResearchProjects();
@@ -274,6 +323,7 @@ export const matchingRouter = router({
     return {
       totalMatches: matches.length,
       matches: matches.slice(0, 10),
+      strategy: 'traditional_matching',
     };
   }),
 
