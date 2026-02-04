@@ -129,3 +129,27 @@
 - [x] 在法律文档页面（Terms、Privacy、Refund）添加Footer
 - [x] 在所有16个页面添加Footer组件
 - [x] 测试所有页面的Footer显示和链接功能
+
+## 匹配算法系统重构 - AI规范化和按需爬取
+- [x] 创建数据库表：university_normalization
+- [x] 创建数据库表：major_normalization
+- [x] 创建数据库表：user_input_history
+- [x] 创建数据库表：university_major_mapping
+- [x] 创建数据库表：university_major_cache
+- [x] 创建数据库表：scraping_tasks
+- [x] 创建数据库表：scraped_projects
+- [x] 添加student_profiles表的规范化ID列
+- [x] 添加universities表的aliases和region列
+- [x] 实现NormalizationService类（简化版，核心LLM功能）
+- [x] 实现identifyUniversity LLM函数
+- [x] 实现identifyMajor LLM函数
+- [x] 更新Profile Upsert API支持自动规范化
+- [x] 改进匹配算法：仅限目标大学，专业不过滤
+- [ ] 实现ScrapingService类
+- [ ] 实现按需爬取逻辑
+- [ ] 配置Bull消息队列
+- [ ] 实现后台爬虫任务处理
+- [ ] 更新前端显示规范化结果
+- [ ] 添加缓存状态指示
+- [ ] 编写单元测试
+- [ ] 性能测试和优化

@@ -214,8 +214,8 @@ export const matchingRouter = router({
     const activities = await db.getUserActivities(ctx.user.id);
     let projects = await db.getAllResearchProjects();
 
-    // SOFT PRIORITY: If user has target universities, try to filter projects from those universities
-    // But if no projects found, use all projects instead of empty results
+    // STRICT FILTERING: Only show projects from target universities
+    // This is a HARD requirement - user only wants to see these universities
     let filteredByUniversity = false;
     if (profile && profile.targetUniversities) {
       try {
@@ -223,7 +223,8 @@ export const matchingRouter = router({
         if (targetUniversities && Array.isArray(targetUniversities) && targetUniversities.length > 0) {
           console.log(`[Matching] User has ${targetUniversities.length} target universities:`, targetUniversities);
           
-          // Filter projects to only include those from target universities
+          // STRICT FILTER: Only include projects from target universities
+          // Within target universities, show ALL related projects (no major filtering)
           const filteredProjects = [];
           for (const project of projects) {
             const university = await db.getUniversityById(project.universityId);
@@ -238,13 +239,13 @@ export const matchingRouter = router({
           
           console.log(`[Matching] Filtered ${filteredProjects.length} projects from ${projects.length} total`);
           
-          // IMPORTANT: Only use filtered projects if we found some
-          // If no projects found from target universities, use all projects
-          if (filteredProjects.length > 0) {
-            projects = filteredProjects;
-            filteredByUniversity = true;
-          } else {
-            console.log(`[Matching] No projects found from target universities, using all ${projects.length} projects`);
+          // ALWAYS use filtered projects, even if empty
+          // This respects user's explicit choice of target universities
+          projects = filteredProjects;
+          filteredByUniversity = true;
+          
+          if (projects.length === 0) {
+            console.log(`[Matching] No projects found from target universities. User should add more universities or wait for data scraping.`);
           }
         }
       } catch (e) {
