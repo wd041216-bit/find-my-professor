@@ -22,6 +22,7 @@ export default function Explore() {
   const [projects, setProjects] = useState<any[]>([]);
   const [minMatchScore, setMinMatchScore] = useState(0);
   const { t } = useLanguage();
+  const utils = trpc.useUtils();
 
   // Get user profile for target universities and majors
   const { data: profile } = trpc.profile.get.useQuery(undefined, {
@@ -77,7 +78,6 @@ export default function Explore() {
       const universityName = targetUniversities[0];
       const majorName = targetMajors[0];
       
-      const utils = trpc.useUtils();
       const result = await utils.scraping.searchProjects.fetch({
         universityName,
         majorName,
@@ -102,7 +102,6 @@ export default function Explore() {
 
   const handleFetchProjects = async (universityName: string, majorName: string) => {
     try {
-      const utils = trpc.useUtils();
       const result = await utils.scraping.searchProjects.fetch({
         universityName,
         majorName,

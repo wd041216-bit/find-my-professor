@@ -209,3 +209,8 @@
 - [x] 显示爬虫进度和状态
 - [x] 爬虫完成后展示结果
 - [x] 完整重写Explore页面集成爬虫系统
+
+## 修复Explore页面React hooks错误
+- [x] 分析React错误#321的原因（hooks调用位置错误）
+- [x] 修复handleSearchProjects和handleFetchProjects中的hooks调用
+- [x] 测试搜索功能确保正常工作
