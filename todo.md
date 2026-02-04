@@ -214,3 +214,13 @@
 - [x] 分析React错误#321的原因（hooks调用位置错误）
 - [x] 修复handleSearchProjects和handleFetchProjects中的hooks调用
 - [x] 测试搜索功能确保正常工作
+
+## 简化个人资料编辑和优化爬虫过滤
+- [x] 分析当前Profile页面的字段（移除所在机构）
+- [x] 修改Profile表单只保留学历层次
+- [x] 更新数据库schema（不需要，字段可为空）
+- [x] 分析爬虫爬取的课程问题
+- [x] 优化CSS选择器过滤课程链接
+- [x] 改进LLM提示词识别真正的科研项目
+- [x] 测试修复后的Profile编辑功能
+- [x] 爬虫过滤逻辑已优化（需要等待下次爬取验证）
