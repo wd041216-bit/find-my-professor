@@ -274,8 +274,8 @@ export class ScrapingService {
   }
 
   /**
-   * Scrape university projects (using LLM to generate realistic data)
-   * In production, this would use actual web scraping or API calls
+   * Scrape university projects using real web scraping
+   * Falls back to LLM generation if scraping fails
    */
   private static async scrapeUniversityProjects(
     universityName: string,
@@ -284,8 +284,103 @@ export class ScrapingService {
   ): Promise<Array<Omit<ScrapedProject, 'id' | 'scrapedAt'>>> {
     console.log(`[Scraping] Scraping ${universityName} for ${majorName} projects...`);
     
-    // Use LLM to generate realistic research project data
-    const prompt = `You are a research project data generator. Generate 5-10 realistic research project opportunities at ${universityName} in the field of ${majorName} for ${degreeLevel} students.
+    try {
+      // Import GenericUniversityScraper
+      const { GenericUniversityScraper } = await import('./scrapers/GenericUniversityScraper');
+      
+      // Get university base URL
+      const baseUrl = this.getUniversityBaseUrl(universityName);
+      
+      // Create scraper instance
+      const scraper = new GenericUniversityScraper(universityName, baseUrl);
+      
+      // Scrape projects
+      const projects = await scraper.scrapeProjects(majorName, degreeLevel);
+      
+      if (projects.length > 0) {
+        console.log(`[Scraping] Successfully scraped ${projects.length} projects from ${universityName}`);
+        // Add universityName and majorName to match ScrapedProject interface
+        return projects.map(p => ({
+          ...p,
+          universityName,
+          majorName
+        }));
+      }
+      
+      // If no projects found, fall back to LLM generation
+      console.log(`[Scraping] No projects found via scraping, falling back to LLM generation`);
+      return await this.generateProjectsWithLLM(universityName, majorName, degreeLevel);
+      
+    } catch (error) {
+      console.error(`[Scraping] Error during web scraping:`, error);
+      // Fall back to LLM generation
+      console.log(`[Scraping] Falling back to LLM generation due to error`);
+      return await this.generateProjectsWithLLM(universityName, majorName, degreeLevel);
+    }
+  }
+  
+  /**
+   * Get base URL for a university
+   */
+  private static getUniversityBaseUrl(universityName: string): string {
+    // Map of university names to their base URLs
+    const universityUrls: Record<string, string> = {
+      'Massachusetts Institute of Technology': 'https://www.csail.mit.edu',
+      'MIT': 'https://www.csail.mit.edu',
+      'Stanford University': 'https://cs.stanford.edu',
+      'Stanford': 'https://cs.stanford.edu',
+      'Harvard University': 'https://seas.harvard.edu',
+      'Harvard': 'https://seas.harvard.edu',
+      'University of California, Berkeley': 'https://eecs.berkeley.edu',
+      'UC Berkeley': 'https://eecs.berkeley.edu',
+      'Berkeley': 'https://eecs.berkeley.edu',
+      'Carnegie Mellon University': 'https://www.cs.cmu.edu',
+      'CMU': 'https://www.cs.cmu.edu',
+      'California Institute of Technology': 'https://www.cms.caltech.edu',
+      'Caltech': 'https://www.cms.caltech.edu',
+      'Princeton University': 'https://www.cs.princeton.edu',
+      'Princeton': 'https://www.cs.princeton.edu',
+      'Yale University': 'https://cpsc.yale.edu',
+      'Yale': 'https://cpsc.yale.edu',
+      'Columbia University': 'https://www.cs.columbia.edu',
+      'Columbia': 'https://www.cs.columbia.edu',
+      'Cornell University': 'https://www.cs.cornell.edu',
+      'Cornell': 'https://www.cs.cornell.edu',
+    };
+    
+    // Try exact match first
+    if (universityUrls[universityName]) {
+      return universityUrls[universityName];
+    }
+    
+    // Try partial match
+    for (const [key, url] of Object.entries(universityUrls)) {
+      if (universityName.includes(key) || key.includes(universityName)) {
+        return url;
+      }
+    }
+    
+    // Default: try to construct URL from university name
+    const slug = universityName.toLowerCase()
+      .replace(/university|college|institute/gi, '')
+      .trim()
+      .replace(/\s+/g, '')
+      .replace(/[^a-z0-9]/g, '');
+    
+    return `https://www.${slug}.edu`;
+  }
+  
+  /**
+   * Generate projects using LLM (fallback method)
+   */
+  private static async generateProjectsWithLLM(
+    universityName: string,
+    majorName: string,
+    degreeLevel: string
+  ): Promise<Array<Omit<ScrapedProject, 'id' | 'scrapedAt'>>> {
+    console.log(`[Scraping] Generating projects with LLM for ${universityName}...`);
+    
+    const prompt = `You are a research project data generator. Generate 5-7 realistic research project opportunities at ${universityName} in the field of ${majorName} for ${degreeLevel} students.
 
 For each project, provide:
 1. Professor name (realistic name)
