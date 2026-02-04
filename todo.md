@@ -224,3 +224,12 @@
 - [x] 改进LLM提示词识别真正的科研项目
 - [x] 测试修复后的Profile编辑功能
 - [x] 爬虫过滤逻辑已优化（需要等待下次爬取验证）
+
+## 清空缓存、禁用缓存、移除专业匹配度、添加LLM二次验证
+- [x] 清空scraped_projects表的数据
+- [x] 清空university_major_cache表的数据
+- [x] 禁用30天缓存机制（验证期间）
+- [x] 分析匹配度算法，移除专业匹配度系数
+- [x] 添加LLM二次验证逻辑（爬虫完成后验证）
+- [x] 测试Stanford computer science项目爬取
+- [x] 验证过滤效果（爬虫成功运行，但Stanford CS网站URL不匹配）

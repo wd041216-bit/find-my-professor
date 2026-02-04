@@ -53,12 +53,19 @@ export class ScrapingService {
   /**
    * Check if we have cached data for (university + major)
    * Returns cached data if exists and < 30 days old
+   * 
+   * CACHE DISABLED FOR TESTING: Always returns cache miss to force re-scraping
    */
   static async getCachedProjects(
     universityName: string,
     majorName: string,
     degreeLevel: string = 'all'
   ): Promise<{ cached: boolean; projects: ScrapedProject[]; cacheAge?: number }> {
+    // TEMPORARY: Disable cache for testing filter logic
+    console.log(`[Scraping] Cache DISABLED for testing - forcing re-scrape`);
+    return { cached: false, projects: [] };
+    
+    /* Original cache logic (commented out for testing)
     try {
       const pool = getConnectionPool();
       
@@ -118,6 +125,7 @@ export class ScrapingService {
       console.error('[Scraping] Error getting cached projects:', error);
       return { cached: false, projects: [] };
     }
+    */
   }
 
   /**
@@ -299,8 +307,14 @@ export class ScrapingService {
       
       if (projects.length > 0) {
         console.log(`[Scraping] Successfully scraped ${projects.length} projects from ${universityName}`);
+        
+        // LLM二次验证：过滤掉课程内容
+        console.log(`[Scraping] Running LLM verification on ${projects.length} projects...`);
+        const verifiedProjects = await this.verifyProjectsWithLLM(projects);
+        console.log(`[Scraping] LLM verification complete: ${verifiedProjects.length}/${projects.length} projects verified as research projects`);
+        
         // Add universityName and majorName to match ScrapedProject interface
-        return projects.map(p => ({
+        return verifiedProjects.map((p: any) => ({
           ...p,
           universityName,
           majorName
@@ -473,6 +487,76 @@ Respond in JSON format as an array of projects.`;
     }
   }
 
+  /**
+   * LLM二次验证：过滤掉课程内容，只保留真正的科研项目
+   */
+  private static async verifyProjectsWithLLM(
+    projects: any[]
+  ): Promise<any[]> {
+    const verifiedProjects: any[] = [];
+    
+    // 批量验证，每次验证5个项目
+    for (let i = 0; i < projects.length; i += 5) {
+      const batch = projects.slice(i, i + 5);
+      
+      for (const project of batch) {
+        try {
+          const isResearchProject = await this.verifyProjectWithLLM(project);
+          if (isResearchProject) {
+            verifiedProjects.push(project);
+          } else {
+            console.log(`[Scraping] LLM filtered out non-research project: ${project.projectTitle}`);
+          }
+        } catch (error) {
+          console.error(`[Scraping] Error verifying project:`, error);
+          // 验证失败时保留项目（宁可误留，不可误删）
+          verifiedProjects.push(project);
+        }
+      }
+    }
+    
+    return verifiedProjects;
+  }
+  
+  /**
+   * 使用LLM验证单个项目是否为科研项目
+   */
+  private static async verifyProjectWithLLM(project: any): Promise<boolean> {
+    const prompt = `You are a research project classifier. Determine if the following content describes a REAL RESEARCH PROJECT/LAB or a COURSE.
+
+**Project Information:**
+Title: ${project.projectTitle}
+Lab Name: ${project.labName}
+Professor: ${project.professorName}
+Research Area: ${project.researchArea}
+Description: ${project.projectDescription}
+Requirements: ${project.requirements}
+
+**Classification Rules:**
+- Research projects/labs: faculty research groups, ongoing research, research assistant positions, lab opportunities
+- Courses: class syllabi, course descriptions, lectures, homework, assignments, exams
+
+**Question:** Is this a research project/lab (not a course)?
+
+Respond with ONLY "true" or "false".`;
+
+    try {
+      const response = await invokeLLMWithLimit({
+        messages: [
+          { role: 'system', content: 'You are a precise classifier. Always respond with only "true" or "false".' },
+          { role: 'user', content: prompt }
+        ],
+      });
+      
+      const content = response.choices[0]?.message?.content?.trim().toLowerCase();
+      return content === 'true';
+    } catch (error) {
+      console.error(`[Scraping] LLM verification error:`, error);
+      // 验证失败时默认为是科研项目
+      return true;
+    }
+  }
+  
   /**
    * Clean up expired cache and projects
    */
