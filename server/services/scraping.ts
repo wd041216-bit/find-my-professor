@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-import { invokeLLM } from "../_core/llm";
+import { invokeLLMWithLimit } from './llmQueue';
 
 /**
  * Scraping Service
@@ -16,7 +16,16 @@ let connectionPool: mysql.Pool | null = null;
 
 function getConnectionPool(): mysql.Pool {
   if (!connectionPool && process.env.DATABASE_URL) {
-    connectionPool = mysql.createPool(process.env.DATABASE_URL);
+    // 优化连接池配置以支持高并发
+    connectionPool = mysql.createPool({
+      uri: process.env.DATABASE_URL,
+      connectionLimit: 50,      // 增加到50个并发连接
+      queueLimit: 100,          // 队列限制100个等待请求
+      waitForConnections: true, // 等待可用连接
+      connectTimeout: 10000,    // 连接超时10秒
+      enableKeepAlive: true,    // 保持连接活跃
+      keepAliveInitialDelay: 0  // 立即发送keep-alive
+    });
   }
   if (!connectionPool) {
     throw new Error('Database connection not available');
@@ -292,7 +301,7 @@ Generate diverse projects across different sub-fields and research areas within 
 
 Respond in JSON format as an array of projects.`;
 
-    const response = await invokeLLM({
+    const response = await invokeLLMWithLimit({
       messages: [
         { role: "system", content: "You are a research project data generator. Always respond with valid JSON array." },
         { role: "user", content: prompt }
