@@ -251,3 +251,11 @@
 - [x] 修复导致发布失败的问题（移除date导入）
 - [x] 验证修复（TypeScript编译通过，服务器运行正常）
 - [ ] 重新创建checkpoint并测试发布
+
+## 排查网站发布长时间不成功的问题
+- [x] 检查项目中的大文件（图片、视频等）
+- [x] 检查node_modules大小
+- [x] 检查构建配置和依赖项
+- [x] 发现问题：streamdown库包含396个KaTeX字体文件
+- [x] 用react-markdown替换streamdown
+- [x] 优化效果：构建产物从16MB降到1.9MB，文件数从396个降到6个

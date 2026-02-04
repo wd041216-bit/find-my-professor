@@ -10,7 +10,8 @@ import { Link, useLocation, useParams } from "wouter";
 import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Mail, Building, FileText, Copy, Check, Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Streamdown } from "streamdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function ProjectDetail() {
   const { user, loading: authLoading } = useAuth();
@@ -351,7 +352,11 @@ export default function ProjectDetail() {
           
           <div className="space-y-4">
             <div className="bg-muted/30 p-6 rounded-lg">
-              <Streamdown>{generatedLetter}</Streamdown>
+              <div className="prose prose-sm max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {generatedLetter}
+                </ReactMarkdown>
+              </div>
             </div>
             
             <div className="flex gap-2">
