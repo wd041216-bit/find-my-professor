@@ -1,0 +1,26 @@
+{
+  "query": "\n-- 清空旧的学校相关数据\nDELETE FROM research_projects;\nDELETE FROM professors;\nDELETE FROM universities;\nDELETE FROM project_matches;\n\n-- 显示清空后的记录数\nSELECT 'universities' as table_name, COUNT(*) as count FROM universities\nUNION ALL\nSELECT 'professors', COUNT(*) FROM professors\nUNION ALL\nSELECT 'research_projects', COUNT(*) FROM research_projects\nUNION ALL\nSELECT 'project_matches', COUNT(*) FROM project_matches;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute \n-- 清空旧的学校相关数据\nDELETE FROM research_projects;\nDELETE FROM professors;\nDELETE FROM universities;\nDELETE FROM project_matches;\n\n-- 显示清空后的记录数\nSELECT 'universities' as table_name, COUNT(*) as count FROM universities\nUNION ALL\nSELECT 'professors', COUNT(*) FROM professors\nUNION ALL\nSELECT 'research_projects', COUNT(*) FROM research_projects\nUNION ALL\nSELECT 'project_matches', COUNT(*) FROM project_matches;\n",
+  "rows": [
+    {
+      "table_name": "universities",
+      "count": "0"
+    },
+    {
+      "table_name": "project_matches",
+      "count": "0"
+    },
+    {
+      "table_name": "research_projects",
+      "count": "0"
+    },
+    {
+      "table_name": "professors",
+      "count": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "table_name\tcount\nuniversities\t0\nproject_matches\t0\nresearch_projects\t0\nprofessors\t0\n",
+  "stderr": "",
+  "execution_time_ms": 2586
+}
