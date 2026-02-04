@@ -1,0 +1,9 @@
+{
+  "query": "-- 添加缺失的列到university_normalization表\nALTER TABLE university_normalization \nADD COLUMN IF NOT EXISTS confidence DECIMAL(3,2) DEFAULT 0.95,\nADD COLUMN IF NOT EXISTS reasoning TEXT;\n\n-- 添加缺失的列到major_normalization表\nALTER TABLE major_normalization \nADD COLUMN IF NOT EXISTS confidence DECIMAL(3,2) DEFAULT 0.95,\nADD COLUMN IF NOT EXISTS reasoning TEXT;\n\n-- 修复user_input_history表的列名\nALTER TABLE user_input_history \nCHANGE COLUMN IF EXISTS normalization_id normalized_id INT;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute -- 添加缺失的列到university_normalization表\nALTER TABLE university_normalization \nADD COLUMN IF NOT EXISTS confidence DECIMAL(3,2) DEFAULT 0.95,\nADD COLUMN IF NOT EXISTS reasoning TEXT;\n\n-- 添加缺失的列到major_normalization表\nALTER TABLE major_normalization \nADD COLUMN IF NOT EXISTS confidence DECIMAL(3,2) DEFAULT 0.95,\nADD COLUMN IF NOT EXISTS reasoning TEXT;\n\n-- 修复user_input_history表的列名\nALTER TABLE user_input_history \nCHANGE COLUMN IF EXISTS normalization_id normalized_id INT;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 5089
+}

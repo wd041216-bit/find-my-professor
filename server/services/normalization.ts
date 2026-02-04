@@ -1,4 +1,5 @@
-import { invokeLLM } from "../_core/llm";
+import { invokeLLMWithLimit } from './llmQueue';
+import { withDistributedLock, DistributedLock } from './distributedLock';
 import mysql from 'mysql2/promise';
 import { ENV } from '../_core/env';
 
@@ -32,7 +33,16 @@ let connectionPool: mysql.Pool | null = null;
 
 function getConnectionPool(): mysql.Pool {
   if (!connectionPool && process.env.DATABASE_URL) {
-    connectionPool = mysql.createPool(process.env.DATABASE_URL);
+    // 优化连接池配置以支持高并发
+    connectionPool = mysql.createPool({
+      uri: process.env.DATABASE_URL,
+      connectionLimit: 50,      // 增加到50个并发连接
+      queueLimit: 100,          // 队列限制100个等待请求
+      waitForConnections: true, // 等待可用连接
+      connectTimeout: 10000,    // 连接超时10秒
+      enableKeepAlive: true,    // 保持连接活跃
+      keepAliveInitialDelay: 0  // 立即发送keep-alive
+    });
   }
   if (!connectionPool) {
     throw new Error('Database connection not available');
@@ -78,19 +88,44 @@ export class NormalizationService {
       };
     }
     
-    // Step 2: Cache MISS - Call LLM
-    console.log(`[Normalization] Cache MISS for university: "${rawInput}" - calling LLM`);
-    const result = await this.identifyUniversity(rawInput);
+    // Step 2: Cache MISS - Use distributed lock to prevent duplicate LLM calls
+    const lockKey = `university:${normalizedInput}`;
     
-    // Step 3: Store result in cache
-    const cacheId = await this.cacheUniversityResult(normalizedInput, result);
-    
-    // Step 4: Log user input history
-    if (userId) {
-      await this.logUserInput(userId, 'university', rawInput, cacheId);
-    }
-    
-    return result;
+    return await withDistributedLock(
+      lockKey,
+      'university',
+      // 获取锁成功 - 调用LLM
+      async () => {
+        console.log(`[Normalization] Cache MISS for university: "${rawInput}" - calling LLM`);
+        const result = await this.identifyUniversity(rawInput);
+        
+        // Store result in cache
+        const cacheId = await this.cacheUniversityResult(normalizedInput, result);
+        
+        // Log user input history
+        if (userId) {
+          await this.logUserInput(userId, 'university', rawInput, cacheId);
+        }
+        
+        return result;
+      },
+      // 锁被占用 - 等待并查询缓存
+      async () => {
+        console.log(`[Normalization] Waiting for other user to complete: "${rawInput}"`);
+        const cachedAfterWait = await this.getCachedUniversity(normalizedInput);
+        if (cachedAfterWait) {
+          return {
+            normalizedName: cachedAfterWait.normalized_name,
+            aliases: JSON.parse(cachedAfterWait.aliases),
+            country: cachedAfterWait.country,
+            region: cachedAfterWait.region,
+            confidence: parseFloat(cachedAfterWait.confidence),
+            reasoning: cachedAfterWait.reasoning
+          };
+        }
+        throw new Error(`Failed to get cached result for: ${rawInput}`);
+      }
+    );
   }
 
   /**
@@ -124,19 +159,45 @@ export class NormalizationService {
       };
     }
     
-    // Step 2: Cache MISS - Call LLM
-    console.log(`[Normalization] Cache MISS for major: "${rawInput}" - calling LLM`);
-    const result = await this.identifyMajor(rawInput);
+    // Step 2: Cache MISS - Use distributed lock to prevent duplicate LLM calls
+    const lockKey = `major:${normalizedInput}`;
     
-    // Step 3: Store result in cache
-    const cacheId = await this.cacheMajorResult(normalizedInput, result);
-    
-    // Step 4: Log user input history
-    if (userId) {
-      await this.logUserInput(userId, 'major', rawInput, cacheId);
-    }
-    
-    return result;
+    return await withDistributedLock(
+      lockKey,
+      'major',
+      // 获取锁成功 - 调用LLM
+      async () => {
+        console.log(`[Normalization] Cache MISS for major: "${rawInput}" - calling LLM`);
+        const result = await this.identifyMajor(rawInput);
+        
+        // Store result in cache
+        const cacheId = await this.cacheMajorResult(normalizedInput, result);
+        
+        // Log user input history
+        if (userId) {
+          await this.logUserInput(userId, 'major', rawInput, cacheId);
+        }
+        
+        return result;
+      },
+      // 锁被占用 - 等待并查询缓存
+      async () => {
+        console.log(`[Normalization] Waiting for other user to complete: "${rawInput}"`);
+        const cachedAfterWait = await this.getCachedMajor(normalizedInput);
+        if (cachedAfterWait) {
+          return {
+            normalizedName: cachedAfterWait.normalized_name,
+            aliases: JSON.parse(cachedAfterWait.aliases),
+            category: cachedAfterWait.category,
+            field: cachedAfterWait.field,
+            relatedMajors: JSON.parse(cachedAfterWait.related_majors),
+            confidence: parseFloat(cachedAfterWait.confidence),
+            reasoning: cachedAfterWait.reasoning
+          };
+        }
+        throw new Error(`Failed to get cached result for: ${rawInput}`);
+      }
+    );
   }
 
   /**
@@ -266,7 +327,7 @@ export class NormalizationService {
       const pool = getConnectionPool();
       await pool.execute(
         `INSERT INTO user_input_history 
-         (user_id, input_type, raw_input, normalization_id, created_at) 
+         (user_id, input_type, raw_input, normalized_id, created_at) 
          VALUES (?, ?, ?, ?, NOW())`,
         [userId, inputType, rawInput, normalizationId]
       );
@@ -308,7 +369,7 @@ Respond in JSON format:
   "reasoning": "Explanation of your identification"
 }`;
 
-    const response = await invokeLLM({
+    const response = await invokeLLMWithLimit({
       messages: [
         { role: "system", content: "You are a university identification expert. Always respond with valid JSON." },
         { role: "user", content: prompt }
@@ -383,7 +444,7 @@ Respond in JSON format:
   "reasoning": "Explanation of your identification"
 }`;
 
-    const response = await invokeLLM({
+    const response = await invokeLLMWithLimit({
       messages: [
         { role: "system", content: "You are a major/field of study identification expert. Always respond with valid JSON." },
         { role: "user", content: prompt }
