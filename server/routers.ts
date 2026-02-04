@@ -9,10 +9,71 @@ import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
 import { creditsRouter } from "./routers/credits";
 import { NormalizationService } from "./services/normalization";
+import { ScrapingService } from "./services/scraping";
 // import { paypalRouter } from "./routers/paypal";
 
 export const appRouter = router({
   system: systemRouter,
+  
+  // Scraping and caching system
+  scraping: router({
+    // Search with on-demand scraping
+    searchProjects: protectedProcedure
+      .input(z.object({
+        universityName: z.string(),
+        majorName: z.string(),
+        degreeLevel: z.enum(["all", "undergraduate", "graduate"]).default("all"),
+      }))
+      .query(async ({ ctx, input }) => {
+        // Step 1: Check cache
+        const cached = await ScrapingService.getCachedProjects(
+          input.universityName,
+          input.majorName,
+          input.degreeLevel
+        );
+        
+        if (cached.cached && cached.projects.length > 0) {
+          console.log(`[API] Returning ${cached.projects.length} cached projects (age: ${cached.cacheAge} days)`);
+          return {
+            projects: cached.projects,
+            cached: true,
+            cacheAge: cached.cacheAge,
+            scrapingTriggered: false
+          };
+        }
+        
+        // Step 2: No cache or expired - trigger scraping
+        console.log(`[API] No cache found, triggering scraping task`);
+        const task = await ScrapingService.triggerScrapingTask(
+          input.universityName,
+          input.majorName,
+          input.degreeLevel,
+          ctx.user.id
+        );
+        
+        // Step 3: Return empty array with task info
+        return {
+          projects: [],
+          cached: false,
+          scrapingTriggered: true,
+          taskId: task.taskId,
+          taskStatus: task.status,
+          message: "Scraping task triggered. Please check back in a few moments."
+        };
+      }),
+    
+    // Get scraping task status
+    getTaskStatus: protectedProcedure
+      .input(z.object({ taskId: z.number() }))
+      .query(async ({ input }) => {
+        return ScrapingService.getTaskStatus(input.taskId);
+      }),
+    
+    // Get cache statistics
+    getCacheStats: protectedProcedure.query(async () => {
+      return NormalizationService.getCacheStats();
+    }),
+  }),
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

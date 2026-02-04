@@ -153,3 +153,19 @@
 - [ ] 添加缓存状态指示
 - [ ] 编写单元测试
 - [ ] 性能测试和优化
+
+## 完善数据库缓存和按需爬取系统
+- [x] 完善NormalizationService的数据库缓存功能
+- [x] 实现缓存查询和存储逻辑
+- [x] 实现“一次LLM调用，永久复用”策略
+- [x] 编写测试验证缓存功能（8个测试全部通过）
+- [x] 实现ScrapingService类
+- [x] 实现按需爬取逻辑（用户搜索时触发）
+- [x] 实现30天缓存机制
+- [x] 集成爬取系统到搜索API
+- [x] 创建scraping.searchProjects API
+- [x] 创建scraping.getTaskStatus API
+- [x] 创建scraping.getCacheStats API
+- [x] 编写测试验证缓存和爬取功能（6个测试全部通过）
+- [x] 端到端测试：完整工作流程验证
+- [x] 性能测试：缓存重用速度 <1s
