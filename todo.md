@@ -266,3 +266,8 @@
 - [x] 优化LLM验证提示词（更宽松的判断标准，不确定时视为研究项目）
 - [x] 调整LLM二次验证的严格度（RELAXED MODE，只过滤明显的课程）
 - [ ] 测试Stanford和MIT的爬取效果
+
+## 修复英语模式和移除重复UI
+- [x] 修复Explore页面英语模式的翻译（"搜索研究项目"和"搜索项目"按钮）
+- [x] 移除手机端Dashboard的"Your Activities"部分（任务栏已有Activities）
+- [x] 清空爬虫缓存测试优化效果

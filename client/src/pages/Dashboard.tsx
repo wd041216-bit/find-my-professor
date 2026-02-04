@@ -193,8 +193,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Activities */}
-        <Card className="mb-6 md:mb-8">
+        {/* Activities - Hidden on mobile since Activities page is in navigation */}
+        <Card className="mb-6 md:mb-8 hidden md:block">
           <CardHeader className="p-4 md:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
             <div>
               <CardTitle className="text-base md:text-lg">{t.dashboard.yourActivities}</CardTitle>

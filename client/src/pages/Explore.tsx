@@ -179,10 +179,10 @@ export default function Explore() {
           <CardHeader className="p-4 md:p-6">
             <CardTitle className="flex items-center gap-2 text-base md:text-lg">
               <Search className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-              搜索研究项目
+              {t.explore.searchTitle}
             </CardTitle>
             <CardDescription className="text-sm">
-              基于您的目标大学和专业，实时爬取最新的研究项目信息
+              {t.explore.searchDescription}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 pt-0 md:p-6 md:pt-0 flex flex-col gap-3">
@@ -202,7 +202,7 @@ export default function Explore() {
               ) : (
                 <>
                   <Search className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm md:text-base">搜索项目</span>
+                  <span className="text-sm md:text-base">{t.explore.searchButton}</span>
                 </>
               )}
             </Button>
@@ -247,9 +247,9 @@ export default function Explore() {
           <Card>
             <CardContent className="py-12 md:py-16 text-center">
               <Target className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-semibold mb-2">暂无项目</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">{t.explore.noProjectsTitle}</h3>
               <p className="text-muted-foreground text-sm md:text-base mb-4 md:mb-6">
-                点击"搜索项目"按钮开始搜索研究项目
+                {t.explore.noProjectsHint}
               </p>
             </CardContent>
           </Card>
@@ -257,7 +257,7 @@ export default function Explore() {
           <div className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-between mb-3 md:mb-4">
               <h2 className="text-xl md:text-2xl font-bold">
-                搜索结果 ({filteredProjects.length})
+                {t.explore.searchResults} ({filteredProjects.length})
               </h2>
             </div>
 
@@ -296,18 +296,18 @@ export default function Explore() {
                 <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">研究方向</h4>
+                      <h4 className="font-semibold text-sm mb-1">{t.explore.researchDirection}</h4>
                       <p className="text-sm text-muted-foreground">{project.researchArea}</p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">项目描述</h4>
+                      <h4 className="font-semibold text-sm mb-1">{t.explore.projectDescription}</h4>
                       <p className="text-sm text-muted-foreground line-clamp-3">
                         {project.projectDescription}
                       </p>
                     </div>
                     {project.requirements && (
                       <div>
-                        <h4 className="font-semibold text-sm mb-1">申请要求</h4>
+                        <h4 className="font-semibold text-sm mb-1">{t.explore.applicationRequirements}</h4>
                         <p className="text-sm text-muted-foreground">{project.requirements}</p>
                       </div>
                     )}
@@ -315,14 +315,14 @@ export default function Explore() {
                       {project.contactEmail && (
                         <Button variant="default" size="sm" asChild className="w-full sm:w-auto">
                           <a href={`mailto:${project.contactEmail}`}>
-                            联系教授
+                            {t.explore.contactProfessor}
                           </a>
                         </Button>
                       )}
                       {project.sourceUrl && (
                         <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
                           <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer">
-                            查看详情
+                            {t.explore.viewDetails}
                           </a>
                         </Button>
                       )}
