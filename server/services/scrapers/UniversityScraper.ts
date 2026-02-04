@@ -146,9 +146,9 @@ export abstract class UniversityScraper {
     const prompt = `You are a web scraping assistant. Extract REAL RESEARCH PROJECT/LAB information from the following HTML content from ${context.universityName} in the field of ${context.major}.
 
 **IMPORTANT FILTERING RULES:**
-- ONLY extract information about research labs, research groups, or research opportunities
-- IGNORE course descriptions, class syllabi, or academic courses (even if they mention "research")
-- IGNORE teaching-related content
+- Extract information about research labs, research groups, research opportunities, or faculty research pages
+- ONLY filter out OBVIOUS courses with syllabus, homework, exams, or grading information
+- If unsure whether it's a course or research project, treat it as a research project
 - Focus on faculty research labs, ongoing research projects, or research assistant positions
 
 HTML Content:
@@ -163,7 +163,7 @@ Extract the following information (if available):
 6. Requirements (GPA, skills, experience)
 7. Contact email
 
-If the content is about a COURSE (not a research lab/project), return all fields as "Not a research project".
+If the content is CLEARLY about a COURSE with syllabus/homework/exams (not a research lab/project), return all fields as "Not a research project".
 
 Return ONLY a JSON object with these fields:
 {

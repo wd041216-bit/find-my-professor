@@ -522,7 +522,7 @@ Respond in JSON format as an array of projects.`;
    * 使用LLM验证单个项目是否为科研项目
    */
   private static async verifyProjectWithLLM(project: any): Promise<boolean> {
-    const prompt = `You are a research project classifier. Determine if the following content describes a REAL RESEARCH PROJECT/LAB or a COURSE.
+    const prompt = `You are a research project classifier. Determine if the following content describes a REAL RESEARCH PROJECT/LAB or an OBVIOUS COURSE.
 
 **Project Information:**
 Title: ${project.projectTitle}
@@ -532,13 +532,15 @@ Research Area: ${project.researchArea}
 Description: ${project.projectDescription}
 Requirements: ${project.requirements}
 
-**Classification Rules:**
-- Research projects/labs: faculty research groups, ongoing research, research assistant positions, lab opportunities
-- Courses: class syllabi, course descriptions, lectures, homework, assignments, exams
+**Classification Rules (RELAXED MODE):**
+- Research projects/labs: faculty research groups, ongoing research, research assistant positions, lab opportunities, faculty research pages
+- ONLY filter out OBVIOUS courses with: syllabus, homework assignments, exams, grading rubrics, lecture schedules
+- If unsure or ambiguous, classify as research project (err on the side of inclusion)
+- Faculty pages describing research interests should be classified as research projects
 
-**Question:** Is this a research project/lab (not a course)?
+**Question:** Is this CLEARLY an obvious course (with syllabus/homework/exams)?
 
-Respond with ONLY "true" or "false".`;
+Respond with "true" if it's a research project, "false" if it's an OBVIOUS course.`;
 
     try {
       const response = await invokeLLMWithLimit({

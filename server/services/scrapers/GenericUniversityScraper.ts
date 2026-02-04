@@ -221,16 +221,15 @@ export class GenericUniversityScraper extends UniversityScraper {
       'div[class*="research"]',
     ];
     
-    // Course-related keywords to filter out
+    // Course-related keywords to filter out (only obvious course indicators)
+    // Relaxed to avoid over-filtering research projects
     const courseKeywords = [
-      'course',
-      'syllabus',
-      'lecture',
-      'homework',
-      'assignment',
-      'exam',
-      'textbook',
-      'grading',
+      'syllabus',      // Very specific to courses
+      'homework',      // Very specific to courses
+      'assignment',    // Very specific to courses
+      'exam',          // Very specific to courses
+      'midterm',       // Very specific to courses
+      'final exam',    // Very specific to courses
     ];
     
     for (const selector of containerSelectors) {
