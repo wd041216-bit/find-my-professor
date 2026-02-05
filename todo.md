@@ -380,3 +380,9 @@
 - [x] 创建/cover-letters页面展示所有已生成的文书
 - [x] 在MobileNav中添加"申请文书"入口链接到/cover-letters
 - [x] 测试手机端导航功能
+
+## Dashboard简化
+- [x] 从Dashboard页面移除"匹配历史"板块（只通过侧边栏访问）
+- [x] 从Dashboard页面移除"申请文书"板块（只通过侧边栏访问）
+- [x] 清空用户的匹配历史数据
+- [x] 测试Dashboard简化后的显示效果
