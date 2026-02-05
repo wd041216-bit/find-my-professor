@@ -60,3 +60,10 @@
 - [x] 失败时回滚已扣除的积分或不扣除
 - [x] 测试失败场景（网络错误、LLM错误、爬虫错误）
 - [x] 保存checkpoint
+
+## 修复新用户匹配错误
+- [ ] 检查服务器日志定位"Cannot read properties of undefined (reading '0')"错误
+- [ ] 检查前端Explore页面和后端matching router的数组访问
+- [x] 修复所有可能导致undefined[0]访问的代码
+- [x] 测试新用户（MIT+生物）的匹配场景
+- [x] 保存checkpoint

@@ -110,8 +110,29 @@ export default function Explore() {
       return;
     }
 
-    const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
-    const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+    // Safely parse JSON with error handling
+    let targetUniversities: string[] = [];
+    let targetMajors: string[] = [];
+    
+    try {
+      targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
+      if (!Array.isArray(targetUniversities)) {
+        targetUniversities = [];
+      }
+    } catch (e) {
+      console.error('Failed to parse targetUniversities:', e);
+      targetUniversities = [];
+    }
+    
+    try {
+      targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+      if (!Array.isArray(targetMajors)) {
+        targetMajors = [];
+      }
+    } catch (e) {
+      console.error('Failed to parse targetMajors:', e);
+      targetMajors = [];
+    }
 
     // Validate required fields
     if (targetUniversities.length === 0) {
@@ -149,8 +170,6 @@ export default function Explore() {
     
     try {
       // Use new matching API (deducts 40 credits: matching + normalization)
-      const universityName = targetUniversities[0];
-      const majorName = targetMajors[0];
       
       const result = await calculateMatchesMutation.mutateAsync({ language });
 
