@@ -45,3 +45,11 @@
 - [x] 更新ContactDialog组件，在"购买积分"表单中显示定价
 - [x] 测试中英文显示效果
 - [x] 保存checkpoint
+
+## 简化简历上传流程
+- [x] 查找现有简历上传相关代码（Activities页面）
+- [x] 移除"Parsing Complete!"弹窗和解析结果展示
+- [x] 移除"View All Activities"和统计信息显示
+- [x] 简化为：上传 → 保存到profile → 成功提示
+- [x] 测试上传流程
+- [x] 保存checkpoint
