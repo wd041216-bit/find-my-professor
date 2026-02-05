@@ -41,9 +41,9 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
-  // Fetch user credits balance
+  // Fetch user credits balance (show for all users including admins)
   const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: !!user && user.role !== 'admin', // Admins don't have credit limits
+    enabled: !!user,
   });
 
   if (authLoading) {
@@ -83,8 +83,8 @@ export default function Dashboard() {
                 {t.nav.explore}
               </Button>
             </Link>
-            {/* Credits balance display (only for non-admin users) */}
-            {user.role !== 'admin' && creditsData && (
+            {/* Credits balance display */}
+            {creditsData && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full">
                 <Coins className="h-4 w-4" />
                 <span className="text-sm font-medium">{creditsData.balance}</span>
@@ -116,8 +116,8 @@ export default function Dashboard() {
           </div>
           {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-1">
-            {/* Credits balance display for mobile (only for non-admin users) */}
-            {user.role !== 'admin' && creditsData && (
+            {/* Credits balance display for mobile */}
+            {creditsData && (
               <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full mr-1">
                 <Coins className="h-3 w-3" />
                 <span className="text-xs font-medium">{creditsData.balance}</span>
