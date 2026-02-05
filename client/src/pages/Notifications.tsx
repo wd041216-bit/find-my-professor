@@ -5,16 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Bell, BellOff, Loader2, CheckCheck, Trash2 } from "lucide-react";
+import { ArrowLeft, Bell, BellOff, Loader2, CheckCheck, Trash2, Megaphone } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Notifications() {
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [, setLocation] = useLocation();
 
   const { data: notifications = [], refetch, isLoading } = trpc.notifications.list.useQuery(undefined, {
     enabled: !!user,
   });
+
+  const { data: announcements = [], isLoading: announcementsLoading } = trpc.announcements.getActive.useQuery();
 
   const markReadMutation = trpc.notifications.markAsRead.useMutation({
     onSuccess: () => {
@@ -117,7 +121,37 @@ export default function Notifications() {
           )}
         </div>
 
+        {/* Active Announcements */}
+        {!announcementsLoading && announcements.length > 0 && (
+          <div className="mb-6 space-y-3">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Megaphone className="h-5 w-5 text-primary" />
+              {t.notifications?.announcements || "System Announcements"}
+            </h2>
+            {announcements.map((announcement) => (
+              <Card key={announcement.id} className="border-primary/50 bg-primary/5">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <Megaphone className="h-4 w-4 text-primary" />
+                    <CardTitle className="text-lg">{announcement.title}</CardTitle>
+                    <Badge variant="default" className="text-xs">
+                      {t.notifications?.announcement || "Announcement"}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm whitespace-pre-wrap mb-2">{announcement.content}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(announcement.startDate).toLocaleDateString()} - {new Date(announcement.endDate).toLocaleDateString()}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
         {/* Notifications List */}
+        <h2 className="text-xl font-semibold mb-4">{t.notifications?.yourNotifications || "Your Notifications"}</h2>
         {isLoading ? (
           <div className="flex justify-center py-16">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />

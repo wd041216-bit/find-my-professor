@@ -375,6 +375,35 @@ export const translations = {
       successMessage: "Successfully extracted {activities} activities and {skills} skills!",
       errorParse: "Failed to parse resume: {error}",
     },
+    // Notifications Page
+    notifications: {
+      announcements: "System Announcements",
+      announcement: "Announcement",
+      yourNotifications: "Your Notifications",
+    },
+    // Admin
+    admin: {
+      announcements: {
+        title: "Announcements Management",
+        subtitle: "Create and manage system announcements for all users",
+        createNew: "Create Announcement",
+        createTitle: "New Announcement",
+        createDescription: "Create a new announcement that will be visible to all users",
+        titleLabel: "Title",
+        titlePlaceholder: "Enter announcement title",
+        contentLabel: "Content",
+        contentPlaceholder: "Enter announcement content",
+        durationLabel: "Duration (days)",
+        durationHint: "How many days this announcement will be active",
+        create: "Create",
+        createSuccess: "Announcement created successfully",
+        deleteSuccess: "Announcement deleted successfully",
+        confirmDelete: "Are you sure you want to delete this announcement?",
+        validationError: "Title and content are required",
+        active: "Active",
+        noAnnouncements: "No announcements yet",
+      },
+    },
   },
   zh: {
     // Navigation
@@ -746,6 +775,35 @@ export const translations = {
       errorReadFile: "读取文件失败",
       successMessage: "成功提取了{activities}个活动和{skills}个技能！",
       errorParse: "解析简历失败：{error}",
+    },
+    // Notifications Page
+    notifications: {
+      announcements: "系统公告",
+      announcement: "公告",
+      yourNotifications: "你的通知",
+    },
+    // Admin
+    admin: {
+      announcements: {
+        title: "公告管理",
+        subtitle: "创建和管理系统公告，所有用户可见",
+        createNew: "创建公告",
+        createTitle: "新公告",
+        createDescription: "创建一个所有用户都可以看到的公告",
+        titleLabel: "标题",
+        titlePlaceholder: "输入公告标题",
+        contentLabel: "内容",
+        contentPlaceholder: "输入公告内容",
+        durationLabel: "持续时间（天）",
+        durationHint: "公告将持续显示多少天",
+        create: "创建",
+        createSuccess: "公告创建成功",
+        deleteSuccess: "公告删除成功",
+        confirmDelete: "确定要删除这个公告吗？",
+        validationError: "标题和内容为必填项",
+        active: "活跃",
+        noAnnouncements: "还没有公告",
+      },
     },
   },
 };

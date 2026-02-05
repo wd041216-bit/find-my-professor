@@ -386,6 +386,61 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  // Announcements
+  announcements: router({
+    // Get active announcements (for all users)
+    getActive: publicProcedure.query(async () => {
+      return db.getActiveAnnouncements();
+    }),
+    
+    // Admin: Get all announcements
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      return db.getAllAnnouncements();
+    }),
+    
+    // Admin: Create announcement
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string(),
+        content: z.string(),
+        durationDays: z.number().min(1).max(365),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + input.durationDays);
+        
+        const announcementId = await db.createAnnouncement({
+          title: input.title,
+          content: input.content,
+          startDate,
+          endDate,
+          createdBy: ctx.user.id,
+        });
+        
+        return { success: true, id: announcementId };
+      }),
+    
+    // Admin: Delete announcement
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        
+        await db.deleteAnnouncement(input.id);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
