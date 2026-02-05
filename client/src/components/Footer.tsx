@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { ContactDialog } from "@/components/ContactDialog";
 
 export function Footer() {
   return (
@@ -9,17 +10,11 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <button
-                  onClick={() => {
-                    const contactSection = document.getElementById("contact");
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                  className="hover:underline text-left"
-                >
-                  Contact Us
-                </button>
+                <ContactDialog trigger={
+                  <button className="hover:underline text-left">
+                    Contact Us
+                  </button>
+                } />
               </li>
               <li>
                 <Link href="/explore" className="hover:underline">

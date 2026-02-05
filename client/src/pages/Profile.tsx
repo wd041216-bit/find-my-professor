@@ -27,14 +27,14 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     academicLevel: "" as "high_school" | "undergraduate" | "graduate" | "",
     gpa: "",
-    targetUniversities: [] as string[],
+    targetUniversity: "" as string,
     targetMajors: [] as string[],
     skills: [] as string[],
     interests: [] as string[],
     bio: "",
   });
 
-  const [targetUnivInput, setTargetUnivInput] = useState("");
+
   const [targetMajorInput, setTargetMajorInput] = useState("");
   const [skillInput, setSkillInput] = useState("");
   const [interestInput, setInterestInput] = useState("");
@@ -44,7 +44,7 @@ export default function Profile() {
       setFormData({
         academicLevel: profile.academicLevel || "",
         gpa: profile.gpa || "",
-        targetUniversities: profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [],
+        targetUniversity: profile.targetUniversities ? (JSON.parse(profile.targetUniversities)[0] || "") : "",
         targetMajors: profile.targetMajors ? JSON.parse(profile.targetMajors) : [],
         skills: profile.skills ? JSON.parse(profile.skills) : [],
         interests: profile.interests ? JSON.parse(profile.interests) : [],
@@ -66,29 +66,29 @@ export default function Profile() {
     e.preventDefault();
     const submitData = {
       ...formData,
+      targetUniversities: formData.targetUniversity ? [formData.targetUniversity] : [],
       academicLevel: formData.academicLevel || undefined,
     };
     upsertMutation.mutate(submitData);
   };
 
-  const addItem = (type: "targetUniversities" | "targetMajors" | "skills" | "interests", value: string) => {
+  const addItem = (type: "targetMajors" | "skills" | "interests", value: string) => {
     if (value.trim()) {
       setFormData(prev => ({
         ...prev,
         [type]: [...prev[type], value.trim()],
       }));
       
-      if (type === "targetUniversities") setTargetUnivInput("");
       if (type === "targetMajors") setTargetMajorInput("");
       if (type === "skills") setSkillInput("");
       if (type === "interests") setInterestInput("");
     }
   };
 
-  const removeItem = (type: "targetUniversities" | "targetMajors" | "skills" | "interests", index: number) => {
+  const removeItem = (type: "targetMajors" | "skills" | "interests", index: number) => {
     setFormData(prev => ({
       ...prev,
-      [type]: prev[type].filter((_, i) => i !== index),
+      [type]: prev[type].filter((_: any, i: number) => i !== index),
     }));
   };
 
@@ -178,31 +178,20 @@ export default function Profile() {
                 )}
               </div>
 
-              {/* Target Universities */}
+              {/* Target University (Single Selection) */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.targetUniversities}</h3>
-                <div className="flex gap-2">
-                  <Input
-                    value={targetUnivInput}
-                    onChange={(e) => setTargetUnivInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addItem("targetUniversities", targetUnivInput))}
-                    placeholder={t.profile.addUniversity}
-                    className="h-9 md:h-10 text-sm"
-                  />
-                  <Button type="button" size="sm" onClick={() => addItem("targetUniversities", targetUnivInput)} className="h-9 md:h-10">
-                    Add
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-1.5 md:gap-2">
-                  {formData.targetUniversities.map((univ, index) => (
-                    <div key={index} className="bg-secondary text-secondary-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm flex items-center gap-1.5 md:gap-2">
-                      {univ}
-                      <button type="button" onClick={() => removeItem("targetUniversities", index)} className="hover:text-destructive">
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                <h3 className="text-base md:text-lg font-semibold">{t.profile.targetUniversity || t.profile.targetUniversities}</h3>
+                <Input
+                  value={formData.targetUniversity}
+                  onChange={(e) => setFormData(prev => ({ ...prev, targetUniversity: e.target.value }))}
+                  placeholder={t.profile.addUniversity}
+                  className="h-9 md:h-10 text-sm"
+                />
+                {formData.targetUniversity && (
+                  <div className="bg-secondary text-secondary-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm inline-flex items-center gap-1.5 md:gap-2">
+                    {formData.targetUniversity}
+                  </div>
+                )}
               </div>
 
               {/* Target Majors */}
