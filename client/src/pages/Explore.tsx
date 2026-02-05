@@ -98,7 +98,7 @@ export default function Explore() {
     setProjects([]);
     
     try {
-      // Use new matching API (deducts 30 credits)
+      // Use new matching API (deducts 40 credits: matching + normalization)
       const universityName = targetUniversities[0];
       const majorName = targetMajors[0];
       
