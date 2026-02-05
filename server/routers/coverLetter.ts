@@ -91,9 +91,12 @@ export const coverLetterRouter = router({
       };
 
       // Generate cover letter using LLM
+      // IMPORTANT: Always generate in English regardless of user interface language
       const prompt = `You are an expert academic advisor helping a student write a compelling cover letter for a research position.
 
-**Student Profile:**
+**CRITICAL INSTRUCTION: Write the entire cover letter in English only. The recipient is a foreign professor who expects English communication.**
+
+**Student Profile:
 - Current University: ${userProfile.currentUniversity || "Not specified"}
 - Current Major: ${userProfile.currentMajor || "Not specified"}
 - Academic Level: ${userProfile.academicLevel || "Not specified"}
@@ -133,7 +136,7 @@ Return ONLY the cover letter text, without any additional commentary or meta-tex
           {
             role: "system",
             content:
-              "You are an expert academic advisor specializing in research position applications. Write compelling, personalized cover letters.",
+              "You are an expert academic advisor specializing in research position applications. Write compelling, personalized cover letters in English only. Never use Chinese or any other language.",
           },
           {
             role: "user",
