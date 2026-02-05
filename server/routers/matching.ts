@@ -17,12 +17,15 @@ export const matchingRouter = router({
     .mutation(async ({ ctx, input }) => {
     const language = input?.language || 'en';
     // Step 1: Check credits (40 points for matching, includes normalization)
-    const currentCredits = await checkAndResetCredits(ctx.user.id);
-    if (currentCredits < 40) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'INSUFFICIENT_CREDITS',
-      });
+    // Skip credit check for admin users
+    if (ctx.user.role !== 'admin') {
+      const currentCredits = await checkAndResetCredits(ctx.user.id);
+      if (currentCredits < 40) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'INSUFFICIENT_CREDITS',
+        });
+      }
     }
 
     // Step 2: Get user profile
@@ -95,7 +98,10 @@ export const matchingRouter = router({
     };
 
     // Step 5: Deduct credits (40 points: matching + normalization)
-    await deductCredits(ctx.user.id, 40, 'project_matching');
+    // Skip credit deduction for admin users
+    if (ctx.user.role !== 'admin') {
+      await deductCredits(ctx.user.id, 40, 'project_matching');
+    }
 
     // Step 6: Generate matches with LLM (fast, returns immediately)
     const matches: MatchedProject[] = await generateMatchedProjects(university, major, userProfile, language);
