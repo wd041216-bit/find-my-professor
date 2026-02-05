@@ -45,6 +45,7 @@ export interface ScrapedProject {
   requirements: string;
   contactEmail: string;
   sourceUrl: string;
+  source?: 'scraped' | 'llm_generated'; // Data source
   scrapedAt: Date;
 }
 
@@ -213,9 +214,9 @@ export class ScrapingService {
         await pool.execute(
           `INSERT INTO scraped_projects 
            (university_name, major_name, degree_level, professor_name, lab_name, research_area, 
-            project_title, project_description, requirements, contact_email, source_url, 
+            project_title, project_description, requirements, contact_email, source_url, source,
             scraped_at, expires_at, created_at) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), NOW())`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR), NOW())`,
           [
             task.university_name,
             task.major_name,
@@ -227,7 +228,8 @@ export class ScrapingService {
             project.projectDescription,
             project.requirements,
             project.contactEmail,
-            project.sourceUrl
+            project.sourceUrl,
+            project.source || 'llm_generated' // Default to llm_generated if not specified
           ]
         );
       }
@@ -236,7 +238,7 @@ export class ScrapingService {
       await pool.execute(
         `INSERT INTO university_major_cache 
          (university_name, major_name, degree_level, project_count, cached_at, expires_at, request_count, last_requested_at, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 1, NOW(), NOW(), NOW())`,
+         VALUES (?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR), 1, NOW(), NOW(), NOW())`,
         [task.university_name, task.major_name, task.degree_level, scrapedProjects.length]
       );
       
@@ -311,7 +313,8 @@ export class ScrapingService {
         return verifiedProjects.map((p: any) => ({
           ...p,
           universityName,
-          majorName
+          majorName,
+          source: 'scraped' as const // Mark as scraped from website
         }));
       }
       
@@ -471,33 +474,24 @@ export class ScrapingService {
     }
     
     // Layer 2: Check URL cache (LLM-generated URLs from previous searches, 0 tokens)
-    // TODO: Re-enable after URL generator refactoring is complete
-    // const { UrlGeneratorService } = await import('./urlGenerator');
-    // const cachedUrl = await UrlGeneratorService.getCachedUrl(universityName, major);
-    // if (cachedUrl) {
-    //   console.log(`[Scraping] URL from cache: ${cachedUrl}`);
-    //   return cachedUrl;
-    // }
-    
-    // Layer 3: Generate with LLM and cache (fallback, 300-500 tokens)
-    // TODO: Re-enable after URL generator refactoring is complete
-    // console.log(`[Scraping] Generating URL with LLM for ${universityName}...`);
-    // const generatedUrl = await UrlGeneratorService.generateAndValidateUrl(universityName, major);
-    // 
-    // if (generatedUrl) {
-    //   // Cache the generated URL for future use
-    //   const generated = await UrlGeneratorService.generateUniversityUrl(universityName, major);
-    //   await UrlGeneratorService.cacheUrl(
-    //     universityName,
-    //     major,
-    //     generatedUrl,
-    //     'llm_generated',
-    //     generated.confidence,
-    //     true
-    //   );
-    //   console.log(`[Scraping] URL generated and cached: ${generatedUrl}`);
-    //   return generatedUrl;
-    // }
+    try {
+      const pool = getConnectionPool();
+      const [rows] = await pool.execute(
+        `SELECT url FROM professor_url_cache 
+         WHERE university = ? AND expires_at > NOW() 
+         LIMIT 1`,
+        [universityName]
+      );
+      
+      if (Array.isArray(rows) && rows.length > 0) {
+        const cachedUrl = (rows[0] as any).url;
+        console.log(`[Scraping] URL from cache: ${cachedUrl}`);
+        return cachedUrl;
+      }
+    } catch (error) {
+      console.error('[Scraping] Error querying URL cache:', error);
+      // Continue to fallback
+    }
     
     // Default: try to construct URL from university name
     // Fixed: properly handle "of" and other prepositions
@@ -594,7 +588,8 @@ Respond in JSON format as an array of projects.`;
       projectDescription: project.projectDescription,
       requirements: project.requirements,
       contactEmail: project.contactEmail,
-      sourceUrl: project.sourceUrl
+      sourceUrl: project.sourceUrl,
+      source: 'llm_generated' as const // Mark as LLM-generated
     }));
   }
 

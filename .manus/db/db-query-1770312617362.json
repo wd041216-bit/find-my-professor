@@ -1,0 +1,75 @@
+{
+  "query": "SELECT * FROM university_major_cache LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT * FROM university_major_cache LIMIT 5;",
+  "rows": [
+    {
+      "id": "150001",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "degree_level": "undergraduate",
+      "project_count": "6",
+      "cached_at": "2026-02-04 16:58:09",
+      "expires_at": "2026-03-06 16:58:09",
+      "request_count": "3",
+      "last_requested_at": "2026-02-05 03:36:48",
+      "created_at": "2026-02-04 16:58:09",
+      "updated_at": "2026-02-05 03:36:48"
+    },
+    {
+      "id": "180001",
+      "university_name": "University of Washington",
+      "major_name": "computer science",
+      "degree_level": "all",
+      "project_count": "6",
+      "cached_at": "2026-02-05 02:41:16",
+      "expires_at": "2026-03-07 02:41:16",
+      "request_count": "2",
+      "last_requested_at": "2026-02-05 02:41:25",
+      "created_at": "2026-02-05 02:41:16",
+      "updated_at": "2026-02-05 02:41:25"
+    },
+    {
+      "id": "210001",
+      "university_name": "Stanford University",
+      "major_name": "Computer Science",
+      "degree_level": "undergraduate",
+      "project_count": "6",
+      "cached_at": "2026-02-05 03:39:25",
+      "expires_at": "2026-03-07 03:39:25",
+      "request_count": "4",
+      "last_requested_at": "2026-02-05 04:12:32",
+      "created_at": "2026-02-05 03:39:25",
+      "updated_at": "2026-02-05 04:12:32"
+    },
+    {
+      "id": "210002",
+      "university_name": "University of Illinois Urbana-Champaign",
+      "major_name": "Computer Science",
+      "degree_level": "undergraduate",
+      "project_count": "6",
+      "cached_at": "2026-02-05 04:15:14",
+      "expires_at": "2026-03-07 04:15:14",
+      "request_count": "2",
+      "last_requested_at": "2026-02-05 04:18:56",
+      "created_at": "2026-02-05 04:15:14",
+      "updated_at": "2026-02-05 04:18:56"
+    },
+    {
+      "id": "210003",
+      "university_name": "Washington University in St. Louis",
+      "major_name": "Computer Science",
+      "degree_level": "undergraduate",
+      "project_count": "6",
+      "cached_at": "2026-02-05 04:22:42",
+      "expires_at": "2026-03-07 04:22:42",
+      "request_count": "1",
+      "last_requested_at": "2026-02-05 04:22:42",
+      "created_at": "2026-02-05 04:22:42",
+      "updated_at": "2026-02-05 04:22:42"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuniversity_name\tmajor_name\tdegree_level\tproject_count\tcached_at\texpires_at\trequest_count\tlast_requested_at\tcreated_at\tupdated_at\n150001\tStanford\tcomputer science\tundergraduate\t6\t2026-02-04 16:58:09\t2026-03-06 16:58:09\t3\t2026-02-05 03:36:48\t2026-02-04 16:58:09\t2026-02-05 03:36:48\n180001\tUniversity of Washington\tcomputer science\tall\t6\t2026-02-05 02:41:16\t2026-03-07 02:41:16\t2\t2026-02-05 02:41:25\t2026-02-05 02:41:16\t2026-02-05 02:41:25\n210001\tStanford University\tComputer Science\tundergraduate\t6\t2026-02-05 03:39:25\t2026-03-07 03:39:25\t4\t2026-02-05 04:12:32\t2026-02-05 03:39:25\t2026-02-05 04:12:32\n210002\tUniversity of Illinois Urbana-Champaign\tComputer Science\tundergraduate\t6\t2026-02-05 04:15:14\t2026-03-07 04:15:14\t2\t2026-02-05 04:18:56\t2026-02-05 04:15:14\t2026-02-05 04:18:56\n210003\tWashington University in St. Louis\tComputer Science\tundergraduate\t6\t2026-02-05 04:22:42\t2026-03-07 04:22:42\t1\t2026-02-05 04:22:42\t2026-02-05 04:22:42\t2026-02-05 04:22:42\n",
+  "stderr": "",
+  "execution_time_ms": 4167
+}

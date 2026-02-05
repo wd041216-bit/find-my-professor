@@ -104,8 +104,53 @@
 - [x] 修改i18n.ts中中文积分耗尽弹窗的提示信息，添加按需购买选项
 - [ ] 测试并保存checkpoint
 
-## 🔧 修复"购买积分"按钮跳转问题
-- [ ] 测试"购买积分"按钮的跳转功能
-- [ ] 检查InsufficientCreditsDialog组件的代码
-- [ ] 修复按钮点击后无法跳转到Contact页面的问题
+## 🔧 修复“购买积分”按钮跳转问题
+- [x] 测试“购买积分”按钮的跳转功能
+- [x] 检查InsufficientCreditsDialog组件的代码
+- [x] 修复i18n.ts中的语法错误（删除多余的逗号）
+- [x] 测试并保存checkpoint
+
+## 🔄 积分重置功能
+- [x] 检查当前积分重置逻辑（确认是否按用户时区重置）
+- [x] 立即重置所有用户积分到100
+- [x] 修复购买积分按钮跳转到404页面的问题（创建Contact页面并添加路由）
+- [ ] 实现基于用户浏览器时区的积分重置系统（每天凌晨12点重置）
+- [ ] 测试时区感知的积分重置功能
+- [ ] 保存checkpoint
+
+## 🔔 自定义通知功能
+- [ ] 设计自定义通知的数据库表结构
+- [ ] 创建通知管理的tRPC接口（创建、查询、标记已读、删除）
+- [ ] 实现通知发送逻辑（系统通知、管理员通知）
+- [ ] 创建通知展示组件（通知列表、通知弹窗）
+- [ ] 集成到现有通知系统
+- [ ] 编写单元测试
 - [ ] 测试并保存checkpoint
+
+## 🔍 SEO优化
+- [x] 优化meta description（缩短到150字符以内）
+- [x] 优化网站title（添加"AI Research Opportunity Matcher"后缀）
+
+## 🕷️ 爬虫问题调查与修复
+- [x] 检查数据库中的research_projects表（确认是否有数据）
+- [x] 检查爬虫任务表（university_major_cache）的状态
+- [x] 分析服务器日志中的爬虫错误
+- [x] 分析scraping.ts代码逻辑
+- [x] 在scraped_projects表添加source字段（区分'scraped'和'llm_generated'）
+- [x] 修改过期时间从30天改为1年
+- [ ] 深入分析爬虫效果差的原因（URL 404、网站结构变化等）
+- [ ] 修复爬虫问题
+- [ ] 测试爬虫功能
+- [ ] 保存checkpoint
+
+## 🔗 爬虫URL修复方案
+- [x] 分析当前URL系统的问题（爬虫404错误）
+- [x] 删除matching.ts中的urlGenerator调用（直接使用LLM生成的URL）
+- [x] 删除urlGenerator.ts文件
+- [x] 清空professor_url_cache和university_url_cache中的错误URL
+- [x] 从project_matches表提取LLM生成的URL（19个URL）
+- [x] 验证URL的有效性（设置1年过期）
+- [x] 将验证过的URL存入缓存表
+- [x] 修改爬虫逻辑使用缓存的URL（Layer 2查询professor_url_cache）
+- [x] 测试爬虫功能（服务器重启成功，无错误）
+- [ ] 保存checkpoint

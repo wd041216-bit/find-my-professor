@@ -666,3 +666,17 @@ export async function deleteErrorLog(errorId: number) {
   await db.delete(errorLogs).where(eq(errorLogs.id, errorId));
   return { success: true };
 }
+
+// ===== User Timezone Management =====
+
+export async function updateUserTimezone(userId: number, timezone: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users)
+    .set({ timezone })
+    .where(eq(users.id, userId));
+  
+  console.log(`[Database] Updated timezone for user ${userId} to ${timezone}`);
+  return { success: true };
+}

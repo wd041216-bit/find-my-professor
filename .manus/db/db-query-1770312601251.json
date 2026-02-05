@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, university_name, major_name, professor_name, project_title, scraped_at FROM scraped_projects LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, university_name, major_name, professor_name, project_title, scraped_at FROM scraped_projects LIMIT 10;",
+  "rows": [
+    {
+      "id": "150001",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Fei-Fei Li",
+      "project_title": "Understanding Human-Object Interaction in Videos",
+      "scraped_at": "2026-02-04 16:58:08"
+    },
+    {
+      "id": "150002",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Percy Liang",
+      "project_title": "Evaluating Robustness of Large Language Models to Adversarial Attacks",
+      "scraped_at": "2026-02-04 16:58:08"
+    },
+    {
+      "id": "150003",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Pat Hanrahan",
+      "project_title": "Real-time Physically Based Rendering for Interactive Applications",
+      "scraped_at": "2026-02-04 16:58:08"
+    },
+    {
+      "id": "150004",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Dawson Engler",
+      "project_title": "Automated Bug Detection in Linux Kernel Modules",
+      "scraped_at": "2026-02-04 16:58:09"
+    },
+    {
+      "id": "150005",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Jennifer Widom",
+      "project_title": "Optimizing Query Performance in Distributed Graph Databases",
+      "scraped_at": "2026-02-04 16:58:09"
+    },
+    {
+      "id": "150006",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Chris Ré",
+      "project_title": "Accelerating Data Labeling for Weak Supervision Systems",
+      "scraped_at": "2026-02-04 16:58:09"
+    },
+    {
+      "id": "150007",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Fei-Fei Li",
+      "project_title": "Bias Detection in Large-Scale Image Datasets",
+      "scraped_at": "2026-02-04 17:07:02"
+    },
+    {
+      "id": "150008",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Percy Liang",
+      "project_title": "Evaluating Robustness of LLMs to Adversarial Prompts",
+      "scraped_at": "2026-02-04 17:07:02"
+    },
+    {
+      "id": "150009",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Pat Hanrahan",
+      "project_title": "Real-time Rendering Techniques for Interactive 3D Environments",
+      "scraped_at": "2026-02-04 17:07:03"
+    },
+    {
+      "id": "150010",
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "professor_name": "Monica Lam",
+      "project_title": "Optimizing Performance of Decentralized Applications on Blockchain",
+      "scraped_at": "2026-02-04 17:07:03"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuniversity_name\tmajor_name\tprofessor_name\tproject_title\tscraped_at\n150001\tStanford\tcomputer science\tFei-Fei Li\tUnderstanding Human-Object Interaction in Videos\t2026-02-04 16:58:08\n150002\tStanford\tcomputer science\tPercy Liang\tEvaluating Robustness of Large Language Models to Adversarial Attacks\t2026-02-04 16:58:08\n150003\tStanford\tcomputer science\tPat Hanrahan\tReal-time Physically Based Rendering for Interactive Applications\t2026-02-04 16:58:08\n150004\tStanford\tcomputer science\tDawson Engler\tAutomated Bug Detection in Linux Kernel Modules\t2026-02-04 16:58:09\n150005\tStanford\tcomputer science\tJennifer Widom\tOptimizing Query Performance in Distributed Graph Databases\t2026-02-04 16:58:09\n150006\tStanford\tcomputer science\tChris Ré\tAccelerating Data Labeling for Weak Supervision Systems\t2026-02-04 16:58:09\n150007\tStanford\tcomputer science\tFei-Fei Li\tBias Detection in Large-Scale Image Datasets\t2026-02-04 17:07:02\n150008\tStanford\tcomputer science\tPercy Liang\tEvaluating Robustness of LLMs to Adversarial Prompts\t2026-02-04 17:07:02\n150009\tStanford\tcomputer science\tPat Hanrahan\tReal-time Rendering Techniques for Interactive 3D Environments\t2026-02-04 17:07:03\n150010\tStanford\tcomputer science\tMonica Lam\tOptimizing Performance of Decentralized Applications on Blockchain\t2026-02-04 17:07:03\n",
+  "stderr": "",
+  "execution_time_ms": 2546
+}

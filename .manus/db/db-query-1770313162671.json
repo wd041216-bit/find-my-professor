@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, project_name, professor_name, university, url FROM project_matches WHERE url IS NOT NULL LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, project_name, professor_name, university, url FROM project_matches WHERE url IS NOT NULL LIMIT 10;",
+  "rows": [
+    {
+      "id": "120031",
+      "project_name": "宪法理论与民主治理研究",
+      "professor_name": "Jack Balkin",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/jack-m-balkin"
+    },
+    {
+      "id": "120032",
+      "project_name": "刑法与刑事司法改革",
+      "professor_name": "Tracey Meares",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/tracey-l-meares"
+    },
+    {
+      "id": "120033",
+      "project_name": "国际法与全球治理挑战",
+      "professor_name": "Oona Hathaway",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/oona-a-hathaway"
+    },
+    {
+      "id": "120034",
+      "project_name": "知识产权与创新政策",
+      "professor_name": "Amy Kapczynski",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/amy-kapczynski"
+    },
+    {
+      "id": "120035",
+      "project_name": "环境法与政策创新",
+      "professor_name": "Douglas Kysar",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/douglas-a-kysar"
+    },
+    {
+      "id": "120036",
+      "project_name": "公司法与企业治理",
+      "professor_name": "Jonathan Macey",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/jonathan-r-macey"
+    },
+    {
+      "id": "120037",
+      "project_name": "移民法与公民权研究",
+      "professor_name": "Cristina Rodríguez",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/cristina-m-rodriguez"
+    },
+    {
+      "id": "120038",
+      "project_name": "法律史与社会变迁",
+      "professor_name": "John Fabian Witt",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/john-fabian-witt"
+    },
+    {
+      "id": "120039",
+      "project_name": "医疗保健法与政策",
+      "professor_name": "Abbe Gluck",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/abbe-r-gluck"
+    },
+    {
+      "id": "120040",
+      "project_name": "法律与哲学：正义理论",
+      "professor_name": "Scott Shapiro",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/scott-j-shapiro"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tproject_name\tprofessor_name\tuniversity\turl\n120031\t宪法理论与民主治理研究\tJack Balkin\tYale University\thttps://law.yale.edu/faculty/jack-m-balkin\n120032\t刑法与刑事司法改革\tTracey Meares\tYale University\thttps://law.yale.edu/faculty/tracey-l-meares\n120033\t国际法与全球治理挑战\tOona Hathaway\tYale University\thttps://law.yale.edu/faculty/oona-a-hathaway\n120034\t知识产权与创新政策\tAmy Kapczynski\tYale University\thttps://law.yale.edu/faculty/amy-kapczynski\n120035\t环境法与政策创新\tDouglas Kysar\tYale University\thttps://law.yale.edu/faculty/douglas-a-kysar\n120036\t公司法与企业治理\tJonathan Macey\tYale University\thttps://law.yale.edu/faculty/jonathan-r-macey\n120037\t移民法与公民权研究\tCristina Rodríguez\tYale University\thttps://law.yale.edu/faculty/cristina-m-rodriguez\n120038\t法律史与社会变迁\tJohn Fabian Witt\tYale University\thttps://law.yale.edu/faculty/john-fabian-witt\n120039\t医疗保健法与政策\tAbbe Gluck\tYale University\thttps://law.yale.edu/faculty/abbe-r-gluck\n120040\t法律与哲学：正义理论\tScott Shapiro\tYale University\thttps://law.yale.edu/faculty/scott-j-shapiro\n",
+  "stderr": "",
+  "execution_time_ms": 8033
+}

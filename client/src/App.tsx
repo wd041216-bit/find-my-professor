@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { TimezoneSync } from "./components/TimezoneSync";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Home from "./pages/Home";
@@ -22,6 +23,7 @@ import Skills from "./pages/Skills";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
+import Contact from "./pages/Contact";
 
 function Router() {
   return (
@@ -43,6 +45,7 @@ function Router() {
       <Route path={"/terms"} component={TermsOfService} />
       <Route path={"/privacy"} component={PrivacyPolicy} />
       <Route path={"/refund"} component={RefundPolicy} />
+      <Route path={"/contact"} component={Contact} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -55,6 +58,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <LanguageProvider>
           <TooltipProvider>
+            <TimezoneSync />
             <Toaster />
             <Router />
           </TooltipProvider>

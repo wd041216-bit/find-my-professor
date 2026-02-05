@@ -1,0 +1,94 @@
+{
+  "query": "SELECT \n  university_name, \n  major_name, \n  COUNT(*) as project_count,\n  MIN(scraped_at) as first_scraped,\n  MAX(expires_at) as latest_expiry\nFROM scraped_projects \nWHERE expires_at > NOW()\nGROUP BY university_name, major_name\nORDER BY project_count DESC\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT \n  university_name, \n  major_name, \n  COUNT(*) as project_count,\n  MIN(scraped_at) as first_scraped,\n  MAX(expires_at) as latest_expiry\nFROM scraped_projects \nWHERE expires_at > NOW()\nGROUP BY university_name, major_name\nORDER BY project_count DESC\nLIMIT 20;",
+  "rows": [
+    {
+      "university_name": "University of Washington",
+      "major_name": "Artificial Intelligence",
+      "project_count": "105",
+      "first_scraped": "2026-02-05 07:17:58",
+      "latest_expiry": "2026-03-07 17:15:14"
+    },
+    {
+      "university_name": "Washington University in St. Louis",
+      "major_name": "Art History",
+      "project_count": "66",
+      "first_scraped": "2026-02-05 04:40:07",
+      "latest_expiry": "2026-03-07 07:08:13"
+    },
+    {
+      "university_name": "Stanford",
+      "major_name": "computer science",
+      "project_count": "24",
+      "first_scraped": "2026-02-04 16:58:08",
+      "latest_expiry": "2026-03-06 17:12:56"
+    },
+    {
+      "university_name": "Harvard University",
+      "major_name": "Economics",
+      "project_count": "18",
+      "first_scraped": "2026-02-05 11:37:47",
+      "latest_expiry": "2026-03-07 12:04:30"
+    },
+    {
+      "university_name": "Princeton University",
+      "major_name": "Mathematics",
+      "project_count": "18",
+      "first_scraped": "2026-02-05 11:37:57",
+      "latest_expiry": "2026-03-07 12:04:44"
+    },
+    {
+      "university_name": "Stanford University",
+      "major_name": "Biology",
+      "project_count": "13",
+      "first_scraped": "2026-02-05 11:36:56",
+      "latest_expiry": "2026-03-07 12:04:27"
+    },
+    {
+      "university_name": "University of California, Berkeley",
+      "major_name": "Physics",
+      "project_count": "12",
+      "first_scraped": "2026-02-05 11:37:56",
+      "latest_expiry": "2026-03-07 12:03:52"
+    },
+    {
+      "university_name": "Stanford University",
+      "major_name": "Computer Science",
+      "project_count": "6",
+      "first_scraped": "2026-02-05 03:39:24",
+      "latest_expiry": "2026-03-07 03:39:24"
+    },
+    {
+      "university_name": "University of Washington",
+      "major_name": "computer science",
+      "project_count": "6",
+      "first_scraped": "2026-02-05 02:41:15",
+      "latest_expiry": "2026-03-07 02:41:16"
+    },
+    {
+      "university_name": "University of Illinois Urbana-Champaign",
+      "major_name": "Computer Science",
+      "project_count": "6",
+      "first_scraped": "2026-02-05 04:15:13",
+      "latest_expiry": "2026-03-07 04:15:14"
+    },
+    {
+      "university_name": "Washington University in St. Louis",
+      "major_name": "Computer Science",
+      "project_count": "6",
+      "first_scraped": "2026-02-05 04:22:42",
+      "latest_expiry": "2026-03-07 04:22:42"
+    },
+    {
+      "university_name": "Massachusetts Institute of Technology",
+      "major_name": "Computer Science",
+      "project_count": "1",
+      "first_scraped": "2026-02-05 11:35:41",
+      "latest_expiry": "2026-03-07 11:35:41"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_name\tmajor_name\tproject_count\tfirst_scraped\tlatest_expiry\nUniversity of Washington\tArtificial Intelligence\t105\t2026-02-05 07:17:58\t2026-03-07 17:15:14\nWashington University in St. Louis\tArt History\t66\t2026-02-05 04:40:07\t2026-03-07 07:08:13\nStanford\tcomputer science\t24\t2026-02-04 16:58:08\t2026-03-06 17:12:56\nHarvard University\tEconomics\t18\t2026-02-05 11:37:47\t2026-03-07 12:04:30\nPrinceton University\tMathematics\t18\t2026-02-05 11:37:57\t2026-03-07 12:04:44\nStanford University\tBiology\t13\t2026-02-05 11:36:56\t2026-03-07 12:04:27\nUniversity of California, Berkeley\tPhysics\t12\t2026-02-05 11:37:56\t2026-03-07 12:03:52\nStanford University\tComputer Science\t6\t2026-02-05 03:39:24\t2026-03-07 03:39:24\nUniversity of Washington\tcomputer science\t6\t2026-02-05 02:41:15\t2026-03-07 02:41:16\nUniversity of Illinois Urbana-Champaign\tComputer Science\t6\t2026-02-05 04:15:13\t2026-03-07 04:15:14\nWashington University in St. Louis\tComputer Science\t6\t2026-02-05 04:22:42\t2026-03-07 04:22:42\nMassachusetts Institute of Technology\tComputer Science\t1\t2026-02-05 11:35:41\t2026-03-07 11:35:41\n",
+  "stderr": "",
+  "execution_time_ms": 1993
+}

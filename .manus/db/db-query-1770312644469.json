@@ -1,0 +1,15 @@
+{
+  "query": "SELECT \n  COUNT(*) as total,\n  SUM(CASE WHEN expires_at > NOW() THEN 1 ELSE 0 END) as not_expired,\n  SUM(CASE WHEN expires_at <= NOW() THEN 1 ELSE 0 END) as expired\nFROM scraped_projects;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT \n  COUNT(*) as total,\n  SUM(CASE WHEN expires_at > NOW() THEN 1 ELSE 0 END) as not_expired,\n  SUM(CASE WHEN expires_at <= NOW() THEN 1 ELSE 0 END) as expired\nFROM scraped_projects;",
+  "rows": [
+    {
+      "total": "281",
+      "not_expired": "281",
+      "expired": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tnot_expired\texpired\n281\t281\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1795
+}

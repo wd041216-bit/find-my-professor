@@ -1,0 +1,124 @@
+{
+  "query": "SELECT professor_name, university, url, COUNT(*) as count \nFROM project_matches \nWHERE url IS NOT NULL AND url != ''\nGROUP BY professor_name, university, url\nORDER BY count DESC\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT professor_name, university, url, COUNT(*) as count \nFROM project_matches \nWHERE url IS NOT NULL AND url != ''\nGROUP BY professor_name, university, url\nORDER BY count DESC\nLIMIT 20;",
+  "rows": [
+    {
+      "professor_name": "Dr. Jessica White",
+      "university": "University of Washington",
+      "url": "https://www.washington.edu/",
+      "count": "2"
+    },
+    {
+      "professor_name": "Dr. David Miller",
+      "university": "University of Washington",
+      "url": "https://hcds.ischool.uw.edu/",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. Kevin Zhang",
+      "university": "University of Washington",
+      "url": "https://hcai.cs.washington.edu/",
+      "count": "1"
+    },
+    {
+      "professor_name": "Jonathan Macey",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/jonathan-r-macey",
+      "count": "1"
+    },
+    {
+      "professor_name": "Scott Shapiro",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/scott-j-shapiro",
+      "count": "1"
+    },
+    {
+      "professor_name": "Tracey Meares",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/tracey-l-meares",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. Emily Chen",
+      "university": "University of Washington",
+      "url": "https://www.washington.edu/",
+      "count": "1"
+    },
+    {
+      "professor_name": "Oona Hathaway",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/oona-a-hathaway",
+      "count": "1"
+    },
+    {
+      "professor_name": "John Fabian Witt",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/john-fabian-witt",
+      "count": "1"
+    },
+    {
+      "professor_name": "Cristina Rodríguez",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/cristina-m-rodriguez",
+      "count": "1"
+    },
+    {
+      "professor_name": "Abbe Gluck",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/abbe-r-gluck",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. Jessica Wang",
+      "university": "University of Washington",
+      "url": "https://www.cs.washington.edu/",
+      "count": "1"
+    },
+    {
+      "professor_name": "Douglas Kysar",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/douglas-a-kysar",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. David Lee",
+      "university": "University of Washington",
+      "url": "https://cssl.uw.edu/",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. Jessica Brown",
+      "university": "University of Washington",
+      "url": "https://www.washington.edu/",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. Anya Sharma",
+      "university": "University of Washington",
+      "url": "https://www.psych.uw.edu/computational-cognition-lab",
+      "count": "1"
+    },
+    {
+      "professor_name": "Jack Balkin",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/jack-m-balkin",
+      "count": "1"
+    },
+    {
+      "professor_name": "Amy Kapczynski",
+      "university": "Yale University",
+      "url": "https://law.yale.edu/faculty/amy-kapczynski",
+      "count": "1"
+    },
+    {
+      "professor_name": "Dr. Sarah Kim",
+      "university": "University of Washington",
+      "url": "https://ai.uw.edu/",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "professor_name\tuniversity\turl\tcount\nDr. Jessica White\tUniversity of Washington\thttps://www.washington.edu/\t2\nDr. David Miller\tUniversity of Washington\thttps://hcds.ischool.uw.edu/\t1\nDr. Kevin Zhang\tUniversity of Washington\thttps://hcai.cs.washington.edu/\t1\nJonathan Macey\tYale University\thttps://law.yale.edu/faculty/jonathan-r-macey\t1\nScott Shapiro\tYale University\thttps://law.yale.edu/faculty/scott-j-shapiro\t1\nTracey Meares\tYale University\thttps://law.yale.edu/faculty/tracey-l-meares\t1\nDr. Emily Chen\tUniversity of Washington\thttps://www.washington.edu/\t1\nOona Hathaway\tYale University\thttps://law.yale.edu/faculty/oona-a-hathaway\t1\nJohn Fabian Witt\tYale University\thttps://law.yale.edu/faculty/john-fabian-witt\t1\nCristina Rodríguez\tYale University\thttps://law.yale.edu/faculty/cristina-m-rodriguez\t1\nAbbe Gluck\tYale University\thttps://law.yale.edu/faculty/abbe-r-gluck\t1\nDr. Jessica Wang\tUniversity of Washington\thttps://www.cs.washington.edu/\t1\nDouglas Kysar\tYale University\thttps://law.yale.edu/faculty/douglas-a-kysar\t1\nDr. David Lee\tUniversity of Washington\thttps://cssl.uw.edu/\t1\nDr. Jessica Brown\tUniversity of Washington\thttps://www.washington.edu/\t1\nDr. Anya Sharma\tUniversity of Washington\thttps://www.psych.uw.edu/computational-cognition-lab\t1\nJack Balkin\tYale University\thttps://law.yale.edu/faculty/jack-m-balkin\t1\nAmy Kapczynski\tYale University\thttps://law.yale.edu/faculty/amy-kapczynski\t1\nDr. Sarah Kim\tUniversity of Washington\thttps://ai.uw.edu/\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1907
+}
