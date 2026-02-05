@@ -35,7 +35,7 @@ export function TimezoneSync() {
         console.error(`[TimezoneSync] Failed to detect timezone:`, error);
       }
     }
-  }, [user, updateTimezoneMutation]);
+  }, [user]); // Remove updateTimezoneMutation from deps to avoid infinite loop
 
   // This component doesn't render anything
   return null;
