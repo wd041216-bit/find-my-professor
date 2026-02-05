@@ -179,13 +179,25 @@ export default function Profile() {
           </CardHeader>
           <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
             <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+              {/* Required Fields Info */}
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 md:p-4">
+                <h3 className="text-sm md:text-base font-semibold text-primary mb-1">{t.profile.requiredFields}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">{t.profile.requiredFieldsDesc}</p>
+              </div>
+
               {/* Basic Information */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.academicInfo}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base md:text-lg font-semibold">{t.profile.academicInfo}</h3>
+                  <span className="text-xs text-muted-foreground">({t.profile.required})</span>
+                </div>
                 
                 {/* Academic Level - First */}
                 <div className="space-y-1.5 md:space-y-2">
-                  <Label htmlFor="academicLevel" className="text-sm">{t.profile.academicLevel}</Label>
+                  <Label htmlFor="academicLevel" className="text-sm flex items-center gap-1.5">
+                    {t.profile.academicLevel}
+                    <span className="text-destructive">*</span>
+                  </Label>
                   <Select
                     value={formData.academicLevel}
                     onValueChange={(value: "high_school" | "undergraduate" | "graduate") => 
@@ -206,7 +218,10 @@ export default function Profile() {
                 {/* GPA Input */}
                 {formData.academicLevel && (
                   <div className="space-y-1.5 md:space-y-2">
-                    <Label htmlFor="gpa" className="text-sm">{t.profile.gpa}</Label>
+                    <Label htmlFor="gpa" className="text-sm flex items-center gap-1.5">
+                      {t.profile.gpa}
+                      <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+                    </Label>
                     <Input
                       id="gpa"
                       value={formData.gpa}
@@ -220,10 +235,10 @@ export default function Profile() {
 
               {/* Target University (Single Selection) */}
               <div className="space-y-3 md:space-y-4">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base md:text-lg font-semibold">{t.profile.targetUniversity || t.profile.targetUniversities}</h3>
-                  <span className="text-destructive text-sm">*</span>
-                </div>
+                <Label htmlFor="targetUniversity" className="text-base md:text-lg font-semibold flex items-center gap-1.5">
+                  {t.profile.targetUniversity || t.profile.targetUniversities}
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   value={formData.targetUniversity}
                   onChange={(e) => setFormData(prev => ({ ...prev, targetUniversity: e.target.value }))}
@@ -243,7 +258,10 @@ export default function Profile() {
 
               {/* Target Majors */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.targetMajors}</h3>
+                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
+                  {t.profile.targetMajors}
+                  <span className="text-destructive">*</span>
+                </Label>
                 <div className="flex gap-2">
                   <Input
                     value={targetMajorInput}
@@ -268,9 +286,18 @@ export default function Profile() {
                 </div>
               </div>
 
+              {/* Optional Fields Info */}
+              <div className="bg-muted/50 border border-muted rounded-lg p-3 md:p-4">
+                <h3 className="text-sm md:text-base font-semibold mb-1">{t.profile.optionalFields}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">{t.profile.optionalFieldsDesc}</p>
+              </div>
+
               {/* Skills */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.skills}</h3>
+                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
+                  {t.profile.skills}
+                  <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+                </Label>
                 <div className="flex gap-2">
                   <Input
                     value={skillInput}
@@ -297,7 +324,10 @@ export default function Profile() {
 
               {/* Interests */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.interests}</h3>
+                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
+                  {t.profile.interests}
+                  <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+                </Label>
                 <div className="flex gap-2">
                   <Input
                     value={interestInput}
@@ -324,7 +354,10 @@ export default function Profile() {
 
               {/* Bio */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.bio}</h3>
+                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
+                  {t.profile.bio}
+                  <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+                </Label>
                 <Textarea
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}

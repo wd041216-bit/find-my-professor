@@ -60,7 +60,15 @@ export default function Dashboard() {
   }
 
   // Only check profile completeness after data is loaded to avoid flashing
-  const profileComplete = profileLoading ? true : (profile && profile.currentUniversity && profile.currentMajor && profile.academicLevel);
+  // Required fields: targetUniversities, targetMajors, academicLevel
+  const profileComplete = profileLoading ? true : (
+    profile && 
+    profile.targetUniversities && 
+    profile.targetUniversities.length > 0 && 
+    profile.targetMajors && 
+    profile.targetMajors.length > 0 && 
+    profile.academicLevel
+  );
 
   return (
     <div className="min-h-screen bg-background">
