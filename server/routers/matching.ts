@@ -314,7 +314,19 @@ export const matchingRouter = router({
       const existingMatches = await db.getUserMatches(ctx.user.id);
       const existingProjectNames = new Set(existingMatches.map(m => m.projectName));
 
-      // Step 5: Try to get projects from database first (crawler results)
+      // Step 5: Check credits first (40 points for refresh, same as initial match)
+      if (ctx.user.role !== 'admin') {
+        const currentCredits = await checkAndResetCredits(ctx.user.id);
+        if (currentCredits < 40) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'INSUFFICIENT_CREDITS',
+          });
+        }
+        await deductCredits(ctx.user.id, 40, 'project_refresh');
+      }
+
+      // Step 6: Try to get projects from database first (crawler results)
       let matches: MatchedProject[] = [];
       let strategy = 'database_refresh';
       
@@ -337,20 +349,8 @@ export const matchingRouter = router({
         strategy = 'llm_refresh';
       }
 
-      // Step 6: If database doesn't have enough new projects, call LLM
+      // Step 7: If database doesn't have enough new projects, call LLM
       if (matches.length === 0) {
-        // Check credits before LLM call (10 points for refresh)
-        if (ctx.user.role !== 'admin') {
-          const currentCredits = await checkAndResetCredits(ctx.user.id);
-          if (currentCredits < 10) {
-            throw new TRPCError({
-              code: 'FORBIDDEN',
-              message: 'INSUFFICIENT_CREDITS',
-            });
-          }
-          await deductCredits(ctx.user.id, 10, 'project_refresh');
-        }
-
         // Build user profile for LLM
         const activities = await db.getUserActivities(ctx.user.id);
         const skills = profile.skills ? JSON.parse(profile.skills) : undefined;
@@ -371,14 +371,9 @@ export const matchingRouter = router({
 
         console.log(`[RefreshMatches] Calling LLM for new matches...`);
         matches = await generateMatchedProjects(university, major, userProfile, language);
-      } else {
-        // Using database results, deduct minimal credits (5 points)
-        if (ctx.user.role !== 'admin') {
-          await deductCredits(ctx.user.id, 5, 'project_refresh');
-        }
       }
 
-      // Step 7: Delete old matches and save new ones
+      // Step 8: Delete old matches and save new ones
       await db.deleteUserMatches(ctx.user.id);
 
       const matchesWithIds = [];
