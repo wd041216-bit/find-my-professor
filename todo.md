@@ -193,3 +193,9 @@
 - [ ] 将4个额外的表添加到schema.ts（major_normalization, university_normalization, scraped_projects, university_major_cache）
 - [ ] 更新schema文档
 - [ ] 保存checkpoint
+
+## 🎯 新任务
+- [ ] 实现匹配结果小于10个时使用LLM补齐功能
+- [ ] 优化匹配结果展示（中文用户友好格式、项目标签、筛选功能）
+- [ ] 测试爬虫功能（清空profile_cache后触发真实匹配）
+- [ ] 保存checkpoint
