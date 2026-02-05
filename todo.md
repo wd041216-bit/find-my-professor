@@ -332,7 +332,13 @@
 ## 前端修复和功能增强
 - [x] 修复ProjectDetail页面使用trpc.matching.getMatchHistory API
 - [x] 在Dashboard顶部添加积分余额显示（剩余积分+每日重置提示）
-- [ ] 实现积分不足提示：捕获INSUFFICIENT_CREDITS错误显示InsufficientCreditsDialog  
+- [ ] 实现积分不足提示：Dashboard的Find Matches按钮捕获INSUFFICIENT_CREDITS错误
 - [x] 启用联网LLM：在llmMatching.ts中启用LLM联网功能获取最新项目信息
-- [ ] 项目卡片添加"一键生成文书"按钮（消耗10积分）
+- [ ] 项目卡片添加Generate Letter按钮（消耐10积分，无需进入详情页）
 - [ ] 测试完整流程（匹配、积分扣除、文书生成）
+
+## UI优化和匹配逻辑改进
+- [x] 将Profile页面的保存按钮移到顶部（提升用户体验）
+- [ ] 优化匹配逻辑：数据库有数据直接使用，无数据才用LLM匹配
+- [ ] 确保爬虫异步后台运行，不阻塞用户查看匹配结果
+- [ ] 测试完整匹配流程（数据库命中和LLM fallback两种场景）

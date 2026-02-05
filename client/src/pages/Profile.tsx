@@ -123,7 +123,25 @@ export default function Profile() {
             <GraduationCap className="h-5 w-5 text-primary" />
             <span className="font-semibold text-sm md:text-base">Find My Professor</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            <Button 
+              onClick={handleSubmit} 
+              disabled={upsertMutation.isPending}
+              size="sm"
+              className="hidden md:flex"
+            >
+              {upsertMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t.profile.saving}
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  {t.profile.saveProfile}
+                </>
+              )}
+            </Button>
             <LanguageSwitcher />
           </div>
         </div>
