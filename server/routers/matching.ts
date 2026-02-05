@@ -4,6 +4,8 @@ import * as db from "../db";
 import { generateMatchedProjects, triggerBackgroundCrawler, type UserProfile, type MatchedProject } from "../services/llmMatching";
 import { deductCredits, checkAndResetCredits } from "../services/credits";
 import { NormalizationService } from "../services/normalization";
+import { getCachedMatches, cacheMatches } from "../services/profileCache";
+import { isSimplifiedProfile, getRandomProjectsFromDatabase, hasSufficientProjects } from "../services/simplifiedMatching";
 import { TRPCError } from "@trpc/server";
 
 export const matchingRouter = router({
@@ -83,11 +85,13 @@ export const matchingRouter = router({
     
     // Step 4: Build user profile for LLM (re-fetch activities after resume parsing)
     activities = await db.getUserActivities(ctx.user.id);
+    const skills = profile.skills ? JSON.parse(profile.skills) : undefined;
+    const interests = profile.interests ? JSON.parse(profile.interests) : undefined;
     const userProfile: UserProfile = {
       academicLevel: profile.academicLevel || undefined,
       gpa: profile.gpa || undefined,
-      skills: profile.skills ? JSON.parse(profile.skills) : undefined,
-      interests: profile.interests ? JSON.parse(profile.interests) : undefined,
+      skills,
+      interests,
       bio: profile.bio || undefined,
       activities: activities.map(a => ({
         title: a.title,
@@ -96,15 +100,90 @@ export const matchingRouter = router({
         role: a.role || undefined,
       })),
     };
+    
+    // Step 4.5: Check if this is a simplified profile
+    const isSimplified = isSimplifiedProfile(skills, interests, activities, profile.bio || undefined);
+    console.log(`[Matching] Profile type: ${isSimplified ? 'SIMPLIFIED' : 'DETAILED'}`);
 
-    // Step 5: Deduct credits (40 points: matching + normalization)
-    // Skip credit deduction for admin users
-    if (ctx.user.role !== 'admin') {
-      await deductCredits(ctx.user.id, 40, 'project_matching');
+    // Step 5: Check profile cache (only for non-simplified profiles)
+    let matches: MatchedProject[] = [];
+    let strategy = 'llm_direct';
+    
+    if (!isSimplified) {
+      // Try to get cached matches for detailed profiles
+      const hasSkills = skills && skills.length > 0;
+      const hasActivities = activities.length > 0;
+      const cachedMatches = await getCachedMatches(
+        university,
+        major,
+        profile.academicLevel || undefined,
+        hasSkills,
+        hasActivities
+      );
+      
+      if (cachedMatches && cachedMatches.length > 0) {
+        console.log(`[Matching] Using cached matches (${cachedMatches.length} projects)`);
+        matches = cachedMatches;
+        strategy = 'cache_hit';
+      }
     }
-
-    // Step 6: Generate matches with LLM (fast, returns immediately)
-    const matches: MatchedProject[] = await generateMatchedProjects(university, major, userProfile, language);
+    
+    // Step 6: If no cache hit, decide strategy based on profile type
+    if (matches.length === 0) {
+      if (isSimplified) {
+        // Simplified profile: try database first
+        console.log(`[Matching] Simplified profile detected, checking database...`);
+        const hasProjects = await hasSufficientProjects(university, major, 5);
+        
+        if (hasProjects) {
+          // Use random database selection
+          console.log(`[Matching] Using database random selection`);
+          matches = await getRandomProjectsFromDatabase(university, major, 10);
+          strategy = 'database_random';
+        } else {
+          // Database empty, trigger scraping
+          console.log(`[Matching] Database empty, triggering scraper...`);
+          // For simplified profiles with no database, we still need to call LLM
+          // but we'll use a simpler prompt
+          strategy = 'llm_fallback';
+        }
+      }
+      
+      // Step 7: If still no matches, use LLM
+      if (matches.length === 0) {
+        // Deduct credits before LLM call
+        if (ctx.user.role !== 'admin') {
+          await deductCredits(ctx.user.id, 40, 'project_matching');
+        }
+        
+        console.log(`[Matching] Calling LLM for matching...`);
+        matches = await generateMatchedProjects(university, major, userProfile, language);
+        
+        // Cache the results for future use (only for detailed profiles)
+        if (!isSimplified && matches.length > 0) {
+          const hasSkills = skills && skills.length > 0;
+          const hasActivities = activities.length > 0;
+          await cacheMatches(
+            university,
+            major,
+            profile.academicLevel || undefined,
+            hasSkills,
+            hasActivities,
+            matches
+          );
+        }
+      } else if (strategy === 'database_random') {
+        // For database random selection, deduct reduced credits (20 instead of 40)
+        if (ctx.user.role !== 'admin') {
+          await deductCredits(ctx.user.id, 20, 'project_matching');
+        }
+      }
+    } else {
+      // Cache hit, deduct minimal credits (10 instead of 40)
+      if (ctx.user.role !== 'admin') {
+        await deductCredits(ctx.user.id, 10, 'project_matching');
+      }
+    }
 
     // Step 6.5: Delete old matches for this user to avoid duplicates
     await db.deleteUserMatches(ctx.user.id);
@@ -151,7 +230,7 @@ export const matchingRouter = router({
         matchScore: m.matchScore,
         matchReason: m.matchReason,
       })),
-      strategy: 'llm_direct',
+      strategy,
       university,
       major,
     };

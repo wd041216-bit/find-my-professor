@@ -183,6 +183,35 @@ export type ApplicationLetter = typeof applicationLetters.$inferSelect;
 export type InsertApplicationLetter = typeof applicationLetters.$inferInsert;
 
 /**
+ * User profile cache for matching optimization
+ * Caches matching results for similar user profiles to reduce LLM calls
+ */
+export const profileCache = mysqlTable("profile_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  profileHash: varchar("profile_hash", { length: 64 }).notNull().unique(), // SHA-256 hash of profile key fields
+  university: varchar("university", { length: 255 }).notNull(),
+  major: varchar("major", { length: 255 }).notNull(),
+  
+  // Cached profile snapshot (for debugging)
+  academicLevel: mysqlEnum("academic_level", ["high_school", "undergraduate", "graduate"]),
+  hasSkills: boolean("has_skills").default(false),
+  hasActivities: boolean("has_activities").default(false),
+  
+  // Cached matching results (JSON array of MatchedProject)
+  cachedMatches: text("cached_matches").notNull(),
+  matchCount: int("match_count").notNull(),
+  
+  // Cache metadata
+  hitCount: int("hit_count").default(0).notNull(), // Number of times this cache was reused
+  expiresAt: timestamp("expires_at").notNull(), // Cache expiration (7 days)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProfileCache = typeof profileCache.$inferSelect;
+export type InsertProfileCache = typeof profileCache.$inferInsert;
+
+/**
  * Cover letters generated for project matches
  * Stores personalized application letters for specific project-user pairs
  */
