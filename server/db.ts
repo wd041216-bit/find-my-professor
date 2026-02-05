@@ -305,6 +305,12 @@ export async function getUserMatches(userId: number) {
     .orderBy(desc(projectMatches.matchScore));
 }
 
+export async function deleteUserMatches(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(projectMatches).where(eq(projectMatches.userId, userId));
+}
+
 export async function getMatchByUserAndProject(userId: number, projectId: number) {
   const db = await getDb();
   if (!db) return undefined;

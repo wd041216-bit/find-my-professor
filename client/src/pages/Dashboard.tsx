@@ -276,7 +276,7 @@ export default function Dashboard() {
                 <CardTitle className="text-base md:text-lg">{t.dashboard.matchHistory || "Match History"}</CardTitle>
                 <CardDescription className="text-sm">{matchHistory.length} {t.dashboard.matches || "matches"}</CardDescription>
               </div>
-              <Link href="/explore">
+              <Link href="/history">
                 <Button size="sm" variant="outline">
                   {t.dashboard.viewAll}
                   <ArrowRight className="ml-2 h-4 w-4" />
