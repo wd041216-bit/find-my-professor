@@ -17,6 +17,230 @@ export interface GeneratedUrl {
 
 export class UrlGeneratorService {
   
+  /**
+   * Generate project URL with fallback strategy
+   * Priority 1: Professor's faculty page
+   * Priority 2: Research lab/group page
+   * Priority 3: Department page
+   * Priority 4: School/college page
+   * Priority 5: University homepage
+   */
+  static async generateProjectUrl(
+    projectName: string,
+    professorName: string,
+    department: string,
+    university: string
+  ): Promise<string | null> {
+    try {
+      console.log(`[URL Generator] Generating URL for: ${projectName} - ${professorName} at ${university}`);
+      
+      const prompt = `You are a research project URL finder. Given the following information, generate the most appropriate URL.
+
+**Project Information:**
+- Project: ${projectName}
+- Professor: ${professorName}
+- Department: ${department}
+- University: ${university}
+
+**URL Priority (choose the best available):**
+1. Professor's faculty page at the university (BEST)
+2. Research lab/group page
+3. Department page (if professor page not found)
+4. School/college page (if department page not found)
+5. University homepage (LAST RESORT)
+
+**Instructions:**
+- Search your knowledge for the professor's official faculty page URL
+- If the professor exists, return their faculty page URL
+- If the professor doesn't exist or you're unsure, return the department/school page URL
+- Always return a VALID, WORKING URL (not a 404 page)
+- Use the official university domain
+
+**Examples:**
+- Good: https://law.yale.edu/jack-m-balkin (professor page)
+- Good: https://www.cs.washington.edu/research/human-centered-computing/ (research group)
+- Acceptable: https://www.cs.washington.edu/ (department page)
+- Last resort: https://www.washington.edu/ (university homepage)
+
+Return ONLY a JSON object with this structure:
+{
+  "url": "string (the URL)",
+  "type": "professor_page" | "lab_page" | "department_page" | "school_page" | "university_homepage",
+  "confidence": "high" | "medium" | "low",
+  "reasoning": "string (brief explanation)"
+}`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: "You are a research project URL finder. Always return valid, working URLs. Return only valid JSON." },
+          { role: "user", content: prompt }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "url_result",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                url: { type: "string" },
+                type: { 
+                  type: "string",
+                  enum: ["professor_page", "lab_page", "department_page", "school_page", "university_homepage"]
+                },
+                confidence: { 
+                  type: "string",
+                  enum: ["high", "medium", "low"]
+                },
+                reasoning: { type: "string" }
+              },
+              required: ["url", "type", "confidence", "reasoning"],
+              additionalProperties: false
+            }
+          }
+        }
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        console.log('[URL Generator] No response from LLM');
+        return null;
+      }
+
+      const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+      const result = JSON.parse(contentStr);
+      console.log(`[URL Generator] Generated URL: ${result.url} (${result.type}, confidence: ${result.confidence})`);
+      console.log(`[URL Generator] Reasoning: ${result.reasoning}`);
+      
+      // Verify the URL is accessible
+      console.log(`[URL Generator] Verifying URL accessibility...`);
+      const isAccessible = await this.testUrlAccessible(result.url);
+
+      if (isAccessible) {
+        console.log(`[URL Generator] ✅ URL verified and accessible`);
+        return result.url;
+      }
+
+      console.log(
+        `[URL Generator] ⚠️ URL not accessible (${result.url}), falling back to department page`
+      );
+
+      // Fallback to department/school page
+      const departmentUrl = await this.generateDepartmentUrl(
+        department,
+        university
+      );
+
+      // Verify department URL
+      const isDepartmentAccessible = await this.testUrlAccessible(departmentUrl);
+      if (isDepartmentAccessible) {
+        console.log(
+          `[URL Generator] ✅ Department URL verified: ${departmentUrl}`
+        );
+        return departmentUrl;
+      }
+
+      console.log(
+        `[URL Generator] ⚠️ Department URL not accessible, falling back to university homepage`
+      );
+
+      // Final fallback to university homepage
+      const universityUrl = this.generateUniversityHomepage(university);
+      console.log(
+        `[URL Generator] ✅ Using university homepage: ${universityUrl}`
+      );
+      return universityUrl;
+    } catch (error) {
+      console.error('[URL Generator] Error generating project URL:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Generate department/school URL as fallback
+   */
+  private static async generateDepartmentUrl(
+    departmentName: string,
+    universityName: string
+  ): Promise<string> {
+    console.log(
+      `[URL Generator] Generating department URL for ${departmentName} at ${universityName}`
+    );
+
+    const prompt = `Find the official website URL for the ${departmentName} department/school at ${universityName}.
+
+IMPORTANT: Return ONLY a valid, accessible URL that exists. Common patterns:
+- For Yale Law School: https://law.yale.edu/
+- For UW Computer Science: https://www.cs.washington.edu/
+- For Stanford CS: https://cs.stanford.edu/
+
+If you cannot find the department page, return the university homepage.
+
+Return ONLY the URL, nothing else.`;
+
+    try {
+      const response = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a URL finder. Return only valid, accessible URLs. If unsure, return the university homepage.",
+          },
+          { role: "user", content: prompt },
+        ],
+      });
+
+      const content = response.choices[0].message.content;
+      const url = (typeof content === 'string' ? content : JSON.stringify(content)).trim();
+      console.log(`[URL Generator] Generated department URL: ${url}`);
+      return url;
+    } catch (error) {
+      console.error("[URL Generator] Error generating department URL:", error);
+      // Fallback to university homepage
+      return this.generateUniversityHomepage(universityName);
+    }
+  }
+
+  /**
+   * Generate university homepage URL
+   */
+  private static generateUniversityHomepage(universityName: string): string {
+    // Common university URL patterns
+    const urlMap: Record<string, string> = {
+      "Yale University": "https://www.yale.edu/",
+      "University of Washington": "https://www.washington.edu/",
+      "Stanford University": "https://www.stanford.edu/",
+      "Harvard University": "https://www.harvard.edu/",
+      "MIT": "https://www.mit.edu/",
+      "Princeton University": "https://www.princeton.edu/",
+      "Columbia University": "https://www.columbia.edu/",
+      "University of California, Berkeley": "https://www.berkeley.edu/",
+      "Cornell University": "https://www.cornell.edu/",
+      "University of Pennsylvania": "https://www.upenn.edu/",
+    };
+
+    const url = urlMap[universityName];
+    if (url) {
+      console.log(
+        `[URL Generator] Using known university URL: ${url} for ${universityName}`
+      );
+      return url;
+    }
+
+    // Generate URL from university name
+    const domain = universityName
+      .toLowerCase()
+      .replace(/university of /g, "")
+      .replace(/,/g, "")
+      .replace(/ /g, "")
+      .replace(/\./g, "");
+    const generatedUrl = `https://www.${domain}.edu/`;
+    console.log(
+      `[URL Generator] Generated university URL: ${generatedUrl} for ${universityName}`
+    );
+    return generatedUrl;
+  }
+
   // Database connection pool
   private static connectionPool: mysql.Pool | null = null;
   
