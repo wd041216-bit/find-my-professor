@@ -2,58 +2,36 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Footer } from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, MapPin, Clock, DollarSign, Globe, GraduationCap, Target, Sparkles, Filter, Search, AlertCircle } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { ArrowLeft, Loader2, MapPin, Globe, GraduationCap, Target, Sparkles, Search, AlertCircle, Mail } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialog";
 
 export default function Explore() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [searching, setSearching] = useState(false);
-  const [scrapingTaskId, setScrapingTaskId] = useState<number | null>(null);
   const [projects, setProjects] = useState<any[]>([]);
-  const [minMatchScore, setMinMatchScore] = useState(0);
+  const [showCreditsDialog, setShowCreditsDialog] = useState(false);
   const { t } = useLanguage();
-  const utils = trpc.useUtils();
+
+  const calculateMatchesMutation = trpc.matching.calculateMatches.useMutation();
 
   // Get user profile for target universities and majors
   const { data: profile } = trpc.profile.get.useQuery(undefined, {
     enabled: !!user,
   });
 
-  // Poll scraping task status
-  const { data: taskStatus } = trpc.scraping.getTaskStatus.useQuery(
-    { taskId: scrapingTaskId! },
-    {
-      enabled: !!scrapingTaskId,
-      refetchInterval: 3000,
-    }
-  );
-
-  // When task completes, fetch the cached projects
-  useEffect(() => {
-    if (taskStatus?.status === 'completed' && profile) {
-      const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
-      const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
-      
-      if (targetUniversities.length > 0 && targetMajors.length > 0) {
-        // Fetch projects for the first target university and major
-        handleFetchProjects(targetUniversities[0], targetMajors[0]);
-      }
-    }
-  }, [taskStatus?.status]);
-
   const handleSearchProjects = async () => {
     if (!profile) {
-      toast.error("请先完善个人资料");
+      toast.error(t.explore.completeProfileFirst || "请先完善个人资料");
       return;
     }
 
@@ -61,12 +39,12 @@ export default function Explore() {
     const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
 
     if (targetUniversities.length === 0) {
-      toast.error("请在个人资料中添加目标大学");
+      toast.error(t.explore.addTargetUniversity || "请在个人资料中添加目标大学");
       return;
     }
 
     if (targetMajors.length === 0) {
-      toast.error("请在个人资料中添加目标专业");
+      toast.error(t.explore.addTargetMajor || "请在个人资料中添加目标专业");
       return;
     }
 
@@ -74,57 +52,24 @@ export default function Explore() {
     setProjects([]);
     
     try {
-      // Search for the first target university and major
+      // Use new matching API (deducts 30 credits)
       const universityName = targetUniversities[0];
       const majorName = targetMajors[0];
       
-      const result = await utils.scraping.searchProjects.fetch({
-        universityName,
-        majorName,
-        degreeLevel: profile.academicLevel === 'high_school' ? 'undergraduate' : (profile.academicLevel || 'all'),
-      });
+      const result = await calculateMatchesMutation.mutateAsync();
 
-      if (result.cached) {
-        // Cache hit - show results immediately
-        setProjects(result.projects);
-        toast.success(`找到 ${result.projects.length} 个项目（缓存数据，${result.cacheAge}天前）`);
-        setSearching(false);
-      } else if (result.scrapingTriggered) {
-        // Cache miss - scraping triggered
-        setScrapingTaskId(result.taskId!);
-        toast.info(`正在爬取 ${universityName} 的 ${majorName} 项目...`);
-      }
+      setProjects(result.matches);
+      toast.success(t.explore.foundProjects?.replace('{count}', result.matches.length.toString()) || `找到 ${result.matches.length} 个匹配项目`);
+      setSearching(false);
     } catch (error: any) {
-      toast.error(`搜索失败: ${error.message}`);
+      if (error.message?.includes('INSUFFICIENT_CREDITS') || error.data?.code === 'INSUFFICIENT_CREDITS') {
+        setShowCreditsDialog(true);
+      } else {
+        toast.error(t.explore.searchFailed?.replace('{message}', error.message) || `搜索失败: ${error.message}`);
+      }
       setSearching(false);
     }
   };
-
-  const handleFetchProjects = async (universityName: string, majorName: string) => {
-    try {
-      const result = await utils.scraping.searchProjects.fetch({
-        universityName,
-        majorName,
-        degreeLevel: profile?.academicLevel === 'high_school' ? 'undergraduate' : (profile?.academicLevel || 'all'),
-      });
-
-      if (result.cached && result.projects.length > 0) {
-        setProjects(result.projects);
-        toast.success(`找到 ${result.projects.length} 个项目`);
-      }
-      setSearching(false);
-      setScrapingTaskId(null);
-    } catch (error: any) {
-      toast.error(`获取项目失败: ${error.message}`);
-      setSearching(false);
-      setScrapingTaskId(null);
-    }
-  };
-
-  // Filter projects based on minimum score (if we add matching scores later)
-  const filteredProjects = useMemo(() => {
-    return projects; // For now, show all scraped projects
-  }, [projects]);
 
   if (authLoading) {
     return (
@@ -139,8 +84,6 @@ export default function Explore() {
     return null;
   }
 
-  const isScrapingInProgress = !!(scrapingTaskId && taskStatus?.status === 'in_progress');
-
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -148,194 +91,201 @@ export default function Explore() {
         <div className="container flex h-14 md:h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <MobileNav />
-            <Link href="/dashboard" className="hidden md:block">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t.common.back}
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">{t.common.back}</span>
               </Button>
             </Link>
+            <div className="flex items-center gap-2">
+              <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              <span className="text-lg md:text-xl font-bold text-foreground hidden sm:inline">Find My Professor</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-sm md:text-base">Find My Professor</span>
-          </div>
-          <div className="flex items-center">
             <LanguageSwitcher />
           </div>
         </div>
       </nav>
 
-      <div className="container px-4 py-4 md:py-8 max-w-6xl">
+      {/* Main Content */}
+      <main className="container py-6 md:py-8 pb-20 md:pb-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">{t.explore.title}</h1>
-          <p className="text-muted-foreground text-sm md:text-lg">
-            {t.explore.subtitle}
-          </p>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">{t.explore.title}</h1>
+          <p className="text-muted-foreground">{t.explore.subtitle}</p>
         </div>
 
-        {/* Search Projects Button */}
-        <Card className="mb-6 md:mb-8 border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
-          <CardHeader className="p-4 md:p-6">
-            <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-              <Search className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-              {t.explore.searchTitle}
-            </CardTitle>
-            <CardDescription className="text-sm">
-              {t.explore.searchDescription}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 flex flex-col gap-3">
-            <Button
-              onClick={handleSearchProjects}
-              disabled={searching || isScrapingInProgress}
-              size="default"
-              className="w-full sm:w-auto"
-            >
-              {searching || isScrapingInProgress ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 md:h-5 md:w-5 animate-spin" />
-                  <span className="text-sm md:text-base">
-                    {isScrapingInProgress ? '正在爬取数据...' : '搜索中...'}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Search className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm md:text-base">{t.explore.searchButton}</span>
-                </>
-              )}
-            </Button>
+        {/* Profile Check Alert */}
+        {!profile?.targetUniversities || !profile?.targetMajors ? (
+          <Alert className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {t.explore.completeProfilePrompt || "请先在个人资料中设置目标大学和专业"}
+              <Link href="/profile">
+                <Button variant="link" className="px-2 h-auto">
+                  {t.common.goToProfile || "前往设置"}
+                </Button>
+              </Link>
+            </AlertDescription>
+          </Alert>
+        ) : null}
 
-            {/* Scraping Progress */}
-            {isScrapingInProgress && taskStatus && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  正在爬取 {taskStatus.university_name} 的 {taskStatus.major_name} 项目...
-                  <br />
-                  <span className="text-xs text-muted-foreground">
-                    已找到 {taskStatus.projects_found || 0} 个项目
-                  </span>
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Profile Reminder */}
-            {!profile?.targetUniversities || !profile?.targetMajors ? (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  请先在<Link href="/profile"><a className="underline">个人资料</a></Link>中设置目标大学和专业
-                </AlertDescription>
-              </Alert>
-            ) : null}
+        {/* Search Button */}
+        <Card className="mb-6 md:mb-8">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="text-lg md:text-xl font-semibold mb-2">
+                  {t.explore.smartMatching || "智能匹配"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {t.explore.smartMatchingDesc || "基于您的个人资料，为您推荐8-10个最匹配的研究项目"}
+                </p>
+                {profile?.targetUniversities && profile?.targetMajors && (
+                  <div className="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
+                    <Badge variant="secondary">
+                      <Target className="mr-1 h-3 w-3" />
+                      {JSON.parse(profile.targetUniversities)[0]}
+                    </Badge>
+                    <Badge variant="secondary">
+                      <GraduationCap className="mr-1 h-3 w-3" />
+                      {JSON.parse(profile.targetMajors)[0]}
+                    </Badge>
+                  </div>
+                )}
+              </div>
+              <Button
+                size="lg"
+                onClick={handleSearchProjects}
+                disabled={searching || !profile?.targetUniversities || !profile?.targetMajors}
+                className="w-full md:w-auto"
+              >
+                {searching ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    {t.explore.searching || "搜索中..."}
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    {t.explore.searchProjects || "搜索研究项目"}
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Projects List */}
-        {searching || isScrapingInProgress ? (
-          <div className="flex justify-center py-12 md:py-16">
-            <div className="text-center">
-              <Loader2 className="h-10 w-10 md:h-12 md:w-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                {isScrapingInProgress ? '正在爬取数据，请稍候...' : '搜索中...'}
-              </p>
-            </div>
-          </div>
-        ) : filteredProjects.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 md:py-16 text-center">
-              <Target className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mx-auto mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-semibold mb-2">{t.explore.noProjectsTitle}</h3>
-              <p className="text-muted-foreground text-sm md:text-base mb-4 md:mb-6">
-                {t.explore.noProjectsHint}
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4 md:space-y-6">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h2 className="text-xl md:text-2xl font-bold">
-                {t.explore.searchResults} ({filteredProjects.length})
+        {/* Results */}
+        {projects.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">
+                {t.explore.matchResults || "匹配结果"} ({projects.length})
               </h2>
             </div>
 
-            {filteredProjects.map((project) => (
-              <Card key={project.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
-                    <div className="flex-1">
-                      <CardTitle className="text-base md:text-xl mb-2">
-                        {project.projectTitle}
-                      </CardTitle>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        <Badge variant="secondary" className="text-xs">
-                          <MapPin className="mr-1 h-3 w-3" />
-                          {project.universityName}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          {project.majorName}
-                        </Badge>
+            <div className="grid gap-4 md:gap-6">
+              {projects.map((project, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg md:text-xl mb-2">
+                          {project.projectName}
+                        </CardTitle>
+                        <CardDescription className="flex flex-wrap gap-2 items-center">
+                          <Badge variant="secondary" className="font-medium">
+                            {project.professorName}
+                          </Badge>
+                          {project.lab && (
+                            <Badge variant="outline">{project.lab}</Badge>
+                          )}
+                        </CardDescription>
                       </div>
-                      <div className="text-sm text-muted-foreground space-y-1">
-                        <div className="flex items-center gap-2">
-                          <GraduationCap className="h-4 w-4" />
-                          <span>{project.professorName}</span>
-                        </div>
-                        {project.labName && (
-                          <div className="flex items-center gap-2">
-                            <Globe className="h-4 w-4" />
-                            <span>{project.labName}</span>
-                          </div>
-                        )}
-                      </div>
+                      <Badge className="shrink-0">
+                        {t.explore.matchScore || "匹配度"}: {project.matchScore}%
+                      </Badge>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-                  <div className="space-y-3">
+                  </CardHeader>
+                  <CardContent className="space-y-4">
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">{t.explore.researchDirection}</h4>
-                      <p className="text-sm text-muted-foreground">{project.researchArea}</p>
+                      <h4 className="font-semibold text-sm mb-1 flex items-center gap-2">
+                        <Target className="h-4 w-4 text-primary" />
+                        {t.explore.researchDirection || "研究方向"}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">{project.researchDirection}</p>
                     </div>
+
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">{t.explore.projectDescription}</h4>
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {project.projectDescription}
-                      </p>
+                      <h4 className="font-semibold text-sm mb-1">{t.explore.description || "项目描述"}</h4>
+                      <p className="text-sm text-muted-foreground">{project.description}</p>
                     </div>
+
                     {project.requirements && (
                       <div>
-                        <h4 className="font-semibold text-sm mb-1">{t.explore.applicationRequirements}</h4>
+                        <h4 className="font-semibold text-sm mb-1">{t.explore.requirements || "要求"}</h4>
                         <p className="text-sm text-muted-foreground">{project.requirements}</p>
                       </div>
                     )}
-                    <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                      {project.contactEmail && (
-                        <Button variant="default" size="sm" asChild className="w-full sm:w-auto">
-                          <a href={`mailto:${project.contactEmail}`}>
-                            {t.explore.contactProfessor}
-                          </a>
-                        </Button>
-                      )}
-                      {project.sourceUrl && (
-                        <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
-                          <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer">
-                            {t.explore.viewDetails}
-                          </a>
-                        </Button>
-                      )}
+
+                    <div>
+                      <h4 className="font-semibold text-sm mb-1">{t.explore.matchReason || "匹配原因"}</h4>
+                      <p className="text-sm text-primary/80">{project.matchReason}</p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {project.contactEmail && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={`mailto:${project.contactEmail}`}>
+                            <Mail className="mr-2 h-4 w-4" />
+                            {t.explore.contact || "联系"}
+                          </a>
+                        </Button>
+                      )}
+                      {project.url && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={project.url} target="_blank" rel="noopener noreferrer">
+                            <Globe className="mr-2 h-4 w-4" />
+                            {t.explore.viewDetails || "查看详情"}
+                          </a>
+                        </Button>
+                      )}
+                      <Link href={`/project/${project.id}`}>
+                        <Button variant="default" size="sm">
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          {t.common.generateLetter || "生成文书"}
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         )}
-      </div>
+
+        {/* Empty State */}
+        {!searching && projects.length === 0 && (
+          <Card className="p-12 text-center">
+            <Search className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+            <h3 className="text-lg font-semibold mb-2">{t.common.noResults || "暂无搜索结果"}</h3>
+            <p className="text-muted-foreground">
+              {t.explore.clickToSearch || "点击上方按钮开始搜索匹配的研究项目"}
+            </p>
+          </Card>
+        )}
+      </main>
 
       <Footer />
+
+      {/* Insufficient Credits Dialog */}
+      <InsufficientCreditsDialog 
+        open={showCreditsDialog} 
+        onOpenChange={setShowCreditsDialog}
+        remainingCredits={0}
+      />
     </div>
   );
 }
