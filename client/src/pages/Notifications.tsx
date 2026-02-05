@@ -22,31 +22,31 @@ export default function Notifications() {
 
   const markReadMutation = trpc.notifications.markAsRead.useMutation({
     onSuccess: () => {
-      toast.success("Notification marked as read");
+      toast.success(t.notifications.markedAsRead);
       refetch();
     },
     onError: (error) => {
-      toast.error(`Failed to mark as read: ${error.message}`);
+      toast.error(`${t.notifications.markReadFailed}: ${error.message}`);
     },
   });
 
   const markAllReadMutation = trpc.notifications.markAsRead.useMutation({
     onSuccess: () => {
-      toast.success("All notifications marked as read");
+      toast.success(t.notifications.allMarkedAsRead);
       refetch();
     },
     onError: (error: any) => {
-      toast.error(`Failed to mark all as read: ${error.message}`);
+      toast.error(`${t.notifications.markReadFailed}: ${error.message}`);
     },
   });
 
   const deleteMutation = trpc.notifications.markAsRead.useMutation({
     onSuccess: () => {
-      toast.success("Notification deleted");
+      toast.success(t.notifications.deleted);
       refetch();
     },
     onError: (error: any) => {
-      toast.error(`Failed to delete notification: ${error.message}`);
+      toast.error(`${t.notifications.deleteFailed}: ${error.message}`);
     },
   });
 
@@ -61,7 +61,7 @@ export default function Notifications() {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this notification?")) {
+    if (confirm(t.notifications.deleteConfirm)) {
       // For now, just mark as read since we don't have a delete endpoint
       markReadMutation.mutate({ id });
     }
@@ -90,12 +90,12 @@ export default function Notifications() {
           <Link href="/dashboard">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
+              {t.notifications.backToDashboard}
             </Button>
           </Link>
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-primary" />
-            <span className="font-semibold">Notifications</span>
+            <span className="font-semibold">{t.notifications.title}</span>
           </div>
         </div>
       </nav>
@@ -104,9 +104,11 @@ export default function Notifications() {
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Notifications</h1>
+            <h1 className="text-4xl font-bold mb-2">{t.notifications.title}</h1>
             <p className="text-muted-foreground">
-              {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}` : "All caught up!"}
+              {unreadCount > 0 
+                ? `${unreadCount} ${unreadCount > 1 ? t.notifications.unreadCountPlural : t.notifications.unreadCount}` 
+                : t.notifications.allCaughtUp}
             </p>
           </div>
           {unreadCount > 0 && (
@@ -116,7 +118,7 @@ export default function Notifications() {
               disabled={markAllReadMutation.isPending}
             >
               <CheckCheck className="mr-2 h-4 w-4" />
-              Mark All as Read
+              {t.notifications.markAllAsRead}
             </Button>
           )}
         </div>
@@ -126,7 +128,7 @@ export default function Notifications() {
           <div className="mb-6 space-y-3">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Megaphone className="h-5 w-5 text-primary" />
-              {t.notifications?.announcements || "System Announcements"}
+              {t.notifications.announcements}
             </h2>
             {announcements.map((announcement) => (
               <Card key={announcement.id} className="border-primary/50 bg-primary/5">
@@ -135,7 +137,7 @@ export default function Notifications() {
                     <Megaphone className="h-4 w-4 text-primary" />
                     <CardTitle className="text-lg">{announcement.title}</CardTitle>
                     <Badge variant="default" className="text-xs">
-                      {t.notifications?.announcement || "Announcement"}
+                      {t.notifications.announcement}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -151,7 +153,7 @@ export default function Notifications() {
         )}
 
         {/* Notifications List */}
-        <h2 className="text-xl font-semibold mb-4">{t.notifications?.yourNotifications || "Your Notifications"}</h2>
+        <h2 className="text-xl font-semibold mb-4">{t.notifications.yourNotifications}</h2>
         {isLoading ? (
           <div className="flex justify-center py-16">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -160,12 +162,12 @@ export default function Notifications() {
           <Card>
             <CardContent className="py-16 text-center">
               <BellOff className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No notifications yet</h3>
+              <h3 className="text-xl font-semibold mb-2">{t.notifications.noNotifications}</h3>
               <p className="text-muted-foreground mb-6">
-                We'll notify you when there are updates about your research matches
+                {t.notifications.noNotificationsDesc}
               </p>
               <Link href="/explore">
-                <Button>Explore Projects</Button>
+                <Button>{t.notifications.exploreProjects}</Button>
               </Link>
             </CardContent>
           </Card>
@@ -187,7 +189,7 @@ export default function Notifications() {
                         <h3 className="font-semibold text-lg">{notification.title}</h3>
                         {!notification.read && (
                           <Badge variant="default" className="text-xs">
-                            New
+                            {t.notifications.new}
                           </Badge>
                         )}
                       </div>

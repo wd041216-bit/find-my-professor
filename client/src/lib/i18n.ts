@@ -383,9 +383,25 @@ export const translations = {
     },
     // Notifications Page
     notifications: {
+      backToDashboard: "Back to Dashboard",
+      title: "Notifications",
+      unreadCount: "unread notification",
+      unreadCountPlural: "unread notifications",
+      allCaughtUp: "All caught up!",
+      markAllAsRead: "Mark All as Read",
       announcements: "System Announcements",
       announcement: "Announcement",
       yourNotifications: "Your Notifications",
+      noNotifications: "No notifications yet",
+      noNotificationsDesc: "We'll notify you when there are updates about your research matches",
+      exploreProjects: "Explore Projects",
+      new: "New",
+      deleteConfirm: "Are you sure you want to delete this notification?",
+      markedAsRead: "Notification marked as read",
+      allMarkedAsRead: "All notifications marked as read",
+      deleted: "Notification deleted",
+      markReadFailed: "Failed to mark as read",
+      deleteFailed: "Failed to delete notification",
     },
     // Admin
     admin: {
@@ -790,9 +806,25 @@ export const translations = {
     },
     // Notifications Page
     notifications: {
+      backToDashboard: "返回控制台",
+      title: "通知",
+      unreadCount: "条未读通知",
+      unreadCountPlural: "条未读通知",
+      allCaughtUp: "已全部阅读！",
+      markAllAsRead: "全部标记为已读",
       announcements: "系统公告",
       announcement: "公告",
       yourNotifications: "你的通知",
+      noNotifications: "暂无通知",
+      noNotificationsDesc: "当有关于你的研究匹配的更新时，我们会通知你",
+      exploreProjects: "探索项目",
+      new: "新",
+      deleteConfirm: "确定要删除这条通知吗？",
+      markedAsRead: "已标记为已读",
+      allMarkedAsRead: "全部通知已标记为已读",
+      deleted: "通知已删除",
+      markReadFailed: "标记为已读失败",
+      deleteFailed: "删除通知失败",
     },
     // Admin
     admin: {

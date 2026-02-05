@@ -61,12 +61,16 @@ export default function Dashboard() {
 
   // Only check profile completeness after data is loaded to avoid flashing
   // Required fields: targetUniversities, targetMajors, academicLevel
+  // Parse JSON strings if needed
+  const targetUniversities = profile?.targetUniversities ? 
+    (typeof profile.targetUniversities === 'string' ? JSON.parse(profile.targetUniversities) : profile.targetUniversities) : [];
+  const targetMajors = profile?.targetMajors ? 
+    (typeof profile.targetMajors === 'string' ? JSON.parse(profile.targetMajors) : profile.targetMajors) : [];
+  
   const profileComplete = profileLoading ? true : (
     profile && 
-    profile.targetUniversities && 
-    profile.targetUniversities.length > 0 && 
-    profile.targetMajors && 
-    profile.targetMajors.length > 0 && 
+    targetUniversities.length > 0 && 
+    targetMajors.length > 0 && 
     profile.academicLevel
   );
 

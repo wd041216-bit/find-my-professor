@@ -201,24 +201,29 @@ export default function Explore() {
                   </div>
                 )}
               </div>
-              <Button
-                size="lg"
-                onClick={handleSearchProjects}
-                disabled={searching || !profile?.targetUniversities || !profile?.targetMajors}
-                className="w-full md:w-auto"
-              >
-                {searching ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {t.explore.searching || "搜索中..."}
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    {t.explore.searchProjects || "搜索研究项目"}
-                  </>
-                )}
-              </Button>
+              <div className="flex flex-col items-center gap-2 w-full md:w-auto">
+                <Button
+                  size="lg"
+                  onClick={handleSearchProjects}
+                  disabled={searching || !profile?.targetUniversities || !profile?.targetMajors}
+                  className="w-full md:w-auto"
+                >
+                  {searching ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      {t.explore.searching || "搜索中..."}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      {t.explore.searchProjects || "搜索研究项目"}
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  {language === 'zh' ? '消耗 40 积分' : 'Costs 40 credits'}
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -300,19 +305,24 @@ export default function Explore() {
                           </a>
                         </Button>
                       )}
-                      <Button 
-                        variant="default" 
-                        size="sm"
-                        onClick={() => handleGenerateLetter(project)}
-                        disabled={generatingLetter}
-                      >
-                        {generatingLetter ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Sparkles className="mr-2 h-4 w-4" />
-                        )}
-                        {t.common.generateLetter || "生成文书"}
-                      </Button>
+                      <div className="flex flex-col items-start gap-1">
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          onClick={() => handleGenerateLetter(project)}
+                          disabled={generatingLetter}
+                        >
+                          {generatingLetter ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <Sparkles className="mr-2 h-4 w-4" />
+                          )}
+                          {t.common.generateLetter || "生成文书"}
+                        </Button>
+                        <p className="text-xs text-muted-foreground ml-1">
+                          {language === 'zh' ? '消耗 20 积分' : 'Costs 20 credits'}
+                        </p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
