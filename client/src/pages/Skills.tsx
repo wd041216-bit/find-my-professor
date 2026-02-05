@@ -27,7 +27,16 @@ export default function Skills() {
     },
   });
 
-  const skills = profile?.skills ? JSON.parse(profile.skills) : [];
+  const skills = (() => {
+    try {
+      if (!profile?.skills) return [];
+      const parsed = JSON.parse(profile.skills);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Failed to parse skills:', e);
+      return [];
+    }
+  })();
 
   const handleAddSkill = async () => {
     if (!newSkill.trim()) return;

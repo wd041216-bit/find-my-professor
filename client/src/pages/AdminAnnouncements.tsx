@@ -150,7 +150,7 @@ export default function AdminAnnouncements() {
                     min={1}
                     max={365}
                     value={formData.durationDays}
-                    onChange={(e) => setFormData(prev => ({ ...prev, durationDays: parseInt(e.target.value) }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, durationDays: parseInt(e.target.value, 10) || 1 }))}
                     required
                   />
                   <p className="text-xs text-muted-foreground">

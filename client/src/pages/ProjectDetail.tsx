@@ -14,7 +14,7 @@ export default function ProjectDetail() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
   const params = useParams();
-  const matchId = parseInt(params.id || "0");
+  const matchId = parseInt(params.id || "0", 10) || 0;
   
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedLetter, setGeneratedLetter] = useState("");
@@ -98,7 +98,16 @@ export default function ProjectDetail() {
     );
   }
 
-  const matchReasons = matchData.matchReasons ? JSON.parse(matchData.matchReasons as string) : [];
+  const matchReasons = (() => {
+    try {
+      if (!matchData.matchReasons) return [];
+      const parsed = JSON.parse(matchData.matchReasons as string);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Failed to parse matchReasons:', e);
+      return [];
+    }
+  })();
 
   return (
     <div className="min-h-screen bg-background">

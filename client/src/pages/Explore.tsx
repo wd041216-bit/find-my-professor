@@ -268,7 +268,7 @@ export default function Explore() {
                   try {
                     const universities = JSON.parse(profile.targetUniversities);
                     const majors = JSON.parse(profile.targetMajors);
-                    if (universities.length > 0 && majors.length > 0) {
+                    if (Array.isArray(universities) && Array.isArray(majors) && universities.length > 0 && majors.length > 0) {
                       return (
                         <div className="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
                           <Badge variant="secondary">
