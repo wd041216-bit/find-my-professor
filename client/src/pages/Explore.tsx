@@ -13,6 +13,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialog";
+import { CoverLetterDialog } from "@/components/CoverLetterDialog";
 
 export default function Explore() {
   const { user, loading: authLoading } = useAuth();
@@ -20,14 +21,59 @@ export default function Explore() {
   const [searching, setSearching] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [showCreditsDialog, setShowCreditsDialog] = useState(false);
+  const [showLetterDialog, setShowLetterDialog] = useState(false);
+  const [generatingLetter, setGeneratingLetter] = useState(false);
+  const [currentLetter, setCurrentLetter] = useState<{
+    content: string;
+    projectName: string;
+    professorName: string;
+    university: string;
+  } | null>(null);
   const { t } = useLanguage();
 
   const calculateMatchesMutation = trpc.matching.calculateMatches.useMutation();
+  const generateLetterMutation = trpc.coverLetter.generate.useMutation();
 
   // Get user profile for target universities and majors
   const { data: profile } = trpc.profile.get.useQuery(undefined, {
     enabled: !!user,
   });
+
+  const handleGenerateLetter = async (project: any) => {
+    setGeneratingLetter(true);
+    setShowLetterDialog(true);
+    setCurrentLetter({
+      content: "",
+      projectName: project.projectName,
+      professorName: project.professorName,
+      university: project.university,
+    });
+
+    try {
+      const result = await generateLetterMutation.mutateAsync({
+        matchId: project.id,
+        tone: "formal",
+      });
+
+      setCurrentLetter({
+        content: result.content,
+        projectName: result.projectName,
+        professorName: result.professorName,
+        university: result.university,
+      });
+      toast.success(t.coverLetter.generateSuccess);
+    } catch (error: any) {
+      if (error.message?.includes('INSUFFICIENT_CREDITS') || error.data?.code === 'INSUFFICIENT_CREDITS') {
+        setShowLetterDialog(false);
+        setShowCreditsDialog(true);
+      } else {
+        toast.error(t.coverLetter.generateFailed + ": " + error.message);
+        setShowLetterDialog(false);
+      }
+    } finally {
+      setGeneratingLetter(false);
+    }
+  };
 
   const handleSearchProjects = async () => {
     if (!profile) {
@@ -252,12 +298,19 @@ export default function Explore() {
                           </a>
                         </Button>
                       )}
-                      <Link href={`/project/${project.id}`}>
-                        <Button variant="default" size="sm">
+                      <Button 
+                        variant="default" 
+                        size="sm"
+                        onClick={() => handleGenerateLetter(project)}
+                        disabled={generatingLetter}
+                      >
+                        {generatingLetter ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
                           <Sparkles className="mr-2 h-4 w-4" />
-                          {t.common.generateLetter || "生成文书"}
-                        </Button>
-                      </Link>
+                        )}
+                        {t.common.generateLetter || "生成文书"}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -281,10 +334,21 @@ export default function Explore() {
       <Footer />
 
       {/* Insufficient Credits Dialog */}
-      <InsufficientCreditsDialog 
-        open={showCreditsDialog} 
+      <InsufficientCreditsDialog
+        open={showCreditsDialog}
         onOpenChange={setShowCreditsDialog}
         remainingCredits={0}
+      />
+      
+      {/* Cover Letter Dialog */}
+      <CoverLetterDialog
+        open={showLetterDialog}
+        onOpenChange={setShowLetterDialog}
+        content={currentLetter?.content || ""}
+        projectName={currentLetter?.projectName || ""}
+        professorName={currentLetter?.professorName || ""}
+        university={currentLetter?.university || ""}
+        loading={generatingLetter}
       />
     </div>
   );

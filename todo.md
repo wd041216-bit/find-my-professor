@@ -335,8 +335,15 @@
 - [x] 更新Explore页面使用trpc.matching.calculateMatches API替代scraping API
 - [x] 实现积分不足提示：Explore页面捕获INSUFFICIENT_CREDITS错误显示InsufficientCreditsDialog
 - [x] 启用联网LLM：在llmMatching.ts中启用LLM联网功能获取最新项目信息
-- [ ] 项目卡片添加Generate Letter按钮（消耐10积分，无需进入详情页）
-- [ ] 测试完整流程（匹配、积分扣除、文书生成）
+- [x] 创建coverLetters表存储生成的申请文书
+- [x] 实现文书生成后端API（generateCoverLetter）
+- [x] 集成积分扣除（10积分）和不足检查
+- [x] 在Explore页面项目卡片添加"Generate Letter"按钮
+- [x] 实现文书生成对话框显示生成结果
+- [x] 在Dashboard添加"Your Cover Letters"部分显示已生成文书列表
+- [x] 在Dashboard添加"Match History"部分显示最近匹配记录
+- [x] 添加文书生成相关的双语翻译键
+- [x] 测试完整流程：匹配项目 → 生成文书 → 查看历史
 
 ## UI优化和匹配逻辑改进
 - [x] 将Profile页面的保存按钮移到顶部（提升用户体验）
