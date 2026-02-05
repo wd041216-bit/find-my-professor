@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 export default function UploadResume() {
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const [parseResult, setParseResult] = useState<any>(null);
@@ -18,10 +20,14 @@ export default function UploadResume() {
   const uploadAndParseMutation = trpc.resume.uploadAndParse.useMutation({
     onSuccess: (data) => {
       setParseResult(data);
-      toast.success(`Successfully extracted ${data.activitiesCreated} activities and ${data.skillsExtracted} skills!`);
+      const message = t.uploadResume.successMessage
+        .replace("{activities}", data.activitiesCreated.toString())
+        .replace("{skills}", data.skillsExtracted.toString());
+      toast.success(message);
     },
     onError: (error) => {
-      toast.error(`Failed to parse resume: ${error.message}`);
+      const message = t.uploadResume.errorParse.replace("{error}", error.message);
+      toast.error(message);
     },
   });
 
@@ -30,12 +36,12 @@ export default function UploadResume() {
     if (selectedFile) {
       const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
       if (!["pdf", "doc", "docx"].includes(fileExtension || "")) {
-        toast.error("Please upload a PDF or Word document");
+        toast.error(t.uploadResume.errorInvalidFormat);
         return;
       }
       
       if (selectedFile.size > 16 * 1024 * 1024) {
-        toast.error("File size must be less than 16MB");
+        toast.error(t.uploadResume.errorFileSize);
         return;
       }
       
@@ -46,7 +52,7 @@ export default function UploadResume() {
 
   const handleUpload = async () => {
     if (!file) {
-      toast.error("Please select a file first");
+      toast.error(t.uploadResume.errorSelectFile);
       return;
     }
 
@@ -76,13 +82,14 @@ export default function UploadResume() {
       };
       
       reader.onerror = () => {
-        toast.error("Failed to read file");
+        toast.error(t.uploadResume.errorReadFile);
       };
       
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to upload file");
+      const message = error instanceof Error ? error.message : t.uploadResume.errorReadFile;
+      toast.error(message);
     }
   };
 
@@ -106,16 +113,16 @@ export default function UploadResume() {
           <Link href="/dashboard">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
+              {t.uploadResume.backToDashboard}
             </Button>
           </Link>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl">Upload Resume</CardTitle>
+            <CardTitle className="text-3xl">{t.uploadResume.title}</CardTitle>
             <CardDescription>
-              Upload your resume in PDF or Word format. Our AI will automatically extract your activities, skills, and experiences.
+              {t.uploadResume.subtitle}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -132,13 +139,13 @@ export default function UploadResume() {
               {!file ? (
                 <>
                   <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Choose a file to upload</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t.uploadResume.chooseFile}</h3>
                   <p className="text-muted-foreground mb-4">
-                    PDF or Word document (max 16MB)
+                    {t.uploadResume.fileFormat}
                   </p>
                   <Button onClick={() => fileInputRef.current?.click()}>
                     <Upload className="mr-2 h-4 w-4" />
-                    Select File
+                    {t.uploadResume.selectFile}
                   </Button>
                 </>
               ) : (
@@ -153,12 +160,12 @@ export default function UploadResume() {
                       {uploadAndParseMutation.isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
+                          {t.uploadResume.processing}
                         </>
                       ) : (
                         <>
                           <Upload className="mr-2 h-4 w-4" />
-                          Upload & Parse
+                          {t.uploadResume.uploadAndParse}
                         </>
                       )}
                     </Button>
@@ -171,7 +178,7 @@ export default function UploadResume() {
                       }}
                       disabled={uploadAndParseMutation.isPending}
                     >
-                      Cancel
+                      {t.uploadResume.cancel}
                     </Button>
                   </div>
                 </>
@@ -184,27 +191,27 @@ export default function UploadResume() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-6 w-6 text-primary" />
-                    <CardTitle>Parsing Complete!</CardTitle>
+                    <CardTitle>{t.uploadResume.parsingComplete}</CardTitle>
                   </div>
                   <CardDescription>
-                    Your resume has been successfully analyzed
+                    {t.uploadResume.resumeAnalyzed}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-background rounded-lg p-4">
                       <div className="text-3xl font-bold text-primary">{parseResult.activitiesCreated}</div>
-                      <p className="text-sm text-muted-foreground">Activities Extracted</p>
+                      <p className="text-sm text-muted-foreground">{t.uploadResume.activitiesExtracted}</p>
                     </div>
                     <div className="bg-background rounded-lg p-4">
                       <div className="text-3xl font-bold text-primary">{parseResult.skillsExtracted}</div>
-                      <p className="text-sm text-muted-foreground">Skills Identified</p>
+                      <p className="text-sm text-muted-foreground">{t.uploadResume.skillsIdentified}</p>
                     </div>
                   </div>
 
                   {parseResult.activities && parseResult.activities.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-3">Extracted Activities:</h4>
+                      <h4 className="font-semibold mb-3">{t.uploadResume.extractedActivities}</h4>
                       <div className="space-y-2">
                         {parseResult.activities.map((activity: any, index: number) => (
                           <div key={index} className="bg-background rounded-lg p-3 border">
@@ -228,7 +235,7 @@ export default function UploadResume() {
                   <div className="flex gap-2">
                     <Link href="/activities">
                       <Button className="flex-1">
-                        View All Activities
+                        {t.uploadResume.viewAllActivities}
                       </Button>
                     </Link>
                     <Button
@@ -239,7 +246,7 @@ export default function UploadResume() {
                         if (fileInputRef.current) fileInputRef.current.value = "";
                       }}
                     >
-                      Upload Another
+                      {t.uploadResume.uploadAnother}
                     </Button>
                   </div>
                 </CardContent>
@@ -251,15 +258,15 @@ export default function UploadResume() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <AlertCircle className="h-5 w-5" />
-                  Tips for Best Results
+                  {t.uploadResume.tipsTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>• Use a well-formatted resume with clear sections</p>
-                <p>• Include dates, organization names, and detailed descriptions</p>
-                <p>• List specific skills and achievements for each experience</p>
-                <p>• Supported formats: PDF, DOC, DOCX (max 16MB)</p>
-                <p>• Review and edit extracted activities after parsing</p>
+                <p>• {t.uploadResume.tip1}</p>
+                <p>• {t.uploadResume.tip2}</p>
+                <p>• {t.uploadResume.tip3}</p>
+                <p>• {t.uploadResume.tip4}</p>
+                <p>• {t.uploadResume.tip5}</p>
               </CardContent>
             </Card>
           </CardContent>
