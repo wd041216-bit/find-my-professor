@@ -64,6 +64,29 @@ export default function Profile() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation: Target university is required
+    if (!formData.targetUniversity || formData.targetUniversity.trim() === "") {
+      toast.error(t.profile.validationRequired);
+      return;
+    }
+    
+    // Friendly reminder: Multiple universities
+    if (formData.targetUniversity && !formData.targetUniversity.includes(",")) {
+      // Show info toast for single university (non-blocking)
+      toast.info(t.profile.validationMultipleUniversities, { duration: 5000 });
+    }
+    
+    // Friendly reminder: Target majors
+    if (formData.targetMajors.length === 0) {
+      toast.info(t.profile.validationMajorRequired, { duration: 5000 });
+    }
+    
+    // Friendly reminder: Skills
+    if (formData.skills.length === 0) {
+      toast.info(t.profile.validationSkillsRecommended, { duration: 5000 });
+    }
+    
     const submitData = {
       ...formData,
       targetUniversities: formData.targetUniversity ? [formData.targetUniversity] : [],
@@ -197,17 +220,24 @@ export default function Profile() {
 
               {/* Target University (Single Selection) */}
               <div className="space-y-3 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">{t.profile.targetUniversity || t.profile.targetUniversities}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base md:text-lg font-semibold">{t.profile.targetUniversity || t.profile.targetUniversities}</h3>
+                  <span className="text-destructive text-sm">*</span>
+                </div>
                 <Input
                   value={formData.targetUniversity}
                   onChange={(e) => setFormData(prev => ({ ...prev, targetUniversity: e.target.value }))}
                   placeholder={t.profile.addUniversity}
                   className="h-9 md:h-10 text-sm"
+                  required
                 />
                 {formData.targetUniversity && (
                   <div className="bg-secondary text-secondary-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm inline-flex items-center gap-1.5 md:gap-2">
                     {formData.targetUniversity}
                   </div>
+                )}
+                {!formData.targetUniversity && (
+                  <p className="text-xs text-muted-foreground">{t.profile.validationRequired}</p>
                 )}
               </div>
 

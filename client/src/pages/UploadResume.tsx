@@ -1,11 +1,12 @@
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Upload, FileText, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, Upload, FileText, Loader2, CheckCircle, AlertCircle, GraduationCap } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 
@@ -108,15 +109,27 @@ export default function UploadResume() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container py-8 max-w-4xl">
-        <div className="mb-6">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t.uploadResume.backToDashboard}
-            </Button>
+      {/* Top Navigation Bar */}
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="container flex h-16 items-center justify-between">
+          <Link href="/">
+            <div className="flex items-center gap-2 cursor-pointer">
+              <GraduationCap className="h-6 w-6 text-primary" />
+              <span className="font-bold text-lg">Find My Professor</span>
+            </div>
           </Link>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">
+                {t.common.back}
+              </Button>
+            </Link>
+          </div>
         </div>
+      </header>
+
+      <div className="container py-8 max-w-4xl">
 
         <Card>
           <CardHeader>

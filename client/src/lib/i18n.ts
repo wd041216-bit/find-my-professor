@@ -121,6 +121,10 @@ export const translations = {
       bioPlaceholder: "Tell us about yourself, your academic journey, and research aspirations...",
       saveProfile: "Save Profile",
       saving: "Saving...",
+      validationRequired: "Target university is required for better matching results",
+      validationMultipleUniversities: "Tip: Consider adding multiple target universities to explore more opportunities",
+      validationMajorRequired: "Adding target majors will improve matching accuracy",
+      validationSkillsRecommended: "Skills help match you with relevant research projects",
     },
     // Activities
     activities: {
@@ -489,6 +493,10 @@ export const translations = {
       bioPlaceholder: "介绍一下你自己、你的学术经历和研究志向...",
       saveProfile: "保存资料",
       saving: "保存中...",
+      validationRequired: "目标大学是必填项，以获得更好的匹配结果",
+      validationMultipleUniversities: "提示：考虑添加多个目标大学以探索更多机会",
+      validationMajorRequired: "添加目标专业将提高匹配准确度",
+      validationSkillsRecommended: "技能有助于匹配相关的研究项目",
     },
     // Activities
     activities: {
