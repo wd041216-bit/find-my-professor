@@ -39,6 +39,11 @@ export default function Explore() {
     enabled: !!user,
   });
 
+  // Get user credits balance
+  const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
+    enabled: !!user,
+  });
+
   const handleGenerateLetter = async (project: any) => {
     setGeneratingLetter(true);
     setShowLetterDialog(true);
@@ -77,20 +82,46 @@ export default function Explore() {
 
   const handleSearchProjects = async () => {
     if (!profile) {
-      toast.error(t.explore.completeProfileFirst || "请先完善个人资料");
+      toast.error(t.explore.completeProfileFirst || "请先完善个人资料", {
+        action: {
+          label: language === 'zh' ? '去完善' : 'Complete Profile',
+          onClick: () => setLocation('/profile'),
+        },
+      });
       return;
     }
 
     const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
     const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
 
+    // Validate required fields
     if (targetUniversities.length === 0) {
-      toast.error(t.explore.addTargetUniversity || "请在个人资料中添加目标大学");
+      toast.error(t.explore.addTargetUniversity || "请在个人资料中添加目标大学", {
+        action: {
+          label: language === 'zh' ? '去添加' : 'Add Now',
+          onClick: () => setLocation('/profile'),
+        },
+      });
       return;
     }
 
     if (targetMajors.length === 0) {
-      toast.error(t.explore.addTargetMajor || "请在个人资料中添加目标专业");
+      toast.error(t.explore.addTargetMajor || "请在个人资料中添加目标专业", {
+        action: {
+          label: language === 'zh' ? '去添加' : 'Add Now',
+          onClick: () => setLocation('/profile'),
+        },
+      });
+      return;
+    }
+
+    if (!profile.academicLevel) {
+      toast.error(t.explore.addAcademicLevel || "请在个人资料中选择您的学历层次", {
+        action: {
+          label: language === 'zh' ? '去选择' : 'Select Now',
+          onClick: () => setLocation('/profile'),
+        },
+      });
       return;
     }
 
@@ -349,7 +380,7 @@ export default function Explore() {
       <InsufficientCreditsDialog
         open={showCreditsDialog}
         onOpenChange={setShowCreditsDialog}
-        remainingCredits={0}
+        remainingCredits={creditsData?.balance || 0}
       />
       
       {/* Cover Letter Dialog */}

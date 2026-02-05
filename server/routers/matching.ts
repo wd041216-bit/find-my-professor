@@ -141,11 +141,10 @@ export const matchingRouter = router({
           matches = await getRandomProjectsFromDatabase(university, major, 10);
           strategy = 'database_random';
         } else {
-          // Database empty, trigger scraping
-          console.log(`[Matching] Database empty, triggering scraper...`);
-          // For simplified profiles with no database, we still need to call LLM
-          // but we'll use a simpler prompt
+          // Database empty, need to call LLM to generate initial projects
+          console.log(`[Matching] Database empty for simplified profile, will call LLM...`);
           strategy = 'llm_fallback';
+          // Don't set matches here, let it fall through to Step 7
         }
       }
       
