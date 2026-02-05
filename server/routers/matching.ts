@@ -169,11 +169,6 @@ export const matchingRouter = router({
         console.log(`[Matching] Calling LLM for matching...`);
         matches = await generateMatchedProjects(university, major, userProfile, language);
         
-        // Deduct credits AFTER successful LLM call
-        if (ctx.user.role !== 'admin') {
-          await deductCredits(ctx.user.id, 40, 'project_matching');
-        }
-        
         // Cache the results for future use (only for detailed profiles)
         if (!isSimplified && matches.length > 0) {
           const hasSkills = skills && skills.length > 0;
@@ -187,17 +182,13 @@ export const matchingRouter = router({
             matches
           );
         }
-      } else if (strategy === 'database_random') {
-        // For database random selection, deduct reduced credits (20 instead of 40)
-        if (ctx.user.role !== 'admin') {
-          await deductCredits(ctx.user.id, 20, 'project_matching');
-        }
       }
-    } else {
-      // Cache hit, deduct minimal credits (10 instead of 40)
-      if (ctx.user.role !== 'admin') {
-        await deductCredits(ctx.user.id, 10, 'project_matching');
-      }
+    }
+    
+    // Deduct credits uniformly for all search types (40 credits)
+    // All searches cost the same regardless of cache hit, database random, or LLM matching
+    if (ctx.user.role !== 'admin') {
+      await deductCredits(ctx.user.id, 40, 'project_matching');
     }
 
     // Step 6.5: Delete old matches for this user to avoid duplicates
