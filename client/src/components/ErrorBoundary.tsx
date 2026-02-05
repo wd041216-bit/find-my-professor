@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { AlertTriangle, RotateCcw } from "lucide-react";
-import { Component, ReactNode } from "react";
+import { Component, ErrorInfo, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -21,6 +21,50 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    
+    // Report error to backend
+    this.reportError(error, errorInfo);
+  }
+
+  async reportError(error: Error, errorInfo: ErrorInfo) {
+    try {
+      // Use fetch directly to avoid tRPC context issues
+      const response = await fetch('/api/trpc/errors.logError', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          json: {
+            message: error.message,
+            stack: error.stack,
+            errorType: error.name,
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            browserInfo: JSON.stringify({
+              browser: navigator.userAgent,
+              language: navigator.language,
+              platform: navigator.platform,
+              screenResolution: `${window.screen.width}x${window.screen.height}`,
+            }),
+            componentStack: errorInfo.componentStack,
+            additionalInfo: JSON.stringify({
+              timestamp: new Date().toISOString(),
+            }),
+          }
+        }),
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to report error:', response.statusText);
+      }
+    } catch (reportError) {
+      console.error('Failed to report error:', reportError);
+    }
+  }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -32,6 +76,9 @@ class ErrorBoundary extends Component<Props, State> {
             />
 
             <h2 className="text-xl mb-4">An unexpected error occurred.</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              The error has been reported to our team. / 错误已自动上报给管理员。
+            </p>
 
             <div className="p-4 w-full rounded bg-muted overflow-auto mb-6">
               <pre className="text-sm text-muted-foreground whitespace-break-spaces">
@@ -60,3 +107,82 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
+
+/**
+ * Global error handler for uncaught errors
+ */
+export function setupGlobalErrorHandler() {
+  // Handle uncaught errors
+  window.onerror = (message, source, lineno, colno, error) => {
+    console.error('Global error caught:', { message, source, lineno, colno, error });
+    
+    // Report to backend
+    fetch('/api/trpc/errors.logError', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        json: {
+          message: typeof message === 'string' ? message : String(message),
+          stack: error?.stack || `at ${source}:${lineno}:${colno}`,
+          errorType: error?.name || 'Error',
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+          browserInfo: JSON.stringify({
+            browser: navigator.userAgent,
+            language: navigator.language,
+            platform: navigator.platform,
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+          }),
+          additionalInfo: JSON.stringify({
+            source,
+            lineno,
+            colno,
+            timestamp: new Date().toISOString(),
+          }),
+        }
+      }),
+    }).catch(err => {
+      console.error('Failed to report global error:', err);
+    });
+
+    return false; // Let default error handling continue
+  };
+
+  // Handle unhandled promise rejections
+  window.onunhandledrejection = (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    
+    const error = event.reason;
+    const message = error?.message || String(error);
+    const stack = error?.stack || 'No stack trace available';
+
+    fetch('/api/trpc/errors.logError', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        json: {
+          message: `Unhandled Promise Rejection: ${message}`,
+          stack,
+          errorType: error?.name || 'UnhandledRejection',
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+          browserInfo: JSON.stringify({
+            browser: navigator.userAgent,
+            language: navigator.language,
+            platform: navigator.platform,
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+          }),
+          additionalInfo: JSON.stringify({
+            timestamp: new Date().toISOString(),
+          }),
+        }
+      }),
+    }).catch(err => {
+      console.error('Failed to report unhandled rejection:', err);
+    });
+  };
+}

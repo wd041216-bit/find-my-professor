@@ -22,7 +22,8 @@ import {
   announcements,
   InsertAnnouncement,
   userCredits,
-  creditTransactions
+  creditTransactions,
+  errorLogs
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -586,3 +587,82 @@ export async function getCreditTransactions(userId: number, limit: number = 50) 
 }
 
 // updateStripeCustomerId removed - payment feature not yet launched
+
+// ===== Error Logs =====
+
+export async function createErrorLog(data: {
+  userId: number | null;
+  message: string;
+  stack: string | null;
+  errorType: string | null;
+  url: string;
+  userAgent: string | null;
+  browserInfo: string | null;
+  componentStack: string | null;
+  additionalInfo: string | null;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [result] = await db.insert(errorLogs).values(data);
+  
+  // Return the created error log
+  const [errorLog] = await db.select().from(errorLogs).where(eq(errorLogs.id, Number(result.insertId)));
+  return errorLog;
+}
+
+export async function getErrorLogs(
+  limit: number = 50,
+  offset: number = 0,
+  resolved?: boolean
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  let query = db.select().from(errorLogs).orderBy(desc(errorLogs.createdAt)).limit(limit).offset(offset);
+  
+  if (resolved !== undefined) {
+    query = query.where(eq(errorLogs.resolved, resolved)) as any;
+  }
+
+  return query;
+}
+
+export async function getErrorLogStats() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [totalResult] = await db.select({ count: sql<number>`count(*)` }).from(errorLogs);
+  const [unresolvedResult] = await db.select({ count: sql<number>`count(*)` }).from(errorLogs).where(eq(errorLogs.resolved, false));
+  const [todayResult] = await db.select({ count: sql<number>`count(*)` }).from(errorLogs).where(sql`DATE(${errorLogs.createdAt}) = CURDATE()`);
+
+  return {
+    total: Number(totalResult.count),
+    unresolved: Number(unresolvedResult.count),
+    today: Number(todayResult.count),
+  };
+}
+
+export async function markErrorResolved(errorId: number, adminId: number, notes?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(errorLogs)
+    .set({
+      resolved: true,
+      resolvedBy: adminId,
+      resolvedAt: new Date(),
+      notes: notes || null,
+    })
+    .where(eq(errorLogs.id, errorId));
+
+  return { success: true };
+}
+
+export async function deleteErrorLog(errorId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(errorLogs).where(eq(errorLogs.id, errorId));
+  return { success: true };
+}
