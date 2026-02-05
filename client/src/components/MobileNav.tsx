@@ -102,20 +102,34 @@ export function MobileNav({ unreadCount = 0 }: MobileNavProps) {
               </Link>
             ))}
 
-            {/* Admin link for admin users */}
+            {/* Admin links for admin users */}
             {isAuthenticated && user?.role === "admin" && (
-              <Link href="/admin/messages" onClick={closeNav}>
-                <div
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    isActive("/admin/messages")
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-accent"
-                  }`}
-                >
-                  <Shield className="h-5 w-5" />
-                  <span>{t.nav.admin}</span>
-                </div>
-              </Link>
+              <>
+                <Link href="/admin/messages" onClick={closeNav}>
+                  <div
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                      isActive("/admin/messages")
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-accent"
+                    }`}
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    <span>Messages</span>
+                  </div>
+                </Link>
+                <Link href="/admin/announcements" onClick={closeNav}>
+                  <div
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                      isActive("/admin/announcements")
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-accent"
+                    }`}
+                  >
+                    <Shield className="h-5 w-5" />
+                    <span>{t.admin?.announcements?.title || "Announcements"}</span>
+                  </div>
+                </Link>
+              </>
             )}
           </nav>
 

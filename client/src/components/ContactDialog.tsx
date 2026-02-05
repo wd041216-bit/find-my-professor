@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Loader2, MessageSquare, Send } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ContactDialogProps {
   trigger?: React.ReactNode;
@@ -24,6 +25,7 @@ interface ContactDialogProps {
 
 export function ContactDialog({ trigger }: ContactDialogProps) {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [messageType, setMessageType] = useState<"business" | "support" | "purchase">("support");
   const [subject, setSubject] = useState("");
@@ -33,13 +35,13 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
 
   const sendMutation = trpc.contact.send.useMutation({
     onSuccess: () => {
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      toast.success(t.contact.messageSent);
       setSubject("");
       setMessage("");
       setOpen(false);
     },
     onError: (error) => {
-      toast.error(`Failed to send message: ${error.message}`);
+      toast.error(`${t.contact.sendFailed}: ${error.message}`);
     },
   });
 
@@ -48,7 +50,7 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
     
     if (messageType === "purchase") {
       if (!paymentAccount.trim() || !creditAmount.trim()) {
-        toast.error("Please provide your payment account and credit amount");
+        toast.error(t.contact.providePaymentInfo);
         return;
       }
       const purchaseSubject = `Credit Purchase Request: ${creditAmount} credits`;
@@ -56,7 +58,7 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
       sendMutation.mutate({ messageType, subject: purchaseSubject, message: purchaseMessage });
     } else {
       if (!subject.trim() || !message.trim()) {
-        toast.error("Please fill in all fields");
+        toast.error(t.contact.fillAllFields);
         return;
       }
       sendMutation.mutate({ messageType, subject, message });
@@ -70,20 +72,20 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
           {trigger || (
             <Button variant="ghost" size="sm">
               <MessageSquare className="mr-2 h-4 w-4" />
-              Contact
+              {t.nav.contact}
             </Button>
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Contact Us</DialogTitle>
+            <DialogTitle>{t.contact.title}</DialogTitle>
             <DialogDescription>
-              Please log in to send us a message.
+              {t.contact.loginRequired}
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center py-6">
             <Button asChild>
-              <a href={getLoginUrl()}>Log in to Continue</a>
+              <a href={getLoginUrl()}>{t.contact.loginToContinue}</a>
             </Button>
           </div>
         </DialogContent>
@@ -97,62 +99,62 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
         {trigger || (
           <Button variant="ghost" size="sm">
             <MessageSquare className="mr-2 h-4 w-4" />
-            Contact
+            {t.nav.contact}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Contact Us</DialogTitle>
+          <DialogTitle>{t.contact.title}</DialogTitle>
           <DialogDescription>
-            Have a question or feedback? Send us a message and we'll get back to you soon.
+            {t.contact.subtitle}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="messageType">Message Type</Label>
+            <Label htmlFor="messageType">{t.contact.messageType}</Label>
             <Select value={messageType} onValueChange={(value: "business" | "support" | "purchase") => setMessageType(value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="support">Problem / Question</SelectItem>
-                <SelectItem value="business">Business Cooperation</SelectItem>
-                <SelectItem value="purchase">Purchase Credits (China Only)</SelectItem>
+                <SelectItem value="support">{t.contact.problemQuestion}</SelectItem>
+                <SelectItem value="business">{t.contact.businessCooperation}</SelectItem>
+                <SelectItem value="purchase">{t.contact.purchaseCredits}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {messageType === "purchase" ? (
             <>
               <div className="space-y-2">
-                <Label htmlFor="paymentAccount">WeChat / Alipay Account</Label>
+                <Label htmlFor="paymentAccount">{t.contact.paymentAccount}</Label>
                 <Input
                   id="paymentAccount"
-                  placeholder="Your WeChat ID or Alipay account"
+                  placeholder={t.contact.paymentAccountPlaceholder}
                   value={paymentAccount}
                   onChange={(e) => setPaymentAccount(e.target.value)}
                   disabled={sendMutation.isPending}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="creditAmount">Credits to Purchase</Label>
+                <Label htmlFor="creditAmount">{t.contact.creditsToPurchase}</Label>
                 <Input
                   id="creditAmount"
                   type="number"
-                  placeholder="e.g., 500"
+                  placeholder={t.contact.creditAmountPlaceholder}
                   value={creditAmount}
                   onChange={(e) => setCreditAmount(e.target.value)}
                   disabled={sendMutation.isPending}
                 />
                 <p className="text-xs text-muted-foreground">
-                  We'll contact you with pricing and payment details.
+                  {t.contact.pricingNote}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="message">Additional Notes (Optional)</Label>
+                <Label htmlFor="message">{t.contact.additionalNotes}</Label>
                 <Textarea
                   id="message"
-                  placeholder="Any special requirements or questions..."
+                  placeholder={t.contact.additionalNotesPlaceholder}
                   rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -163,20 +165,20 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
           ) : (
             <>
               <div className="space-y-2">
-                <Label htmlFor="subject">Subject</Label>
+                <Label htmlFor="subject">{t.contact.subject}</Label>
                 <Input
                   id="subject"
-                  placeholder="What's this about?"
+                  placeholder={t.contact.subjectPlaceholder}
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   disabled={sendMutation.isPending}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
+                <Label htmlFor="message">{t.contact.message}</Label>
                 <Textarea
                   id="message"
-                  placeholder="Tell us more..."
+                  placeholder={t.contact.messagePlaceholder}
                   rows={5}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -192,18 +194,18 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
               onClick={() => setOpen(false)}
               disabled={sendMutation.isPending}
             >
-              Cancel
+              {t.contact.cancel}
             </Button>
             <Button type="submit" disabled={sendMutation.isPending}>
               {sendMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
+                  {t.contact.sending}
                 </>
               ) : (
                 <>
                   <Send className="mr-2 h-4 w-4" />
-                  Send Message
+                  {t.contact.send}
                 </>
               )}
             </Button>
