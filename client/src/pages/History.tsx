@@ -149,9 +149,16 @@ export default function History() {
                     <div>
                       <h4 className="font-semibold text-sm mb-2">{t.explore.matchReason || "匹配原因"}</h4>
                       <p className="text-sm text-muted-foreground">
-                        {typeof match.matchReasons === 'string' 
-                          ? JSON.parse(match.matchReasons)[0] 
-                          : match.matchReasons[0]}
+                        {(() => {
+                          try {
+                            const reasons = typeof match.matchReasons === 'string' 
+                              ? JSON.parse(match.matchReasons) 
+                              : match.matchReasons;
+                            return Array.isArray(reasons) && reasons.length > 0 ? reasons[0] : "暂无匹配原因";
+                          } catch (e) {
+                            return "暂无匹配原因";
+                          }
+                        })()}
                       </p>
                     </div>
                   )}

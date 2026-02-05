@@ -46,7 +46,14 @@ export default function Profile() {
       setFormData({
         academicLevel: profile.academicLevel || "",
         gpa: profile.gpa || "",
-        targetUniversity: profile.targetUniversities ? (JSON.parse(profile.targetUniversities)[0] || "") : "",
+        targetUniversity: (() => {
+          try {
+            const universities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
+            return Array.isArray(universities) && universities.length > 0 ? universities[0] : "";
+          } catch (e) {
+            return "";
+          }
+        })(),
         targetMajors: profile.targetMajors ? JSON.parse(profile.targetMajors) : [],
         skills: profile.skills ? JSON.parse(profile.skills) : [],
         interests: profile.interests ? JSON.parse(profile.interests) : [],
