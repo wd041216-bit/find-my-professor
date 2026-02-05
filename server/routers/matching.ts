@@ -40,8 +40,24 @@ export const matchingRouter = router({
     }
 
     // Step 3: Validate target university and major
-    const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
-    const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+    let targetUniversities: string[] = [];
+    let targetMajors: string[] = [];
+    
+    try {
+      targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
+      if (!Array.isArray(targetUniversities)) targetUniversities = [];
+    } catch (e) {
+      console.error('[Matching] Failed to parse targetUniversities:', e);
+      targetUniversities = [];
+    }
+    
+    try {
+      targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+      if (!Array.isArray(targetMajors)) targetMajors = [];
+    } catch (e) {
+      console.error('[Matching] Failed to parse targetMajors:', e);
+      targetMajors = [];
+    }
 
     if (targetUniversities.length === 0 || targetMajors.length === 0) {
       throw new TRPCError({
@@ -284,8 +300,24 @@ export const matchingRouter = router({
       }
 
       // Step 2: Get normalized university and major from profile
-      const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
-      const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+      let targetUniversities: string[] = [];
+      let targetMajors: string[] = [];
+      
+      try {
+        targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
+        if (!Array.isArray(targetUniversities)) targetUniversities = [];
+      } catch (e) {
+        console.error('[RefreshMatches] Failed to parse targetUniversities:', e);
+        targetUniversities = [];
+      }
+      
+      try {
+        targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+        if (!Array.isArray(targetMajors)) targetMajors = [];
+      } catch (e) {
+        console.error('[RefreshMatches] Failed to parse targetMajors:', e);
+        targetMajors = [];
+      }
 
       if (targetUniversities.length === 0 || targetMajors.length === 0) {
         throw new TRPCError({
