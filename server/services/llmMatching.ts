@@ -249,9 +249,11 @@ async function llmDeepMatching(
    URL: ${p.project_url || 'Not available'}`
   ).join('\n\n');
   
-  // CRITICAL: Always generate project information in English for database storage
-  // This ensures cover letters to foreign professors are always in English
-  const languageInstruction = 'Please respond in English only. All project names, professor names, research directions, descriptions, requirements, and match reasons MUST be in English.';
+  // Generate content in the user's preferred language for better UX
+  // Cover letters will be translated to English when generated
+  const languageInstruction = language === 'zh' 
+    ? 'Please respond in Simplified Chinese (简体中文). All project names, professor names, research directions, descriptions, requirements, and match reasons should be in Chinese.'
+    : 'Please respond in English. All project names, professor names, research directions, descriptions, requirements, and match reasons should be in English.';
   
   const prompt = `You are a research opportunity matching expert. ${languageInstruction}
 
@@ -502,9 +504,11 @@ async function generateProjectsFromScratch(
 ): Promise<MatchedProject[]> {
   console.log('[Fallback] Generating projects from scratch using LLM...');
   
-  // CRITICAL: Always generate project information in English for database storage
-  // This ensures cover letters to foreign professors are always in English
-  const languageInstruction = 'Please respond in English only. All project names, professor names, research directions, descriptions, requirements, and match reasons MUST be in English.';
+  // Generate content in the user's preferred language for better UX
+  // Cover letters will be translated to English when generated
+  const languageInstruction = language === 'zh' 
+    ? 'Please respond in Simplified Chinese (简体中文). All project names, professor names, research directions, descriptions, requirements, and match reasons should be in Chinese.'
+    : 'Please respond in English. All project names, professor names, research directions, descriptions, requirements, and match reasons should be in English.';
   
   const prompt = `You are a research opportunity matching expert with web search capabilities. ${languageInstruction}
 
