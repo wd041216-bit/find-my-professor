@@ -229,28 +229,6 @@ export const appRouter = router({
       }),
   }),
 
-  projects: router({
-    list: publicProcedure.query(async () => {
-      return db.getAllResearchProjects();
-    }),
-    
-    get: publicProcedure
-      .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getResearchProjectById(input.id);
-      }),
-    
-    search: publicProcedure
-      .input(z.object({
-        universityIds: z.array(z.number()).optional(),
-        majors: z.array(z.string()).optional(),
-        researchAreas: z.array(z.string()).optional(),
-      }))
-      .query(async ({ input }) => {
-        return db.searchResearchProjects(input);
-      }),
-  }),
-
   matches: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       return db.getUserMatches(ctx.user.id);

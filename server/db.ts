@@ -11,8 +11,6 @@ import {
   InsertUniversity,
   professors,
   InsertProfessor,
-  researchProjects,
-  InsertResearchProject,
   projectMatches,
   InsertProjectMatch,
   applicationLetters,
@@ -264,45 +262,6 @@ export async function createProfessor(professor: InsertProfessor) {
 
 // ===== Research Project Management =====
 
-export async function getAllResearchProjects() {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(researchProjects)
-    .where(eq(researchProjects.status, "open"))
-    .orderBy(desc(researchProjects.createdAt));
-}
-
-export async function getResearchProjectById(id: number) {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(researchProjects).where(eq(researchProjects.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
-}
-
-export async function searchResearchProjects(filters: {
-  universityIds?: number[];
-  majors?: string[];
-  researchAreas?: string[];
-}) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  let query = db.select().from(researchProjects).where(eq(researchProjects.status, "open"));
-  
-  // Note: For JSON array filtering, we'll need to handle this in application logic
-  // as MySQL JSON functions are complex. Return all open projects for now.
-  
-  return query.orderBy(desc(researchProjects.createdAt));
-}
-
-export async function createResearchProject(project: InsertResearchProject) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.insert(researchProjects).values(project);
-  const inserted = await db.select().from(researchProjects).orderBy(desc(researchProjects.id)).limit(1);
-  return inserted[0]?.id ?? 0;
-}
-
 // ===== Project Match Management =====
 
 export async function getUserMatches(userId: number) {
@@ -355,6 +314,13 @@ export async function upsertProjectMatch(match: InsertProjectMatch) {
     const inserted = await db.select().from(projectMatches).orderBy(desc(projectMatches.id)).limit(1);
     return inserted[0]?.id ?? 0;
   }
+}
+
+export async function getMatchById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(projectMatches).where(eq(projectMatches.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
 }
 
 export async function updateMatchStatus(id: number, updates: { viewed?: boolean; saved?: boolean; applied?: boolean }) {

@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "../_core/trpc";
+import { protectedProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import { invokeLLM } from "../_core/llm";
 import * as db from "../db";
@@ -6,7 +6,7 @@ import * as db from "../db";
 export const applicationRouter = router({
   generateLetter: protectedProcedure
     .input(z.object({
-      projectId: z.number(),
+      projectId: z.number(), // This is actually matchId from project_matches table
     }))
     .mutation(async ({ ctx, input }) => {
       // Check if user is admin (admins don't consume credits)
@@ -25,14 +25,11 @@ export const applicationRouter = router({
       const profile = await db.getStudentProfile(ctx.user.id);
       const activities = await db.getUserActivities(ctx.user.id);
       
-      // Get project, professor, and university details
-      const project = await db.getResearchProjectById(input.projectId);
-      if (!project) {
-        throw new Error("Project not found");
+      // Get project match details (contains all project information)
+      const match = await db.getMatchById(input.projectId);
+      if (!match || match.userId !== ctx.user.id) {
+        throw new Error("Project match not found");
       }
-      
-      const professor = await db.getProfessorById(project.professorId);
-      const university = await db.getUniversityById(project.universityId);
 
       // Prepare context for LLM
       const studentContext = {
@@ -58,21 +55,16 @@ export const applicationRouter = router({
       };
 
       const projectContext = {
-        title: project.title,
-        description: project.description,
-        requirements: project.requirements ? JSON.parse(project.requirements) : [],
-        researchAreas: project.researchAreas ? JSON.parse(project.researchAreas) : [],
+        title: match.projectName,
+        description: match.description,
+        requirements: match.requirements || "",
+        researchDirection: match.researchDirection,
         professor: {
-          name: professor?.name,
-          title: professor?.title,
-          department: professor?.department,
-          researchAreas: professor?.researchAreas ? JSON.parse(professor.researchAreas) : [],
-          labName: professor?.labName,
+          name: match.professorName,
+          lab: match.lab,
         },
-        university: {
-          name: university?.name,
-          country: university?.country,
-        },
+        university: match.university,
+        major: match.major,
       };
 
       // Generate application letter using LLM
@@ -85,7 +77,7 @@ Research Project:
 ${JSON.stringify(projectContext, null, 2)}
 
 Requirements:
-1. Address the letter to ${professor?.name} (${professor?.title})
+1. Address the letter to ${match.professorName}
 2. Express genuine interest in the specific research project
 3. Highlight relevant skills and experiences from the student's activities
 4. Connect the student's interests and goals with the research areas
@@ -93,6 +85,7 @@ Requirements:
 6. Be professional, concise (300-400 words), and enthusiastic
 7. Include specific examples from the student's background
 8. End with a clear call to action
+9. Write the letter in English (this is for applying to foreign professors)
 
 Write a complete, ready-to-send application letter in professional format.`;
 
@@ -117,7 +110,7 @@ Write a complete, ready-to-send application letter in professional format.`;
       // Save to application history
       const historyId = await db.createApplicationLetter({
         userId: ctx.user.id,
-        projectId: input.projectId,
+        projectId: input.projectId, // This is matchId
         content: generatedLetter,
       });
       
@@ -135,75 +128,6 @@ Write a complete, ready-to-send application letter in professional format.`;
         success: true,
         letter: generatedLetter,
         historyId,
-      };
-    }),
-
-  getHistory: protectedProcedure.query(async ({ ctx }) => {
-    // Get all application letters for the user across all projects
-    const allProjects = await db.getAllResearchProjects();
-    const history: any[] = [];
-    
-    for (const project of allProjects) {
-      const letters = await db.getUserApplicationLetters(ctx.user.id, project.id);
-      history.push(...letters);
-    }
-    
-    const historyWithDetails = await Promise.all(
-      history.map(async (item: any) => {
-        const project = await db.getResearchProjectById(item.projectId);
-        const professor = project ? await db.getProfessorById(project.professorId) : null;
-        const university = project ? await db.getUniversityById(project.universityId) : null;
-        
-        return {
-          ...item,
-          project: project ? {
-            title: project.title,
-            professor: professor?.name,
-            university: university?.name,
-          } : null,
-        };
-      })
-    );
-
-    return historyWithDetails;
-  }),
-
-  getById: protectedProcedure
-    .input(z.object({
-      id: z.number(),
-    }))
-    .query(async ({ ctx, input }) => {
-      // Get application letter by finding it in user's history
-      const allProjects = await db.getAllResearchProjects();
-      let history: any = null;
-      
-      for (const project of allProjects) {
-        const letters = await db.getUserApplicationLetters(ctx.user.id, project.id);
-        history = letters.find((l: any) => l.id === input.id);
-        if (history) break;
-      }
-      
-      if (!history || history.userId !== ctx.user.id) {
-        throw new Error("Application history not found");
-      }
-
-      const project = await db.getResearchProjectById(history.projectId);
-      const professor = project ? await db.getProfessorById(project.professorId) : null;
-      const university = project ? await db.getUniversityById(project.universityId) : null;
-
-      return {
-        ...history,
-        project: project ? {
-          ...project,
-          requirements: project.requirements ? JSON.parse(project.requirements) : [],
-          researchAreas: project.researchAreas ? JSON.parse(project.researchAreas) : [],
-          majors: project.majors ? JSON.parse(project.majors) : [],
-        } : null,
-        professor: professor ? {
-          ...professor,
-          researchAreas: professor.researchAreas ? JSON.parse(professor.researchAreas) : [],
-        } : null,
-        university,
       };
     }),
 });
