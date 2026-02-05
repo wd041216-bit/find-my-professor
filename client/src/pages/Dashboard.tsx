@@ -31,6 +31,16 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
+  // Fetch match history
+  const { data: matchHistory = [] } = trpc.matching.getMatchHistory.useQuery(undefined, {
+    enabled: !!user,
+  });
+
+  // Fetch cover letters
+  const { data: coverLetters = [] } = trpc.coverLetter.getMyLetters.useQuery(undefined, {
+    enabled: !!user,
+  });
+
   // Fetch user credits balance
   const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
     enabled: !!user && user.role !== 'admin', // Admins don't have credit limits
@@ -251,6 +261,90 @@ export default function Dashboard() {
                       <Badge variant="secondary" className="text-xs flex-shrink-0">{activity.category}</Badge>
                     </div>
                     <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{activity.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Match History */}
+        <Card className="mb-6 md:mb-8">
+          <CardHeader className="p-4 md:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base md:text-lg">{t.dashboard.matchHistory || "Match History"}</CardTitle>
+                <CardDescription className="text-sm">{matchHistory.length} {t.dashboard.matches || "matches"}</CardDescription>
+              </div>
+              <Link href="/explore">
+                <Button size="sm" variant="outline">
+                  {t.dashboard.viewAll}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+            {matchHistory.length === 0 ? (
+              <div className="text-center py-8 md:py-12">
+                <Search className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mx-auto mb-3 md:mb-4" />
+                <p className="text-muted-foreground mb-3 md:mb-4 text-sm">{t.dashboard.noMatches || "No matches yet"}</p>
+                <Link href="/explore">
+                  <Button variant="outline" size="sm">{t.dashboard.searchProjects}</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3 md:space-y-4">
+                {matchHistory.slice(0, 3).map((match: any) => (
+                  <div key={match.id} className="border rounded-lg p-3 md:p-4 hover:bg-accent/5 transition-colors">
+                    <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm md:text-base truncate">{match.projectName}</h4>
+                        <p className="text-xs md:text-sm text-muted-foreground truncate">{match.professorName} - {match.university}</p>
+                      </div>
+                      <Badge variant="secondary" className="text-xs flex-shrink-0">{match.matchScore}%</Badge>
+                    </div>
+                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{match.researchDirection}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Cover Letters */}
+        <Card className="mb-6 md:mb-8">
+          <CardHeader className="p-4 md:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base md:text-lg">{t.dashboard.yourCoverLetters || "Your Cover Letters"}</CardTitle>
+                <CardDescription className="text-sm">{coverLetters.length} {t.dashboard.lettersGenerated || "letters generated"}</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+            {coverLetters.length === 0 ? (
+              <div className="text-center py-8 md:py-12">
+                <FileText className="h-10 w-10 md:h-12 md:w-12 text-muted-foreground mx-auto mb-3 md:mb-4" />
+                <p className="text-muted-foreground mb-3 md:mb-4 text-sm">{t.dashboard.noCoverLetters || "No cover letters yet"}</p>
+                <Link href="/explore">
+                  <Button variant="outline" size="sm">{t.dashboard.searchProjects}</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3 md:space-y-4">
+                {coverLetters.slice(0, 3).map((letter: any) => (
+                  <div key={letter.id} className="border rounded-lg p-3 md:p-4 hover:bg-accent/5 transition-colors">
+                    <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm md:text-base truncate">{letter.projectName}</h4>
+                        <p className="text-xs md:text-sm text-muted-foreground truncate">{letter.professorName} - {letter.university}</p>
+                      </div>
+                      <Badge variant="outline" className="text-xs flex-shrink-0">{letter.tone}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(letter.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 ))}
               </div>

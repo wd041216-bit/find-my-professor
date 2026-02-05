@@ -8,6 +8,7 @@ import { resumeRouter } from "./routers/resume";
 import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
 import { creditsRouter } from "./routers/credits";
+import { coverLetterRouter } from "./routers/coverLetter";
 // Credits router removed - payment feature not yet launched
 import { NormalizationService } from "./services/normalization";
 import { ScrapingService } from "./services/scraping";
@@ -316,6 +317,7 @@ export const appRouter = router({
   matching: matchingRouter,
   application: applicationRouter,
   credits: creditsRouter,
+  coverLetter: coverLetterRouter,
 
   notifications: router({
     list: protectedProcedure.query(async ({ ctx }) => {

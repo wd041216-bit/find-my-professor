@@ -182,6 +182,34 @@ export type ApplicationLetter = typeof applicationLetters.$inferSelect;
 export type InsertApplicationLetter = typeof applicationLetters.$inferInsert;
 
 /**
+ * Cover letters generated for project matches
+ * Stores personalized application letters for specific project-user pairs
+ */
+export const coverLetters = mysqlTable("cover_letters", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull(),
+  matchId: int("match_id").notNull(), // Links to project_matches table
+  
+  // Project context (denormalized for easy access)
+  projectName: varchar("project_name", { length: 500 }).notNull(),
+  professorName: varchar("professor_name", { length: 255 }).notNull(),
+  university: varchar("university", { length: 255 }).notNull(),
+  
+  // Letter content
+  content: text("content").notNull(), // The generated cover letter
+  tone: mysqlEnum("tone", ["formal", "casual", "enthusiastic"]).default("formal").notNull(),
+  
+  // Metadata
+  viewed: boolean("viewed").default(false),
+  downloaded: boolean("downloaded").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CoverLetter = typeof coverLetters.$inferSelect;
+export type InsertCoverLetter = typeof coverLetters.$inferInsert;
+
+/**
  * Notifications for users
  */
 export const notifications = mysqlTable("notifications", {

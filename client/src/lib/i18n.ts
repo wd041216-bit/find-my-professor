@@ -85,6 +85,10 @@ export const translations = {
       smartMatching: "Smart Matching",
       smartMatchingDesc: "Find research opportunities that match your profile and interests",
       viewAll: "View All",
+      matchHistory: "Match History",
+      noMatches: "No matches yet",
+      yourCoverLetters: "Your Cover Letters",
+      noCoverLetters: "No cover letters yet",
     },
     // Profile
     profile: {
@@ -325,6 +329,17 @@ export const translations = {
       add: "Add",
       goToProfile: "Go to Profile",
       generateLetter: "Generate Letter",
+      close: "Close",
+    },
+    coverLetter: {
+      title: "Cover Letter",
+      generating: "Generating cover letter...",
+      copy: "Copy",
+      copied: "Copied to clipboard",
+      copyFailed: "Failed to copy",
+      generateSuccess: "Cover letter generated successfully",
+      generateFailed: "Failed to generate cover letter",
+      cost: "Cost: {cost} credits",
     },
   },
   zh: {
@@ -408,6 +423,10 @@ export const translations = {
       smartMatching: "智能匹配",
       smartMatchingDesc: "找到与你的背景和兴趣相匹配的研究机会",
       viewAll: "查看全部",
+      matchHistory: "匹配历史",
+      noMatches: "还没有匹配记录",
+      yourCoverLetters: "你的申请文书",
+      noCoverLetters: "还没有生成文书",
     },
     // Profile
     profile: {
@@ -648,6 +667,17 @@ export const translations = {
       add: "添加",
       goToProfile: "前往设置",
       generateLetter: "生成文书",
+      close: "关闭",
+    },
+    coverLetter: {
+      title: "申请文书",
+      generating: "正在生成文书...",
+      copy: "复制",
+      copied: "已复制到剪贴板",
+      copyFailed: "复制失败",
+      generateSuccess: "文书生成成功",
+      generateFailed: "文书生成失败",
+      cost: "消耗：{cost}积分",
     },
   },
 };
