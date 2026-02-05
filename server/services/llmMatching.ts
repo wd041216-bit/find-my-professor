@@ -37,7 +37,8 @@ export interface MatchedProject {
 export async function generateMatchedProjects(
   university: string,
   major: string,
-  userProfile: UserProfile
+  userProfile: UserProfile,
+  language: 'en' | 'zh' = 'en'
 ): Promise<MatchedProject[]> {
   // First, try to get existing projects from database
   const db = await getDb();
@@ -59,7 +60,11 @@ export async function generateMatchedProjects(
       ).join('\n\n')}`
     : '';
 
-  const prompt = `You are a research opportunity matching expert. Generate 8-10 highly relevant research projects for a student.
+  const languageInstruction = language === 'zh' 
+    ? 'Please respond in Simplified Chinese (简体中文). All project names, descriptions, requirements, and match reasons should be in Chinese.'
+    : 'Please respond in English.';
+
+  const prompt = `You are a research opportunity matching expert. ${languageInstruction} Generate 8-10 highly relevant research projects for a student.
 
 **Student Profile:**
 - Academic Level: ${userProfile.academicLevel || 'Not specified'}

@@ -9,7 +9,12 @@ export const matchingRouter = router({
   // Calculate matches for current user
   // Frontend: LLM generates 8-10 matches instantly
   // Background: Crawler silently scrapes all projects for the university/major
-  calculateMatches: protectedProcedure.mutation(async ({ ctx }) => {
+  calculateMatches: protectedProcedure
+    .input(z.object({
+      language: z.enum(['en', 'zh']).optional().default('en'),
+    }).optional())
+    .mutation(async ({ ctx, input }) => {
+    const language = input?.language || 'en';
     // Step 1: Check credits (30 points for matching)
     const currentCredits = await checkAndResetCredits(ctx.user.id);
     if (currentCredits < 30) {
@@ -63,7 +68,7 @@ export const matchingRouter = router({
     await deductCredits(ctx.user.id, 30, 'project_matching');
 
     // Step 6: Generate matches with LLM (fast, returns immediately)
-    const matches: MatchedProject[] = await generateMatchedProjects(university, major, userProfile);
+    const matches: MatchedProject[] = await generateMatchedProjects(university, major, userProfile, language);
 
     // Step 7: Save matches to database
     for (const match of matches) {

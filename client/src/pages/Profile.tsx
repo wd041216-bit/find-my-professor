@@ -128,7 +128,6 @@ export default function Profile() {
               onClick={handleSubmit} 
               disabled={upsertMutation.isPending}
               size="sm"
-              className="hidden md:flex"
             >
               {upsertMutation.isPending ? (
                 <>
@@ -304,20 +303,6 @@ export default function Profile() {
                   className="text-sm"
                 />
               </div>
-
-              <Button type="submit" size="default" className="w-full h-10 md:h-11" disabled={upsertMutation.isPending}>
-                {upsertMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t.profile.saving}
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    {t.profile.saveProfile}
-                  </>
-                )}
-              </Button>
             </form>
           </CardContent>
         </Card>

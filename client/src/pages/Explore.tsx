@@ -29,7 +29,7 @@ export default function Explore() {
     professorName: string;
     university: string;
   } | null>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const calculateMatchesMutation = trpc.matching.calculateMatches.useMutation();
   const generateLetterMutation = trpc.coverLetter.generate.useMutation();
@@ -102,7 +102,7 @@ export default function Explore() {
       const universityName = targetUniversities[0];
       const majorName = targetMajors[0];
       
-      const result = await calculateMatchesMutation.mutateAsync();
+      const result = await calculateMatchesMutation.mutateAsync({ language });
 
       setProjects(result.matches);
       toast.success(t.explore.foundProjects?.replace('{count}', result.matches.length.toString()) || `找到 ${result.matches.length} 个匹配项目`);
@@ -236,23 +236,25 @@ export default function Explore() {
               {projects.map((project, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg md:text-xl mb-2">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <CardTitle className="text-lg md:text-xl flex-1 min-w-0">
                           {project.projectName}
                         </CardTitle>
-                        <CardDescription className="flex flex-wrap gap-2 items-center">
-                          <Badge variant="secondary" className="font-medium">
-                            {project.professorName}
-                          </Badge>
-                          {project.lab && (
-                            <Badge variant="outline">{project.lab}</Badge>
-                          )}
-                        </CardDescription>
+                        <Badge className="shrink-0">
+                          {t.explore.matchScore || "匹配度"}: {project.matchScore}%
+                        </Badge>
                       </div>
-                      <Badge className="shrink-0">
-                        {t.explore.matchScore || "匹配度"}: {project.matchScore}%
-                      </Badge>
+                      <CardDescription className="flex flex-wrap gap-2 items-center">
+                        <Badge variant="secondary" className="font-medium">
+                          {project.professorName}
+                        </Badge>
+                        {project.lab && (
+                          <Badge variant="outline" className="max-w-full truncate">
+                            {project.lab}
+                          </Badge>
+                        )}
+                      </CardDescription>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
