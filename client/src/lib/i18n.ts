@@ -397,6 +397,7 @@ export const translations = {
       errorFileSize: "File size must be less than 16MB",
       errorSelectFile: "Please select a file first",
       errorReadFile: "Failed to read file",
+      uploadSuccess: "Resume uploaded successfully! Your profile has been updated.",
       successMessage: "Successfully extracted {activities} activities and {skills} skills!",
       errorParse: "Failed to parse resume: {error}",
     },
@@ -839,7 +840,8 @@ export const translations = {
       errorFileSize: "文件大小必须小于16MB",
       errorSelectFile: "请先选择文件",
       errorReadFile: "读取文件失败",
-      successMessage: "成功提取了{activities}个活动和{skills}个技能！",
+      uploadSuccess: "简历上传成功！您的个人资料已更新。",
+      successMessage: "成功提取{activities}个活动和{skills}个技能！",
       errorParse: "解析简历失败：{error}",
     },
     // Notifications Page

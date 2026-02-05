@@ -15,16 +15,15 @@ export default function UploadResume() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
-  const [parseResult, setParseResult] = useState<any>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadAndParseMutation = trpc.resume.uploadAndParse.useMutation({
-    onSuccess: (data) => {
-      setParseResult(data);
-      const message = t.uploadResume.successMessage
-        .replace("{activities}", data.activitiesCreated.toString())
-        .replace("{skills}", data.skillsExtracted.toString());
-      toast.success(message);
+    onSuccess: () => {
+      toast.success(t.uploadResume.uploadSuccess);
+      // Reset file input for next upload
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     },
     onError: (error) => {
       const message = t.uploadResume.errorParse.replace("{error}", error.message);
@@ -47,7 +46,6 @@ export default function UploadResume() {
       }
       
       setFile(selectedFile);
-      setParseResult(null);
     }
   };
 
@@ -186,7 +184,6 @@ export default function UploadResume() {
                       variant="outline"
                       onClick={() => {
                         setFile(null);
-                        setParseResult(null);
                         if (fileInputRef.current) fileInputRef.current.value = "";
                       }}
                       disabled={uploadAndParseMutation.isPending}
@@ -197,74 +194,6 @@ export default function UploadResume() {
                 </>
               )}
             </div>
-
-            {/* Parse Result */}
-            {parseResult && (
-              <Card className="border-2 border-primary/20 bg-primary/5">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-6 w-6 text-primary" />
-                    <CardTitle>{t.uploadResume.parsingComplete}</CardTitle>
-                  </div>
-                  <CardDescription>
-                    {t.uploadResume.resumeAnalyzed}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="bg-background rounded-lg p-4">
-                      <div className="text-3xl font-bold text-primary">{parseResult.activitiesCreated}</div>
-                      <p className="text-sm text-muted-foreground">{t.uploadResume.activitiesExtracted}</p>
-                    </div>
-                    <div className="bg-background rounded-lg p-4">
-                      <div className="text-3xl font-bold text-primary">{parseResult.skillsExtracted}</div>
-                      <p className="text-sm text-muted-foreground">{t.uploadResume.skillsIdentified}</p>
-                    </div>
-                  </div>
-
-                  {parseResult.activities && parseResult.activities.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-3">{t.uploadResume.extractedActivities}</h4>
-                      <div className="space-y-2">
-                        {parseResult.activities.map((activity: any, index: number) => (
-                          <div key={index} className="bg-background rounded-lg p-3 border">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="font-medium">{activity.title}</p>
-                                {activity.organization && (
-                                  <p className="text-sm text-muted-foreground">{activity.organization}</p>
-                                )}
-                              </div>
-                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                                {activity.category}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex gap-2">
-                    <Link href="/activities">
-                      <Button className="flex-1">
-                        {t.uploadResume.viewAllActivities}
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setFile(null);
-                        setParseResult(null);
-                        if (fileInputRef.current) fileInputRef.current.value = "";
-                      }}
-                    >
-                      {t.uploadResume.uploadAnother}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Instructions */}
             <Card className="bg-muted/30">
