@@ -31,42 +31,228 @@ export interface MatchedProject {
 }
 
 /**
- * Use LLM to generate 8-10 matched research projects for a user
- * This is the fast frontend response
+ * Layer 1: SQL-based coarse filtering
+ * Goal: Filter 200+ projects down to ~150 using keyword matching
+ * Strategy: Very loose filtering - only exclude obviously irrelevant projects
  */
-export async function generateMatchedProjects(
+async function sqlCoarseFilter(
+  db: any,
   university: string,
   major: string,
-  userProfile: UserProfile,
-  language: 'en' | 'zh' = 'en'
-): Promise<MatchedProject[]> {
-  // First, try to get existing projects from database
-  const db = await getDb();
-  if (!db) {
-    throw new Error('Database connection failed');
+  userProfile: UserProfile
+): Promise<any[]> {
+  console.log('[Layer 1] Starting SQL coarse filter...');
+  
+  // Build keyword list from user profile
+  const keywords: string[] = [];
+  
+  // Add skills
+  if (userProfile.skills && userProfile.skills.length > 0) {
+    keywords.push(...userProfile.skills.map(s => s.toLowerCase()));
   }
-  const existingProjects = await db.execute(
-    sql`SELECT * FROM scraped_projects 
-        WHERE LOWER(university_name) = LOWER(${university}) 
-        AND LOWER(major_name) = LOWER(${major}) 
-        AND expires_at > NOW() 
-        LIMIT 50`
-  );
+  
+  // Add interests
+  if (userProfile.interests && userProfile.interests.length > 0) {
+    keywords.push(...userProfile.interests.map(i => i.toLowerCase()));
+  }
+  
+  // Add activity categories as additional context
+  if (userProfile.activities && userProfile.activities.length > 0) {
+    const activityKeywords = userProfile.activities
+      .map(a => a.category.toLowerCase())
+      .filter((v, i, a) => a.indexOf(v) === i); // unique
+    keywords.push(...activityKeywords);
+  }
+  
+  // Build SQL LIKE conditions (very loose - OR logic)
+  const likeConditions = keywords.map(keyword => 
+    `(LOWER(research_area) LIKE '%${keyword}%' OR LOWER(project_description) LIKE '%${keyword}%' OR LOWER(requirements) LIKE '%${keyword}%')`
+  ).join(' OR ');
+  
+  // If no keywords, return all projects (no filtering)
+  if (keywords.length === 0) {
+    console.log('[Layer 1] No keywords found, returning all projects');
+    const result = await db.execute(
+      sql`SELECT * FROM scraped_projects 
+          WHERE LOWER(university_name) = LOWER(${university}) 
+          AND LOWER(major_name) = LOWER(${major}) 
+          AND expires_at > NOW() 
+          ORDER BY created_at DESC 
+          LIMIT 150`
+    );
+    return (result as any).rows || [];
+  }
+  
+  // Execute query with keyword filtering
+  const query = `
+    SELECT * FROM scraped_projects 
+    WHERE LOWER(university_name) = LOWER('${university}') 
+    AND LOWER(major_name) = LOWER('${major}') 
+    AND expires_at > NOW() 
+    AND (${likeConditions})
+    ORDER BY created_at DESC 
+    LIMIT 150
+  `;
+  
+  const result = await db.execute(sql.raw(query));
+  const filtered = (result as any).rows || [];
+  
+  console.log(`[Layer 1] Filtered ${filtered.length} projects using keywords: ${keywords.slice(0, 5).join(', ')}${keywords.length > 5 ? '...' : ''}`);
+  
+  return filtered;
+}
 
-  const projects = (existingProjects as any).rows || [];
-  const projectsContext = projects.length > 0
-    ? `\n\nExisting projects in our database (use these as reference or select from them):\n${projects.map((p: any, i: number) => 
-        `${i + 1}. ${p.project_title} - ${p.professor_name} (${p.lab_name || 'N/A'})\n   Research: ${p.research_area}\n   Description: ${p.project_description}`
-      ).join('\n\n')}`
-    : '';
+/**
+ * Layer 2: LLM batch scoring
+ * Goal: Quickly score projects (0-10) and select top 30-40
+ * Strategy: Use simple prompts to minimize token usage
+ */
+async function llmBatchScoring(
+  projects: any[],
+  userProfile: UserProfile,
+  university: string,
+  major: string
+): Promise<Array<{project: any, score: number}>> {
+  console.log(`[Layer 2] Starting LLM batch scoring for ${projects.length} projects...`);
+  
+  const batchSize = 50;
+  const scoredProjects: Array<{project: any, score: number}> = [];
+  
+  // Split into batches
+  for (let i = 0; i < projects.length; i += batchSize) {
+    const batch = projects.slice(i, i + batchSize);
+    const batchNum = Math.floor(i / batchSize) + 1;
+    const totalBatches = Math.ceil(projects.length / batchSize);
+    
+    console.log(`[Layer 2] Processing batch ${batchNum}/${totalBatches} (${batch.length} projects)...`);
+    
+    // Build simplified project list
+    const projectList = batch.map((p, idx) => 
+      `${idx + 1}. ${p.project_title || 'Untitled'} - ${p.professor_name || 'Unknown'}
+   Research: ${p.research_area || 'Not specified'}
+   Description: ${(p.project_description || '').substring(0, 150)}...`
+    ).join('\n\n');
+    
+    const prompt = `You are a research matching expert. Rate each project's relevance to this student (0-10 scale).
 
+**Student Profile:**
+- Target: ${major} at ${university}
+- Academic Level: ${userProfile.academicLevel || 'Not specified'}
+- Skills: ${userProfile.skills?.join(', ') || 'Not specified'}
+- Interests: ${userProfile.interests?.join(', ') || 'Not specified'}
+${userProfile.activities && userProfile.activities.length > 0 ? `- Activities: ${userProfile.activities.map(a => a.title).join(', ')}` : ''}
+
+**Projects to Rate:**
+${projectList}
+
+**Rating Criteria (0-10):**
+- 8-10: Excellent match (skills align, strong interest fit, appropriate level)
+- 5-7: Good match (some skills match, related interests, could work)
+- 2-4: Weak match (few skills, tangential interests, challenging)
+- 0-1: Poor match (no skill overlap, unrelated interests)
+
+Return ONLY a JSON array of ${batch.length} numbers: {"scores": [score1, score2, ...]}`;
+
+    try {
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: "You are a research matching expert. Return only valid JSON with scores." },
+          { role: "user", content: prompt }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "project_scores",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                scores: {
+                  type: "array",
+                  items: { type: "number" }
+                }
+              },
+              required: ["scores"],
+              additionalProperties: false
+            }
+          }
+        }
+      });
+      
+      const content = response.choices[0].message.content;
+      if (!content || typeof content !== 'string') {
+        console.error(`[Layer 2] Batch ${batchNum} returned empty response`);
+        // Assign default score of 5 to all projects in this batch
+        batch.forEach(project => {
+          scoredProjects.push({ project, score: 5 });
+        });
+        continue;
+      }
+      
+      const parsed = JSON.parse(content);
+      const scores = parsed.scores || [];
+      
+      // Associate scores with projects
+      batch.forEach((project, idx) => {
+        scoredProjects.push({
+          project,
+          score: scores[idx] !== undefined ? scores[idx] : 5 // default to 5 if missing
+        });
+      });
+      
+      console.log(`[Layer 2] Batch ${batchNum} completed. Score range: ${Math.min(...scores)}-${Math.max(...scores)}`);
+      
+    } catch (error) {
+      console.error(`[Layer 2] Batch ${batchNum} failed:`, error);
+      // Assign default scores on error
+      batch.forEach(project => {
+        scoredProjects.push({ project, score: 5 });
+      });
+    }
+  }
+  
+  // Sort by score descending and take top 40
+  scoredProjects.sort((a, b) => b.score - a.score);
+  const topProjects = scoredProjects.slice(0, 40);
+  
+  console.log(`[Layer 2] Completed. Top 40 projects selected. Score range: ${topProjects[0]?.score}-${topProjects[topProjects.length - 1]?.score}`);
+  
+  return topProjects;
+}
+
+/**
+ * Layer 3: LLM deep matching
+ * Goal: Perform detailed analysis and return final 8-10 matches with reasons
+ * Strategy: Use comprehensive prompts with full project details
+ */
+async function llmDeepMatching(
+  projects: any[],
+  userProfile: UserProfile,
+  university: string,
+  major: string,
+  language: 'en' | 'zh'
+): Promise<MatchedProject[]> {
+  console.log(`[Layer 3] Starting LLM deep matching for ${projects.length} projects...`);
+  
+  const projectsContext = projects.map((p, i) => 
+    `${i + 1}. ${p.project_title || 'Untitled Project'}
+   Professor: ${p.professor_name || 'Unknown'}
+   Lab: ${p.lab_name || 'Not specified'}
+   Research Area: ${p.research_area || 'Not specified'}
+   Description: ${p.project_description || 'No description available'}
+   Requirements: ${p.requirements || 'Not specified'}
+   Contact: ${p.contact_email || 'Not available'}
+   URL: ${p.project_url || 'Not available'}`
+  ).join('\n\n');
+  
   const languageInstruction = language === 'zh' 
     ? 'Please respond in Simplified Chinese (简体中文). All project names, descriptions, requirements, and match reasons should be in Chinese.'
     : 'Please respond in English.';
-
-  const prompt = `You are a research opportunity matching expert. ${languageInstruction} Generate 8-10 highly relevant research projects for a student.
+  
+  const prompt = `You are a research opportunity matching expert. ${languageInstruction}
 
 **Student Profile:**
+- Target: ${major} at ${university}
 - Academic Level: ${userProfile.academicLevel || 'Not specified'}
 - GPA: ${userProfile.gpa || 'Not specified'}
 - Skills: ${userProfile.skills?.join(', ') || 'Not specified'}
@@ -74,47 +260,47 @@ export async function generateMatchedProjects(
 - Bio: ${userProfile.bio || 'Not specified'}
 ${userProfile.activities && userProfile.activities.length > 0 ? `- Activities:\n${userProfile.activities.map(a => `  * ${a.title} (${a.category})${a.role ? ` - ${a.role}` : ''}${a.description ? `\n    ${a.description}` : ''}`).join('\n')}` : ''}
 
-**Target:**
-- University: ${university}
-- Major: ${major}
+**Candidate Projects (Pre-screened):**
 ${projectsContext}
 
 **Task:**
-Generate 8-10 research projects that match this student's profile. Each project should include:
-1. Project name
-2. Professor name
-3. Lab name (if applicable)
-4. Research direction
-5. Project description
-6. Requirements (what skills/background needed)
-7. Contact email (if available)
-8. URL (if available)
-9. Match score (0-100, how well it matches the student)
-10. Match reason (why this project is a good fit)
+Select the BEST 8-10 projects for this student. For each selected project, provide:
+1. **Match Score (0-100)**: How well it matches the student's profile
+2. **Match Reason**: Specific explanation covering:
+   - Which skills/experiences make them a strong candidate
+   - How their interests align with the research direction
+   - What they can contribute and learn
+   - Why this is better than other options
 
-${existingProjects.length > 0 ? 'Prioritize selecting and ranking projects from the existing database, but you can also generate new ones if needed.' : 'Generate realistic research projects based on typical research areas in this field at this university.'}
+**Selection Criteria:**
+- Prioritize projects where student's skills directly apply
+- Consider transferable skills (e.g., Python experience → data analysis projects)
+- Value relevant activities/experiences that demonstrate capability
+- Include diverse options (different research directions within their interests)
+- Balance "perfect fit" with "growth opportunity" projects
 
 Return ONLY a JSON array with this exact structure:
-[
-  {
-    "projectName": "string",
-    "professorName": "string",
-    "lab": "string or null",
-    "researchDirection": "string",
-    "description": "string",
-    "requirements": "string or null",
-    "contactEmail": "string or null",
-    "url": "string or null",
-    "matchScore": number (0-100),
-    "matchReason": "string"
-  }
-]`;
+{
+  "projects": [
+    {
+      "projectName": "string",
+      "professorName": "string",
+      "lab": "string or null",
+      "researchDirection": "string",
+      "description": "string",
+      "requirements": "string or null",
+      "contactEmail": "string or null",
+      "url": "string or null",
+      "matchScore": number (0-100),
+      "matchReason": "string (detailed explanation)"
+    }
+  ]
+}`;
 
   try {
-    // Note: LLM has web search capabilities enabled by default
     const response = await invokeLLM({
       messages: [
-        { role: "system", content: "You are a research opportunity matching expert with access to real-time web information. Use your web search capabilities to find the latest research projects, professor information, and lab details from the target university's official website and academic databases. Always return valid JSON." },
+        { role: "system", content: "You are a research opportunity matching expert. Provide detailed, personalized match analysis. Always return valid JSON." },
         { role: "user", content: prompt }
       ],
       response_format: {
@@ -152,23 +338,216 @@ Return ONLY a JSON array with this exact structure:
         }
       }
     });
-
+    
     const content = response.choices[0].message.content;
     if (!content || typeof content !== 'string') {
       throw new Error("Empty or invalid response from LLM");
     }
-
+    
     const parsed = JSON.parse(content);
-    const projects: MatchedProject[] = parsed.projects;
-
+    const matchedProjects: MatchedProject[] = parsed.projects;
+    
     // Sort by match score descending
-    projects.sort((a, b) => b.matchScore - a.matchScore);
-
-    return projects;
+    matchedProjects.sort((a, b) => b.matchScore - a.matchScore);
+    
+    console.log(`[Layer 3] Completed. ${matchedProjects.length} final matches generated.`);
+    
+    return matchedProjects;
+    
   } catch (error) {
-    console.error('[LLM Matching] Error generating matches:', error);
+    console.error('[Layer 3] Deep matching failed:', error);
     throw error;
   }
+}
+
+/**
+ * Main function: Three-layer intelligent filtering architecture
+ * Automatically selects strategy based on project count
+ */
+export async function generateMatchedProjects(
+  university: string,
+  major: string,
+  userProfile: UserProfile,
+  language: 'en' | 'zh' = 'en'
+): Promise<MatchedProject[]> {
+  
+  const db = await getDb();
+  if (!db) {
+    throw new Error('Database connection failed');
+  }
+  
+  // Step 1: Query total project count
+  const countResult = await db.execute(
+    sql`SELECT COUNT(*) as count FROM scraped_projects 
+        WHERE LOWER(university_name) = LOWER(${university}) 
+        AND LOWER(major_name) = LOWER(${major}) 
+        AND expires_at > NOW()`
+  );
+  
+  const totalProjects = parseInt((countResult as any).rows[0]?.count || '0');
+  console.log(`\n========================================`);
+  console.log(`[Matching] Starting match for ${university} - ${major}`);
+  console.log(`[Matching] Total projects in database: ${totalProjects}`);
+  console.log(`========================================\n`);
+  
+  // Step 2: Select strategy based on project count
+  if (totalProjects === 0) {
+    // No projects in database - use LLM to generate from scratch
+    console.log(`[Strategy] No projects found. Using LLM generation mode.`);
+    return await generateProjectsFromScratch(university, major, userProfile, language);
+    
+  } else if (totalProjects <= 50) {
+    // Strategy A: Direct deep matching
+    console.log(`[Strategy A] Direct deep matching (${totalProjects} projects)`);
+    
+    const projects = await db.execute(
+      sql`SELECT * FROM scraped_projects 
+          WHERE LOWER(university_name) = LOWER(${university}) 
+          AND LOWER(major_name) = LOWER(${major}) 
+          AND expires_at > NOW() 
+          ORDER BY created_at DESC`
+    );
+    
+    return await llmDeepMatching((projects as any).rows, userProfile, university, major, language);
+    
+  } else if (totalProjects <= 200) {
+    // Strategy B: Two-stage LLM filtering
+    console.log(`[Strategy B] Two-stage LLM filtering (${totalProjects} projects)`);
+    
+    const projects = await db.execute(
+      sql`SELECT * FROM scraped_projects 
+          WHERE LOWER(university_name) = LOWER(${university}) 
+          AND LOWER(major_name) = LOWER(${major}) 
+          AND expires_at > NOW() 
+          ORDER BY created_at DESC`
+    );
+    
+    // Layer 2: Batch scoring
+    const scoredProjects = await llmBatchScoring((projects as any).rows, userProfile, university, major);
+    
+    // Layer 3: Deep matching
+    return await llmDeepMatching(
+      scoredProjects.map(sp => sp.project),
+      userProfile,
+      university,
+      major,
+      language
+    );
+    
+  } else {
+    // Strategy C: Three-layer filtering
+    console.log(`[Strategy C] Three-layer filtering (${totalProjects} projects)`);
+    
+    // Layer 1: SQL coarse filter
+    const coarseFiltered = await sqlCoarseFilter(db, university, major, userProfile);
+    
+    // Layer 2: LLM batch scoring
+    const scoredProjects = await llmBatchScoring(coarseFiltered, userProfile, university, major);
+    
+    // Layer 3: LLM deep matching
+    return await llmDeepMatching(
+      scoredProjects.map(sp => sp.project),
+      userProfile,
+      university,
+      major,
+      language
+    );
+  }
+}
+
+/**
+ * Fallback: Generate projects from scratch when database is empty
+ * Uses LLM with web search capabilities
+ */
+async function generateProjectsFromScratch(
+  university: string,
+  major: string,
+  userProfile: UserProfile,
+  language: 'en' | 'zh'
+): Promise<MatchedProject[]> {
+  console.log('[Fallback] Generating projects from scratch using LLM...');
+  
+  const languageInstruction = language === 'zh' 
+    ? 'Please respond in Simplified Chinese (简体中文).'
+    : 'Please respond in English.';
+  
+  const prompt = `You are a research opportunity matching expert with web search capabilities. ${languageInstruction}
+
+**Student Profile:**
+- Target: ${major} at ${university}
+- Academic Level: ${userProfile.academicLevel || 'Not specified'}
+- GPA: ${userProfile.gpa || 'Not specified'}
+- Skills: ${userProfile.skills?.join(', ') || 'Not specified'}
+- Research Interests: ${userProfile.interests?.join(', ') || 'Not specified'}
+- Bio: ${userProfile.bio || 'Not specified'}
+${userProfile.activities && userProfile.activities.length > 0 ? `- Activities:\n${userProfile.activities.map(a => `  * ${a.title} (${a.category})`).join('\n')}` : ''}
+
+**Task:**
+Generate 8-10 realistic research projects at ${university} in the ${major} department that match this student's profile.
+
+Use your web search capabilities to find:
+- Real professors and labs at this university
+- Current research areas in this department
+- Typical project requirements and opportunities
+
+For each project, provide detailed match analysis explaining why it's a good fit.
+
+Return JSON array with the standard project structure.`;
+
+  const response = await invokeLLM({
+    messages: [
+      { role: "system", content: "You are a research opportunity matching expert with access to real-time web information. Use your web search capabilities to find accurate, current information. Always return valid JSON." },
+      { role: "user", content: prompt }
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "matched_projects",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            projects: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  projectName: { type: "string" },
+                  professorName: { type: "string" },
+                  lab: { type: ["string", "null"] },
+                  researchDirection: { type: "string" },
+                  description: { type: "string" },
+                  requirements: { type: ["string", "null"] },
+                  contactEmail: { type: ["string", "null"] },
+                  url: { type: ["string", "null"] },
+                  matchScore: { type: "number" },
+                  matchReason: { type: "string" }
+                },
+                required: ["projectName", "professorName", "researchDirection", "description", "matchScore", "matchReason"],
+                additionalProperties: false
+              }
+            }
+          },
+          required: ["projects"],
+          additionalProperties: false
+        }
+      }
+    }
+  });
+  
+  const content = response.choices[0].message.content;
+  if (!content || typeof content !== 'string') {
+    throw new Error("Empty or invalid response from LLM");
+  }
+  
+  const parsed = JSON.parse(content);
+  const projects: MatchedProject[] = parsed.projects;
+  
+  projects.sort((a, b) => b.matchScore - a.matchScore);
+  
+  console.log(`[Fallback] Generated ${projects.length} projects from scratch`);
+  
+  return projects;
 }
 
 /**
