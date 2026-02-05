@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import { notifyOwner } from "./_core/notification";
 import { resumeRouter } from "./routers/resume";
 import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
@@ -310,6 +311,38 @@ export const appRouter = router({
             title: "New Contact Message",
             message: `New message from ${ctx.user.name || ctx.user.email}: ${input.subject}`,
           });
+        }
+        
+        // Send email notification to owner via Manus notification API
+        const messageTypeLabels = {
+          business: "Business Cooperation",
+          support: "Problem/Question",
+          purchase: "Purchase Credits",
+        };
+        
+        const emailContent = `
+You have received a new contact message on Find My Professor:
+
+**Type:** ${messageTypeLabels[input.messageType]}
+**From:** ${ctx.user.name || "Unknown"} (${ctx.user.email || "No email"})
+**Subject:** ${input.subject}
+
+**Message:**
+${input.message}
+
+---
+You can view and reply to this message in the admin panel: https://3000-iau4us3lc6i9h3d009yv0-0c3d5419.sg1.manus.computer/admin/messages
+`;
+        
+        try {
+          await notifyOwner({
+            title: `New Contact Message: ${input.subject}`,
+            content: emailContent,
+          });
+          console.log(`[Contact] Email notification sent for message ${messageId}`);
+        } catch (error) {
+          console.error(`[Contact] Failed to send email notification:`, error);
+          // Don't fail the request if notification fails
         }
         
         return { success: true, messageId };
