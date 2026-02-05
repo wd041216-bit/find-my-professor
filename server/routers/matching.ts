@@ -100,9 +100,13 @@ export const matchingRouter = router({
     // Step 6: Generate matches with LLM (fast, returns immediately)
     const matches: MatchedProject[] = await generateMatchedProjects(university, major, userProfile, language);
 
-    // Step 7: Save matches to database
+    // Step 6.5: Delete old matches for this user to avoid duplicates
+    await db.deleteUserMatches(ctx.user.id);
+
+    // Step 7: Save matches to database and collect IDs
+    const matchesWithIds = [];
     for (const match of matches) {
-      await db.createProjectMatch({
+      const matchId = await db.createProjectMatch({
         userId: ctx.user.id,
         projectName: match.projectName,
         professorName: match.professorName,
@@ -120,14 +124,16 @@ export const matchingRouter = router({
         saved: false,
         applied: false,
       });
+      matchesWithIds.push({ ...match, id: matchId });
     }
 
     // Step 8: Trigger background crawler (async, doesn't block)
     triggerBackgroundCrawler(university, major);
 
     return {
-      totalMatches: matches.length,
-      matches: matches.map(m => ({
+      totalMatches: matchesWithIds.length,
+      matches: matchesWithIds.map(m => ({
+        id: m.id,
         projectName: m.projectName,
         professorName: m.professorName,
         lab: m.lab,
