@@ -352,3 +352,37 @@ export const universityUrlCache = mysqlTable("university_url_cache", {
 
 export type UniversityUrlCache = typeof universityUrlCache.$inferSelect;
 export type InsertUniversityUrlCache = typeof universityUrlCache.$inferInsert;
+
+/**
+ * Frontend error logs for monitoring and debugging
+ * Captures JavaScript errors from client-side to help identify and fix issues
+ */
+export const errorLogs = mysqlTable("error_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id"), // Optional: may be null for unauthenticated users
+  
+  // Error details
+  message: text("message").notNull(), // Error message
+  stack: text("stack"), // Stack trace
+  errorType: varchar("error_type", { length: 100 }), // e.g., "TypeError", "ReferenceError"
+  
+  // Context information
+  url: varchar("url", { length: 500 }).notNull(), // Page URL where error occurred
+  userAgent: text("user_agent"), // Browser user agent
+  browserInfo: text("browser_info"), // Browser name, version, OS (JSON)
+  
+  // Additional metadata
+  componentStack: text("component_stack"), // React component stack (if available)
+  additionalInfo: text("additional_info"), // JSON for custom data
+  
+  // Status
+  resolved: boolean("resolved").default(false), // Whether the error has been fixed
+  resolvedBy: int("resolved_by"), // Admin user ID who marked as resolved
+  resolvedAt: timestamp("resolved_at"),
+  notes: text("notes"), // Admin notes about the error
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ErrorLog = typeof errorLogs.$inferSelect;
+export type InsertErrorLog = typeof errorLogs.$inferInsert;

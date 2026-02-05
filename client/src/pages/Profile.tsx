@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SmartInput } from "@/components/SmartInput";
+import { getUniversitySuggestions, getMajorSuggestions, normalizeUniversity, normalizeMajor } from "@shared/translations";
 
 export default function Profile() {
   const { user, loading: authLoading } = useAuth();
@@ -97,9 +99,12 @@ export default function Profile() {
 
   const addItem = (type: "targetMajors" | "skills" | "interests", value: string) => {
     if (value.trim()) {
+      // Normalize major input if it's Chinese
+      const normalizedValue = type === "targetMajors" ? normalizeMajor(value.trim()) : value.trim();
+      
       setFormData(prev => ({
         ...prev,
-        [type]: [...prev[type], value.trim()],
+        [type]: [...prev[type], normalizedValue],
       }));
       
       if (type === "targetMajors") setTargetMajorInput("");
@@ -239,12 +244,14 @@ export default function Profile() {
                   {t.profile.targetUniversity || t.profile.targetUniversities}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Input
+                <SmartInput
                   value={formData.targetUniversity}
-                  onChange={(e) => setFormData(prev => ({ ...prev, targetUniversity: e.target.value }))}
+                  onChange={(value) => setFormData(prev => ({ ...prev, targetUniversity: value }))}
                   placeholder={t.profile.addUniversity}
+                  type="university"
                   className="h-9 md:h-10 text-sm"
-                  required
+                  getSuggestions={getUniversitySuggestions}
+                  normalize={normalizeUniversity}
                 />
                 {formData.targetUniversity && (
                   <div className="bg-secondary text-secondary-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm inline-flex items-center gap-1.5 md:gap-2">
@@ -263,12 +270,15 @@ export default function Profile() {
                   <span className="text-destructive">*</span>
                 </Label>
                 <div className="flex gap-2">
-                  <Input
+                  <SmartInput
                     value={targetMajorInput}
-                    onChange={(e) => setTargetMajorInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addItem("targetMajors", targetMajorInput))}
+                    onChange={setTargetMajorInput}
+                    onBlur={() => {}}
                     placeholder={t.profile.addMajor}
+                    type="major"
                     className="h-9 md:h-10 text-sm"
+                    getSuggestions={getMajorSuggestions}
+                    normalize={normalizeMajor}
                   />
                   <Button type="button" size="sm" onClick={() => addItem("targetMajors", targetMajorInput)} className="h-9 md:h-10">
                     Add
