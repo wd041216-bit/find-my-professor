@@ -150,13 +150,13 @@ export const matchingRouter = router({
       
       // Step 7: If still no matches, use LLM
       if (matches.length === 0) {
-        // Deduct credits before LLM call
+        console.log(`[Matching] Calling LLM for matching...`);
+        matches = await generateMatchedProjects(university, major, userProfile, language);
+        
+        // Deduct credits AFTER successful LLM call
         if (ctx.user.role !== 'admin') {
           await deductCredits(ctx.user.id, 40, 'project_matching');
         }
-        
-        console.log(`[Matching] Calling LLM for matching...`);
-        matches = await generateMatchedProjects(university, major, userProfile, language);
         
         // Cache the results for future use (only for detailed profiles)
         if (!isSimplified && matches.length > 0) {
@@ -323,7 +323,7 @@ export const matchingRouter = router({
             message: 'INSUFFICIENT_CREDITS',
           });
         }
-        await deductCredits(ctx.user.id, 40, 'project_refresh');
+        // Don't deduct yet - wait until we successfully get matches
       }
 
       // Step 6: Try to get projects from database first (crawler results)
@@ -371,6 +371,11 @@ export const matchingRouter = router({
 
         console.log(`[RefreshMatches] Calling LLM for new matches...`);
         matches = await generateMatchedProjects(university, major, userProfile, language);
+      }
+
+      // Step 7.5: Deduct credits AFTER successfully getting matches
+      if (ctx.user.role !== 'admin') {
+        await deductCredits(ctx.user.id, 40, 'project_refresh');
       }
 
       // Step 8: Delete old matches and save new ones
