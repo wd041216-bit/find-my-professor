@@ -324,8 +324,8 @@ export const translations = {
     creditsSystem: {
       insufficientCredits: "Insufficient Credits",
       dailyLimitTitle: "Daily Credit Limit Reached",
-      dailyLimitMessage: "You've used all 5000 free credits for today. Subscribe for $2.5/month to get 5000 credits monthly and enjoy unlimited research project matching.",
-      resetInfo: "Your credits will automatically reset to 5000 tomorrow.",
+      dailyLimitMessage: "You've used all 100 free credits for today. Our platform uses AI (LLM) to provide intelligent matching and personalized services, which incurs real costs per request. To ensure fair access for all users, we currently offer 100 free credits daily while our payment system is being finalized.",
+      resetInfo: "Your credits will automatically reset to 100 tomorrow.",
       purchaseOption: "Need more credits today? You can purchase additional credits through our Contact page (currently available for users in China only).",
       contactButton: "Purchase Credits",
       understandButton: "Got it",
@@ -767,8 +767,8 @@ export const translations = {
     creditsSystem: {
       insufficientCredits: "积分不足",
       dailyLimitTitle: "今日免费积分已用完",
-      dailyLimitMessage: "您已使用完今日的5000免费积分。订阅¥19.9/月即可获得每月5000积分，畅享无限次研究项目匹配。",
-      resetInfo: "您的积分将在明天自动重置为5000。",
+      dailyLimitMessage: "您已使用完今日的100免费积分。我们的平台使用AI（大语言模型）提供智能匹配和个性化服务，每次请求都会产生实际成本。为了确保所有用户公平使用，我们目前每天提供100免费积分体验，付费功能正在完善中。",
+      resetInfo: "您的积分将在明天自动重置为100。",
       purchaseOption: "需要更多积分？您可以通过联系我们页面购买额外积分（目前仅限中国用户）。",
       contactButton: "购买积分",
       understandButton: "我知道了",
