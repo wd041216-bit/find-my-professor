@@ -31,8 +31,10 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
-  // Credits balance removed - payment feature not yet launched
-  // TODO: Implement daily free credits display
+  // Fetch user credits balance
+  const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
+    enabled: !!user && user.role !== 'admin', // Admins don't have credit limits
+  });
 
   if (authLoading) {
     return (
@@ -71,7 +73,14 @@ export default function Dashboard() {
                 {t.nav.explore}
               </Button>
             </Link>
-            {/* Credits button removed - payment feature not yet launched */}
+            {/* Credits balance display (only for non-admin users) */}
+            {user.role !== 'admin' && creditsData && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full">
+                <Coins className="h-4 w-4" />
+                <span className="text-sm font-medium">{creditsData.balance}</span>
+                <span className="text-xs text-muted-foreground">{t.creditsSystem.dailyCredits}</span>
+              </div>
+            )}
             <Link href="/notifications">
               <Button variant="ghost" size="sm" className="relative">
                 <Bell className="h-4 w-4" />
@@ -97,7 +106,13 @@ export default function Dashboard() {
           </div>
           {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-1">
-            {/* Credits button removed - payment feature not yet launched */}
+            {/* Credits balance display for mobile (only for non-admin users) */}
+            {user.role !== 'admin' && creditsData && (
+              <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full mr-1">
+                <Coins className="h-3 w-3" />
+                <span className="text-xs font-medium">{creditsData.balance}</span>
+              </div>
+            )}
             <Link href="/notifications">
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />

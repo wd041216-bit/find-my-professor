@@ -283,6 +283,7 @@ export const translations = {
       understandButton: "Got it",
       creditsRemaining: "Credits Remaining",
       creditsUsed: "Credits Used Today",
+      dailyCredits: "Daily",
     },
     // Common
     common: {
@@ -588,6 +589,7 @@ export const translations = {
       understandButton: "我知道了",
       creditsRemaining: "剩余积分",
       creditsUsed: "今日已用",
+      dailyCredits: "每日",
     },
     // Common
     common: {

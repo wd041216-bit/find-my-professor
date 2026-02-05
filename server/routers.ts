@@ -7,6 +7,7 @@ import * as db from "./db";
 import { resumeRouter } from "./routers/resume";
 import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
+import { creditsRouter } from "./routers/credits";
 // Credits router removed - payment feature not yet launched
 import { NormalizationService } from "./services/normalization";
 import { ScrapingService } from "./services/scraping";
@@ -314,8 +315,7 @@ export const appRouter = router({
   resume: resumeRouter,
   matching: matchingRouter,
   application: applicationRouter,
-  // credits: creditsRouter, // Removed - payment feature not yet launched
-  // paypal: paypalRouter,
+  credits: creditsRouter,
 
   notifications: router({
     list: protectedProcedure.query(async ({ ctx }) => {
