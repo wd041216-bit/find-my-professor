@@ -154,3 +154,10 @@
 - [x] 修改爬虫逻辑使用缓存的URL（Layer 2查询professor_url_cache）
 - [x] 测试爬虫功能（服务器重启成功，无错误）
 - [ ] 保存checkpoint
+
+## 🚨 紧急修复：TimezoneSync报错
+- [x] 检查auth.updateTimezone接口实现
+- [x] 检查TimezoneSync组件的调用逻辑（发现useEffect依赖项问题）
+- [x] 修复"Failed to fetch"错误（移除updateTimezoneMutation依赖项）
+- [x] 测试修复效果（不再无限循环）
+- [ ] 保存checkpoint
