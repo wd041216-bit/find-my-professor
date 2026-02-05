@@ -2,6 +2,7 @@ import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import * as db from "../db";
 import { generateMatchedProjects, triggerBackgroundCrawler, type UserProfile, type MatchedProject } from "../services/llmMatching";
+import { UrlGeneratorService } from "../services/urlGenerator";
 import { deductCredits, checkAndResetCredits } from "../services/credits";
 import { NormalizationService } from "../services/normalization";
 import { getCachedMatches, cacheMatches } from "../services/profileCache";
@@ -211,6 +212,23 @@ export const matchingRouter = router({
       }
       
       try {
+        // Generate URL if not provided by LLM
+        let projectUrl = match.url || null;
+        if (!projectUrl) {
+          console.log(`[Matching] Generating URL for ${match.projectName} - ${match.professorName}`);
+          try {
+            projectUrl = await UrlGeneratorService.generateProjectUrl(
+              match.projectName || 'Research Project',
+              match.professorName || 'Unknown Professor',
+              match.lab || major, // Use lab name or major as department
+              university
+            );
+          } catch (urlError) {
+            console.error('[Matching] Error generating URL:', urlError);
+            // Continue without URL
+          }
+        }
+        
         const matchId = await db.createProjectMatch({
           userId: ctx.user.id,
           projectName: match.projectName || 'Untitled Project',
@@ -220,7 +238,7 @@ export const matchingRouter = router({
           description: match.description || 'No description available',
           requirements: match.requirements || null,
           contactEmail: match.contactEmail || null,
-          url: match.url || null,
+          url: projectUrl,
           matchScore: (match.matchScore || 0).toString(),
           matchReasons: JSON.stringify([match.matchReason || 'No reason provided']),
           university,
@@ -437,6 +455,23 @@ export const matchingRouter = router({
 
       const matchesWithIds = [];
       for (const match of matches) {
+        // Generate URL if not provided by LLM
+        let projectUrl = match.url || null;
+        if (!projectUrl) {
+          console.log(`[Matching] Generating URL for ${match.projectName} - ${match.professorName}`);
+          try {
+            projectUrl = await UrlGeneratorService.generateProjectUrl(
+              match.projectName || 'Research Project',
+              match.professorName || 'Unknown Professor',
+              match.lab || major, // Use lab name or major as department
+              university
+            );
+          } catch (urlError) {
+            console.error('[Matching] Error generating URL:', urlError);
+            // Continue without URL
+          }
+        }
+        
         const matchId = await db.createProjectMatch({
           userId: ctx.user.id,
           projectName: match.projectName,
@@ -446,7 +481,7 @@ export const matchingRouter = router({
           description: match.description,
           requirements: match.requirements || null,
           contactEmail: match.contactEmail || null,
-          url: match.url || null,
+          url: projectUrl,
           matchScore: match.matchScore.toString(),
           matchReasons: JSON.stringify([match.matchReason]),
           university,
