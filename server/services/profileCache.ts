@@ -106,9 +106,9 @@ export async function cacheMatches(
       console.warn('[ProfileCache] Database not available');
       return;
     }
-    // Calculate expiration (7 days from now)
+    // Calculate expiration (1 year from now)
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+    expiresAt.setDate(expiresAt.getDate() + 365);
     
     // Check if cache already exists
     const existing = await db

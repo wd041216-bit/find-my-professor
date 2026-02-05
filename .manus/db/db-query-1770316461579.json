@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, user_id, university, major, FROM_UNIXTIME(FLOOR(id/1000000)) as match_time\nFROM project_matches \nWHERE university LIKE '%Stanford%' OR university LIKE '%Yale%'\nORDER BY id DESC \nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, user_id, university, major, FROM_UNIXTIME(FLOOR(id/1000000)) as match_time\nFROM project_matches \nWHERE university LIKE '%Stanford%' OR university LIKE '%Yale%'\nORDER BY id DESC \nLIMIT 10;",
+  "rows": [
+    {
+      "id": "150040",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150039",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150038",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150037",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150036",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150035",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150034",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150033",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150032",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    },
+    {
+      "id": "150031",
+      "user_id": "1",
+      "university": "Stanford University",
+      "major": "Chemical Engineering",
+      "match_time": "1970-01-01 00:00:00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuser_id\tuniversity\tmajor\tmatch_time\n150040\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150039\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150038\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150037\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150036\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150035\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150034\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150033\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150032\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n150031\t1\tStanford University\tChemical Engineering\t1970-01-01 00:00:00\n",
+  "stderr": "",
+  "execution_time_ms": 1623
+}

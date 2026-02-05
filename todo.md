@@ -161,3 +161,35 @@
 - [x] 修复"Failed to fetch"错误（移除updateTimezoneMutation依赖项）
 - [x] 测试修复效果（不再无限循环）
 - [ ] 保存checkpoint
+
+## 🧪 爬虫功能测试
+- [ ] 了解爬虫触发机制（何时执行爬虫）
+- [ ] 执行爬虫测试（选择一个大学+专业组合）
+- [ ] 监控服务器日志（查看URL缓存命中情况）
+- [ ] 验证scraped_projects表中的数据
+- [ ] 确认source字段正确标记（scraped vs llm_generated）
+- [ ] 报告测试结果
+
+## 🧠 新发现的问题
+- [x] 修复中文界面显示英文匹配结果的问题（移除强制英文的languageInstruction）
+- [x] 调查爬虫日志没有输出的原因（发现是profileCache缓存命中）
+- [x] 修复profileCache缓存有效期从7天改为1年
+- [x] 更新数据库中现有缓存的expires_at为1年后
+- [ ] 清空缓存并测试爬虫功能
+- [ ] 保存checkpoint
+
+## 🗄️ 数据库梳理与清理
+- [ ] 列出所有数据库表
+- [ ] 分析每个表的用途和关系
+- [ ] 识别冗余表和未使用的表
+- [ ] 清理冗余表
+- [ ] 更新schema文档
+- [ ] 保存checkpoint
+
+- [x] 列出所有数据库表（22个表）
+- [x] 分析每个表的用途和关系
+- [x] 识别冗余表和未使用的表（research_projects是冗余的）
+- [ ] 删除research_projects表及其相关代码
+- [ ] 将4个额外的表添加到schema.ts（major_normalization, university_normalization, scraped_projects, university_major_cache）
+- [ ] 更新schema文档
+- [ ] 保存checkpoint

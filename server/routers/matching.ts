@@ -247,7 +247,10 @@ export const matchingRouter = router({
     }
 
     // Step 8: Trigger background crawler (async, doesn't block)
-    triggerBackgroundCrawler(university, major);
+    console.log(`[Matching] Triggering background crawler for ${university} - ${major}`);
+    triggerBackgroundCrawler(university, major).catch(error => {
+      console.error(`[Matching] Background crawler error:`, error);
+    });
 
     // Validate return structure
     const returnMatches = matchesWithIds.map(m => {

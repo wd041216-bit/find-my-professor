@@ -1,0 +1,94 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "activities"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "announcements"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "application_letters"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "contact_messages"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "cover_letters"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "credit_transactions"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "error_logs"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "major_normalization"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "normalization_locks"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "notifications"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "professor_url_cache"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "professors"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "profile_cache"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "project_matches"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "research_projects"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "scraped_projects"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "scraping_locks"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "scraping_tasks"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "student_profiles"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "universities"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "university_major_cache"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "university_major_mapping"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "university_normalization"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "university_url_cache"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "user_credits"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "user_input_history"
+    },
+    {
+      "Tables_in_hB2F5YxeXakQRcL5WU36Vw": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_hB2F5YxeXakQRcL5WU36Vw\n__drizzle_migrations\nactivities\nannouncements\napplication_letters\ncontact_messages\ncover_letters\ncredit_transactions\nerror_logs\nmajor_normalization\nnormalization_locks\nnotifications\nprofessor_url_cache\nprofessors\nprofile_cache\nproject_matches\nresearch_projects\nscraped_projects\nscraping_locks\nscraping_tasks\nstudent_profiles\nuniversities\nuniversity_major_cache\nuniversity_major_mapping\nuniversity_normalization\nuniversity_url_cache\nuser_credits\nuser_input_history\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 1703
+}
