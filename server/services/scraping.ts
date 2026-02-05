@@ -290,8 +290,8 @@ export class ScrapingService {
       // Import GenericUniversityScraper
       const { GenericUniversityScraper } = await import('./scrapers/GenericUniversityScraper');
       
-      // Get university base URL
-      const baseUrl = this.getUniversityBaseUrl(universityName);
+      // Get university base URL using hybrid strategy
+      const baseUrl = await this.getUniversityBaseUrl(universityName, majorName);
       
       // Create scraper instance
       const scraper = new GenericUniversityScraper(universityName, baseUrl);
@@ -328,11 +328,18 @@ export class ScrapingService {
   }
   
   /**
-   * Get base URL for a university
+   * Get base URL for a university using hybrid strategy:
+   * 1. Check static mapping table (Top 50 universities, 0 tokens)
+   * 2. Check URL cache from previous LLM generations (0 tokens)
+   * 3. Generate with LLM and cache result (300-500 tokens)
    */
-  private static getUniversityBaseUrl(universityName: string): string {
-    // Map of university names to their base URLs
+  private static async getUniversityBaseUrl(
+    universityName: string,
+    major: string = 'computer science'
+  ): Promise<string> {
+    // Map of university names to their base URLs (Top 50 US Universities)
     const universityUrls: Record<string, string> = {
+      // Top 10
       'Massachusetts Institute of Technology': 'https://www.csail.mit.edu',
       'MIT': 'https://www.csail.mit.edu',
       'Stanford University': 'https://cs.stanford.edu',
@@ -354,28 +361,153 @@ export class ScrapingService {
       'Columbia': 'https://www.cs.columbia.edu',
       'Cornell University': 'https://www.cs.cornell.edu',
       'Cornell': 'https://www.cs.cornell.edu',
+      
+      // 11-20
+      'University of Chicago': 'https://cs.uchicago.edu',
+      'UChicago': 'https://cs.uchicago.edu',
+      'University of Pennsylvania': 'https://www.cis.upenn.edu',
+      'UPenn': 'https://www.cis.upenn.edu',
+      'Penn': 'https://www.cis.upenn.edu',
+      'Johns Hopkins University': 'https://www.cs.jhu.edu',
+      'JHU': 'https://www.cs.jhu.edu',
+      'Northwestern University': 'https://www.mccormick.northwestern.edu/computer-science',
+      'Northwestern': 'https://www.mccormick.northwestern.edu/computer-science',
+      'Duke University': 'https://www.cs.duke.edu',
+      'Duke': 'https://www.cs.duke.edu',
+      'Dartmouth College': 'https://web.cs.dartmouth.edu',
+      'Dartmouth': 'https://web.cs.dartmouth.edu',
+      'Brown University': 'https://cs.brown.edu',
+      'Brown': 'https://cs.brown.edu',
+      'Vanderbilt University': 'https://engineering.vanderbilt.edu/cs',
+      'Vanderbilt': 'https://engineering.vanderbilt.edu/cs',
+      'Rice University': 'https://cs.rice.edu',
+      'Rice': 'https://cs.rice.edu',
+      'Washington University in St. Louis': 'https://cse.wustl.edu',
+      'WashU': 'https://cse.wustl.edu',
+      
+      // 21-30
+      'University of Notre Dame': 'https://cse.nd.edu',
+      'Notre Dame': 'https://cse.nd.edu',
+      'University of California, Los Angeles': 'https://www.cs.ucla.edu',
+      'UCLA': 'https://www.cs.ucla.edu',
+      'Emory University': 'https://www.cs.emory.edu',
+      'Emory': 'https://www.cs.emory.edu',
+      'University of California, San Diego': 'https://cse.ucsd.edu',
+      'UCSD': 'https://cse.ucsd.edu',
+      'UC San Diego': 'https://cse.ucsd.edu',
+      'University of Southern California': 'https://www.cs.usc.edu',
+      'USC': 'https://www.cs.usc.edu',
+      'University of Michigan': 'https://cse.engin.umich.edu',
+      'UMich': 'https://cse.engin.umich.edu',
+      'University of Virginia': 'https://engineering.virginia.edu/departments/computer-science',
+      'UVA': 'https://engineering.virginia.edu/departments/computer-science',
+      'University of North Carolina at Chapel Hill': 'https://cs.unc.edu',
+      'UNC': 'https://cs.unc.edu',
+      'Wake Forest University': 'https://cs.wfu.edu',
+      'Wake Forest': 'https://cs.wfu.edu',
+      
+      // 31-40
+      'New York University': 'https://cs.nyu.edu',
+      'NYU': 'https://cs.nyu.edu',
+      'University of California, Santa Barbara': 'https://cs.ucsb.edu',
+      'UCSB': 'https://cs.ucsb.edu',
+      'UC Santa Barbara': 'https://cs.ucsb.edu',
+      'University of California, Irvine': 'https://www.ics.uci.edu',
+      'UCI': 'https://www.ics.uci.edu',
+      'UC Irvine': 'https://www.ics.uci.edu',
+      'University of Florida': 'https://www.cise.ufl.edu',
+      'UF': 'https://www.cise.ufl.edu',
+      'Florida': 'https://www.cise.ufl.edu',
+      'Boston College': 'https://www.bc.edu/bc-web/schools/mcas/departments/computer-science',
+      'BC': 'https://www.bc.edu/bc-web/schools/mcas/departments/computer-science',
+      'University of Rochester': 'https://www.cs.rochester.edu',
+      'Rochester': 'https://www.cs.rochester.edu',
+      'Georgia Institute of Technology': 'https://www.cc.gatech.edu',
+      'Georgia Tech': 'https://www.cc.gatech.edu',
+      'GaTech': 'https://www.cc.gatech.edu',
+      'University of California, Davis': 'https://cs.ucdavis.edu',
+      'UC Davis': 'https://cs.ucdavis.edu',
+      'UCD': 'https://cs.ucdavis.edu',
+      
+      // 41-50
+      'University of Wisconsin-Madison': 'https://www.cs.wisc.edu',
+      'UW-Madison': 'https://www.cs.wisc.edu',
+      'Wisconsin': 'https://www.cs.wisc.edu',
+      'University of Illinois Urbana-Champaign': 'https://cs.illinois.edu',
+      'UIUC': 'https://cs.illinois.edu',
+      'Illinois': 'https://cs.illinois.edu',
+      'University of Washington': 'https://www.cs.washington.edu',
+      'UW': 'https://www.cs.washington.edu',
+      'Washington': 'https://www.cs.washington.edu',
+      'University of Texas at Austin': 'https://www.cs.utexas.edu',
+      'UT Austin': 'https://www.cs.utexas.edu',
+      'Texas': 'https://www.cs.utexas.edu',
+      'Ohio State University': 'https://cse.osu.edu',
+      'OSU': 'https://cse.osu.edu',
+      'Penn State University': 'https://www.eecs.psu.edu',
+      'Penn State': 'https://www.eecs.psu.edu',
+      'Purdue University': 'https://www.cs.purdue.edu',
+      'Purdue': 'https://www.cs.purdue.edu',
+      'University of Maryland': 'https://www.cs.umd.edu',
+      'UMD': 'https://www.cs.umd.edu',
+      'Maryland': 'https://www.cs.umd.edu',
+      'Boston University': 'https://www.bu.edu/cs',
+      'BU': 'https://www.bu.edu/cs',
     };
     
+    // Layer 1: Check static mapping table (highest priority, 0 tokens)
     // Try exact match first
     if (universityUrls[universityName]) {
+      console.log(`[Scraping] URL from mapping table: ${universityUrls[universityName]}`);
       return universityUrls[universityName];
     }
     
     // Try partial match
     for (const [key, url] of Object.entries(universityUrls)) {
       if (universityName.includes(key) || key.includes(universityName)) {
+        console.log(`[Scraping] URL from mapping table (partial match): ${url}`);
         return url;
       }
     }
     
-    // Default: try to construct URL from university name
-    const slug = universityName.toLowerCase()
-      .replace(/university|college|institute/gi, '')
-      .trim()
-      .replace(/\s+/g, '')
-      .replace(/[^a-z0-9]/g, '');
+    // Layer 2: Check URL cache (LLM-generated URLs from previous searches, 0 tokens)
+    const { UrlGeneratorService } = await import('./urlGenerator');
+    const cachedUrl = await UrlGeneratorService.getCachedUrl(universityName, major);
+    if (cachedUrl) {
+      console.log(`[Scraping] URL from cache: ${cachedUrl}`);
+      return cachedUrl;
+    }
     
-    return `https://www.${slug}.edu`;
+    // Layer 3: Generate with LLM and cache (fallback, 300-500 tokens)
+    console.log(`[Scraping] Generating URL with LLM for ${universityName}...`);
+    const generatedUrl = await UrlGeneratorService.generateAndValidateUrl(universityName, major);
+    
+    if (generatedUrl) {
+      // Cache the generated URL for future use
+      const generated = await UrlGeneratorService.generateUniversityUrl(universityName, major);
+      await UrlGeneratorService.cacheUrl(
+        universityName,
+        major,
+        generatedUrl,
+        'llm_generated',
+        generated.confidence,
+        true
+      );
+      console.log(`[Scraping] URL generated and cached: ${generatedUrl}`);
+      return generatedUrl;
+    }
+    
+    // Default: try to construct URL from university name
+    // Fixed: properly handle "of" and other prepositions
+    const slug = universityName.toLowerCase()
+      .replace(/university of |college of |institute of /gi, '')  // Remove "university of"
+      .replace(/university|college|institute/gi, '')              // Remove standalone "university"
+      .replace(/,\s*/g, '-')                                       // Replace commas with hyphens
+      .trim()
+      .replace(/\s+/g, '')                                         // Remove spaces
+      .replace(/[^a-z0-9-]/g, '');                                 // Keep hyphens
+    
+    return `https://www.cs.${slug}.edu`;
   }
   
   /**
