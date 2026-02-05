@@ -146,9 +146,14 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
                   onChange={(e) => setCreditAmount(e.target.value)}
                   disabled={sendMutation.isPending}
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t.contact.pricingNote}
-                </p>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-primary">
+                    {t.contact.pricingInfo}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t.contact.pricingNote}
+                  </p>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="message">{t.contact.additionalNotes}</Label>
