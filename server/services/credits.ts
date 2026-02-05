@@ -36,22 +36,22 @@ export async function checkAndResetCredits(userId: number): Promise<number> {
     // Create new credits record for user
     await db.insert(userCredits).values({
       userId,
-      credits: 100,
+      credits: 5000,
       lastResetDate: today,
       totalConsumed: 0,
     });
-    return 100;
+    return 5000;
   }
 
   // Check if credits need to be reset (new day)
   if (userCredit.lastResetDate !== today) {
     await db.update(userCredits)
       .set({
-        credits: 100,
+        credits: 5000,
         lastResetDate: today,
       })
       .where(eq(userCredits.userId, userId));
-    return 100;
+    return 5000;
   }
 
   return userCredit.credits;
@@ -128,7 +128,7 @@ export async function addCredits(
   const result = await db.select().from(userCredits).where(eq(userCredits.userId, userId)).limit(1);
   const userCredit = result.length > 0 ? result[0] : null;
 
-  const newBalance = (userCredit?.credits || 100) + amount;
+  const newBalance = (userCredit?.credits || 5000) + amount;
 
   await db.update(userCredits)
     .set({
