@@ -1,10 +1,11 @@
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
-import { Search, BookOpen, FileText, Bell, ArrowRight, GraduationCap, Users, Target } from "lucide-react";
+import { Search, BookOpen, FileText, Bell, ArrowRight, GraduationCap, Users, Target, Coins } from "lucide-react";
 import { ContactDialog } from "@/components/ContactDialog";
 import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -13,6 +14,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const { t } = useLanguage();
+  const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
 
   if (loading) {
     return (
@@ -34,6 +38,14 @@ export default function Home() {
           </div>
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
             <ContactDialog />
+            {isAuthenticated && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary">
+                <Coins className="h-4 w-4" />
+                <span className="text-sm font-semibold">
+                  {creditsData?.balance ?? 0}
+                </span>
+              </div>
+            )}
             <LanguageSwitcher />
             {isAuthenticated ? (
               <>
@@ -52,6 +64,14 @@ export default function Home() {
           </div>
           {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-1">
+            {isAuthenticated && (
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/10 text-primary">
+                <Coins className="h-3.5 w-3.5" />
+                <span className="text-xs font-semibold">
+                  {creditsData?.balance ?? 0}
+                </span>
+              </div>
+            )}
             <LanguageSwitcher />
             {!isAuthenticated && (
               <a href={getLoginUrl()}>

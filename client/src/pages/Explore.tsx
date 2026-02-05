@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, MapPin, Globe, GraduationCap, Target, Sparkles, Search, AlertCircle, Mail } from "lucide-react";
+import { ArrowLeft, Loader2, MapPin, Globe, GraduationCap, Target, Sparkles, Search, AlertCircle, Mail, Coins } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { MobileNav } from "@/components/MobileNav";
@@ -32,6 +32,7 @@ export default function Explore() {
   const { t, language } = useLanguage();
 
   const calculateMatchesMutation = trpc.matching.calculateMatches.useMutation();
+  const refreshMatchesMutation = trpc.matching.refreshMatches.useMutation();
   const generateLetterMutation = trpc.coverLetter.generate.useMutation();
 
   // Get user profile for target universities and majors
@@ -77,6 +78,24 @@ export default function Explore() {
       }
     } finally {
       setGeneratingLetter(false);
+    }
+  };
+
+  const handleRefreshMatches = async () => {
+    setSearching(true);
+    
+    try {
+      const result = await refreshMatchesMutation.mutateAsync({ language });
+      setProjects(result.matches);
+      toast.success(t.explore.refreshSuccess?.replace('{count}', result.matches.length.toString()) || `找到 ${result.matches.length} 个新项目`);
+    } catch (error: any) {
+      if (error.message?.includes('INSUFFICIENT_CREDITS') || error.data?.code === 'INSUFFICIENT_CREDITS') {
+        setShowCreditsDialog(true);
+      } else {
+        toast.error(t.explore.refreshFailed?.replace('{message}', error.message) || `刷新失败: ${error.message}`);
+      }
+    } finally {
+      setSearching(false);
     }
   };
 
@@ -179,7 +198,14 @@ export default function Explore() {
               <span className="text-lg md:text-xl font-bold text-foreground hidden sm:inline">Find My Professor</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Credits Display */}
+            <div className="flex items-center gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full bg-primary/10 text-primary">
+              <Coins className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="text-xs md:text-sm font-semibold">
+                {creditsData?.balance ?? 0}
+              </span>
+            </div>
             <LanguageSwitcher />
           </div>
         </div>
@@ -266,6 +292,20 @@ export default function Explore() {
               <h2 className="text-xl font-semibold">
                 {t.explore.matchResults || "匹配结果"} ({projects.length})
               </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefreshMatches}
+                disabled={searching}
+                className="gap-2"
+              >
+                {searching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
+                {t.explore.refreshMatches || "换一批"}
+              </Button>
             </div>
 
             <div className="grid gap-4 md:gap-6">

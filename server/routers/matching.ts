@@ -264,4 +264,164 @@ export const matchingRouter = router({
       await db.updateMatchStatus(input.matchId, { applied: true });
       return { success: true };
     }),
+
+  // Refresh matches - get a new batch of projects
+  // Strategy: Try database first (if crawler has populated data), fallback to LLM if insufficient
+  refreshMatches: protectedProcedure
+    .input(z.object({
+      language: z.enum(['en', 'zh']).optional().default('en'),
+    }).optional())
+    .mutation(async ({ ctx, input }) => {
+      const language = input?.language || 'en';
+      
+      // Step 1: Get user profile
+      const profile = await db.getStudentProfile(ctx.user.id);
+      if (!profile) {
+        throw new TRPCError({
+          code: 'PRECONDITION_FAILED',
+          message: 'Please complete your profile first',
+        });
+      }
+
+      // Step 2: Get normalized university and major from profile
+      const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
+      const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+
+      if (targetUniversities.length === 0 || targetMajors.length === 0) {
+        throw new TRPCError({
+          code: 'PRECONDITION_FAILED',
+          message: 'Please specify your target university and major in your profile',
+        });
+      }
+
+      let university = targetUniversities[0];
+      let major = targetMajors[0];
+      
+      // Step 3: Normalize university and major names
+      try {
+        const [normalizedUniversity, normalizedMajor] = await Promise.all([
+          NormalizationService.normalizeUniversity(university, ctx.user.id),
+          NormalizationService.normalizeMajor(major, ctx.user.id)
+        ]);
+        university = normalizedUniversity.normalizedName;
+        major = normalizedMajor.normalizedName;
+        console.log(`[RefreshMatches] Normalized: "${targetUniversities[0]}" → "${university}", "${targetMajors[0]}" → "${major}"`);
+      } catch (error) {
+        console.error('[RefreshMatches] Normalization failed, using raw input:', error);
+      }
+
+      // Step 4: Get existing match IDs to exclude them from new results
+      const existingMatches = await db.getUserMatches(ctx.user.id);
+      const existingProjectNames = new Set(existingMatches.map(m => m.projectName));
+
+      // Step 5: Try to get projects from database first (crawler results)
+      let matches: MatchedProject[] = [];
+      let strategy = 'database_refresh';
+      
+      const hasProjects = await hasSufficientProjects(university, major, 10);
+      
+      if (hasProjects) {
+        // Get more projects from database and filter out existing ones
+        console.log(`[RefreshMatches] Getting new batch from database...`);
+        const allDbProjects = await getRandomProjectsFromDatabase(university, major, 20);
+        matches = allDbProjects.filter(p => !existingProjectNames.has(p.projectName)).slice(0, 10);
+        
+        if (matches.length < 5) {
+          // Not enough new projects in database, call LLM
+          console.log(`[RefreshMatches] Insufficient new projects in database (${matches.length}), calling LLM...`);
+          strategy = 'llm_refresh';
+          matches = [];
+        }
+      } else {
+        console.log(`[RefreshMatches] Database has insufficient projects, calling LLM...`);
+        strategy = 'llm_refresh';
+      }
+
+      // Step 6: If database doesn't have enough new projects, call LLM
+      if (matches.length === 0) {
+        // Check credits before LLM call (10 points for refresh)
+        if (ctx.user.role !== 'admin') {
+          const currentCredits = await checkAndResetCredits(ctx.user.id);
+          if (currentCredits < 10) {
+            throw new TRPCError({
+              code: 'FORBIDDEN',
+              message: 'INSUFFICIENT_CREDITS',
+            });
+          }
+          await deductCredits(ctx.user.id, 10, 'project_refresh');
+        }
+
+        // Build user profile for LLM
+        const activities = await db.getUserActivities(ctx.user.id);
+        const skills = profile.skills ? JSON.parse(profile.skills) : undefined;
+        const interests = profile.interests ? JSON.parse(profile.interests) : undefined;
+        const userProfile: UserProfile = {
+          academicLevel: profile.academicLevel || undefined,
+          gpa: profile.gpa || undefined,
+          skills,
+          interests,
+          bio: profile.bio || undefined,
+          activities: activities.map(a => ({
+            title: a.title,
+            category: a.category,
+            description: a.description || undefined,
+            role: a.role || undefined,
+          })),
+        };
+
+        console.log(`[RefreshMatches] Calling LLM for new matches...`);
+        matches = await generateMatchedProjects(university, major, userProfile, language);
+      } else {
+        // Using database results, deduct minimal credits (5 points)
+        if (ctx.user.role !== 'admin') {
+          await deductCredits(ctx.user.id, 5, 'project_refresh');
+        }
+      }
+
+      // Step 7: Delete old matches and save new ones
+      await db.deleteUserMatches(ctx.user.id);
+
+      const matchesWithIds = [];
+      for (const match of matches) {
+        const matchId = await db.createProjectMatch({
+          userId: ctx.user.id,
+          projectName: match.projectName,
+          professorName: match.professorName,
+          lab: match.lab || null,
+          researchDirection: match.researchDirection,
+          description: match.description,
+          requirements: match.requirements || null,
+          contactEmail: match.contactEmail || null,
+          url: match.url || null,
+          matchScore: match.matchScore.toString(),
+          matchReasons: JSON.stringify([match.matchReason]),
+          university,
+          major,
+          viewed: false,
+          saved: false,
+          applied: false,
+        });
+        matchesWithIds.push({ ...match, id: matchId });
+      }
+
+      return {
+        totalMatches: matchesWithIds.length,
+        matches: matchesWithIds.map(m => ({
+          id: m.id,
+          projectName: m.projectName,
+          professorName: m.professorName,
+          lab: m.lab,
+          researchDirection: m.researchDirection,
+          description: m.description,
+          requirements: m.requirements,
+          contactEmail: m.contactEmail,
+          url: m.url,
+          matchScore: m.matchScore,
+          matchReason: m.matchReason,
+        })),
+        strategy,
+        university,
+        major,
+      };
+    }),
 });
