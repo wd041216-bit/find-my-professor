@@ -774,7 +774,7 @@ export const translations = {
       understandButton: "我知道了",
       creditsRemaining: "剩余积分",
       creditsUsed: "今日已用",
-      dailyCredits: "每日",
+      dailyCredits: "每日"
     },
     // Common
     common: {
