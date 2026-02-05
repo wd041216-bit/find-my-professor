@@ -33,3 +33,9 @@
 - [x] 更新前端Explore页面的积分提示文案
 - [x] 更新单元测试验证40积分消耗
 - [x] 保存checkpoint
+
+## 修复简化profile匹配错误
+- [ ] 检查服务器日志定位"Cannot read properties of undefined (reading '0')"错误
+- [x] 修复代码中的undefined访问问题（可能在数组访问或对象属性读取）
+- [x] 测试MIT+生物（中文专业名）的匹配场景
+- [x] 保存checkpoint
