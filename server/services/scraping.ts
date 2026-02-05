@@ -471,31 +471,33 @@ export class ScrapingService {
     }
     
     // Layer 2: Check URL cache (LLM-generated URLs from previous searches, 0 tokens)
-    const { UrlGeneratorService } = await import('./urlGenerator');
-    const cachedUrl = await UrlGeneratorService.getCachedUrl(universityName, major);
-    if (cachedUrl) {
-      console.log(`[Scraping] URL from cache: ${cachedUrl}`);
-      return cachedUrl;
-    }
+    // TODO: Re-enable after URL generator refactoring is complete
+    // const { UrlGeneratorService } = await import('./urlGenerator');
+    // const cachedUrl = await UrlGeneratorService.getCachedUrl(universityName, major);
+    // if (cachedUrl) {
+    //   console.log(`[Scraping] URL from cache: ${cachedUrl}`);
+    //   return cachedUrl;
+    // }
     
     // Layer 3: Generate with LLM and cache (fallback, 300-500 tokens)
-    console.log(`[Scraping] Generating URL with LLM for ${universityName}...`);
-    const generatedUrl = await UrlGeneratorService.generateAndValidateUrl(universityName, major);
-    
-    if (generatedUrl) {
-      // Cache the generated URL for future use
-      const generated = await UrlGeneratorService.generateUniversityUrl(universityName, major);
-      await UrlGeneratorService.cacheUrl(
-        universityName,
-        major,
-        generatedUrl,
-        'llm_generated',
-        generated.confidence,
-        true
-      );
-      console.log(`[Scraping] URL generated and cached: ${generatedUrl}`);
-      return generatedUrl;
-    }
+    // TODO: Re-enable after URL generator refactoring is complete
+    // console.log(`[Scraping] Generating URL with LLM for ${universityName}...`);
+    // const generatedUrl = await UrlGeneratorService.generateAndValidateUrl(universityName, major);
+    // 
+    // if (generatedUrl) {
+    //   // Cache the generated URL for future use
+    //   const generated = await UrlGeneratorService.generateUniversityUrl(universityName, major);
+    //   await UrlGeneratorService.cacheUrl(
+    //     universityName,
+    //     major,
+    //     generatedUrl,
+    //     'llm_generated',
+    //     generated.confidence,
+    //     true
+    //   );
+    //   console.log(`[Scraping] URL generated and cached: ${generatedUrl}`);
+    //   return generatedUrl;
+    // }
     
     // Default: try to construct URL from university name
     // Fixed: properly handle "of" and other prepositions

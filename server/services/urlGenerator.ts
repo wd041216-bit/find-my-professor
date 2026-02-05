@@ -1,161 +1,167 @@
 import { invokeLLM } from '../_core/llm';
 import axios from 'axios';
-import mysql from 'mysql2/promise';
+import { getDb } from '../db';
+import { professorUrlCache } from '../../drizzle/schema';
+import { eq, and } from 'drizzle-orm';
 
 /**
- * URL Generator Service
+ * URL Generator Service with Caching and Batch Generation
  * 
- * Uses LLM to generate university department URLs when not found in mapping table.
- * Implements URL validation and caching for efficiency.
+ * Optimizes token consumption by:
+ * 1. Caching generated URLs for 30 days
+ * 2. Batch generating URLs in a single LLM call
  */
 
-export interface GeneratedUrl {
+export interface ProjectInfo {
+  projectName: string;
+  professorName: string;
+  department: string;
+  university: string;
+}
+
+export interface BatchUrlResult {
+  projectName: string;
+  professorName: string;
   url: string;
-  confidence: 'high' | 'medium' | 'low';
-  alternatives: string[];
+  urlType: string;
+  fromCache: boolean;
 }
 
 export class UrlGeneratorService {
   
   /**
-   * Generate project URL with fallback strategy
-   * Priority 1: Professor's faculty page
-   * Priority 2: Research lab/group page
-   * Priority 3: Department page
-   * Priority 4: School/college page
-   * Priority 5: University homepage
+   * Get cached URL for a professor/project
    */
-  static async generateProjectUrl(
-    projectName: string,
+  private static async getCachedUrl(
     professorName: string,
-    department: string,
-    university: string
-  ): Promise<string | null> {
+    university: string,
+    department: string
+  ): Promise<{ url: string; urlType: string } | null> {
     try {
-      console.log(`[URL Generator] Generating URL for: ${projectName} - ${professorName} at ${university}`);
-      
-      const prompt = `You are a research project URL finder. Given the following information, generate the most appropriate URL.
+      const db = await getDb();
+      if (!db) return null;
 
-**Project Information:**
-- Project: ${projectName}
-- Professor: ${professorName}
-- Department: ${department}
-- University: ${university}
+      const cached = await db
+        .select()
+        .from(professorUrlCache)
+        .where(
+          and(
+            eq(professorUrlCache.professorName, professorName),
+            eq(professorUrlCache.university, university),
+            eq(professorUrlCache.department, department)
+          )
+        )
+        .limit(1);
 
-**URL Priority (choose the best available):**
-1. Professor's faculty page at the university (BEST)
-2. Research lab/group page
-3. Department page (if professor page not found)
-4. School/college page (if department page not found)
-5. University homepage (LAST RESORT)
+      if (cached.length > 0 && cached[0].isAccessible) {
+        const cacheEntry = cached[0];
+        const now = new Date();
+        const expiresAt = new Date(cacheEntry.expiresAt);
 
-**Instructions:**
-- Search your knowledge for the professor's official faculty page URL
-- If the professor exists, return their faculty page URL
-- If the professor doesn't exist or you're unsure, return the department/school page URL
-- Always return a VALID, WORKING URL (not a 404 page)
-- Use the official university domain
+        // Check if cache is still valid
+        if (now < expiresAt) {
+          console.log(
+            `[URL Generator] ✅ Cache HIT for ${professorName} at ${university}: ${cacheEntry.url}`
+          );
 
-**Examples:**
-- Good: https://law.yale.edu/jack-m-balkin (professor page)
-- Good: https://www.cs.washington.edu/research/human-centered-computing/ (research group)
-- Acceptable: https://www.cs.washington.edu/ (department page)
-- Last resort: https://www.washington.edu/ (university homepage)
-
-Return ONLY a JSON object with this structure:
-{
-  "url": "string (the URL)",
-  "type": "professor_page" | "lab_page" | "department_page" | "school_page" | "university_homepage",
-  "confidence": "high" | "medium" | "low",
-  "reasoning": "string (brief explanation)"
-}`;
-
-      const response = await invokeLLM({
-        messages: [
-          { role: "system", content: "You are a research project URL finder. Always return valid, working URLs. Return only valid JSON." },
-          { role: "user", content: prompt }
-        ],
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "url_result",
-            strict: true,
-            schema: {
-              type: "object",
-              properties: {
-                url: { type: "string" },
-                type: { 
-                  type: "string",
-                  enum: ["professor_page", "lab_page", "department_page", "school_page", "university_homepage"]
-                },
-                confidence: { 
-                  type: "string",
-                  enum: ["high", "medium", "low"]
-                },
-                reasoning: { type: "string" }
-              },
-              required: ["url", "type", "confidence", "reasoning"],
-              additionalProperties: false
-            }
+          // Update hit count
+          const dbUpdate = await getDb();
+          if (dbUpdate) {
+            await dbUpdate
+              .update(professorUrlCache)
+              .set({ hitCount: cacheEntry.hitCount + 1 })
+              .where(eq(professorUrlCache.id, cacheEntry.id));
           }
+
+          return {
+            url: cacheEntry.url,
+            urlType: cacheEntry.urlType,
+          };
+        } else {
+          console.log(
+            `[URL Generator] ⚠️ Cache expired for ${professorName} at ${university}`
+          );
         }
-      });
-
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        console.log('[URL Generator] No response from LLM');
-        return null;
-      }
-
-      const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
-      const result = JSON.parse(contentStr);
-      console.log(`[URL Generator] Generated URL: ${result.url} (${result.type}, confidence: ${result.confidence})`);
-      console.log(`[URL Generator] Reasoning: ${result.reasoning}`);
-      
-      // Verify the URL is accessible
-      console.log(`[URL Generator] Verifying URL accessibility...`);
-      const isAccessible = await this.testUrlAccessible(result.url);
-
-      if (isAccessible) {
-        console.log(`[URL Generator] ✅ URL verified and accessible`);
-        return result.url;
       }
 
       console.log(
-        `[URL Generator] ⚠️ URL not accessible (${result.url}), falling back to department page`
+        `[URL Generator] ❌ Cache MISS for ${professorName} at ${university}`
       );
-
-      // Fallback to department/school page
-      const departmentUrl = await this.generateDepartmentUrl(
-        department,
-        university
-      );
-
-      // Verify department URL
-      const isDepartmentAccessible = await this.testUrlAccessible(departmentUrl);
-      if (isDepartmentAccessible) {
-        console.log(
-          `[URL Generator] ✅ Department URL verified: ${departmentUrl}`
-        );
-        return departmentUrl;
-      }
-
-      console.log(
-        `[URL Generator] ⚠️ Department URL not accessible, falling back to university homepage`
-      );
-
-      // Final fallback to university homepage
-      const universityUrl = this.generateUniversityHomepage(university);
-      console.log(
-        `[URL Generator] ✅ Using university homepage: ${universityUrl}`
-      );
-      return universityUrl;
+      return null;
     } catch (error) {
-      console.error('[URL Generator] Error generating project URL:', error);
+      console.error('[URL Generator] Error checking cache:', error);
       return null;
     }
   }
-  
+
+  /**
+   * Save URL to cache
+   */
+  private static async saveToCache(
+    professorName: string,
+    university: string,
+    department: string,
+    url: string,
+    urlType: string,
+    isAccessible: boolean
+  ): Promise<void> {
+    try {
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 30); // Cache for 30 days
+
+      const db = await getDb();
+      if (!db) return;
+
+      await db.insert(professorUrlCache).values({
+        professorName,
+        university,
+        department,
+        url,
+        urlType: urlType as any,
+        isAccessible,
+        expiresAt,
+      });
+
+      console.log(
+        `[URL Generator] ✅ Saved to cache: ${professorName} at ${university} -> ${url}`
+      );
+    } catch (error: any) {
+      // Ignore duplicate key errors
+      if (!error.message?.includes('Duplicate entry')) {
+        console.error('[URL Generator] Error saving to cache:', error);
+      }
+    }
+  }
+
+  /**
+   * Test if a URL is accessible
+   */
+  private static async testUrlAccessible(url: string, timeout: number = 5000): Promise<boolean> {
+    try {
+      const response = await axios.head(url, {
+        timeout,
+        maxRedirects: 5,
+        validateStatus: (status) => status >= 200 && status < 400
+      });
+      
+      return response.status >= 200 && response.status < 400;
+    } catch (error) {
+      // Try GET if HEAD fails
+      try {
+        const response = await axios.get(url, {
+          timeout,
+          maxRedirects: 5,
+          validateStatus: (status) => status >= 200 && status < 400,
+          maxContentLength: 1024 * 10 // Only download first 10KB
+        });
+        
+        return response.status >= 200 && response.status < 400;
+      } catch {
+        return false;
+      }
+    }
+  }
+
   /**
    * Generate department/school URL as fallback
    */
@@ -241,266 +247,212 @@ Return ONLY the URL, nothing else.`;
     return generatedUrl;
   }
 
-  // Database connection pool
-  private static connectionPool: mysql.Pool | null = null;
-  
-  private static getConnectionPool(): mysql.Pool {
-    if (!this.connectionPool && process.env.DATABASE_URL) {
-      this.connectionPool = mysql.createPool({
-        uri: process.env.DATABASE_URL,
-        connectionLimit: 10,
-        waitForConnections: true,
-      });
-    }
-    if (!this.connectionPool) {
-      throw new Error('Database connection not available');
-    }
-    return this.connectionPool;
-  }
-  
   /**
-   * Generate university department URL using LLM
-   * Returns the most likely URL and alternatives
+   * Generate URLs for multiple projects in a single LLM call (BATCH)
+   * This is the main entry point for optimized URL generation
    */
-  static async generateUniversityUrl(
-    universityName: string,
-    major: string = 'computer science'
-  ): Promise<GeneratedUrl> {
-    console.log(`[UrlGenerator] Generating URL for ${universityName} - ${major}`);
-    
-    const prompt = `You are a university website URL expert. Generate the most likely URL for the ${major} department at ${universityName}.
+  static async generateBatchUrls(
+    projects: ProjectInfo[]
+  ): Promise<BatchUrlResult[]> {
+    console.log(
+      `[URL Generator] 🚀 Generating URLs for ${projects.length} projects in batch`
+    );
 
-Instructions:
-1. Return the official department website URL (not the main university homepage)
-2. For computer science, common patterns are:
-   - https://cs.university.edu
-   - https://www.cs.university.edu
-   - https://cse.university.edu (Computer Science & Engineering)
-   - https://eecs.university.edu (Electrical Engineering & Computer Science)
-   - https://www.university.edu/cs
-3. Also provide 2-3 alternative URLs that might be correct
-4. Rate your confidence: high (90%+ sure), medium (70-90%), low (<70%)
+    const results: BatchUrlResult[] = [];
+    const projectsNeedingGeneration: ProjectInfo[] = [];
 
-University: ${universityName}
-Major: ${major}
+    // Step 1: Check cache for each project
+    for (const project of projects) {
+      const cached = await this.getCachedUrl(
+        project.professorName,
+        project.university,
+        project.department
+      );
 
-Respond in JSON format:
-{
-  "primaryUrl": "https://...",
-  "confidence": "high|medium|low",
-  "alternatives": ["https://...", "https://..."],
-  "reasoning": "Brief explanation"
-}`;
-
-    try {
-      const response = await invokeLLM({
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant that generates university department URLs.' },
-          { role: 'user', content: prompt }
-        ],
-        response_format: {
-          type: 'json_schema',
-          json_schema: {
-            name: 'university_url',
-            strict: true,
-            schema: {
-              type: 'object',
-              properties: {
-                primaryUrl: { type: 'string', description: 'The most likely URL' },
-                confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
-                alternatives: { 
-                  type: 'array', 
-                  items: { type: 'string' },
-                  description: 'Alternative URLs'
-                },
-                reasoning: { type: 'string', description: 'Brief explanation' }
-              },
-              required: ['primaryUrl', 'confidence', 'alternatives', 'reasoning'],
-              additionalProperties: false
-            }
-          }
-        }
-      });
-      
-      const content = response.choices[0].message.content;
-      const result = JSON.parse(typeof content === 'string' ? content : '{}');
-      
-      console.log(`[UrlGenerator] Generated URL: ${result.primaryUrl} (confidence: ${result.confidence})`);
-      console.log(`[UrlGenerator] Reasoning: ${result.reasoning}`);
-      
-      return {
-        url: result.primaryUrl,
-        confidence: result.confidence,
-        alternatives: result.alternatives || []
-      };
-      
-    } catch (error) {
-      console.error(`[UrlGenerator] Error generating URL:`, error);
-      throw new Error(`Failed to generate URL for ${universityName}`);
-    }
-  }
-  
-  /**
-   * Test if a URL is accessible
-   * Returns true if URL returns 200-399 status code
-   */
-  static async testUrlAccessible(url: string, timeout: number = 5000): Promise<boolean> {
-    try {
-      const response = await axios.head(url, {
-        timeout,
-        maxRedirects: 5,
-        validateStatus: (status) => status >= 200 && status < 400
-      });
-      
-      return response.status >= 200 && response.status < 400;
-    } catch (error) {
-      // Try GET if HEAD fails (some servers don't support HEAD)
-      try {
-        const response = await axios.get(url, {
-          timeout,
-          maxRedirects: 5,
-          validateStatus: (status) => status >= 200 && status < 400,
-          maxContentLength: 1024 * 10 // Only download first 10KB
+      if (cached) {
+        results.push({
+          projectName: project.projectName,
+          professorName: project.professorName,
+          url: cached.url,
+          urlType: cached.urlType,
+          fromCache: true,
         });
-        
-        return response.status >= 200 && response.status < 400;
-      } catch {
-        return false;
+      } else {
+        projectsNeedingGeneration.push(project);
       }
     }
-  }
-  
-  /**
-   * Get cached URL from database
-   */
-  static async getCachedUrl(
-    universityName: string,
-    major: string = 'computer science'
-  ): Promise<string | null> {
-    try {
-      const pool = this.getConnectionPool();
-      
-      const [rows] = await pool.execute(
-        `SELECT base_url, is_accessible, last_validated 
-         FROM university_url_cache 
-         WHERE university_name = ? AND major = ? 
-         ORDER BY success_count DESC, last_validated DESC 
-         LIMIT 1`,
-        [universityName, major]
+
+    // Step 2: Generate URLs for projects not in cache (BATCH)
+    if (projectsNeedingGeneration.length > 0) {
+      console.log(
+        `[URL Generator] ${projectsNeedingGeneration.length} projects need URL generation`
       );
-      
-      const cached = (rows as any[])[0];
-      if (cached && cached.is_accessible) {
-        console.log(`[UrlGenerator] Cache HIT for ${universityName} - ${major}: ${cached.base_url}`);
-        return cached.base_url;
-      }
-      
-      console.log(`[UrlGenerator] Cache MISS for ${universityName} - ${major}`);
-      return null;
-    } catch (error) {
-      console.error(`[UrlGenerator] Error checking cache:`, error);
-      return null;
-    }
-  }
-  
-  /**
-   * Save URL to cache
-   */
-  static async cacheUrl(
-    universityName: string,
-    major: string,
-    url: string,
-    source: 'llm_generated' | 'manual' | 'validated',
-    confidence: 'high' | 'medium' | 'low',
-    isAccessible: boolean
-  ): Promise<void> {
-    try {
-      const pool = this.getConnectionPool();
-      
-      await pool.execute(
-        `INSERT INTO university_url_cache 
-         (university_name, major, base_url, source, confidence, is_accessible, last_validated) 
-         VALUES (?, ?, ?, ?, ?, ?, NOW()) 
-         ON DUPLICATE KEY UPDATE 
-         base_url = VALUES(base_url), 
-         source = VALUES(source), 
-         confidence = VALUES(confidence), 
-         is_accessible = VALUES(is_accessible), 
-         last_validated = NOW(), 
-         updatedAt = NOW()`,
-        [universityName, major, url, source, confidence, isAccessible]
-      );
-      
-      console.log(`[UrlGenerator] Cached URL for ${universityName}: ${url}`);
-    } catch (error) {
-      console.error(`[UrlGenerator] Error caching URL:`, error);
-    }
-  }
-  
-  /**
-   * Update URL success/failure count
-   */
-  static async updateUrlStats(
-    universityName: string,
-    major: string,
-    success: boolean
-  ): Promise<void> {
-    try {
-      const pool = this.getConnectionPool();
-      
-      const field = success ? 'success_count' : 'failure_count';
-      await pool.execute(
-        `UPDATE university_url_cache 
-         SET ${field} = ${field} + 1, 
-         last_validated = NOW(), 
-         updatedAt = NOW() 
-         WHERE university_name = ? AND major = ?`,
-        [universityName, major]
-      );
-      
-      console.log(`[UrlGenerator] Updated stats for ${universityName}: ${success ? 'success' : 'failure'}`);
-    } catch (error) {
-      console.error(`[UrlGenerator] Error updating stats:`, error);
-    }
-  }
-  
-  /**
-   * Generate and validate URL
-   * Tests primary URL and alternatives, returns the first working one
-   */
-  static async generateAndValidateUrl(
-    universityName: string,
-    major: string = 'computer science'
-  ): Promise<string | null> {
-    console.log(`[UrlGenerator] Generating and validating URL for ${universityName}`);
-    
-    try {
-      const generated = await this.generateUniversityUrl(universityName, major);
-      
-      // Test primary URL first
-      console.log(`[UrlGenerator] Testing primary URL: ${generated.url}`);
-      if (await this.testUrlAccessible(generated.url)) {
-        console.log(`[UrlGenerator] ✓ Primary URL is accessible`);
-        return generated.url;
-      }
-      
-      // Test alternatives
-      for (const altUrl of generated.alternatives) {
-        console.log(`[UrlGenerator] Testing alternative URL: ${altUrl}`);
-        if (await this.testUrlAccessible(altUrl)) {
-          console.log(`[UrlGenerator] ✓ Alternative URL is accessible`);
-          return altUrl;
+
+      const batchPrompt = `You are a research project URL finder. Generate URLs for the following research projects.
+
+**Projects:**
+${projectsNeedingGeneration
+  .map(
+    (p, i) =>
+      `${i + 1}. Project: ${p.projectName}\n   Professor: ${p.professorName}\n   Department: ${p.department}\n   University: ${p.university}`
+  )
+  .join('\n\n')}
+
+**Instructions:**
+- For each project, find the professor's faculty page URL (BEST)
+- If professor page not found, use department/school page URL
+- Always return VALID, WORKING URLs (not 404 pages)
+- Use official university domains
+
+**Return a JSON array with this structure:**
+[
+  {
+    "projectIndex": 1,
+    "url": "string (the URL)",
+    "type": "professor_page" | "lab_page" | "department_page" | "school_page" | "university_homepage",
+    "confidence": "high" | "medium" | "low"
+  },
+  ...
+]`;
+
+      try {
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are a research project URL finder. Always return valid, working URLs. Return only valid JSON array.',
+            },
+            { role: 'user', content: batchPrompt },
+          ],
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'batch_url_results',
+              strict: true,
+              schema: {
+                type: 'object',
+                properties: {
+                  urls: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        projectIndex: { type: 'integer' },
+                        url: { type: 'string' },
+                        type: {
+                          type: 'string',
+                          enum: [
+                            'professor_page',
+                            'lab_page',
+                            'department_page',
+                            'school_page',
+                            'university_homepage',
+                          ],
+                        },
+                        confidence: {
+                          type: 'string',
+                          enum: ['high', 'medium', 'low'],
+                        },
+                      },
+                      required: ['projectIndex', 'url', 'type', 'confidence'],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ['urls'],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const content = response.choices[0]?.message?.content;
+        if (!content) {
+          console.log('[URL Generator] No response from LLM');
+          // Fallback: use department URLs
+          for (const project of projectsNeedingGeneration) {
+            const deptUrl = await this.generateDepartmentUrl(
+              project.department,
+              project.university
+            );
+            results.push({
+              projectName: project.projectName,
+              professorName: project.professorName,
+              url: deptUrl,
+              urlType: 'department_page',
+              fromCache: false,
+            });
+          }
+          return results;
+        }
+
+        const contentStr =
+          typeof content === 'string' ? content : JSON.stringify(content);
+        const batchResult = JSON.parse(contentStr);
+
+        // Step 3: Verify URLs and save to cache
+        for (const urlData of batchResult.urls) {
+          const project = projectsNeedingGeneration[urlData.projectIndex - 1];
+          if (!project) continue;
+
+          let finalUrl = urlData.url;
+          let finalType = urlData.type;
+
+          // Verify URL accessibility
+          const isAccessible = await this.testUrlAccessible(urlData.url);
+
+          if (!isAccessible) {
+            console.log(
+              `[URL Generator] ⚠️ URL not accessible: ${urlData.url}, falling back to department page`
+            );
+            finalUrl = await this.generateDepartmentUrl(
+              project.department,
+              project.university
+            );
+            finalType = 'department_page';
+          }
+
+          // Save to cache
+          await this.saveToCache(
+            project.professorName,
+            project.university,
+            project.department,
+            finalUrl,
+            finalType,
+            isAccessible
+          );
+
+          results.push({
+            projectName: project.projectName,
+            professorName: project.professorName,
+            url: finalUrl,
+            urlType: finalType,
+            fromCache: false,
+          });
+        }
+      } catch (error) {
+        console.error('[URL Generator] Error in batch generation:', error);
+        // Fallback: use department URLs
+        for (const project of projectsNeedingGeneration) {
+          const deptUrl = await this.generateDepartmentUrl(
+            project.department,
+            project.university
+          );
+          results.push({
+            projectName: project.projectName,
+            professorName: project.professorName,
+            url: deptUrl,
+            urlType: 'department_page',
+            fromCache: false,
+          });
         }
       }
-      
-      console.log(`[UrlGenerator] ✗ No accessible URL found`);
-      
-      // Return primary URL even if not accessible (爬虫会处理失败情况)
-      return generated.url;
-      
-    } catch (error) {
-      console.error(`[UrlGenerator] Error in generateAndValidateUrl:`, error);
-      return null;
     }
+
+    console.log(
+      `[URL Generator] ✅ Batch generation complete: ${results.filter((r) => r.fromCache).length} from cache, ${results.filter((r) => !r.fromCache).length} newly generated`
+    );
+    return results;
   }
 }

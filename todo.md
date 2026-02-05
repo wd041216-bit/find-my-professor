@@ -87,4 +87,12 @@
 - [x] 添加URL验证机制（HTTP HEAD请求验证可访问性）
 - [x] 实现三层fallback策略（教授页面→学院页面→大学主页）
 - [x] 测试修复效果（验证链接可访问性）
+- [x] 保存checkpoint
+
+## 🚀 URL生成Token消耗优化
+- [x] 设计URL缓存数据库表结构（professor_url_cache表）
+- [x] 实现URL缓存查询和存储逻辑
+- [x] 实现批量URL生成功能（一次LLM调用生成10个项目的URL）
+- [x] 修改matching router集成缓存和批量生成
+- [x] 测试优化效果（对比优化前后的token消耗）
 - [ ] 保存checkpoint
