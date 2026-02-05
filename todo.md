@@ -331,8 +331,8 @@
 
 ## 前端修复和功能增强
 - [x] 修复ProjectDetail页面使用trpc.matching.getMatchHistory API
-- [ ] 在Dashboard顶部添加积分余额显示（剩余积分+每日重置提示）
-- [ ] 实现积分不足提示：捕获INSUFFICIENT_CREDITS错误显示InsufficientCreditsDialog
-- [ ] 启用联网LLM：让LLM可以联网获取最新研究项目信息
+- [x] 在Dashboard顶部添加积分余额显示（剩余积分+每日重置提示）
+- [ ] 实现积分不足提示：捕获INSUFFICIENT_CREDITS错误显示InsufficientCreditsDialog  
+- [x] 启用联网LLM：在llmMatching.ts中启用LLM联网功能获取最新项目信息
 - [ ] 项目卡片添加"一键生成文书"按钮（消耗10积分）
 - [ ] 测试完整流程（匹配、积分扣除、文书生成）

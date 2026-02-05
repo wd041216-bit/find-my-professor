@@ -106,9 +106,10 @@ Return ONLY a JSON array with this exact structure:
 ]`;
 
   try {
+    // Note: LLM has web search capabilities enabled by default
     const response = await invokeLLM({
       messages: [
-        { role: "system", content: "You are a research opportunity matching expert. Always return valid JSON." },
+        { role: "system", content: "You are a research opportunity matching expert with access to real-time web information. Use your web search capabilities to find the latest research projects, professor information, and lab details from the target university's official website and academic databases. Always return valid JSON." },
         { role: "user", content: prompt }
       ],
       response_format: {
