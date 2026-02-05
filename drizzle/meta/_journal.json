@@ -71,6 +71,13 @@
       "when": 1770262129142,
       "tag": "0009_wakeful_shiva",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1770263825215,
+      "tag": "0010_chubby_stature",
+      "breakpoints": true
     }
   ]
 }

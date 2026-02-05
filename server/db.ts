@@ -317,11 +317,19 @@ export async function getMatchByUserAndProject(userId: number, projectId: number
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function createProjectMatch(match: InsertProjectMatch) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(projectMatches).values(match);
+  const inserted = await db.select().from(projectMatches).orderBy(desc(projectMatches.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
 export async function upsertProjectMatch(match: InsertProjectMatch) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const existing = await getMatchByUserAndProject(match.userId, match.projectId);
+  const existing = match.projectId ? await getMatchByUserAndProject(match.userId, match.projectId) : undefined;
   
   if (existing) {
     await db.update(projectMatches)
