@@ -108,17 +108,18 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         // Save raw input without normalization
         // Normalization will be performed during matching to avoid wasting tokens on multiple edits
+        // Handle empty arrays - convert to null to avoid SQL errors
         return db.upsertStudentProfile({
           userId: ctx.user.id,
-          currentUniversity: input.currentUniversity,
-          currentMajor: input.currentMajor,
-          academicLevel: input.academicLevel,
-          gpa: input.gpa,
-          targetUniversities: input.targetUniversities ? JSON.stringify(input.targetUniversities) : null,
-          targetMajors: input.targetMajors ? JSON.stringify(input.targetMajors) : null,
-          skills: input.skills ? JSON.stringify(input.skills) : null,
-          interests: input.interests ? JSON.stringify(input.interests) : null,
-          bio: input.bio,
+          currentUniversity: input.currentUniversity || null,
+          currentMajor: input.currentMajor || null,
+          academicLevel: input.academicLevel || null,
+          gpa: input.gpa || null,
+          targetUniversities: input.targetUniversities && input.targetUniversities.length > 0 ? JSON.stringify(input.targetUniversities) : null,
+          targetMajors: input.targetMajors && input.targetMajors.length > 0 ? JSON.stringify(input.targetMajors) : null,
+          skills: input.skills && input.skills.length > 0 ? JSON.stringify(input.skills) : null,
+          interests: input.interests && input.interests.length > 0 ? JSON.stringify(input.interests) : null,
+          bio: input.bio || null,
         });
       }),
   }),
