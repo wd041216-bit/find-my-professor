@@ -19,6 +19,8 @@ import {
   InsertApplicationLetter,
   notifications,
   InsertNotification,
+  announcements,
+  InsertAnnouncement,
   userCredits,
   creditTransactions
 } from "../drizzle/schema";
@@ -417,6 +419,40 @@ export async function getUnreadNotificationCount(userId: number) {
   return result[0]?.count ?? 0;
 }
 
+// ===== Announcement Management =====
+
+export async function createAnnouncement(announcement: InsertAnnouncement) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(announcements).values(announcement);
+  const inserted = await db.select().from(announcements).orderBy(desc(announcements.id)).limit(1);
+  return inserted[0]?.id ?? 0;
+}
+
+export async function getActiveAnnouncements() {
+  const db = await getDb();
+  if (!db) return [];
+  const now = new Date();
+  return db.select().from(announcements)
+    .where(and(
+      sql`${announcements.startDate} <= ${now}`,
+      sql`${announcements.endDate} >= ${now}`
+    ))
+    .orderBy(desc(announcements.createdAt));
+}
+
+export async function getAllAnnouncements() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(announcements)
+    .orderBy(desc(announcements.createdAt));
+}
+
+export async function deleteAnnouncement(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(announcements).where(eq(announcements.id, id));
+}
 
 // ===== Contact Message Management =====
 

@@ -16,6 +16,7 @@ import CoverLetters from "./pages/CoverLetters";
 import ProjectDetail from "./pages/ProjectDetail";
 import Notifications from "./pages/Notifications";
 import AdminMessages from "./pages/AdminMessages";
+import AdminAnnouncements from "./pages/AdminAnnouncements";
 // Credits page removed - payment feature not yet launched
 import Skills from "./pages/Skills";
 import TermsOfService from "./pages/TermsOfService";
@@ -36,6 +37,7 @@ function Router() {
       <Route path={"/project/:id"} component={ProjectDetail} />
       <Route path={"/notifications"} component={Notifications} />
       <Route path={"/admin/messages"} component={AdminMessages} />
+      <Route path={"/admin/announcements"} component={AdminAnnouncements} />
       {/* Credits page removed - payment feature not yet launched */}
       <Route path={"/skills"} component={Skills} />
       <Route path={"/terms"} component={TermsOfService} />
