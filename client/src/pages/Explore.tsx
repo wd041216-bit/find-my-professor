@@ -245,18 +245,29 @@ export default function Explore() {
                 <p className="text-sm text-muted-foreground">
                   {t.explore.smartMatchingDesc || "基于您的个人资料，为您推荐8-10个最匹配的研究项目"}
                 </p>
-                {profile?.targetUniversities && profile?.targetMajors && (
-                  <div className="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
-                    <Badge variant="secondary">
-                      <Target className="mr-1 h-3 w-3" />
-                      {JSON.parse(profile.targetUniversities)[0]}
-                    </Badge>
-                    <Badge variant="secondary">
-                      <GraduationCap className="mr-1 h-3 w-3" />
-                      {JSON.parse(profile.targetMajors)[0]}
-                    </Badge>
-                  </div>
-                )}
+                {profile?.targetUniversities && profile?.targetMajors && (() => {
+                  try {
+                    const universities = JSON.parse(profile.targetUniversities);
+                    const majors = JSON.parse(profile.targetMajors);
+                    if (universities.length > 0 && majors.length > 0) {
+                      return (
+                        <div className="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
+                          <Badge variant="secondary">
+                            <Target className="mr-1 h-3 w-3" />
+                            {universities[0]}
+                          </Badge>
+                          <Badge variant="secondary">
+                            <GraduationCap className="mr-1 h-3 w-3" />
+                            {majors[0]}
+                          </Badge>
+                        </div>
+                      );
+                    }
+                  } catch (e) {
+                    console.error('Failed to parse profile data:', e);
+                  }
+                  return null;
+                })()}
               </div>
               <div className="flex flex-col items-center gap-2 w-full md:w-auto">
                 <Button
