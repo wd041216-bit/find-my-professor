@@ -106,68 +106,16 @@ export const appRouter = router({
         bio: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // AI-driven normalization for universities and majors
-        let normalizedCurrentUniversity = input.currentUniversity;
-        let normalizedCurrentMajor = input.currentMajor;
-        let normalizedTargetUniversities = input.targetUniversities;
-        let normalizedTargetMajors = input.targetMajors;
-
-        // Normalize current university
-        if (input.currentUniversity) {
-          try {
-            const result = await NormalizationService.normalizeUniversity(input.currentUniversity);
-            normalizedCurrentUniversity = result.normalizedName;
-            console.log(`[Profile] Normalized university: "${input.currentUniversity}" → "${result.normalizedName}" (confidence: ${result.confidence})`);
-          } catch (error) {
-            console.error('[Profile] Failed to normalize current university:', error);
-            // Continue with original input on error
-          }
-        }
-
-        // Normalize current major
-        if (input.currentMajor) {
-          try {
-            const result = await NormalizationService.normalizeMajor(input.currentMajor);
-            normalizedCurrentMajor = result.normalizedName;
-            console.log(`[Profile] Normalized major: "${input.currentMajor}" → "${result.normalizedName}" (confidence: ${result.confidence})`);
-          } catch (error) {
-            console.error('[Profile] Failed to normalize current major:', error);
-            // Continue with original input on error
-          }
-        }
-
-        // Normalize target universities
-        if (input.targetUniversities && input.targetUniversities.length > 0) {
-          try {
-            const results = await NormalizationService.normalizeUniversities(input.targetUniversities);
-            normalizedTargetUniversities = results.map(r => r.normalizedName);
-            console.log(`[Profile] Normalized ${results.length} target universities`);
-          } catch (error) {
-            console.error('[Profile] Failed to normalize target universities:', error);
-            // Continue with original input on error
-          }
-        }
-
-        // Normalize target majors
-        if (input.targetMajors && input.targetMajors.length > 0) {
-          try {
-            const results = await NormalizationService.normalizeMajors(input.targetMajors);
-            normalizedTargetMajors = results.map(r => r.normalizedName);
-            console.log(`[Profile] Normalized ${results.length} target majors`);
-          } catch (error) {
-            console.error('[Profile] Failed to normalize target majors:', error);
-            // Continue with original input on error
-          }
-        }
-
+        // Save raw input without normalization
+        // Normalization will be performed during matching to avoid wasting tokens on multiple edits
         return db.upsertStudentProfile({
           userId: ctx.user.id,
-          currentUniversity: normalizedCurrentUniversity,
-          currentMajor: normalizedCurrentMajor,
+          currentUniversity: input.currentUniversity,
+          currentMajor: input.currentMajor,
           academicLevel: input.academicLevel,
           gpa: input.gpa,
-          targetUniversities: normalizedTargetUniversities ? JSON.stringify(normalizedTargetUniversities) : null,
-          targetMajors: normalizedTargetMajors ? JSON.stringify(normalizedTargetMajors) : null,
+          targetUniversities: input.targetUniversities ? JSON.stringify(input.targetUniversities) : null,
+          targetMajors: input.targetMajors ? JSON.stringify(input.targetMajors) : null,
           skills: input.skills ? JSON.stringify(input.skills) : null,
           interests: input.interests ? JSON.stringify(input.interests) : null,
           bio: input.bio,

@@ -33,6 +33,7 @@ export const studentProfiles = mysqlTable("student_profiles", {
   skills: text("skills"), // JSON array
   interests: text("interests"), // JSON array
   bio: text("bio"),
+  resumeUrl: text("resume_url"), // URL to uploaded resume file
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

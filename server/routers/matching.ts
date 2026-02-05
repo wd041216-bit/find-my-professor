@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as db from "../db";
 import { generateMatchedProjects, triggerBackgroundCrawler, type UserProfile, type MatchedProject } from "../services/llmMatching";
 import { deductCredits, checkAndResetCredits } from "../services/credits";
+import { NormalizationService } from "../services/normalization";
 import { TRPCError } from "@trpc/server";
 
 export const matchingRouter = router({
@@ -15,9 +16,9 @@ export const matchingRouter = router({
     }).optional())
     .mutation(async ({ ctx, input }) => {
     const language = input?.language || 'en';
-    // Step 1: Check credits (30 points for matching)
+    // Step 1: Check credits (40 points for matching, includes normalization)
     const currentCredits = await checkAndResetCredits(ctx.user.id);
-    if (currentCredits < 30) {
+    if (currentCredits < 40) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'INSUFFICIENT_CREDITS',
@@ -44,12 +45,41 @@ export const matchingRouter = router({
       });
     }
 
-    // For now, use first university and first major
-    const university = targetUniversities[0];
-    const major = targetMajors[0];
+    // Step 3.5: Normalize university and major names (delayed from profile save)
+    let university = targetUniversities[0];
+    let major = targetMajors[0];
+    
+    try {
+      const [normalizedUniversity, normalizedMajor] = await Promise.all([
+        NormalizationService.normalizeUniversity(university, ctx.user.id),
+        NormalizationService.normalizeMajor(major, ctx.user.id)
+      ]);
+      university = normalizedUniversity.normalizedName;
+      major = normalizedMajor.normalizedName;
+      console.log(`[Matching] Normalized: "${targetUniversities[0]}" → "${university}", "${targetMajors[0]}" → "${major}"`);
+    } catch (error) {
+      console.error('[Matching] Normalization failed, using raw input:', error);
+      // Continue with raw input if normalization fails
+    }
 
-    // Step 4: Build user profile for LLM
-    const activities = await db.getUserActivities(ctx.user.id);
+    // Step 3.6: Parse resume if uploaded but not yet parsed
+    let activities = await db.getUserActivities(ctx.user.id);
+    if (profile.resumeUrl && activities.length === 0) {
+      try {
+        console.log(`[Matching] Parsing resume for user ${ctx.user.id}...`);
+        // Import resume router to call parse function
+        const { resumeRouter } = await import("./resume");
+        const caller = resumeRouter.createCaller(ctx);
+        await caller.parse({ fileUrl: profile.resumeUrl });
+        console.log(`[Matching] Resume parsed successfully`);
+      } catch (error) {
+        console.error('[Matching] Resume parsing failed:', error);
+        // Continue without resume data if parsing fails
+      }
+    }
+    
+    // Step 4: Build user profile for LLM (re-fetch activities after resume parsing)
+    activities = await db.getUserActivities(ctx.user.id);
     const userProfile: UserProfile = {
       academicLevel: profile.academicLevel || undefined,
       gpa: profile.gpa || undefined,
@@ -64,8 +94,8 @@ export const matchingRouter = router({
       })),
     };
 
-    // Step 5: Deduct credits
-    await deductCredits(ctx.user.id, 30, 'project_matching');
+    // Step 5: Deduct credits (40 points: matching + normalization)
+    await deductCredits(ctx.user.id, 40, 'project_matching');
 
     // Step 6: Generate matches with LLM (fast, returns immediately)
     const matches: MatchedProject[] = await generateMatchedProjects(university, major, userProfile, language);
