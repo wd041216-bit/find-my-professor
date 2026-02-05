@@ -2,6 +2,7 @@ import { invokeLLM } from "../_core/llm";
 import { getDb } from "../db";
 import * as schema from "../../drizzle/schema";
 import { eq, and, sql } from "drizzle-orm";
+import { safeGetRows, safeGetCount } from "./dbResultHelper";
 
 export interface UserProfile {
   academicLevel?: string;
@@ -80,7 +81,7 @@ async function sqlCoarseFilter(
           ORDER BY created_at DESC 
           LIMIT 150`
     );
-    return (result as any).rows || [];
+    return safeGetRows(result);
   }
   
   // Execute query with keyword filtering
@@ -95,7 +96,7 @@ async function sqlCoarseFilter(
   `;
   
   const result = await db.execute(sql.raw(query));
-  const filtered = (result as any).rows || [];
+  const filtered = safeGetRows(result);
   
   console.log(`[Layer 1] Filtered ${filtered.length} projects using keywords: ${keywords.slice(0, 5).join(', ')}${keywords.length > 5 ? '...' : ''}`);
   
@@ -339,13 +340,29 @@ Return ONLY a JSON array with this exact structure:
       }
     });
     
-    const content = response.choices[0].message.content;
+    const content = response.choices[0]?.message?.content;
     if (!content || typeof content !== 'string') {
       throw new Error("Empty or invalid response from LLM");
     }
     
-    const parsed = JSON.parse(content);
-    const matchedProjects: MatchedProject[] = parsed.projects;
+    let parsed: any;
+    try {
+      parsed = JSON.parse(content);
+    } catch (e) {
+      console.error('[Layer 3] JSON parse error:', e, 'Content:', content);
+      throw new Error("Failed to parse LLM response as JSON");
+    }
+    
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error("LLM response is not an object");
+    }
+    
+    if (!Array.isArray(parsed.projects)) {
+      console.error('[Layer 3] Invalid projects structure:', parsed);
+      throw new Error("LLM response missing 'projects' array");
+    }
+    
+    const matchedProjects: MatchedProject[] = parsed.projects.filter((p: any) => p && typeof p === 'object');
     
     // Sort by match score descending
     matchedProjects.sort((a, b) => b.matchScore - a.matchScore);
@@ -384,7 +401,8 @@ export async function generateMatchedProjects(
         AND expires_at > NOW()`
   );
   
-  const totalProjects = parseInt((countResult as any).rows[0]?.count || '0');
+  // Use safe helper to extract count
+  const totalProjects = safeGetCount(countResult);
   console.log(`\n========================================`);
   console.log(`[Matching] Starting match for ${university} - ${major}`);
   console.log(`[Matching] Total projects in database: ${totalProjects}`);
@@ -408,7 +426,7 @@ export async function generateMatchedProjects(
           ORDER BY created_at DESC`
     );
     
-    return await llmDeepMatching((projects as any).rows, userProfile, university, major, language);
+    return await llmDeepMatching(safeGetRows(projects), userProfile, university, major, language);
     
   } else if (totalProjects <= 200) {
     // Strategy B: Two-stage LLM filtering
@@ -423,7 +441,7 @@ export async function generateMatchedProjects(
     );
     
     // Layer 2: Batch scoring
-    const scoredProjects = await llmBatchScoring((projects as any).rows, userProfile, university, major);
+    const scoredProjects = await llmBatchScoring(safeGetRows(projects), userProfile, university, major);
     
     // Layer 3: Deep matching
     return await llmDeepMatching(
@@ -535,13 +553,29 @@ Return JSON array with the standard project structure.`;
     }
   });
   
-  const content = response.choices[0].message.content;
-  if (!content || typeof content !== 'string') {
-    throw new Error("Empty or invalid response from LLM");
-  }
-  
-  const parsed = JSON.parse(content);
-  const projects: MatchedProject[] = parsed.projects;
+    const content = response.choices[0]?.message?.content;
+    if (!content || typeof content !== 'string') {
+      throw new Error("Empty or invalid response from LLM");
+    }
+    
+    let parsed: any;
+    try {
+      parsed = JSON.parse(content);
+    } catch (e) {
+      console.error('[Fallback] JSON parse error:', e, 'Content:', content);
+      throw new Error("Failed to parse LLM response as JSON");
+    }
+    
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error("LLM response is not an object");
+    }
+    
+    if (!Array.isArray(parsed.projects)) {
+      console.error('[Fallback] Invalid projects structure:', parsed);
+      throw new Error("LLM response missing 'projects' array");
+    }
+    
+    const projects: MatchedProject[] = parsed.projects.filter((p: any) => p && typeof p === 'object');
   
   projects.sort((a, b) => b.matchScore - a.matchScore);
   
