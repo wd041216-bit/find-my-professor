@@ -240,3 +240,25 @@ export const creditTransactions = mysqlTable("credit_transactions", {
 
 export type CreditTransaction = typeof creditTransactions.$inferSelect;
 export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
+
+/**
+ * University URL cache for LLM-generated URLs
+ * Stores validated URLs to avoid repeated LLM calls
+ */
+export const universityUrlCache = mysqlTable("university_url_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  universityName: varchar("university_name", { length: 255 }).notNull(),
+  major: varchar("major", { length: 100 }).notNull().default("computer science"),
+  baseUrl: varchar("base_url", { length: 500 }).notNull(),
+  source: mysqlEnum("source", ["llm_generated", "manual", "validated"]).notNull(),
+  confidence: mysqlEnum("confidence", ["high", "medium", "low"]).notNull().default("medium"),
+  isAccessible: boolean("is_accessible").notNull().default(true),
+  lastValidated: timestamp("last_validated").defaultNow().notNull(),
+  successCount: int("success_count").notNull().default(0), // Number of successful scrapes
+  failureCount: int("failure_count").notNull().default(0), // Number of failed scrapes
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UniversityUrlCache = typeof universityUrlCache.$inferSelect;
+export type InsertUniversityUrlCache = typeof universityUrlCache.$inferInsert;
