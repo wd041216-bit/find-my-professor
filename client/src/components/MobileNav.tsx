@@ -24,6 +24,8 @@ import {
   LogOut,
   LogIn,
   GraduationCap,
+  History,
+  Sparkles,
 } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
@@ -47,6 +49,8 @@ export function MobileNav({ unreadCount = 0 }: MobileNavProps) {
           { href: "/profile", icon: User, label: t.nav.profile },
           { href: "/activities", icon: FileText, label: t.nav.activities },
           { href: "/explore", icon: Search, label: t.nav.explore },
+          { href: "/history", icon: History, label: t.dashboard?.matchHistory || "Match History" },
+          { href: "/cover-letters", icon: Sparkles, label: t.dashboard?.yourCoverLetters || "Cover Letters" },
           {
             href: "/notifications",
             icon: Bell,

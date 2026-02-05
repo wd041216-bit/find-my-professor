@@ -12,6 +12,7 @@ import Activities from "./pages/Activities";
 import UploadResume from "./pages/UploadResume";
 import Explore from "./pages/Explore";
 import History from "./pages/History";
+import CoverLetters from "./pages/CoverLetters";
 import ProjectDetail from "./pages/ProjectDetail";
 import Notifications from "./pages/Notifications";
 import AdminMessages from "./pages/AdminMessages";
@@ -31,6 +32,7 @@ function Router() {
       <Route path={"/upload-resume"} component={UploadResume} />
       <Route path={"/explore"} component={Explore} />
       <Route path={"/history"} component={History} />
+      <Route path={"/cover-letters"} component={CoverLetters} />
       <Route path={"/project/:id"} component={ProjectDetail} />
       <Route path={"/notifications"} component={Notifications} />
       <Route path={"/admin/messages"} component={AdminMessages} />
