@@ -54,9 +54,30 @@ export default function Profile() {
             return "";
           }
         })(),
-        targetMajors: profile.targetMajors ? JSON.parse(profile.targetMajors) : [],
-        skills: profile.skills ? JSON.parse(profile.skills) : [],
-        interests: profile.interests ? JSON.parse(profile.interests) : [],
+        targetMajors: (() => {
+          try {
+            const parsed = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (e) {
+            return [];
+          }
+        })(),
+        skills: (() => {
+          try {
+            const parsed = profile.skills ? JSON.parse(profile.skills) : [];
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (e) {
+            return [];
+          }
+        })(),
+        interests: (() => {
+          try {
+            const parsed = profile.interests ? JSON.parse(profile.interests) : [];
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (e) {
+            return [];
+          }
+        })(),
         bio: profile.bio || "",
       });
     }

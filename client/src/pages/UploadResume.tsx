@@ -61,7 +61,8 @@ export default function UploadResume() {
       reader.onload = async (e) => {
         const base64Content = e.target?.result as string;
         // Remove data URL prefix (e.g., "data:application/pdf;base64,")
-        const base64Data = base64Content.split(",")[1];
+        const parts = base64Content?.split(",");
+        const base64Data = parts && parts.length > 1 ? parts[1] : "";
         
         // Determine MIME type
         let mimeType = "application/pdf";

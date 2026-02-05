@@ -62,10 +62,27 @@ export default function Dashboard() {
   // Only check profile completeness after data is loaded to avoid flashing
   // Required fields: targetUniversities, targetMajors, academicLevel
   // Parse JSON strings if needed
-  const targetUniversities = profile?.targetUniversities ? 
-    (typeof profile.targetUniversities === 'string' ? JSON.parse(profile.targetUniversities) : profile.targetUniversities) : [];
-  const targetMajors = profile?.targetMajors ? 
-    (typeof profile.targetMajors === 'string' ? JSON.parse(profile.targetMajors) : profile.targetMajors) : [];
+  const targetUniversities = (() => {
+    try {
+      if (!profile?.targetUniversities) return [];
+      const parsed = typeof profile.targetUniversities === 'string' ? JSON.parse(profile.targetUniversities) : profile.targetUniversities;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Failed to parse targetUniversities:', e);
+      return [];
+    }
+  })();
+  
+  const targetMajors = (() => {
+    try {
+      if (!profile?.targetMajors) return [];
+      const parsed = typeof profile.targetMajors === 'string' ? JSON.parse(profile.targetMajors) : profile.targetMajors;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Failed to parse targetMajors:', e);
+      return [];
+    }
+  })();
   
   const profileComplete = profileLoading ? true : (
     profile && 
