@@ -173,15 +173,35 @@ export default function Explore() {
       
       const result = await calculateMatchesMutation.mutateAsync({ language });
 
-      setProjects(result.matches);
-      toast.success(t.explore.foundProjects?.replace('{count}', result.matches.length.toString()) || `找到 ${result.matches.length} 个匹配项目`);
+      // Validate result structure
+      if (!result) {
+        throw new Error('Empty response from server');
+      }
+      
+      if (!Array.isArray(result.matches)) {
+        console.error('Invalid matches structure:', result);
+        throw new Error('Invalid matches structure from server');
+      }
+      
+      // Filter out invalid matches
+      const validMatches = result.matches.filter((m: any) => m && typeof m === 'object');
+      
+      if (validMatches.length === 0) {
+        toast.info('暂无匹配的项目，请尝试调整您的搜索条件');
+        setProjects([]);
+      } else {
+        setProjects(validMatches);
+        toast.success(t.explore.foundProjects?.replace('{count}', validMatches.length.toString()) || `找到 ${validMatches.length} 个匹配项目`);
+      }
       setSearching(false);
     } catch (error: any) {
+      console.error('Search error:', error);
       if (error.message?.includes('INSUFFICIENT_CREDITS') || error.data?.code === 'INSUFFICIENT_CREDITS') {
         setShowCreditsDialog(true);
       } else {
         toast.error(t.explore.searchFailed?.replace('{message}', error.message) || `搜索失败: ${error.message}`);
       }
+      setProjects([]);
       setSearching(false);
     }
   };

@@ -204,47 +204,78 @@ export const matchingRouter = router({
     await db.deleteUserMatches(ctx.user.id);
 
     // Step 7: Save matches to database and collect IDs
+    if (!Array.isArray(matches)) {
+      console.error('[Matching] Invalid matches structure, not an array:', typeof matches, matches);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Invalid matches structure from LLM',
+      });
+    }
+    
     const matchesWithIds = [];
     for (const match of matches) {
-      const matchId = await db.createProjectMatch({
-        userId: ctx.user.id,
-        projectName: match.projectName,
-        professorName: match.professorName,
-        lab: match.lab || null,
-        researchDirection: match.researchDirection,
-        description: match.description,
-        requirements: match.requirements || null,
-        contactEmail: match.contactEmail || null,
-        url: match.url || null,
-        matchScore: match.matchScore.toString(),
-        matchReasons: JSON.stringify([match.matchReason]),
-        university,
-        major,
-        viewed: false,
-        saved: false,
-        applied: false,
-      });
-      matchesWithIds.push({ ...match, id: matchId });
+      if (!match || typeof match !== 'object') {
+        console.warn('[Matching] Skipping invalid match:', match);
+        continue;
+      }
+      
+      try {
+        const matchId = await db.createProjectMatch({
+          userId: ctx.user.id,
+          projectName: match.projectName || 'Untitled Project',
+          professorName: match.professorName || 'Unknown Professor',
+          lab: match.lab || null,
+          researchDirection: match.researchDirection || 'Not specified',
+          description: match.description || 'No description available',
+          requirements: match.requirements || null,
+          contactEmail: match.contactEmail || null,
+          url: match.url || null,
+          matchScore: (match.matchScore || 0).toString(),
+          matchReasons: JSON.stringify([match.matchReason || 'No reason provided']),
+          university,
+          major,
+          viewed: false,
+          saved: false,
+          applied: false,
+        });
+        matchesWithIds.push({ ...match, id: matchId });
+      } catch (error) {
+        console.error('[Matching] Error saving match to database:', error, 'Match:', match);
+        // Continue with next match instead of failing completely
+      }
+    }
+
+    if (matchesWithIds.length === 0) {
+      console.warn('[Matching] No matches were successfully saved to database');
     }
 
     // Step 8: Trigger background crawler (async, doesn't block)
     triggerBackgroundCrawler(university, major);
 
+    // Validate return structure
+    const returnMatches = matchesWithIds.map(m => {
+      if (!m || typeof m !== 'object') {
+        console.warn('[Matching] Invalid match in return:', m);
+        return null;
+      }
+      return {
+        id: m.id || 0,
+        projectName: m.projectName || 'Untitled',
+        professorName: m.professorName || 'Unknown',
+        lab: m.lab || null,
+        researchDirection: m.researchDirection || 'Not specified',
+        description: m.description || '',
+        requirements: m.requirements || null,
+        contactEmail: m.contactEmail || null,
+        url: m.url || null,
+        matchScore: m.matchScore || 0,
+        matchReason: m.matchReason || 'No reason provided',
+      };
+    }).filter((m): m is any => m !== null);
+
     return {
-      totalMatches: matchesWithIds.length,
-      matches: matchesWithIds.map(m => ({
-        id: m.id,
-        projectName: m.projectName,
-        professorName: m.professorName,
-        lab: m.lab,
-        researchDirection: m.researchDirection,
-        description: m.description,
-        requirements: m.requirements,
-        contactEmail: m.contactEmail,
-        url: m.url,
-        matchScore: m.matchScore,
-        matchReason: m.matchReason,
-      })),
+      totalMatches: returnMatches.length,
+      matches: returnMatches,
       strategy,
       university,
       major,
