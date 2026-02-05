@@ -161,13 +161,18 @@ export async function upsertStudentProfile(profile: InsertStudentProfile) {
   
   const existing = await getStudentProfile(profile.userId);
   
+  // Filter out undefined values to avoid SQL errors
+  const cleanProfile = Object.fromEntries(
+    Object.entries(profile).filter(([_, v]) => v !== undefined)
+  ) as InsertStudentProfile;
+  
   if (existing) {
     await db.update(studentProfiles)
-      .set({ ...profile, updatedAt: new Date() })
+      .set({ ...cleanProfile, updatedAt: new Date() })
       .where(eq(studentProfiles.userId, profile.userId));
     return getStudentProfile(profile.userId);
   } else {
-    await db.insert(studentProfiles).values(profile);
+    await db.insert(studentProfiles).values(cleanProfile);
     return getStudentProfile(profile.userId);
   }
 }
