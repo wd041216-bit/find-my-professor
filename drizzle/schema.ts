@@ -133,11 +133,26 @@ export type InsertResearchProject = typeof researchProjects.$inferInsert;
 
 /**
  * Project matches and scores
+ * Now stores project details directly (no longer requires research_projects table)
  */
 export const projectMatches = mysqlTable("project_matches", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("user_id").notNull(),
-  projectId: int("project_id").notNull(),
+  projectId: int("project_id"), // Optional: only if linked to research_projects
+  
+  // Project details (from LLM or scraper)
+  projectName: varchar("project_name", { length: 500 }).notNull(),
+  professorName: varchar("professor_name", { length: 255 }).notNull(),
+  lab: varchar("lab", { length: 255 }),
+  researchDirection: varchar("research_direction", { length: 500 }).notNull(),
+  description: text("description").notNull(),
+  requirements: text("requirements"),
+  contactEmail: varchar("contact_email", { length: 255 }),
+  url: varchar("url", { length: 500 }),
+  university: varchar("university", { length: 255 }).notNull(),
+  major: varchar("major", { length: 255 }).notNull(),
+  
+  // Match metadata
   matchScore: decimal("match_score", { precision: 5, scale: 2 }).notNull(), // 0-100
   matchReasons: text("match_reasons"), // JSON array
   viewed: boolean("viewed").default(false),
