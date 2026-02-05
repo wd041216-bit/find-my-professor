@@ -204,6 +204,39 @@ export const matchingRouter = router({
       });
     }
     
+    // Step 7.5: Generate URLs in batch for all projects
+    const projectsForUrlGen = matches
+      .filter((m) => m && typeof m === 'object' && !m.url)
+      .map((m) => ({
+        projectName: m.projectName || 'Research Project',
+        professorName: m.professorName || 'Unknown Professor',
+        department: m.lab || major,
+        university,
+      }));
+
+    let urlResults: any[] = [];
+    if (projectsForUrlGen.length > 0) {
+      console.log(
+        `[Matching] Generating URLs for ${projectsForUrlGen.length} projects in batch`
+      );
+      try {
+        urlResults = await UrlGeneratorService.generateBatchUrls(projectsForUrlGen);
+        console.log(
+          `[Matching] ✅ Batch URL generation complete: ${urlResults.filter((r) => r.fromCache).length} from cache, ${urlResults.filter((r) => !r.fromCache).length} newly generated`
+        );
+      } catch (urlError) {
+        console.error('[Matching] Error in batch URL generation:', urlError);
+      }
+    }
+
+    // Create a map for quick URL lookup
+    const urlMap = new Map(
+      urlResults.map((r) => [
+        `${r.professorName}|${university}`,
+        r.url,
+      ])
+    );
+
     const matchesWithIds = [];
     for (const match of matches) {
       if (!match || typeof match !== 'object') {
@@ -212,22 +245,11 @@ export const matchingRouter = router({
       }
       
       try {
-        // Generate URL if not provided by LLM
-        let projectUrl = match.url || null;
-        if (!projectUrl) {
-          console.log(`[Matching] Generating URL for ${match.projectName} - ${match.professorName}`);
-          try {
-            projectUrl = await UrlGeneratorService.generateProjectUrl(
-              match.projectName || 'Research Project',
-              match.professorName || 'Unknown Professor',
-              match.lab || major, // Use lab name or major as department
-              university
-            );
-          } catch (urlError) {
-            console.error('[Matching] Error generating URL:', urlError);
-            // Continue without URL
-          }
-        }
+        // Get URL from batch results or use LLM-provided URL
+        const projectUrl =
+          match.url ||
+          urlMap.get(`${match.professorName || 'Unknown Professor'}|${university}`) ||
+          null;
         
         const matchId = await db.createProjectMatch({
           userId: ctx.user.id,
@@ -453,24 +475,46 @@ export const matchingRouter = router({
       // Step 8: Delete old matches and save new ones
       await db.deleteUserMatches(ctx.user.id);
 
+      // Step 8.5: Generate URLs in batch for all projects
+      const projectsForUrlGen = matches
+        .filter((m) => m && typeof m === 'object' && !m.url)
+        .map((m) => ({
+          projectName: m.projectName || 'Research Project',
+          professorName: m.professorName || 'Unknown Professor',
+          department: m.lab || major,
+          university,
+        }));
+
+      let urlResults: any[] = [];
+      if (projectsForUrlGen.length > 0) {
+        console.log(
+          `[RefreshMatches] Generating URLs for ${projectsForUrlGen.length} projects in batch`
+        );
+        try {
+          urlResults = await UrlGeneratorService.generateBatchUrls(projectsForUrlGen);
+          console.log(
+            `[RefreshMatches] ✅ Batch URL generation complete: ${urlResults.filter((r) => r.fromCache).length} from cache, ${urlResults.filter((r) => !r.fromCache).length} newly generated`
+          );
+        } catch (urlError) {
+          console.error('[RefreshMatches] Error in batch URL generation:', urlError);
+        }
+      }
+
+      // Create a map for quick URL lookup
+      const urlMap = new Map(
+        urlResults.map((r) => [
+          `${r.professorName}|${university}`,
+          r.url,
+        ])
+      );
+
       const matchesWithIds = [];
       for (const match of matches) {
-        // Generate URL if not provided by LLM
-        let projectUrl = match.url || null;
-        if (!projectUrl) {
-          console.log(`[Matching] Generating URL for ${match.projectName} - ${match.professorName}`);
-          try {
-            projectUrl = await UrlGeneratorService.generateProjectUrl(
-              match.projectName || 'Research Project',
-              match.professorName || 'Unknown Professor',
-              match.lab || major, // Use lab name or major as department
-              university
-            );
-          } catch (urlError) {
-            console.error('[Matching] Error generating URL:', urlError);
-            // Continue without URL
-          }
-        }
+        // Get URL from batch results or use LLM-provided URL
+        const projectUrl =
+          match.url ||
+          urlMap.get(`${match.professorName || 'Unknown Professor'}|${university}`) ||
+          null;
         
         const matchId = await db.createProjectMatch({
           userId: ctx.user.id,

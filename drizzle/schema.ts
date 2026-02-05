@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, unique } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -352,6 +352,37 @@ export const universityUrlCache = mysqlTable("university_url_cache", {
 
 export type UniversityUrlCache = typeof universityUrlCache.$inferSelect;
 export type InsertUniversityUrlCache = typeof universityUrlCache.$inferInsert;
+
+/**
+ * Professor/Project URL Cache
+ * Stores validated URLs for professors and research projects to avoid repeated LLM calls
+ * Cache key: professor_name + university + department
+ */
+export const professorUrlCache = mysqlTable("professor_url_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  professorName: varchar("professor_name", { length: 255 }).notNull(),
+  university: varchar("university", { length: 255 }).notNull(),
+  department: varchar("department", { length: 255 }).notNull(),
+  projectName: varchar("project_name", { length: 500 }), // Optional, for project-specific URLs
+  
+  // URL information
+  url: varchar("url", { length: 500 }).notNull(),
+  urlType: mysqlEnum("url_type", ["professor_page", "lab_page", "department_page", "school_page", "university_homepage"]).notNull(),
+  isAccessible: boolean("is_accessible").notNull().default(true),
+  
+  // Cache metadata
+  hitCount: int("hit_count").notNull().default(0), // Number of times this cache was reused
+  lastValidated: timestamp("last_validated").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(), // Cache expiration (30 days)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  // Unique constraint on professor + university + department
+  uniqueKey: unique().on(table.professorName, table.university, table.department),
+}));
+
+export type ProfessorUrlCache = typeof professorUrlCache.$inferSelect;
+export type InsertProfessorUrlCache = typeof professorUrlCache.$inferInsert;
 
 /**
  * Frontend error logs for monitoring and debugging
