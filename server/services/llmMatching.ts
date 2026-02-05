@@ -146,11 +146,14 @@ ${userProfile.activities && userProfile.activities.length > 0 ? `- Activities: $
 **Projects to Rate:**
 ${projectList}
 
-**Rating Criteria (0-10):**
-- 8-10: Excellent match (skills align, strong interest fit, appropriate level)
-- 5-7: Good match (some skills match, related interests, could work)
-- 2-4: Weak match (few skills, tangential interests, challenging)
-- 0-1: Poor match (no skill overlap, unrelated interests)
+**Rating Criteria (0-10) - BE GENEROUS:**
+- 8-10: Strong match (skills align OR strong interest fit OR appropriate level)
+- 6-7: Good match (some skills match OR related interests OR could work)
+- 4-5: Possible match (transferable skills, growth opportunity)
+- 2-3: Weak but possible (tangential interests, learning opportunity)
+- 0-1: Completely unrelated (different field entirely)
+
+**IMPORTANT: Be INCLUSIVE. Most projects in the same major should score 5+.**
 
 Return ONLY a JSON array of ${batch.length} numbers: {"scores": [score1, score2, ...]}`;
 
@@ -265,20 +268,29 @@ ${userProfile.activities && userProfile.activities.length > 0 ? `- Activities:\n
 ${projectsContext}
 
 **Task:**
-Select the BEST 8-10 projects for this student. For each selected project, provide:
-1. **Match Score (0-100)**: How well it matches the student's profile
-2. **Match Reason**: Specific explanation covering:
-   - Which skills/experiences make them a strong candidate
-   - How their interests align with the research direction
-   - What they can contribute and learn
-   - Why this is better than other options
+Select EXACTLY 10 projects for this student (or all projects if fewer than 10 available).
 
-**Selection Criteria:**
-- Prioritize projects where student's skills directly apply
-- Consider transferable skills (e.g., Python experience → data analysis projects)
-- Value relevant activities/experiences that demonstrate capability
-- Include diverse options (different research directions within their interests)
-- Balance "perfect fit" with "growth opportunity" projects
+**IMPORTANT: You MUST select exactly 10 projects. No more, no less (unless fewer available).**
+
+**Matching Philosophy (BE INCLUSIVE):**
+- Show ALL relevant lab opportunities, not just perfect matches
+- Include projects that are broadly related to the major
+- Prioritize diversity of research opportunities
+- Include both "perfect fit" AND "growth opportunity" projects
+- A student can learn and grow - don't be too strict!
+
+For each selected project, provide:
+1. **Match Score (60-100)**: Be generous - most related projects should score 70+
+2. **Match Reason**: Explain:
+   - How the student could contribute (even with transferable skills)
+   - What they would learn from this opportunity
+   - Why this is a valuable experience for their career
+
+**Selection Criteria (INCLUSIVE):**
+- Include projects where student's skills could apply (even indirectly)
+- Value transferable skills broadly (e.g., any programming → any technical project)
+- Consider growth potential, not just current fit
+- Include diverse research directions to give students options
 
 Return ONLY a JSON array with this exact structure:
 {
@@ -366,6 +378,11 @@ Return ONLY a JSON array with this exact structure:
     
     // Sort by match score descending
     matchedProjects.sort((a, b) => b.matchScore - a.matchScore);
+    
+    // Warn if we got fewer than expected
+    if (matchedProjects.length < 8) {
+      console.warn(`[Layer 3] WARNING: Only ${matchedProjects.length} matches generated, expected 8-10`);
+    }
     
     console.log(`[Layer 3] Completed. ${matchedProjects.length} final matches generated.`);
     
@@ -501,16 +518,26 @@ async function generateProjectsFromScratch(
 ${userProfile.activities && userProfile.activities.length > 0 ? `- Activities:\n${userProfile.activities.map(a => `  * ${a.title} (${a.category})`).join('\n')}` : ''}
 
 **Task:**
-Generate 8-10 realistic research projects at ${university} in the ${major} department that match this student's profile.
+Generate EXACTLY 10 realistic research projects at ${university} in the ${major} department.
 
-Use your web search capabilities to find:
+**IMPORTANT: You MUST generate exactly 10 projects. No more, no less.**
+
+**Matching Philosophy:**
+- Be INCLUSIVE rather than exclusive - show ALL relevant lab opportunities
+- Include projects that are broadly related to the major, not just perfect matches
+- Prioritize showing the diversity of research opportunities available
+- Include both "perfect fit" projects AND "growth opportunity" projects
+
+Use your knowledge to find:
 - Real professors and labs at this university
 - Current research areas in this department
 - Typical project requirements and opportunities
 
-For each project, provide detailed match analysis explaining why it's a good fit.
+For each project, provide:
+1. Match Score (60-100): Be generous - most related projects should score 70+
+2. Match Reason: Explain how the student could contribute and what they would learn
 
-Return JSON array with the standard project structure.`;
+Return JSON array with EXACTLY 10 projects.`;
 
   const response = await invokeLLM({
     messages: [
@@ -578,6 +605,11 @@ Return JSON array with the standard project structure.`;
     const projects: MatchedProject[] = parsed.projects.filter((p: any) => p && typeof p === 'object');
   
   projects.sort((a, b) => b.matchScore - a.matchScore);
+  
+  // Warn if we got fewer than expected
+  if (projects.length < 8) {
+    console.warn(`[Fallback] WARNING: Only ${projects.length} projects generated, expected 8-10`);
+  }
   
   console.log(`[Fallback] Generated ${projects.length} projects from scratch`);
   
