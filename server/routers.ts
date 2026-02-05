@@ -88,6 +88,12 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+    updateTimezone: protectedProcedure
+      .input(z.object({ timezone: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateUserTimezone(ctx.user.id, input.timezone);
+        return { success: true };
+      }),
   }),
 
   profile: router({

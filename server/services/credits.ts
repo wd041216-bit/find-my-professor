@@ -1,5 +1,5 @@
 import { getDb } from "../db";
-import { userCredits, creditTransactions } from "../../drizzle/schema";
+import { userCredits, creditTransactions, users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 /**
@@ -12,10 +12,25 @@ export const CREDIT_COSTS = {
 } as const;
 
 /**
- * Get current date in YYYY-MM-DD format (UTC)
+ * Get current date in user's timezone in YYYY-MM-DD format
+ * @param timezone - IANA timezone string (e.g., "Asia/Shanghai", "America/New_York")
  */
-function getCurrentDate(): string {
-  return new Date().toISOString().split('T')[0];
+function getCurrentDateInTimezone(timezone: string): string {
+  try {
+    const now = new Date();
+    // Format date in user's timezone
+    const formatter = new Intl.DateTimeFormat('en-CA', { 
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    return formatter.format(now); // Returns YYYY-MM-DD
+  } catch (error) {
+    console.error(`[Credits] Invalid timezone: ${timezone}, falling back to UTC`, error);
+    // Fallback to UTC if timezone is invalid
+    return new Date().toISOString().split('T')[0];
+  }
 }
 
 /**
@@ -26,7 +41,12 @@ export async function checkAndResetCredits(userId: number): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const today = getCurrentDate();
+  // Get user's timezone
+  const userResult = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  const user = userResult.length > 0 ? userResult[0] : null;
+  const userTimezone = user?.timezone || "UTC";
+  
+  const today = getCurrentDateInTimezone(userTimezone);
   
   // Get or create user credits record
   const result = await db.select().from(userCredits).where(eq(userCredits.userId, userId)).limit(1);
@@ -40,10 +60,11 @@ export async function checkAndResetCredits(userId: number): Promise<number> {
       lastResetDate: today,
       totalConsumed: 0,
     });
+    console.log(`[Credits] Created new credit record for user ${userId} with timezone ${userTimezone}`);
     return 100;
   }
 
-  // Check if credits need to be reset (new day)
+  // Check if credits need to be reset (new day in user's timezone)
   if (userCredit.lastResetDate !== today) {
     await db.update(userCredits)
       .set({
@@ -51,6 +72,7 @@ export async function checkAndResetCredits(userId: number): Promise<number> {
         lastResetDate: today,
       })
       .where(eq(userCredits.userId, userId));
+    console.log(`[Credits] Reset credits for user ${userId} (timezone: ${userTimezone}, last reset: ${userCredit.lastResetDate}, today: ${today})`);
     return 100;
   }
 
