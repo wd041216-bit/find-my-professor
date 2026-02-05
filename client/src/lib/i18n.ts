@@ -125,6 +125,12 @@ export const translations = {
       validationMultipleUniversities: "Tip: Consider adding multiple target universities to explore more opportunities",
       validationMajorRequired: "Adding target majors will improve matching accuracy",
       validationSkillsRecommended: "Skills help match you with relevant research projects",
+      requiredFields: "Required Fields",
+      optionalFields: "Optional Fields (Recommended)",
+      requiredFieldsDesc: "These fields are required to use the matching system",
+      optionalFieldsDesc: "Fill these to get better matching results",
+      required: "Required",
+      optional: "Optional",
     },
     // Activities
     activities: {
@@ -526,6 +532,12 @@ export const translations = {
       validationMultipleUniversities: "提示：考虑添加多个目标大学以探索更多机会",
       validationMajorRequired: "添加目标专业将提高匹配准确度",
       validationSkillsRecommended: "技能有助于匹配相关的研究项目",
+      requiredFields: "必填项",
+      optionalFields: "可选项（建议填写）",
+      requiredFieldsDesc: "这些字段是使用匹配系统的必填项",
+      optionalFieldsDesc: "填写这些字段可以获得更好的匹配结果",
+      required: "必填",
+      optional: "可选",
     },
     // Activities
     activities: {
