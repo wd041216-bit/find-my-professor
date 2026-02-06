@@ -662,7 +662,6 @@ export async function triggerBackgroundCrawler(
             contactEmail: project.contactEmail || null,
             sourceUrl: project.url || null,
             searchScope: 'major_specific',
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
           });
         } catch (error) {
           console.error(`[Background Search] Failed to save project:`, error);

@@ -7,6 +7,7 @@ import { deductCredits, checkAndResetCredits } from "../services/credits";
 import { NormalizationService } from "../services/normalization";
 import { getCachedMatches, cacheMatches } from "../services/profileCache";
 import { isSimplifiedProfile, getRandomProjectsFromDatabase, hasSufficientProjects } from "../services/simplifiedMatching";
+import { hasPerplexitySearched } from "../services/perplexitySearchCache";
 import { TRPCError } from "@trpc/server";
 
 export const matchingRouter = router({
@@ -284,15 +285,15 @@ export const matchingRouter = router({
       console.warn('[Matching] No matches were successfully saved to database');
     }
 
-    // Step 8: Trigger background crawler only if database has <20 projects (async, doesn't block)
-    const dbProjectCount = await hasSufficientProjects(university, major, 20);
-    if (!dbProjectCount) {
-      console.log(`[Matching] Database has <20 projects, triggering background crawler for ${university} - ${major}`);
+    // Step 8: Trigger Perplexity search only if we haven't searched this university+major before (async, doesn't block)
+    const alreadySearched = await hasPerplexitySearched(university, major);
+    if (!alreadySearched) {
+      console.log(`[Matching] First search for ${university} - ${major}, triggering Perplexity search`);
       triggerBackgroundCrawler(university, major).catch(error => {
-        console.error(`[Matching] Background crawler error:`, error);
+        console.error(`[Matching] Perplexity search error:`, error);
       });
     } else {
-      console.log(`[Matching] Database has >=20 projects, skipping crawler for ${university} - ${major}`);
+      console.log(`[Matching] Already searched ${university} - ${major} before, using cached data`);
     }
 
     // Validate return structure
