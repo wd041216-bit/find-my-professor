@@ -8,6 +8,7 @@ import { NormalizationService } from "../services/normalization";
 import { getCachedMatches, cacheMatches } from "../services/profileCache";
 import { isSimplifiedProfile, getRandomProjectsFromDatabase, hasSufficientProjects } from "../services/simplifiedMatching";
 import { hasPerplexitySearched } from "../services/perplexitySearchCache";
+import { getProjectsFromScrapedData, hasSufficientScrapedProjects } from "../services/scrapedProjectsService";
 import { TRPCError } from "@trpc/server";
 
 export const matchingRouter = router({
@@ -128,8 +129,8 @@ export const matchingRouter = router({
     let strategy = 'llm_direct';
     
     if (!isSimplified) {
-      // Only use profile cache when database has sufficient data (>=50 projects)
-      const hasSufficientData = await hasSufficientProjects(university, major, 50);
+      // Only use profile cache when scraped_projects has sufficient data (>=50 projects)
+      const hasSufficientData = await hasSufficientScrapedProjects(university, major, 50);
       
       if (hasSufficientData) {
         // Try to get cached matches for detailed profiles
@@ -149,59 +150,61 @@ export const matchingRouter = router({
           strategy = 'cache_hit';
         }
       } else {
-        console.log(`[Matching] Database has <50 projects, skipping profile cache`);
+        console.log(`[Matching] Scraped projects <50, skipping profile cache`);
       }
     }
     
-    // Step 6: If no cache hit, decide strategy based on profile type
+    // Step 6: If no cache hit, try scraped_projects first (Perplexity search results)
     if (matches.length === 0) {
-      if (isSimplified) {
-        // Simplified profile: try database first
-        console.log(`[Matching] Simplified profile detected, checking database...`);
-        const hasProjects = await hasSufficientProjects(university, major, 5);
-        
-        if (hasProjects) {
-          // Use random database selection
-          console.log(`[Matching] Using database random selection`);
-          matches = await getRandomProjectsFromDatabase(university, major, 10);
-          strategy = 'database_random';
-        } else {
-          // Database empty, need to call LLM to generate initial projects
-          console.log(`[Matching] Database empty for simplified profile, will call LLM...`);
-          strategy = 'llm_fallback';
-          // Don't set matches here, let it fall through to Step 7
-        }
-      }
+      console.log(`[Matching] Checking scraped_projects table...`);
+      const scrapedMatches = await getProjectsFromScrapedData(university, major, 10);
       
-      // Step 7: If still no matches, use LLM
-      if (matches.length === 0) {
-        console.log(`[Matching] Calling LLM for matching...`);
-        matches = await generateMatchedProjects(university, major, userProfile, language);
-        
-        // Cache the results for future use (only for detailed profiles AND when data is sufficient)
-        if (!isSimplified && matches.length > 0) {
-          const hasSufficientData = await hasSufficientProjects(university, major, 50);
-          if (hasSufficientData) {
-            const hasSkills = skills && skills.length > 0;
-            const hasActivities = activities.length > 0;
-            await cacheMatches(
-              university,
-              major,
-              profile.academicLevel || undefined,
-              hasSkills,
-              hasActivities,
-              matches
-            );
-            console.log(`[Matching] Cached matches for future use`);
-          } else {
-            console.log(`[Matching] Database has <50 projects, skipping cache save`);
-          }
+      if (scrapedMatches.length >= 10) {
+        // Have enough scraped data, use directly
+        console.log(`[Matching] Using ${scrapedMatches.length} projects from scraped_projects`);
+        matches = scrapedMatches;
+        strategy = isSimplified ? 'scraped_random' : 'scraped_direct';
+      } else if (scrapedMatches.length > 0) {
+        // Have partial scraped data, will supplement later
+        console.log(`[Matching] Found ${scrapedMatches.length} projects from scraped_projects, will supplement`);
+        matches = scrapedMatches;
+        strategy = 'scraped_partial';
+      }
+    }
+    
+    // Step 7: If no scraped data, use LLM to generate (directly generate 10 projects)
+    if (matches.length === 0) {
+      console.log(`[Matching] No scraped data available, calling LLM to generate 10 projects...`);
+      // Generate 10 projects directly to avoid supplementation later
+      const allMatches = await generateMatchedProjects(university, major, userProfile, language);
+      matches = allMatches.slice(0, 10); // Ensure exactly 10 projects
+      strategy = 'llm_direct';
+      
+      // Cache the results for future use (only for detailed profiles AND when scraped data is sufficient)
+      if (!isSimplified && matches.length > 0) {
+        const hasSufficientData = await hasSufficientScrapedProjects(university, major, 50);
+        if (hasSufficientData) {
+          const hasSkills = skills && skills.length > 0;
+          const hasActivities = activities.length > 0;
+          await cacheMatches(
+            university,
+            major,
+            profile.academicLevel || undefined,
+            hasSkills,
+            hasActivities,
+            matches
+          );
+          console.log(`[Matching] Cached matches for future use`);
+        } else {
+          console.log(`[Matching] Scraped projects <50, skipping cache save`);
         }
       }
     }
     
     // Step 7.5: Check if matches are insufficient (<10) and supplement with LLM
-    if (matches.length < 10) {
+    // Only supplement for scraped_partial and cache_hit strategies
+    // llm_direct already generates 10 projects, no need to supplement
+    if (matches.length < 10 && (strategy === 'scraped_partial' || strategy === 'cache_hit')) {
       console.log(`[Matching] Insufficient matches (${matches.length}), supplementing with LLM...`);
       const needed = 10 - matches.length;
       const existingProjectNames = new Set(matches.map(m => m.projectName));
@@ -218,8 +221,8 @@ export const matchingRouter = router({
       matches = [...matches, ...newMatches];
       
       // Update strategy to indicate supplementation
-      if (strategy === 'database_random') {
-        strategy = 'database_supplemented';
+      if (strategy === 'scraped_partial') {
+        strategy = 'scraped_supplemented';
       } else if (strategy === 'cache_hit') {
         strategy = 'cache_supplemented';
       }

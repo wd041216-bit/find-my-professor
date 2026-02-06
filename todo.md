@@ -258,3 +258,11 @@
 - [ ] 清空数据库中的所有scraped_projects记录
 - [ ] 测试新逻辑：触发一次搜索，验证不会重复触发
 - [ ] 保存checkpoint
+
+## 匹配流程核心问题修复
+
+- [x] 添加从scraped_projects表读取数据的函数
+- [x] 修改匹配逻辑优先使用scraped_projects数据
+- [x] 修改profile_cache条件为检查scraped_projects表（而不是project_matches）
+- [x] 优化LLM补齐逻辑避免重复调用（只在必要时补齐）
+- [x] 测试修复后的匹配流程
