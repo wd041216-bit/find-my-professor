@@ -415,7 +415,6 @@ export const scrapedProjects = mysqlTable("scraped_projects", {
   source: mysqlEnum("source", ["scraped", "llm_generated"]).default("llm_generated"),
   searchScope: mysqlEnum("search_scope", ["university_wide", "major_specific"]).default("major_specific"),
   scrapedAt: timestamp("scraped_at").defaultNow(),
-  expiresAt: timestamp("expires_at"),
   createdAt: timestamp("createdAt").defaultNow(),
 });
 

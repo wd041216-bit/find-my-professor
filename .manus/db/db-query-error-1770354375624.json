@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE scraped_projects DROP COLUMN expires_at;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute ALTER TABLE scraped_projects DROP COLUMN expires_at;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 8200 (HY000) at line 1: can't drop column expires_at with composite index covered or Primary Key covered now"
+  ]
+}

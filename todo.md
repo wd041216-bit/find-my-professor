@@ -233,7 +233,7 @@
 - [x] 修正TypeScript错误（sourceUrl字段）
 - [x] 修正模型名称（llama-3.1-sonar-small-128k-online → sonar-pro）
 - [x] 测试Perplexity搜索功能（成功返回15个华盛顿大学物理系项目）
-- [ ] 保存checkpoint
+- [x] 保存checkpoint (version: 73863fc3)
 
 ## ❌ 已放弃：通义千问联网搜索
 - [x] 调研通义千问免费额度和海外访问情况（仅中国大陆有免费额度）
@@ -248,4 +248,13 @@
 - [ ] 添加缓存机制（university_wide 30天，major_specific 7天）
 - [ ] 测试混合搜索功能
 - [ ] 删除旧的爬虫代码（scraping.ts）
+- [ ] 保存checkpoint
+
+## 🔄 重构Perplexity搜索逻辑（用户要求）
+- [ ] 修改数据库schema：删除scraped_projects表的expires_at字段
+- [ ] 修改触发逻辑：只检查是否存在记录（不检查数量、不检查过期）
+- [ ] 修改llmMatching.ts：移除所有expires_at相关的查询条件
+- [ ] 修改perplexityWebSearch.ts：移除expiresAt设置
+- [ ] 清空数据库中的所有scraped_projects记录
+- [ ] 测试新逻辑：触发一次搜索，验证不会重复触发
 - [ ] 保存checkpoint
