@@ -621,22 +621,57 @@ Return JSON array with EXACTLY 10 projects.`;
 }
 
 /**
- * Trigger background crawler to scrape all projects for this university/major
+ * Trigger background search using Perplexity to find all projects for this university/major
  * This runs asynchronously and doesn't block the user
  */
 export async function triggerBackgroundCrawler(
   university: string,
   major: string
 ): Promise<void> {
-  // Import dynamically to avoid circular dependencies
-  const { ScrapingService } = await import('./scraping');
+  console.log(`[Background Search] Starting Perplexity search for ${university} - ${major}`);
   
   // Run in background (don't await)
-  ScrapingService.triggerScrapingTask(university, major)
-    .then((result: any) => {
-      console.log(`[Background Crawler] Task created for ${university} - ${major}, taskId: ${result.taskId}`);
-    })
-    .catch((error: any) => {
-      console.error(`[Background Crawler] Failed to create task for ${university} - ${major}:`, error);
-    });
+  (async () => {
+    try {
+      const { searchMajorProjects } = await import('./perplexityWebSearch');
+      const { getDb } = await import('../db');
+      const db = await getDb();
+      
+      if (!db) {
+        throw new Error('Database connection failed');
+      }
+      
+      // Trigger major-specific search
+      console.log(`[Background Search] Calling Perplexity API for ${university} - ${major}`);
+      const projects = await searchMajorProjects(university, major);
+      
+      console.log(`[Background Search] Perplexity returned ${projects.length} projects`);
+      
+      // Save to scraped_projects table
+      for (const project of projects) {
+        try {
+          await db.insert(schema.scrapedProjects).values({
+            universityName: university,
+            majorName: major,
+            projectTitle: project.projectName,
+            professorName: project.professorName || null,
+            labName: project.lab || null,
+            researchArea: project.researchDirection || null,
+            projectDescription: project.description || null,
+            requirements: project.requirements || null,
+            contactEmail: project.contactEmail || null,
+            sourceUrl: project.url || null,
+            searchScope: 'major_specific',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+          });
+        } catch (error) {
+          console.error(`[Background Search] Failed to save project:`, error);
+        }
+      }
+      
+      console.log(`[Background Search] Completed for ${university} - ${major}: ${projects.length} projects saved`);
+    } catch (error) {
+      console.error(`[Background Search] Failed for ${university} - ${major}:`, error);
+    }
+  })();
 }

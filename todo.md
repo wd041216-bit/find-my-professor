@@ -212,4 +212,40 @@
 - [x] 清除Emory大学化学工程的所有匹配记录（已执行，删除0行）
 - [x] 清除profile_cache表（已执行，删除0行）
 - [x] 修改代码：只有当数据库>=50个项目时才使用profile cache
+- [x] 保存checkpoint
+
+## 🎯 调研中国联网大模型替代爬虫方案
+- [x] 调研主流中国联网大模型的API和价格（DeepSeek、通义千问、Kimi、智谱GLM）
+- [x] 生成对比报告并提供建议（推荐智谱AI Search-Std）
+- [x] 用户确认使用智谱AI方案
+
+## 🚀 重新评估智谱AI方案
+- [x] 调研智谱AI海外访问情况（美国实体清单制裁、海外访问风险）
+- [x] 重新计算成本（替代爬虫异步处理，智谱AI成本为￥0.015/次）
+- [x] 提供替代方案（Perplexity API、Tavily API）
+- [ ] 向用户报告评估结果
+
+## 🚀 实施Perplexity Search API（用户最终选择）
+- [x] 等待用户输入Perplexity API密钥
+- [x] 验证API密钥格式（pplx-prHGt...）
+- [x] 创建perplexityWebSearch.ts服务
+- [x] 修改triggerBackgroundCrawler函数，使用Perplexity替代爬虫
+- [x] 修正TypeScript错误（sourceUrl字段）
+- [x] 修正模型名称（llama-3.1-sonar-small-128k-online → sonar-pro）
+- [x] 测试Perplexity搜索功能（成功返回15个华盛顿大学物理系项目）
+- [ ] 保存checkpoint
+
+## ❌ 已放弃：通义千问联网搜索
+- [x] 调研通义千问免费额度和海外访问情况（仅中国大陆有免费额度）
+
+## ❌ 已放弃：Perplexity混合搜索策略
+- [ ] 等待用户注册Perplexity账号并提供API密钥
+- [x] 在scraped_projects表添加search_scope字段（university_wide/major_specific）
+- [x] 创建perplexityWebSearch.ts服务文件
+- [x] 实现searchUniversityProjects函数（大学级别搜索）
+- [x] 实现searchMajorProjects函数（专业级别搜索）
+- [ ] 修改matching.ts，集成两阶段搜索逻辑
+- [ ] 添加缓存机制（university_wide 30天，major_specific 7天）
+- [ ] 测试混合搜索功能
+- [ ] 删除旧的爬虫代码（scraping.ts）
 - [ ] 保存checkpoint
