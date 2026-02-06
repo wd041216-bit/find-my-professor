@@ -186,6 +186,31 @@ export const matchingRouter = router({
       }
     }
     
+    // Step 7.5: Check if matches are insufficient (<10) and supplement with LLM
+    if (matches.length < 10) {
+      console.log(`[Matching] Insufficient matches (${matches.length}), supplementing with LLM...`);
+      const needed = 10 - matches.length;
+      const existingProjectNames = new Set(matches.map(m => m.projectName));
+      
+      // Call LLM to generate additional projects
+      const supplementMatches = await generateMatchedProjects(university, major, userProfile, language);
+      
+      // Filter out duplicates and take only what we need
+      const newMatches = supplementMatches
+        .filter(m => !existingProjectNames.has(m.projectName))
+        .slice(0, needed);
+      
+      console.log(`[Matching] Added ${newMatches.length} supplemental matches from LLM`);
+      matches = [...matches, ...newMatches];
+      
+      // Update strategy to indicate supplementation
+      if (strategy === 'database_random') {
+        strategy = 'database_supplemented';
+      } else if (strategy === 'cache_hit') {
+        strategy = 'cache_supplemented';
+      }
+    }
+    
     // Deduct credits uniformly for all search types (40 credits)
     // All searches cost the same regardless of cache hit, database random, or LLM matching
     if (ctx.user.role !== 'admin') {
@@ -246,11 +271,16 @@ export const matchingRouter = router({
       console.warn('[Matching] No matches were successfully saved to database');
     }
 
-    // Step 8: Trigger background crawler (async, doesn't block)
-    console.log(`[Matching] Triggering background crawler for ${university} - ${major}`);
-    triggerBackgroundCrawler(university, major).catch(error => {
-      console.error(`[Matching] Background crawler error:`, error);
-    });
+    // Step 8: Trigger background crawler only if database has <20 projects (async, doesn't block)
+    const dbProjectCount = await hasSufficientProjects(university, major, 20);
+    if (!dbProjectCount) {
+      console.log(`[Matching] Database has <20 projects, triggering background crawler for ${university} - ${major}`);
+      triggerBackgroundCrawler(university, major).catch(error => {
+        console.error(`[Matching] Background crawler error:`, error);
+      });
+    } else {
+      console.log(`[Matching] Database has >=20 projects, skipping crawler for ${university} - ${major}`);
+    }
 
     // Validate return structure
     const returnMatches = matchesWithIds.map(m => {
@@ -434,6 +464,69 @@ export const matchingRouter = router({
 
         console.log(`[RefreshMatches] Calling LLM for new matches...`);
         matches = await generateMatchedProjects(university, major, userProfile, language);
+      }
+      
+      // Step 7.3: Check if matches are insufficient (<10) and supplement with LLM
+      if (matches.length < 10) {
+        console.log(`[RefreshMatches] Insufficient matches (${matches.length}), supplementing with LLM...`);
+        const needed = 10 - matches.length;
+        const existingProjectNames = new Set([...existingMatches.map(m => m.projectName), ...matches.map(m => m.projectName)]);
+        
+        // Build user profile for LLM (reuse from Step 7 if available)
+        let supplementUserProfile: UserProfile;
+        if (matches.length === 0) {
+          // userProfile was already built in Step 7
+          const activities = await db.getUserActivities(ctx.user.id);
+          const skills = profile.skills ? JSON.parse(profile.skills) : undefined;
+          const interests = profile.interests ? JSON.parse(profile.interests) : undefined;
+          supplementUserProfile = {
+            academicLevel: profile.academicLevel || undefined,
+            gpa: profile.gpa || undefined,
+            skills,
+            interests,
+            bio: profile.bio || undefined,
+            activities: activities.map(a => ({
+              title: a.title,
+              category: a.category,
+              description: a.description || undefined,
+              role: a.role || undefined,
+            })),
+          };
+        } else {
+          // Build fresh profile for supplementation
+          const activities = await db.getUserActivities(ctx.user.id);
+          const skills = profile.skills ? JSON.parse(profile.skills) : undefined;
+          const interests = profile.interests ? JSON.parse(profile.interests) : undefined;
+          supplementUserProfile = {
+            academicLevel: profile.academicLevel || undefined,
+            gpa: profile.gpa || undefined,
+            skills,
+            interests,
+            bio: profile.bio || undefined,
+            activities: activities.map(a => ({
+              title: a.title,
+              category: a.category,
+              description: a.description || undefined,
+              role: a.role || undefined,
+            })),
+          };
+        }
+        
+        // Call LLM to generate additional projects
+        const supplementMatches = await generateMatchedProjects(university, major, supplementUserProfile, language);
+        
+        // Filter out duplicates and take only what we need
+        const newMatches = supplementMatches
+          .filter(m => !existingProjectNames.has(m.projectName))
+          .slice(0, needed);
+        
+        console.log(`[RefreshMatches] Added ${newMatches.length} supplemental matches from LLM`);
+        matches = [...matches, ...newMatches];
+        
+        // Update strategy to indicate supplementation
+        if (strategy === 'database_refresh') {
+          strategy = 'database_supplemented';
+        }
       }
 
       // Step 7.5: Deduct credits AFTER successfully getting matches
