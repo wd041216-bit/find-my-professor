@@ -1,0 +1,9 @@
+{
+  "query": "SELECT id, project_name, university, major, createdAt \nFROM project_matches \nWHERE (university LIKE '%Washington%' OR university LIKE '%华盛顿%')\n  AND (major LIKE '%Physics%' OR major LIKE '%物理%')\nORDER BY createdAt DESC \nLIMIT 15;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, project_name, university, major, createdAt \nFROM project_matches \nWHERE (university LIKE '%Washington%' OR university LIKE '%华盛顿%')\n  AND (major LIKE '%Physics%' OR major LIKE '%物理%')\nORDER BY createdAt DESC \nLIMIT 15;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1641
+}

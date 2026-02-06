@@ -1,0 +1,22 @@
+{
+  "query": "SELECT university, major, COUNT(*) as count, MAX(createdAt) as latest\nFROM project_matches \nGROUP BY university, major \nORDER BY latest DESC \nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT university, major, COUNT(*) as count, MAX(createdAt) as latest\nFROM project_matches \nGROUP BY university, major \nORDER BY latest DESC \nLIMIT 10;",
+  "rows": [
+    {
+      "university": "Emory University",
+      "major": "Chemical Engineering",
+      "count": "10",
+      "latest": "2026-02-06 03:13:53"
+    },
+    {
+      "university": "Yale University",
+      "major": "Law",
+      "count": "10",
+      "latest": "2026-02-05 13:15:21"
+    }
+  ],
+  "messages": [],
+  "stdout": "university\tmajor\tcount\tlatest\nEmory University\tChemical Engineering\t10\t2026-02-06 03:13:53\nYale University\tLaw\t10\t2026-02-05 13:15:21\n",
+  "stderr": "",
+  "execution_time_ms": 1526
+}

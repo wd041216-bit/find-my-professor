@@ -122,26 +122,33 @@ export const matchingRouter = router({
     const isSimplified = isSimplifiedProfile(skills, interests, activities, profile.bio || undefined);
     console.log(`[Matching] Profile type: ${isSimplified ? 'SIMPLIFIED' : 'DETAILED'}`);
 
-    // Step 5: Check profile cache (only for non-simplified profiles)
+    // Step 5: Check profile cache (only for non-simplified profiles AND when data is sufficient)
     let matches: MatchedProject[] = [];
     let strategy = 'llm_direct';
     
     if (!isSimplified) {
-      // Try to get cached matches for detailed profiles
-      const hasSkills = skills && skills.length > 0;
-      const hasActivities = activities.length > 0;
-      const cachedMatches = await getCachedMatches(
-        university,
-        major,
-        profile.academicLevel || undefined,
-        hasSkills,
-        hasActivities
-      );
+      // Only use profile cache when database has sufficient data (>=50 projects)
+      const hasSufficientData = await hasSufficientProjects(university, major, 50);
       
-      if (cachedMatches && cachedMatches.length > 0) {
-        console.log(`[Matching] Using cached matches (${cachedMatches.length} projects)`);
-        matches = cachedMatches;
-        strategy = 'cache_hit';
+      if (hasSufficientData) {
+        // Try to get cached matches for detailed profiles
+        const hasSkills = skills && skills.length > 0;
+        const hasActivities = activities.length > 0;
+        const cachedMatches = await getCachedMatches(
+          university,
+          major,
+          profile.academicLevel || undefined,
+          hasSkills,
+          hasActivities
+        );
+        
+        if (cachedMatches && cachedMatches.length > 0) {
+          console.log(`[Matching] Using cached matches (${cachedMatches.length} projects)`);
+          matches = cachedMatches;
+          strategy = 'cache_hit';
+        }
+      } else {
+        console.log(`[Matching] Database has <50 projects, skipping profile cache`);
       }
     }
     
@@ -170,18 +177,24 @@ export const matchingRouter = router({
         console.log(`[Matching] Calling LLM for matching...`);
         matches = await generateMatchedProjects(university, major, userProfile, language);
         
-        // Cache the results for future use (only for detailed profiles)
+        // Cache the results for future use (only for detailed profiles AND when data is sufficient)
         if (!isSimplified && matches.length > 0) {
-          const hasSkills = skills && skills.length > 0;
-          const hasActivities = activities.length > 0;
-          await cacheMatches(
-            university,
-            major,
-            profile.academicLevel || undefined,
-            hasSkills,
-            hasActivities,
-            matches
-          );
+          const hasSufficientData = await hasSufficientProjects(university, major, 50);
+          if (hasSufficientData) {
+            const hasSkills = skills && skills.length > 0;
+            const hasActivities = activities.length > 0;
+            await cacheMatches(
+              university,
+              major,
+              profile.academicLevel || undefined,
+              hasSkills,
+              hasActivities,
+              matches
+            );
+            console.log(`[Matching] Cached matches for future use`);
+          } else {
+            console.log(`[Matching] Database has <50 projects, skipping cache save`);
+          }
         }
       }
     }
