@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, user_id, university, major, project_name, createdAt FROM project_matches WHERE (major LIKE '%HCI%' OR major LIKE '%Human%') AND user_id = 180001 ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, user_id, university, major, project_name, createdAt FROM project_matches WHERE (major LIKE '%HCI%' OR major LIKE '%Human%') AND user_id = 180001 ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "4",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "教育AI代理与个性化学习系统",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "3",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "面向AI代理的监测与质量评估框架",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "10",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "可调节光学系统的人机交互界面设计",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "7",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "多模态交互中的提示工程与内容刷新策略",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "8",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "社交媒体情感与行为分析工具开发",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "9",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "工程工具与开发实践优化",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "5",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "人机交互中的数据可视化与探索性分析",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "6",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "对话系统与状态管理在复杂任务中的应用",
+      "createdAt": "2026-02-06 08:15:34"
+    },
+    {
+      "id": "2",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "可解释人工智能与人机协作系统设计",
+      "createdAt": "2026-02-06 08:15:33"
+    },
+    {
+      "id": "1",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction",
+      "project_name": "AI代理的协议设计与优化：以搜索和内容合成为例",
+      "createdAt": "2026-02-06 08:15:33"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuser_id\tuniversity\tmajor\tproject_name\tcreatedAt\n4\t180001\tUniversity of Washington\tHuman-Computer Interaction\t教育AI代理与个性化学习系统\t2026-02-06 08:15:34\n3\t180001\tUniversity of Washington\tHuman-Computer Interaction\t面向AI代理的监测与质量评估框架\t2026-02-06 08:15:34\n10\t180001\tUniversity of Washington\tHuman-Computer Interaction\t可调节光学系统的人机交互界面设计\t2026-02-06 08:15:34\n7\t180001\tUniversity of Washington\tHuman-Computer Interaction\t多模态交互中的提示工程与内容刷新策略\t2026-02-06 08:15:34\n8\t180001\tUniversity of Washington\tHuman-Computer Interaction\t社交媒体情感与行为分析工具开发\t2026-02-06 08:15:34\n9\t180001\tUniversity of Washington\tHuman-Computer Interaction\t工程工具与开发实践优化\t2026-02-06 08:15:34\n5\t180001\tUniversity of Washington\tHuman-Computer Interaction\t人机交互中的数据可视化与探索性分析\t2026-02-06 08:15:34\n6\t180001\tUniversity of Washington\tHuman-Computer Interaction\t对话系统与状态管理在复杂任务中的应用\t2026-02-06 08:15:34\n2\t180001\tUniversity of Washington\tHuman-Computer Interaction\t可解释人工智能与人机协作系统设计\t2026-02-06 08:15:33\n1\t180001\tUniversity of Washington\tHuman-Computer Interaction\tAI代理的协议设计与优化：以搜索和内容合成为例\t2026-02-06 08:15:33\n",
+  "stderr": "",
+  "execution_time_ms": 1617
+}

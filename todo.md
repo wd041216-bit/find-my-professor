@@ -266,3 +266,23 @@
 - [x] 修改profile_cache条件为检查scraped_projects表（而不是project_matches）
 - [x] 优化LLM补齐逻辑避免重复调用（只在必要时补齐）
 - [x] 测试修复后的匹配流程
+
+## 数据保存问题修复
+
+- [ ] 检查project_matches表保存逻辑（为什么前端有结果但数据库为空）
+- [ ] 检查scraped_projects表保存逻辑（Perplexity搜索结果未保存）
+- [ ] 修复数据保存问题
+- [ ] 测试验证数据是否正确保存到数据库
+
+## SEO优化
+
+- [x] 添加完整的meta标签（title、description、keywords、og标签）
+- [x] 实施结构化数据（JSON-LD schema.org）
+- [x] 生成sitemap.xml和robots.txt
+- [x] 创建usePageMeta Hook用于页面级SEO
+- [x] 测试sitemap.xml和robots.txt可访问性
+- [ ] 优化页面标题和H1-H6层级结构
+- [ ] 添加语义化HTML标签
+- [ ] 优化图片alt属性
+- [ ] 实施内部链接策略
+- [ ] 优化页面加载速度

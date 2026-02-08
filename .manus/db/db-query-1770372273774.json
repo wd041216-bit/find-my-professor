@@ -1,0 +1,16 @@
+{
+  "query": "SELECT COUNT(*) as total, user_id, university, major FROM project_matches GROUP BY user_id, university, major LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT COUNT(*) as total, user_id, university, major FROM project_matches GROUP BY user_id, university, major LIMIT 10;",
+  "rows": [
+    {
+      "total": "10",
+      "user_id": "180001",
+      "university": "University of Washington",
+      "major": "Human-Computer Interaction"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tuser_id\tuniversity\tmajor\n10\t180001\tUniversity of Washington\tHuman-Computer Interaction\n",
+  "stderr": "",
+  "execution_time_ms": 1495
+}

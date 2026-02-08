@@ -9,6 +9,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import storageRouter from "../routes/storage";
 import stripeWebhookRouter from "../routes/stripe-webhook";
+import sitemapRouter from "../routes/sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -41,6 +42,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Storage upload API
   app.use("/api/storage", storageRouter);
+  // SEO routes (sitemap.xml, robots.txt)
+  app.use(sitemapRouter);
   // tRPC API
   app.use(
     "/api/trpc",
