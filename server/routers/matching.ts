@@ -289,14 +289,19 @@ export const matchingRouter = router({
     }
 
     // Step 8: Trigger Perplexity search only if we haven't searched this university+major before (async, doesn't block)
+    console.log(`[Matching] ===== STEP 8: Checking if Perplexity search needed =====`);
+    console.log(`[Matching] University: "${university}", Major: "${major}"`);
     const alreadySearched = await hasPerplexitySearched(university, major);
+    console.log(`[Matching] hasPerplexitySearched result: ${alreadySearched}`);
+    
     if (!alreadySearched) {
-      console.log(`[Matching] First search for ${university} - ${major}, triggering Perplexity search`);
+      console.log(`[Matching] ===== FIRST SEARCH ===== Triggering Perplexity for ${university} - ${major}`);
       triggerBackgroundCrawler(university, major).catch(error => {
-        console.error(`[Matching] Perplexity search error:`, error);
+        console.error(`[Matching] ===== PERPLEXITY ERROR =====`, error);
       });
+      console.log(`[Matching] triggerBackgroundCrawler called (async, non-blocking)`);
     } else {
-      console.log(`[Matching] Already searched ${university} - ${major} before, using cached data`);
+      console.log(`[Matching] ===== ALREADY SEARCHED ===== Using cached data for ${university} - ${major}`);
     }
 
     // Validate return structure

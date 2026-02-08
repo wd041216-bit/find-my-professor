@@ -628,14 +628,19 @@ export async function triggerBackgroundCrawler(
   university: string,
   major: string
 ): Promise<void> {
-  console.log(`[Background Search] Starting Perplexity search for ${university} - ${major}`);
+  console.log(`[Background Search] ===== TRIGGERED ===== for ${university} - ${major}`);
+  console.log(`[Background Search] Timestamp: ${new Date().toISOString()}`);
   
   // Run in background (don't await)
   (async () => {
     try {
+      console.log(`[Background Search] Inside async block, starting import...`);
       const { searchMajorProjects } = await import('./perplexityWebSearch');
+      console.log(`[Background Search] Imported searchMajorProjects successfully`);
+      
       const { getDb } = await import('../db');
       const db = await getDb();
+      console.log(`[Background Search] Database connection: ${db ? 'SUCCESS' : 'FAILED'}`);
       
       if (!db) {
         throw new Error('Database connection failed');
@@ -644,10 +649,14 @@ export async function triggerBackgroundCrawler(
       // Trigger major-specific search
       console.log(`[Background Search] Calling Perplexity API for ${university} - ${major}`);
       const projects = await searchMajorProjects(university, major);
+      console.log(`[Background Search] Perplexity API returned successfully`);
       
       console.log(`[Background Search] Perplexity returned ${projects.length} projects`);
+      console.log(`[Background Search] Sample project:`, projects[0]);
       
       // Save to scraped_projects table
+      console.log(`[Background Search] Starting to save projects to database...`);
+      let savedCount = 0;
       for (const project of projects) {
         try {
           await db.insert(schema.scrapedProjects).values({
@@ -663,14 +672,19 @@ export async function triggerBackgroundCrawler(
             sourceUrl: project.url || null,
             searchScope: 'major_specific',
           });
+          savedCount++;
         } catch (error) {
-          console.error(`[Background Search] Failed to save project:`, error);
+          console.error(`[Background Search] Failed to save project "${project.projectName}":`, error);
         }
       }
+      console.log(`[Background Search] Saved ${savedCount}/${projects.length} projects to database`);
       
-      console.log(`[Background Search] Completed for ${university} - ${major}: ${projects.length} projects saved`);
+      console.log(`[Background Search] ===== COMPLETED ===== for ${university} - ${major}: ${savedCount} projects saved`);
     } catch (error) {
-      console.error(`[Background Search] Failed for ${university} - ${major}:`, error);
+      console.error(`[Background Search] ===== FAILED ===== for ${university} - ${major}:`, error);
+      console.error(`[Background Search] Error stack:`, error instanceof Error ? error.stack : 'No stack trace');
     }
   })();
+  
+  console.log(`[Background Search] Async task launched, returning immediately`);
 }
