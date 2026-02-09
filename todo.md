@@ -414,3 +414,17 @@
 - [x] 移除所有消耗积分的限制和逻辑
 - [ ] 测试完整用户流程
 - [ ] 保存checkpoint
+
+## 👤 重新设计Tinder风格Profile页面（用户要求）
+- [x] 搜索Tinder Profile设计参考
+- [x] 保留Swipe页面的Profile链接（重新设计Profile页面）
+- [x] 重新设计Profile页面为Tinder风格：圆形大头像、卡片式布局、渐变色
+- [x] 添加头像上传功能（支持本地预览，TODO: S3存储）
+- [x] 保留完整学术信息输入表单：
+  - 基本信息（Academic Level、GPA）
+  - 目标大学和专业
+  - 技能标签（Skills）
+  - 研究兴趣标签（Research Interests）
+  - 个人简介（About Me）
+- [ ] 测试完整用户流程
+- [ ] 保存checkpoint
