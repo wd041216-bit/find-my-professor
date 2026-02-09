@@ -106,23 +106,15 @@ export default function Home() {
               {t.home.heroDescription}
             </p>
             
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 md:gap-5 justify-center px-4">
+            {/* CTA Buttons - Only Start Swiping */}
+            <div className="flex justify-center px-4">
               {isAuthenticated ? (
-                <>
-                  <Link href="/swipe">
-                    <Button size="lg" className="w-full sm:w-auto text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 font-black rounded-full shadow-2xl hover:shadow-3xl transition-all hover:scale-105">
-                      <Flame className="mr-2 h-6 w-6" />
-                      🔥 Start Swiping
-                    </Button>
-                  </Link>
-                  <Link href="/dashboard">
-                    <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 border-3 border-purple-300 hover:bg-purple-50 font-bold rounded-full shadow-lg">
-                      {t.home.goToDashboard}
-                      <ArrowRight className="ml-2 h-5 w-5 md:h-6 md:w-6" />
-                    </Button>
-                  </Link>
-                </>
+                <Link href="/swipe">
+                  <Button size="lg" className="w-full sm:w-auto text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 font-black rounded-full shadow-2xl hover:shadow-3xl transition-all hover:scale-105">
+                    <Flame className="mr-2 h-6 w-6" />
+                    🔥 Start Swiping
+                  </Button>
+                </Link>
               ) : (
                 <a href={getLoginUrl()} className="w-full sm:w-auto">
                   <Button size="lg" className="w-full text-lg md:text-xl px-8 md:px-10 py-6 md:py-7 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 font-black rounded-full shadow-2xl hover:shadow-3xl transition-all hover:scale-105">

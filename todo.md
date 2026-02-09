@@ -377,3 +377,10 @@
 - [ ] 删除所有付费相关代码（积分系统、Stripe、价格信息）
 - [ ] 测试完整滑动流程
 - [ ] 保存checkpoint
+
+## 🎯 简化主页UI（用户要求）
+- [x] 移除主页Hero区域的"进入控制台"（Dashboard）按钮
+- [x] 移除主页Hero区域的"Explore Professors"按钮
+- [x] 只保留"Start Swiping"按钮作为主要CTA
+- [x] 保留所有后台功能（Dashboard、Profile等页面）以便未来恢复
+- [ ] 保存checkpoint
