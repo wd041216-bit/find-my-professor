@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, unique } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, unique, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -412,6 +412,7 @@ export const scrapedProjects = mysqlTable("scraped_projects", {
   requirements: text("requirements"),
   contactEmail: varchar("contact_email", { length: 255 }),
   sourceUrl: varchar("source_url", { length: 500 }),
+  tags: json("tags").$type<string[]>(),  // 教授研究tags（数组）
   source: mysqlEnum("source", ["scraped", "llm_generated"]).default("llm_generated"),
   searchScope: mysqlEnum("search_scope", ["university_wide", "major_specific"]).default("major_specific"),
   scrapedAt: timestamp("scraped_at").defaultNow(),
@@ -497,3 +498,22 @@ export const universityNormalization = mysqlTable("university_normalization", {
 
 export type UniversityNormalization = typeof universityNormalization.$inferSelect;
 export type InsertUniversityNormalization = typeof universityNormalization.$inferInsert;
+
+/**
+ * Research tags dictionary
+ * Stores standardized research tags for each university-major combination
+ * Ensures students and professors use the same tag vocabulary
+ */
+export const researchTagsDictionary = mysqlTable("research_tags_dictionary", {
+  id: int("id").autoincrement().primaryKey(),
+  universityName: varchar("university_name", { length: 255 }).notNull(),
+  majorName: varchar("major_name", { length: 255 }).notNull(),
+  tag: varchar("tag", { length: 100 }).notNull(),
+  category: varchar("category", { length: 50 }), // methodology, domain, technology, etc.
+  frequency: int("frequency").default(1), // How many professors use this tag
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export type ResearchTagsDictionary = typeof researchTagsDictionary.$inferSelect;
+export type InsertResearchTagsDictionary = typeof researchTagsDictionary.$inferInsert;

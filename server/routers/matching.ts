@@ -9,6 +9,8 @@ import { getCachedMatches, cacheMatches } from "../services/profileCache";
 import { isSimplifiedProfile, getRandomProjectsFromDatabase, hasSufficientProjects } from "../services/simplifiedMatching";
 import { hasPerplexitySearched } from "../services/perplexitySearchCache";
 import { getProjectsFromScrapedData, hasSufficientScrapedProjects } from "../services/scrapedProjectsService";
+import { extractStudentTags } from "../services/studentTagsService";
+import { rankProfessorsByMatch } from "../services/tagsMatchingService";
 import { TRPCError } from "@trpc/server";
 
 export const matchingRouter = router({
@@ -157,18 +159,65 @@ export const matchingRouter = router({
     // Step 6: If no cache hit, try scraped_projects first (Perplexity search results)
     if (matches.length === 0) {
       console.log(`[Matching] Checking scraped_projects table...`);
-      const scrapedMatches = await getProjectsFromScrapedData(university, major, 10);
       
-      if (scrapedMatches.length >= 10) {
-        // Have enough scraped data, use directly
-        console.log(`[Matching] Using ${scrapedMatches.length} projects from scraped_projects`);
-        matches = scrapedMatches;
-        strategy = isSimplified ? 'scraped_random' : 'scraped_direct';
-      } else if (scrapedMatches.length > 0) {
-        // Have partial scraped data, will supplement later
-        console.log(`[Matching] Found ${scrapedMatches.length} projects from scraped_projects, will supplement`);
-        matches = scrapedMatches;
-        strategy = 'scraped_partial';
+      // Get ALL scraped projects (not limited to 10) for tags matching
+      const allScrapedProjects = await getProjectsFromScrapedData(university, major, 1000);
+      
+      if (allScrapedProjects.length > 0) {
+        console.log(`[Matching] Found ${allScrapedProjects.length} projects from scraped_projects`);
+        
+        // Extract student tags from profile using dictionary
+        console.log(`[Matching] Extracting student tags using dictionary...`);
+        const studentTags = await extractStudentTags(userProfile, university, major);
+        console.log(`[Matching] Student tags: ${studentTags.join(', ')}`);
+        
+        // Prepare professors data for matching
+        const professorsForMatching = allScrapedProjects
+          .filter(p => p.tags && Array.isArray(p.tags) && p.tags.length > 0)
+          .map(p => ({
+            professorName: p.professorName || 'Unknown',
+            projectTitle: p.projectName || 'Research Project',
+            tags: p.tags as string[],
+            sourceUrl: p.url || undefined,
+            // Keep all original fields for later use
+            lab: p.lab,
+            researchDirection: p.researchDirection,
+            description: p.description,
+            requirements: p.requirements,
+            contactEmail: p.contactEmail,
+          }));
+        
+        console.log(`[Matching] ${professorsForMatching.length} professors have valid tags`);
+        
+        // Use tags matching algorithm to rank professors
+        const rankedResults = rankProfessorsByMatch(studentTags, professorsForMatching);
+        console.log(`[Matching] Ranked ${rankedResults.length} professors by match score`);
+        
+        // Convert ranked results back to MatchedProject format
+        const rankedMatches = rankedResults.slice(0, 10).map(result => ({
+          projectName: result.projectTitle,
+          professorName: result.professorName,
+          lab: (result as any).lab || undefined,
+          researchDirection: (result as any).researchDirection || 'Not specified',
+          description: (result as any).description || 'No description available',
+          requirements: (result as any).requirements || undefined,
+          contactEmail: (result as any).contactEmail || undefined,
+          url: result.sourceUrl || undefined,
+          matchScore: result.matchScore,
+          matchReason: `Matched tags: ${result.matchedTags.join(', ') || 'None'}`,
+        }));
+        
+        if (rankedMatches.length >= 10) {
+          // Have enough ranked matches
+          console.log(`[Matching] Using top ${rankedMatches.length} ranked matches from scraped_projects`);
+          matches = rankedMatches;
+          strategy = isSimplified ? 'scraped_random' : 'scraped_direct';
+        } else if (rankedMatches.length > 0) {
+          // Have partial ranked matches, will supplement later
+          console.log(`[Matching] Found ${rankedMatches.length} ranked matches, will supplement`);
+          matches = rankedMatches;
+          strategy = 'scraped_partial';
+        }
       }
     }
     

@@ -155,6 +155,20 @@
       "when": 1770604980028,
       "tag": "0021_true_gamma_corps",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1770612159590,
+      "tag": "0022_thick_victor_mancha",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1770619616746,
+      "tag": "0023_wooden_king_cobra",
+      "breakpoints": true
     }
   ]
 }

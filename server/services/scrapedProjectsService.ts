@@ -4,6 +4,13 @@ import { and, eq, sql } from 'drizzle-orm';
 import type { MatchedProject } from './llmMatching';
 
 /**
+ * Extended MatchedProject type with tags for matching
+ */
+export interface MatchedProjectWithTags extends MatchedProject {
+  tags?: string[];
+}
+
+/**
  * Scraped Projects Service
  * Retrieves projects from scraped_projects table (Perplexity search results)
  */
@@ -16,7 +23,7 @@ export async function getProjectsFromScrapedData(
   university: string,
   major: string,
   count: number = 10
-): Promise<MatchedProject[]> {
+): Promise<MatchedProjectWithTags[]> {
   try {
     const db = await getDb();
     if (!db) {
@@ -44,8 +51,8 @@ export async function getProjectsFromScrapedData(
     
     console.log(`[ScrapedProjects] Found ${projects.length} projects from Perplexity search results`);
     
-    // Convert to MatchedProject format
-    const matchedProjects: MatchedProject[] = projects.map(p => ({
+    // Convert to MatchedProject format with tags
+    const matchedProjects: MatchedProjectWithTags[] = projects.map(p => ({
       projectName: p.projectTitle,
       professorName: p.professorName || 'Unknown Professor',
       lab: p.labName || undefined,
@@ -54,8 +61,9 @@ export async function getProjectsFromScrapedData(
       requirements: p.requirements || undefined,
       contactEmail: p.contactEmail || undefined,
       url: p.sourceUrl || undefined,
-      matchScore: 75, // Default score, can be adjusted by LLM later
+      matchScore: 75, // Default score, will be updated by tags matching
       matchReason: 'This project matches your target university and major.',
+      tags: (p.tags as string[]) || undefined, // Include tags for matching
     }));
     
     return matchedProjects;

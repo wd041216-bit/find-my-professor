@@ -254,16 +254,19 @@ async function saveProfessorsToDatabase(
   // 合并教授列表和tags
   const professorMap = new Map(professors.map(p => [p.name, p.url]));
   
-  const dataToInsert = professorsWithTags.map(p => ({
-    universityName: university,
-    majorName: department,
-    professorName: p.name,
-    projectTitle: `${p.name}'s Research`,
-    projectDescription: `Research areas: ${p.tags.join(', ')}`,
-    sourceUrl: professorMap.get(p.name) || '',
-    source: 'scraped' as const,
-    searchScope: 'major_specific' as const
-  }));
+  const dataToInsert = professorsWithTags
+    .filter(p => p.tags && p.tags.length > 0)  // 过滤掉没有tags的教授
+    .map(p => ({
+      universityName: university,
+      majorName: department,
+      professorName: p.name,
+      projectTitle: `${p.name}'s Research`,
+      projectDescription: `Research areas: ${p.tags.join(', ')}`,
+      tags: p.tags,  // 新增：将tags单独存储为JSON数组
+      sourceUrl: professorMap.get(p.name) || '',
+      source: 'scraped' as const,
+      searchScope: 'major_specific' as const
+    }));
   
   const db = await getDb();
   if (!db) throw new Error('Database connection failed');
