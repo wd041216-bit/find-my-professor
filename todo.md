@@ -326,3 +326,10 @@
 - [x] 修改studentTagsService从词典中选择tags
 - [x] 测试新的词典匹配效果（匹配分数从0提升到22）
 - [x] 集成到主匹配流程（matching.ts Step 6）
+
+## 词典去重和相似词合并
+- [x] 创建tagsMergeService识别相似tags
+- [x] 实施合并逻辑（缩写↔全称、单复数、同义词）
+- [x] 重新构建华盛顿大学Information School词典
+- [x] 测试合并后的匹配效果（分数从22提升到24）
+- [x] 验证词典规模减小（151→57，减少62.3%）
