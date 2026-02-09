@@ -1,0 +1,40 @@
+{
+  "query": "SELECT professor_name, project_title, tags, source_url FROM scraped_projects WHERE university_name = 'University of Washington' AND major_name = 'Information School' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT professor_name, project_title, tags, source_url FROM scraped_projects WHERE university_name = 'University of Washington' AND major_name = 'Information School' LIMIT 5;",
+  "rows": [
+    {
+      "professor_name": "Daniela Rosner",
+      "project_title": "Daniela Rosner's Research",
+      "tags": "[\"feminist design\", \"critical making\", \"human-computer interaction\", \"design justice\", \"feminism and technology\", \"participatory design\", \"value sensitive design\"]",
+      "source_url": "/people/faculty/daniela-rosner"
+    },
+    {
+      "professor_name": "David Hendry",
+      "project_title": "David Hendry's Research",
+      "tags": "[\"human-computer interaction\", \"information visualization\", \"privacy design\", \"value sensitive design\", \"user interface design\", \"personal data management\"]",
+      "source_url": "/people/faculty/david-hendry"
+    },
+    {
+      "professor_name": "Elisa Kendall",
+      "project_title": "Elisa Kendall's Research",
+      "tags": "[\"semantic web\", \"ontologies\", \"knowledge representation\", \"linked data\", \"information organization\", \"data semantics\"]",
+      "source_url": "/people/faculty/elisa-kendall"
+    },
+    {
+      "professor_name": "Emma Spiro",
+      "project_title": "Emma Spiro's Research",
+      "tags": "[\"social networks\", \"crisis informatics\", \"information diffusion\", \"online communities\", \"computational social science\", \"network analysis\"]",
+      "source_url": "/people/faculty/emma-spiro"
+    },
+    {
+      "professor_name": "Gina Neff",
+      "project_title": "Gina Neff's Research",
+      "tags": "[\"science and technology studies\", \"artificial intelligence\", \"work and technology\", \"predictive analytics\", \"sociology of technology\", \"AI ethics\"]",
+      "source_url": "/people/faculty/gina-neff"
+    }
+  ],
+  "messages": [],
+  "stdout": "professor_name\tproject_title\ttags\tsource_url\nDaniela Rosner\tDaniela Rosner's Research\t[\"feminist design\", \"critical making\", \"human-computer interaction\", \"design justice\", \"feminism and technology\", \"participatory design\", \"value sensitive design\"]\t/people/faculty/daniela-rosner\nDavid Hendry\tDavid Hendry's Research\t[\"human-computer interaction\", \"information visualization\", \"privacy design\", \"value sensitive design\", \"user interface design\", \"personal data management\"]\t/people/faculty/david-hendry\nElisa Kendall\tElisa Kendall's Research\t[\"semantic web\", \"ontologies\", \"knowledge representation\", \"linked data\", \"information organization\", \"data semantics\"]\t/people/faculty/elisa-kendall\nEmma Spiro\tEmma Spiro's Research\t[\"social networks\", \"crisis informatics\", \"information diffusion\", \"online communities\", \"computational social science\", \"network analysis\"]\t/people/faculty/emma-spiro\nGina Neff\tGina Neff's Research\t[\"science and technology studies\", \"artificial intelligence\", \"work and technology\", \"predictive analytics\", \"sociology of technology\", \"AI ethics\"]\t/people/faculty/gina-neff\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}
