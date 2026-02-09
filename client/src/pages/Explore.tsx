@@ -40,10 +40,7 @@ export default function Explore() {
     enabled: !!user,
   });
 
-  // Get user credits balance
-  const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: !!user,
-  });
+  // Credits system removed - all features are now free
 
   const handleGenerateLetter = async (project: any) => {
     setGeneratingLetter(true);
@@ -240,10 +237,7 @@ export default function Explore() {
           <div className="flex items-center gap-2 md:gap-3">
             {/* Credits Display */}
             <div className="flex items-center gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full bg-primary/10 text-primary">
-              <Coins className="h-3.5 w-3.5 md:h-4 md:w-4" />
-              <span className="text-xs md:text-sm font-semibold">
-                {creditsData?.balance ?? 0}
-              </span>
+              {/* Credits system removed */}
             </div>
             <LanguageSwitcher />
           </div>
@@ -470,7 +464,7 @@ export default function Explore() {
       <InsufficientCreditsDialog
         open={showCreditsDialog}
         onOpenChange={setShowCreditsDialog}
-        remainingCredits={creditsData?.balance || 0}
+        remainingCredits={0}
       />
       
       {/* Cover Letter Dialog */}

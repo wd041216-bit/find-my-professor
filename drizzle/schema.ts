@@ -553,3 +553,37 @@ export const studentSwipes = mysqlTable("student_swipes", {
 
 export type StudentSwipe = typeof studentSwipes.$inferSelect;
 export type InsertStudentSwipe = typeof studentSwipes.$inferInsert;
+
+/**
+ * Schools/Departments within universities
+ * Stores information about schools/colleges within universities
+ */
+export const schools = mysqlTable("schools", {
+  id: int("id").autoincrement().primaryKey(),
+  universityId: int("university_id").notNull(),
+  name: text("name").notNull(), // e.g., "Information School", "School of Engineering"
+  description: text("description"),
+  website: text("website"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type School = typeof schools.$inferSelect;
+export type InsertSchool = typeof schools.$inferInsert;
+
+/**
+ * School images for professor card backgrounds
+ * Each school can have multiple images displayed on professor cards
+ */
+export const schoolImages = mysqlTable("school_images", {
+  id: int("id").autoincrement().primaryKey(),
+  schoolId: int("school_id").notNull(),
+  imageUrl: text("image_url").notNull(), // S3 URL
+  imageOrder: int("image_order").default(0), // For ordering images
+  description: text("description"), // Optional description
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SchoolImage = typeof schoolImages.$inferSelect;
+export type InsertSchoolImage = typeof schoolImages.$inferInsert;

@@ -7,16 +7,17 @@ export interface Professor {
   name: string;
   universityName: string;
   majorName: string;
-  title?: string;
-  department?: string;
-  email?: string;
-  personalWebsite?: string;
-  researchAreas?: string[];
-  tags?: string[];
-  bio?: string;
+  title?: string | null;
+  department?: string | null;
+  email?: string | null;
+  personalWebsite?: string | null;
+  researchAreas?: string[] | null;
+  tags?: string[] | null;
+  bio?: string | null;
   matchScore?: number;
   displayScore?: number;
   matchLevel?: string;
+  schoolImageUrl?: string;
 }
 
 interface ProfessorCardProps {
@@ -85,17 +86,20 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
           NOPE
         </motion.div>
 
-        {/* Large Avatar Background - Fills entire card like Tinder */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400">
-          {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        {/* School Image Background - Fills entire card like Tinder */}
+        <div className="absolute inset-0">
+          {professor.schoolImageUrl ? (
+            <img 
+              src={professor.schoolImageUrl} 
+              alt={professor.majorName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400" />
+          )}
           
-          {/* Large Avatar Circle - Centered */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-64 h-64 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white shadow-2xl border-8 border-white/30">
-              <span className="text-9xl font-black">{professor.name.charAt(0)}</span>
-            </div>
-          </div>
+          {/* Gradient overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         </div>
 
         {/* Info Toggle Button - Top Right */}
