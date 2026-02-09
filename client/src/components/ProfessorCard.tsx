@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { ExternalLink, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 export interface Professor {
@@ -84,7 +84,7 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
           NOPE
         </motion.div>
 
-        {/* Card Content */}
+        {/* Card Content - Simplified */}
         <div className="flex flex-col h-full p-8 overflow-y-auto">
           {/* Header with Avatar */}
           <div className="flex items-start gap-6 mb-6">
@@ -108,7 +108,7 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
 
           {/* Match Score Badge - More prominent */}
           {professor.displayScore !== undefined && (
-            <div className="mb-6">
+            <div className="mb-8">
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-white rounded-full font-bold text-xl shadow-lg">
                 <Sparkles className="w-6 h-6" />
                 {professor.displayScore}% Match
@@ -116,7 +116,7 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
             </div>
           )}
 
-          {/* Research Tags - More colorful */}
+          {/* Research Interests Tags - More colorful */}
           {professor.tags && professor.tags.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Research Interests</h3>
@@ -142,30 +142,6 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
                   );
                 })}
               </div>
-            </div>
-          )}
-
-          {/* Bio - More readable */}
-          {professor.bio && (
-            <div className="mb-6">
-              <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">About</h3>
-              <p className="text-gray-700 leading-relaxed text-base">{professor.bio}</p>
-            </div>
-          )}
-
-          {/* Website Link Only (NO EMAIL) */}
-          {professor.personalWebsite && (
-            <div className="mt-auto pt-6 border-t border-gray-200">
-              <a
-                href={professor.personalWebsite}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ExternalLink className="w-5 h-5" />
-                <span>Visit Website</span>
-              </a>
             </div>
           )}
         </div>

@@ -384,3 +384,14 @@
 - [x] 只保留"Start Swiping"按钮作为主要CTA
 - [x] 保留所有后台功能（Dashboard、Profile等页面）以便未来恢复
 - [ ] 保存checkpoint
+
+## 🎯 简化教授卡片和优化用户流程（用户要求）
+- [x] 检查现有Profile页面是否支持学生信息上传（已有完整功能）
+- [x] 简化ProfessorCard组件：移除About部分
+- [x] 简化ProfessorCard组件：移除Visit Website按钮
+- [x] 只保留：教授姓名、职位、学院、大学、匹配度、Research Interests标签
+- [x] 移除Swipe页面的My Matches按钮和相关逻辑
+- [x] 移除likedProfessors状态管理（不再需要收藏功能）
+- [x] 添加学生信息上传引导流程（在Start Swiping前检查Profile完整性）
+- [ ] 测试完整用户流程
+- [ ] 保存checkpoint

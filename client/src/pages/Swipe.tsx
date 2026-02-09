@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
-import { X, Heart, RotateCcw, Sparkles, ArrowLeft, Flame } from 'lucide-react';
+import { X, Heart, RotateCcw, Sparkles, ArrowLeft, Flame, User } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Link } from 'wouter';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 
 // Mock data for testing (email removed for privacy)
 const mockProfessors: Professor[] = [
@@ -14,7 +16,6 @@ const mockProfessors: Professor[] = [
     title: "Associate Professor",
     department: "Information School",
     personalWebsite: "https://faculty.washington.edu/tanumitra/",
-    bio: "I study how AI impacts social media and online communities. My research focuses on understanding algorithmic bias, misinformation, and the role of AI in shaping online discourse.",
     tags: ["machine learning", "natural language processing", "online communities", "algorithmic bias"],
     displayScore: 88,
     matchLevel: "excellent",
@@ -26,7 +27,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Associate Professor",
     department: "Information School",
-    bio: "My research explores human-AI collaboration, focusing on how people can work effectively with AI systems. I'm interested in crowdsourcing, machine learning, and educational technology.",
     tags: ["artificial intelligence", "machine learning", "crowdsourcing", "human-AI collaboration"],
     displayScore: 88,
     matchLevel: "excellent",
@@ -38,7 +38,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Assistant Professor",
     department: "Information School",
-    bio: "I work on information retrieval, health informatics, and data science. My research aims to develop intelligent systems that can help people find and make sense of health information.",
     tags: ["machine learning", "natural language processing", "data science", "health informatics"],
     displayScore: 78,
     matchLevel: "good",
@@ -50,7 +49,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Associate Professor",
     department: "Information School",
-    bio: "My research examines online communities and social networks, with a focus on understanding how people coordinate and collaborate in digital spaces.",
     tags: ["online communities", "social networks", "computational social science"],
     displayScore: 71,
     matchLevel: "fair",
@@ -62,7 +60,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Professor",
     department: "Information School",
-    bio: "I research human-computer interaction and user interface design, focusing on how people interact with complex information systems.",
     tags: ["human-computer interaction", "user interface design", "information architecture"],
     displayScore: 62,
     matchLevel: "fair",
@@ -70,16 +67,61 @@ const mockProfessors: Professor[] = [
 ];
 
 export function Swipe() {
+  const { user, loading: authLoading } = useAuth();
+  const { data: profile, isLoading: profileLoading } = trpc.profile.get.useQuery(undefined, {
+    enabled: !!user,
+  });
+
   const [professors, setProfessors] = useState<Professor[]>(mockProfessors);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [likedProfessors, setLikedProfessors] = useState<Professor[]>([]);
   const [lastAction, setLastAction] = useState<'like' | 'pass' | null>(null);
 
   const currentProfessor = professors[currentIndex];
 
+  // Check if profile is complete
+  const isProfileComplete = profile && profile.targetUniversities && profile.targetMajors;
+
+  // Loading state
+  if (authLoading || profileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  // Profile incomplete - show guidance
+  if (!isProfileComplete) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
+        <div className="max-w-md text-center">
+          <div className="mb-8">
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+              <User className="w-16 h-16 text-white" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
+            Complete Your Profile First!
+          </h2>
+          <p className="text-xl text-gray-700 mb-8 font-medium">
+            To get the best professor matches, please tell us about your academic background and research interests.
+          </p>
+          <Link href="/profile">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+            >
+              <User className="w-6 h-6 mr-2" />
+              Complete Profile
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const handleSwipe = (direction: 'left' | 'right', professor: Professor) => {
     if (direction === 'right') {
-      setLikedProfessors([...likedProfessors, professor]);
       setLastAction('like');
     } else {
       setLastAction('pass');
@@ -96,7 +138,6 @@ export function Swipe() {
     if (!currentProfessor) return;
 
     if (action === 'like') {
-      setLikedProfessors([...likedProfessors, currentProfessor]);
       setLastAction('like');
     } else {
       setLastAction('pass');
@@ -111,10 +152,6 @@ export function Swipe() {
   const handleUndo = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      // Remove from liked if it was the last action
-      if (lastAction === 'like') {
-        setLikedProfessors(likedProfessors.slice(0, -1));
-      }
       setLastAction(null);
     }
   };
@@ -134,18 +171,17 @@ export function Swipe() {
           <p className="text-xl text-gray-700 mb-8 font-medium">
             You've reviewed all available professors.
             <br />
-            Check out your matches! 💫
+            Come back later for more! 💫
           </p>
-          <Button
-            size="lg"
-            onClick={() => {
-              window.location.href = '/matches';
-            }}
-            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
-          >
-            <Heart className="w-6 h-6 mr-2 fill-white" />
-            View My Matches ({likedProfessors.length})
-          </Button>
+          <Link href="/">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+            >
+              <ArrowLeft className="w-6 h-6 mr-2" />
+              Back to Home
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -177,15 +213,6 @@ export function Swipe() {
           <span className="text-sm font-semibold text-gray-700 bg-white px-4 py-2 rounded-full shadow-sm">
             {currentIndex + 1} / {professors.length}
           </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.location.href = '/matches'}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 hover:from-purple-700 hover:to-pink-700 font-semibold shadow-md"
-          >
-            <Heart className="w-4 h-4 mr-2 fill-white" />
-            My Matches ({likedProfessors.length})
-          </Button>
         </div>
       </div>
 
