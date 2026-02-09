@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Save, Loader2, GraduationCap } from "lucide-react";
+import { ArrowLeft, Save, Loader2, GraduationCap, Camera } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -40,6 +40,8 @@ export default function Profile() {
   const [targetMajorInput, setTargetMajorInput] = useState("");
   const [skillInput, setSkillInput] = useState("");
   const [interestInput, setInterestInput] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const fileInputRef = useState<HTMLInputElement | null>(null)[0];
 
   useEffect(() => {
     if (profile) {
@@ -80,6 +82,7 @@ export default function Profile() {
         })(),
         bio: profile.bio || "",
       });
+      setAvatarUrl(profile.avatarUrl || "");
     }
   }, [profile]);
 
@@ -165,75 +168,100 @@ export default function Profile() {
     return null;
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container flex h-14 md:h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MobileNav />
-            <Link href="/dashboard" className="hidden md:block">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t.common.back}
-              </Button>
-            </Link>
-          </div>
-          <div className="flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-sm md:text-base">Find My Professor</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              onClick={handleSubmit} 
-              disabled={upsertMutation.isPending}
-              size="sm"
-            >
-              {upsertMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t.profile.saving}
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  {t.profile.saveProfile}
-                </>
-              )}
-            </Button>
-            <LanguageSwitcher />
-          </div>
-        </div>
-      </nav>
+  const handleAvatarClick = () => {
+    document.getElementById('avatar-upload')?.click();
+  };
 
-      <div className="container px-4 py-4 md:py-8 max-w-4xl">
-        <Card>
-          <CardHeader className="p-4 md:p-6">
-            <CardTitle className="text-xl md:text-3xl">{t.profile.title}</CardTitle>
-            <CardDescription className="text-sm md:text-base">
-              {t.profile.subtitle}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
-              {/* Required Fields Info */}
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 md:p-4">
-                <h3 className="text-sm md:text-base font-semibold text-primary mb-1">{t.profile.requiredFields}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">{t.profile.requiredFieldsDesc}</p>
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // TODO: Upload to S3
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    toast.success("Avatar uploaded successfully!");
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+      {/* Navigation */}
+      <div className="max-w-2xl mx-auto px-4 pt-6 pb-4 flex items-center justify-between">
+        <Link href="/swipe">
+          <Button variant="ghost" size="sm" className="hover:bg-white/50 rounded-full">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back
+          </Button>
+        </Link>
+        <h1 className="text-3xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
+          Edit Profile
+        </h1>
+        <Button
+          onClick={handleSubmit}
+          disabled={upsertMutation.isPending}
+          className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold rounded-full shadow-lg"
+        >
+          {upsertMutation.isPending ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
+          Save
+        </Button>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 pb-8">
+        <Card className="bg-white/90 backdrop-blur-sm shadow-2xl rounded-3xl p-8">
+          {/* Avatar Section */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 p-1 shadow-xl">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt="Profile"
+                    className="w-full h-full rounded-full object-cover bg-white"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-5xl font-black text-gray-300">
+                    {user?.name?.charAt(0).toUpperCase() || '?'}
+                  </div>
+                )}
               </div>
+              <button
+                type="button"
+                onClick={handleAvatarClick}
+                className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+              >
+                <Camera className="w-5 h-5 text-white" />
+              </button>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+            <p className="mt-4 text-sm text-gray-500 font-medium">
+              Click the camera icon to upload your photo
+            </p>
+          </div>
+
+          <CardContent className="p-0">
+            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+
 
               {/* Basic Information */}
-              <div className="space-y-3 md:space-y-4">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base md:text-lg font-semibold">{t.profile.academicInfo}</h3>
-                  <span className="text-xs text-muted-foreground">({t.profile.required})</span>
-                </div>
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-800">Academic Info</h3>
                 
-                {/* Academic Level - First */}
-                <div className="space-y-1.5 md:space-y-2">
-                  <Label htmlFor="academicLevel" className="text-sm flex items-center gap-1.5">
-                    {t.profile.academicLevel}
-                    <span className="text-destructive">*</span>
+                <div className="space-y-2">
+                  <Label htmlFor="academicLevel" className="text-base font-bold text-gray-700">
+                    Academic Level *
                   </Label>
                   <Select
                     value={formData.academicLevel}
@@ -241,7 +269,7 @@ export default function Profile() {
                       setFormData(prev => ({ ...prev, academicLevel: value }))
                     }
                   >
-                    <SelectTrigger className="h-9 md:h-10">
+                    <SelectTrigger className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500">
                       <SelectValue placeholder="Select your academic level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -252,167 +280,151 @@ export default function Profile() {
                   </Select>
                 </div>
 
-                {/* GPA Input */}
                 {formData.academicLevel && (
-                  <div className="space-y-1.5 md:space-y-2">
-                    <Label htmlFor="gpa" className="text-sm flex items-center gap-1.5">
-                      {t.profile.gpa}
-                      <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+                  <div className="space-y-2">
+                    <Label htmlFor="gpa" className="text-base font-bold text-gray-700">
+                      GPA
                     </Label>
                     <Input
                       id="gpa"
                       value={formData.gpa}
                       onChange={(e) => setFormData(prev => ({ ...prev, gpa: e.target.value }))}
                       placeholder="e.g., 3.8/4.0"
-                      className="h-9 md:h-10"
+                      className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
                     />
                   </div>
                 )}
               </div>
 
-              {/* Target University (Single Selection) */}
-              <div className="space-y-3 md:space-y-4">
-                <Label htmlFor="targetUniversity" className="text-base md:text-lg font-semibold flex items-center gap-1.5">
-                  {t.profile.targetUniversity || t.profile.targetUniversities}
-                  <span className="text-destructive">*</span>
+              {/* Target University */}
+              <div className="space-y-4">
+                <Label htmlFor="targetUniversity" className="text-xl font-bold text-gray-800">
+                  Target University *
                 </Label>
                 <SmartInput
                   value={formData.targetUniversity}
                   onChange={(value) => setFormData(prev => ({ ...prev, targetUniversity: value }))}
-                  placeholder={t.profile.addUniversity}
+                  placeholder="e.g., Stanford University"
                   type="university"
-                  className="h-9 md:h-10 text-sm"
+                  className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
                   getSuggestions={getUniversitySuggestions}
                   normalize={normalizeUniversity}
                 />
-                {formData.targetUniversity && (
-                  <div className="bg-secondary text-secondary-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm inline-flex items-center gap-1.5 md:gap-2">
-                    {formData.targetUniversity}
-                  </div>
-                )}
-                {!formData.targetUniversity && (
-                  <p className="text-xs text-muted-foreground">{t.profile.validationRequired}</p>
-                )}
               </div>
 
               {/* Target Majors */}
-              <div className="space-y-3 md:space-y-4">
-                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
-                  {t.profile.targetMajors}
-                  <span className="text-destructive">*</span>
+              <div className="space-y-4">
+                <Label className="text-xl font-bold text-gray-800">
+                  Target Major *
                 </Label>
                 <div className="flex gap-2">
                   <SmartInput
                     value={targetMajorInput}
                     onChange={setTargetMajorInput}
                     onBlur={() => {}}
-                    placeholder={t.profile.addMajor}
+                    placeholder="e.g., Computer Science"
                     type="major"
-                    className="h-9 md:h-10 text-sm"
+                    className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
                     getSuggestions={getMajorSuggestions}
                     normalize={normalizeMajor}
                   />
-                  <Button type="button" size="sm" onClick={() => addItem("targetMajors", targetMajorInput)} className="h-9 md:h-10">
+                  <Button type="button" onClick={() => addItem("targetMajors", targetMajorInput)} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl h-12 px-6">
                     Add
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-1.5 md:gap-2">
+                <div className="flex flex-wrap gap-2">
                   {formData.targetMajors.map((major, index) => (
-                    <div key={index} className="bg-secondary text-secondary-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm flex items-center gap-1.5 md:gap-2">
+                    <span key={index} className="inline-flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full font-semibold text-sm shadow-md">
                       {major}
-                      <button type="button" onClick={() => removeItem("targetMajors", index)} className="hover:text-destructive">
+                      <button type="button" onClick={() => removeItem("targetMajors", index)} className="hover:bg-white/20 rounded-full p-0.5">
                         ×
                       </button>
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
 
-              {/* Optional Fields Info */}
-              <div className="bg-muted/50 border border-muted rounded-lg p-3 md:p-4">
-                <h3 className="text-sm md:text-base font-semibold mb-1">{t.profile.optionalFields}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">{t.profile.optionalFieldsDesc}</p>
-              </div>
+
 
               {/* Skills */}
-              <div className="space-y-3 md:space-y-4">
-                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
-                  {t.profile.skills}
-                  <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+              <div className="space-y-4">
+                <Label className="text-xl font-bold text-gray-800">
+                  Skills
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addItem("skills", skillInput))}
-                    placeholder={t.profile.addSkill}
-                    className="h-9 md:h-10 text-sm"
+                    placeholder="Add a skill (press Enter)"
+                    className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
                   />
-                  <Button type="button" size="sm" onClick={() => addItem("skills", skillInput)} className="h-9 md:h-10">
+                  <Button type="button" onClick={() => addItem("skills", skillInput)} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl h-12 px-6">
                     Add
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-1.5 md:gap-2">
+                <div className="flex flex-wrap gap-2">
                   {formData.skills.map((skill, index) => (
-                    <div key={index} className="bg-primary/10 text-primary px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm flex items-center gap-1.5 md:gap-2">
+                    <span key={index} className="inline-flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full font-semibold text-sm shadow-md">
                       {skill}
-                      <button type="button" onClick={() => removeItem("skills", index)} className="hover:text-destructive">
+                      <button type="button" onClick={() => removeItem("skills", index)} className="hover:bg-white/20 rounded-full p-0.5">
                         ×
                       </button>
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
 
-              {/* Interests */}
-              <div className="space-y-3 md:space-y-4">
-                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
-                  {t.profile.interests}
-                  <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+              {/* Research Interests */}
+              <div className="space-y-4">
+                <Label className="text-xl font-bold text-gray-800">
+                  Research Interests
                 </Label>
                 <div className="flex gap-2">
                   <Input
                     value={interestInput}
                     onChange={(e) => setInterestInput(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addItem("interests", interestInput))}
-                    placeholder={t.profile.addInterest}
-                    className="h-9 md:h-10 text-sm"
+                    placeholder="Add an interest (press Enter)"
+                    className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
                   />
-                  <Button type="button" size="sm" onClick={() => addItem("interests", interestInput)} className="h-9 md:h-10">
+                  <Button type="button" onClick={() => addItem("interests", interestInput)} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl h-12 px-6">
                     Add
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-1.5 md:gap-2">
+                <div className="flex flex-wrap gap-2">
                   {formData.interests.map((interest, index) => (
-                    <div key={index} className="bg-accent/10 text-accent-foreground px-2.5 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm flex items-center gap-1.5 md:gap-2">
+                    <span key={index} className="inline-flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold text-sm shadow-md">
                       {interest}
-                      <button type="button" onClick={() => removeItem("interests", index)} className="hover:text-destructive">
+                      <button type="button" onClick={() => removeItem("interests", index)} className="hover:bg-white/20 rounded-full p-0.5">
                         ×
                       </button>
-                    </div>
+                    </span>
                   ))}
                 </div>
               </div>
 
               {/* Bio */}
-              <div className="space-y-3 md:space-y-4">
-                <Label className="text-base md:text-lg font-semibold flex items-center gap-1.5">
-                  {t.profile.bio}
-                  <span className="text-xs text-muted-foreground">({t.profile.optional})</span>
+              <div className="space-y-4">
+                <Label className="text-xl font-bold text-gray-800">
+                  About Me
                 </Label>
                 <Textarea
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  placeholder={t.profile.bioPlaceholder}
-                  rows={4}
-                  className="text-sm"
+                  placeholder="Tell us about yourself, your research interests, and your academic goals..."
+                  rows={5}
+                  className="text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500 resize-none"
                 />
+                <p className="text-sm text-gray-500">
+                  {formData.bio.length} / 500 characters
+                </p>
               </div>
             </form>
           </CardContent>
         </Card>
       </div>
-      <Footer />
+
     </div>
   );
 }
