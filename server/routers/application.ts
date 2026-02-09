@@ -9,17 +9,7 @@ export const applicationRouter = router({
       projectId: z.number(), // This is actually matchId from project_matches table
     }))
     .mutation(async ({ ctx, input }) => {
-      // Check if user is admin (admins don't consume credits)
-      const isAdmin = ctx.user.role === "admin";
-      
-      // For non-admin users, check credit balance (estimated cost: 30 credits)
-      const estimatedCost = 30;
-      if (!isAdmin) {
-        const userCredits = await db.getUserCredits(ctx.user.id);
-        if (!userCredits || userCredits.credits < estimatedCost) {
-          throw new Error("Insufficient credits. Please purchase more credits to use this feature.");
-        }
-      }
+      // Credits system removed - feature is now free
       
       // Get student profile and activities
       const profile = await db.getStudentProfile(ctx.user.id);
@@ -114,15 +104,7 @@ Write a complete, ready-to-send application letter in professional format.`;
         content: generatedLetter,
       });
       
-      // Deduct credits for non-admin users
-      if (!isAdmin) {
-        await db.updateUserCreditsBalance(
-          ctx.user.id,
-          -estimatedCost,
-          "consumption",
-          "AI application letter generation"
-        );
-      }
+      // Credits deduction removed - feature is now free
 
       return {
         success: true,

@@ -19,8 +19,8 @@ import {
   InsertNotification,
   announcements,
   InsertAnnouncement,
-  userCredits,
-  creditTransactions,
+  // userCredits, // Removed
+  // creditTransactions, // Removed
   errorLogs
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -478,79 +478,19 @@ export async function getAdminUsers() {
   return db.select().from(users).where(eq(users.role, "admin"));
 }
 
-// ===== Credits Management =====
+// ===== Credits Management - REMOVED =====
+// Credits system has been removed from the application
 
-export async function getUserCredits(userId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  
-  const result = await db.select().from(userCredits).where(eq(userCredits.userId, userId)).limit(1);
-  return result.length > 0 ? result[0] : null;
-}
+// export async function getUserCredits(userId: number) {
+//   const db = await getDb();
+//   if (!db) return null;
+//   const result = await db.select().from(userCredits).where(eq(userCredits.userId, userId)).limit(1);
+//   return result.length > 0 ? result[0] : null;
+// }
 
-export async function createUserCredits(userId: number) {
-  const db = await getDb();
-  if (!db) return null;
-  
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-  await db.insert(userCredits).values({
-    userId,
-    credits: 100,
-    lastResetDate: today,
-    totalConsumed: 0,
-  });
-  
-  return getUserCredits(userId);
-}
-
-export async function updateUserCreditsBalance(userId: number, amount: number, type: 'purchase' | 'consumption' | 'refund', description: string, metadata?: any) {
-  const db = await getDb();
-  if (!db) return null;
-  
-  // Get current credits
-  let credits = await getUserCredits(userId);
-  if (!credits) {
-    credits = await createUserCredits(userId);
-    if (!credits) return null;
-  }
-  
-  const newBalance = credits.credits + amount;
-  
-  if (newBalance < 0) {
-    throw new Error("Insufficient credits");
-  }
-  
-  // Update credits
-  await db.update(userCredits)
-    .set({
-      credits: newBalance,
-      totalConsumed: type === 'consumption' ? credits.totalConsumed + Math.abs(amount) : credits.totalConsumed,
-    })
-    .where(eq(userCredits.userId, userId));
-  
-  // Record transaction
-  await db.insert(creditTransactions).values({
-    userId,
-    type,
-    amount,
-    balanceAfter: newBalance,
-    description,
-    metadata: metadata ? JSON.stringify(metadata) : null,
-  });
-  
-  return getUserCredits(userId);
-}
-
-export async function getCreditTransactions(userId: number, limit: number = 50) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  return db.select()
-    .from(creditTransactions)
-    .where(eq(creditTransactions.userId, userId))
-    .orderBy(desc(creditTransactions.createdAt))
-    .limit(limit);
-}
+// export async function createUserCredits(userId: number) { ... }
+// export async function updateUserCreditsBalance(...) { ... }
+// export async function getCreditTransactions(...) { ... }
 
 // updateStripeCustomerId removed - payment feature not yet launched
 

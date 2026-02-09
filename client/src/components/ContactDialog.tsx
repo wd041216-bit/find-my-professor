@@ -27,11 +27,9 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
   const { user, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [messageType, setMessageType] = useState<"business" | "support" | "purchase">("support");
+  const [messageType, setMessageType] = useState<"business" | "support">("support");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [paymentAccount, setPaymentAccount] = useState("");
-  const [creditAmount, setCreditAmount] = useState("");
 
   const sendMutation = trpc.contact.send.useMutation({
     onSuccess: () => {
@@ -48,21 +46,11 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (messageType === "purchase") {
-      if (!paymentAccount.trim() || !creditAmount.trim()) {
-        toast.error(t.contact.providePaymentInfo);
-        return;
-      }
-      const purchaseSubject = `Credit Purchase Request: ${creditAmount} credits`;
-      const purchaseMessage = `Payment Account: ${paymentAccount}\nCredits Requested: ${creditAmount}\n\nAdditional Notes:\n${message || "None"}`;
-      sendMutation.mutate({ messageType, subject: purchaseSubject, message: purchaseMessage });
-    } else {
-      if (!subject.trim() || !message.trim()) {
-        toast.error(t.contact.fillAllFields);
-        return;
-      }
-      sendMutation.mutate({ messageType, subject, message });
+    if (!subject.trim() || !message.trim()) {
+      toast.error(t.contact.fillAllFields);
+      return;
     }
+    sendMutation.mutate({ messageType, subject, message });
   };
 
   if (!isAuthenticated) {
@@ -113,85 +101,37 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="messageType">{t.contact.messageType}</Label>
-            <Select value={messageType} onValueChange={(value: "business" | "support" | "purchase") => setMessageType(value)}>
+            <Select value={messageType} onValueChange={(value: "business" | "support") => setMessageType(value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="support">{t.contact.problemQuestion}</SelectItem>
                 <SelectItem value="business">{t.contact.businessCooperation}</SelectItem>
-                <SelectItem value="purchase">{t.contact.purchaseCredits}</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          {messageType === "purchase" ? (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="paymentAccount">{t.contact.paymentAccount}</Label>
-                <Input
-                  id="paymentAccount"
-                  placeholder={t.contact.paymentAccountPlaceholder}
-                  value={paymentAccount}
-                  onChange={(e) => setPaymentAccount(e.target.value)}
-                  disabled={sendMutation.isPending}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="creditAmount">{t.contact.creditsToPurchase}</Label>
-                <Input
-                  id="creditAmount"
-                  type="number"
-                  placeholder={t.contact.creditAmountPlaceholder}
-                  value={creditAmount}
-                  onChange={(e) => setCreditAmount(e.target.value)}
-                  disabled={sendMutation.isPending}
-                />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-primary">
-                    {t.contact.pricingInfo}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t.contact.pricingNote}
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="message">{t.contact.additionalNotes}</Label>
-                <Textarea
-                  id="message"
-                  placeholder={t.contact.additionalNotesPlaceholder}
-                  rows={3}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  disabled={sendMutation.isPending}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="subject">{t.contact.subject}</Label>
-                <Input
-                  id="subject"
-                  placeholder={t.contact.subjectPlaceholder}
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  disabled={sendMutation.isPending}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="message">{t.contact.message}</Label>
-                <Textarea
-                  id="message"
-                  placeholder={t.contact.messagePlaceholder}
-                  rows={5}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  disabled={sendMutation.isPending}
-                />
-              </div>
-            </>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="subject">{t.contact.subject}</Label>
+            <Input
+              id="subject"
+              placeholder={t.contact.subjectPlaceholder}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              disabled={sendMutation.isPending}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="message">{t.contact.message}</Label>
+            <Textarea
+              id="message"
+              placeholder={t.contact.messagePlaceholder}
+              rows={5}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              disabled={sendMutation.isPending}
+            />
+          </div>
           <div className="flex justify-end gap-2">
             <Button
               type="button"

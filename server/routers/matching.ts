@@ -3,7 +3,7 @@ import { z } from "zod";
 import * as db from "../db";
 import { generateMatchedProjects, triggerBackgroundCrawler, type UserProfile, type MatchedProject } from "../services/llmMatching";
 // URL generation removed - using LLM-generated URLs directly
-import { deductCredits, checkAndResetCredits } from "../services/credits";
+// Credits system removed
 import { NormalizationService } from "../services/normalization";
 import { getCachedMatches, cacheMatches } from "../services/profileCache";
 import { isSimplifiedProfile, getRandomProjectsFromDatabase, hasSufficientProjects } from "../services/simplifiedMatching";
@@ -478,17 +478,7 @@ export const matchingRouter = router({
       const existingMatches = await db.getUserMatches(ctx.user.id);
       const existingProjectNames = new Set(existingMatches.map(m => m.projectName));
 
-      // Step 5: Check credits first (40 points for refresh, same as initial match)
-      if (ctx.user.role !== 'admin') {
-        const currentCredits = await checkAndResetCredits(ctx.user.id);
-        if (currentCredits < 40) {
-          throw new TRPCError({
-            code: 'FORBIDDEN',
-            message: 'INSUFFICIENT_CREDITS',
-          });
-        }
-        // Don't deduct yet - wait until we successfully get matches
-      }
+      // Credits check removed - feature is now free
 
       // Step 6: Try to get projects from database first (crawler results)
       let matches: MatchedProject[] = [];
@@ -600,10 +590,7 @@ export const matchingRouter = router({
         }
       }
 
-      // Step 7.5: Deduct credits AFTER successfully getting matches
-      if (ctx.user.role !== 'admin') {
-        await deductCredits(ctx.user.id, 40, 'project_refresh');
-      }
+      // Credits deduction removed - feature is now free
 
       // Step 8: Delete old matches and save new ones
       await db.deleteUserMatches(ctx.user.id);

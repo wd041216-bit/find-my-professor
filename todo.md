@@ -405,3 +405,12 @@
 - [x] 在Swipe页面页眉添加Profile入口（允许修改个人资料）
 - [ ] 测试完整用户流程
 - [ ] 保存checkpoint
+
+## 🗑️ 移除Credits积分系统（用户要求）
+- [x] 移除主页页眉的积分余额显示（100的数字徽章）
+- [x] 移除Contact对话框中的购买积分选项
+- [x] 删除credits相关的tRPC API（credits.getBalance等）
+- [x] 删除credits相关的数据库表（user_credits, credit_transactions等）
+- [x] 移除所有消耗积分的限制和逻辑
+- [ ] 测试完整用户流程
+- [ ] 保存checkpoint

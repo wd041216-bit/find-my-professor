@@ -5,9 +5,8 @@ import { getDb } from "../db";
 import { coverLetters, projectMatches, studentProfiles, activities } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { invokeLLM } from "../_core/llm";
-import { deductCredits } from "../services/credits";
-
-const COVER_LETTER_COST = 10; // 10 credits per cover letter generation
+// Credits system removed
+// const COVER_LETTER_COST = 10; // Removed
 
 export const coverLetterRouter = router({
   /**
@@ -28,22 +27,7 @@ export const coverLetterRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Check if user has enough credits (skip for admins)
-      if (ctx.user.role !== "admin") {
-        const result = await deductCredits(
-          userId,
-          COVER_LETTER_COST,
-          "letter_generation",
-          `Generated cover letter for match ${matchId}`
-        );
-
-        if (!result.success) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "INSUFFICIENT_CREDITS",
-          });
-        }
-      }
+      // Credits check removed - feature is now free
 
       // Get the project match
       const match = await db

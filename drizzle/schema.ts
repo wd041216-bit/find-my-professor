@@ -274,43 +274,41 @@ export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = typeof contactMessages.$inferInsert;
 
 /**
- * User credits for daily free quota system
- * - Each user gets 100 credits per day
- * - Credits reset daily at midnight (UTC)
- * - Credits do not accumulate across days
- * - Admins are exempt from credit deductions
+ * User credits for daily free quota system - REMOVED
+ * Credits system has been removed from the application
  */
-export const userCredits = mysqlTable("user_credits", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("user_id").notNull().unique(),
-  credits: int("credits").notNull().default(100), // Current available credits (max 100)
-  lastResetDate: varchar("last_reset_date", { length: 10 }).notNull(), // Date of last credit reset (YYYY-MM-DD)
-  totalConsumed: int("total_consumed").notNull().default(0), // Total credits ever consumed (for statistics)
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+// export const userCredits = mysqlTable("user_credits", {
+//   id: int("id").autoincrement().primaryKey(),
+//   userId: int("user_id").notNull().unique(),
+//   credits: int("credits").notNull().default(100),
+//   lastResetDate: varchar("last_reset_date", { length: 10 }).notNull(),
+//   totalConsumed: int("total_consumed").notNull().default(0),
+//   createdAt: timestamp("createdAt").defaultNow().notNull(),
+//   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+// });
 
-export type UserCredit = typeof userCredits.$inferSelect;
-export type InsertUserCredit = typeof userCredits.$inferInsert;
+// export type UserCredit = typeof userCredits.$inferSelect;
+// export type InsertUserCredit = typeof userCredits.$inferInsert;
 
 /**
- * Credit transactions (purchases and consumptions)
+ * Credit transactions - REMOVED
+ * Credits system has been removed from the application
  */
-export const creditTransactions = mysqlTable("credit_transactions", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("user_id").notNull(),
-  type: mysqlEnum("type", ["purchase", "consumption", "refund"]).notNull(),
-  amount: int("amount").notNull(), // Positive for purchase/refund, negative for consumption
-  balanceAfter: int("balance_after").notNull(), // Balance after this transaction
-  description: text("description"), // Description of the transaction
-  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }), // For purchases
-  relatedFeature: varchar("related_feature", { length: 100 }), // e.g., "resume_parse", "letter_generation"
-  metadata: text("metadata"), // JSON for additional data
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+// export const creditTransactions = mysqlTable("credit_transactions", {
+//   id: int("id").autoincrement().primaryKey(),
+//   userId: int("user_id").notNull(),
+//   type: mysqlEnum("type", ["purchase", "consumption", "refund"]).notNull(),
+//   amount: int("amount").notNull(),
+//   balanceAfter: int("balance_after").notNull(),
+//   description: text("description"),
+//   stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+//   relatedFeature: varchar("related_feature", { length: 100 }),
+//   metadata: text("metadata"),
+//   createdAt: timestamp("createdAt").defaultNow().notNull(),
+// });
 
-export type CreditTransaction = typeof creditTransactions.$inferSelect;
-export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
+// export type CreditTransaction = typeof creditTransactions.$inferSelect;
+// export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
 
 /**
  * University URL cache for LLM-generated URLs
