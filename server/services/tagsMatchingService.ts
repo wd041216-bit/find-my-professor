@@ -3,11 +3,14 @@
  * 计算学生tags和教授tags的相似度
  */
 
+import { convertCoverageToDisplayScore } from './scoreConversionService';
+
 export interface MatchResult {
   professorName: string;
   projectTitle: string;
   professorTags: string[];
-  matchScore: number;  // 0-100
+  matchScore: number;  // 0-100的实际覆盖率（用于排序）
+  displayScore: number;  // 0-100的展示分数（用于展示）
   matchedTags: string[];  // 匹配上的tags
   sourceUrl?: string;
 }
@@ -64,6 +67,7 @@ function calculatePartialMatch(tags1: string[], tags2: string[]): number {
 
 /**
  * 计算匹配分数（0-100）
+ * 使用覆盖率算法：关注学生需求的覆盖程度
  * @param studentTags 学生的研究tags
  * @param professorTags 教授的研究tags
  * @returns 匹配分数（0-100）
@@ -76,16 +80,16 @@ export function calculateMatchScore(
     return 0;
   }
   
-  // 计算Jaccard相似度（权重60%）
-  const jaccardScore = calculateJaccardSimilarity(studentTags, professorTags);
+  // 计算匹配的tags数量（完全匹配）
+  const matchedTags = getMatchedTags(studentTags, professorTags);
+  const matchedCount = matchedTags.length;
   
-  // 计算部分匹配度（权重40%）
-  const partialMatches = calculatePartialMatch(studentTags, professorTags);
-  const maxPossibleMatches = Math.max(studentTags.length, professorTags.length);
-  const partialScore = Math.min(partialMatches / maxPossibleMatches, 1);
+  // 覆盖率 = 匹配tags数 / 学生tags数
+  // 这样关注的是"教授能覆盖学生多少兴趣"
+  const coverageRate = matchedCount / studentTags.length;
   
-  // 综合分数
-  const finalScore = (jaccardScore * 0.6 + partialScore * 0.4) * 100;
+  // 转换为0-100分
+  const finalScore = coverageRate * 100;
   
   return Math.round(finalScore);
 }
@@ -124,6 +128,7 @@ export function rankProfessorsByMatch(
 ): MatchResult[] {
   const results: MatchResult[] = professors.map(prof => {
     const matchScore = calculateMatchScore(studentTags, prof.tags);
+    const displayScore = convertCoverageToDisplayScore(matchScore / 100);
     const matchedTags = getMatchedTags(studentTags, prof.tags);
     
     return {
@@ -131,6 +136,7 @@ export function rankProfessorsByMatch(
       projectTitle: prof.projectTitle,
       professorTags: prof.tags,
       matchScore,
+      displayScore,
       matchedTags,
       sourceUrl: prof.sourceUrl
     };
