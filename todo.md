@@ -352,3 +352,11 @@
 - [x] 更新matchLevelService的等级阈值（优秀≥85，良好75-84，一般60-74，低<60）
 - [x] 测试Da Wei的匹配结果（Top教授显示88分）
 - [ ] 更新前端展示逻辑
+
+## 系统定位调整：从“科研机会匹配”改为“教授匹配”
+- [x] 分析当前系统架构（数据库、服务层、前端）
+- [x] 调整数据模型：从 scraped_projects 迁移到 professors 表（36位教授已迁移）
+- [x] 更新匹配算法返回结果结构（使用professorsService）
+- [x] 修改前端文案：“Research Opportunity” → “Professor”（中英文、SEO、TOS）
+- [x] 更新爬虫逻辑：已在crawlerService中实现教授列表爬取
+- [ ] 测试教授匹配功能

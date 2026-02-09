@@ -19,7 +19,7 @@ export default function TermsOfService() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">2. Description of Service</h2>
             <p>
-              Find My Professor is an online platform that connects students with research opportunities at leading universities and research institutions. The platform uses an intelligent matching algorithm to recommend research projects based on user profiles, academic backgrounds, skills, and research interests.
+              Find My Professor is an online platform that connects students with professors at leading universities and research institutions. The platform uses an intelligent matching algorithm to recommend professors based on user profiles, academic backgrounds, skills, and research interests.
             </p>
           </section>
 
@@ -75,9 +75,9 @@ export default function TermsOfService() {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">8. Research Project Information</h2>
+            <h2 className="text-2xl font-semibold mb-4">8. Professor Information</h2>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Find My Professor provides information about research opportunities sourced from partner universities and institutions</li>
+              <li>Find My Professor provides information about professors sourced from partner universities and institutions</li>
               <li>We strive for accuracy but do not guarantee that all information is current or complete</li>
               <li>Users are responsible for verifying project details directly with the respective institutions</li>
               <li>Find My Professor is not responsible for changes in project availability, requirements, or terms after listing</li>

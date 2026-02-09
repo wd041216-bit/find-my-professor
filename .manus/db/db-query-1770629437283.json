@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `professors` MODIFY COLUMN `university_id` int;\nALTER TABLE `professors` MODIFY COLUMN `department` text;\nALTER TABLE `professors` ADD `university_name` varchar(255);\nALTER TABLE `professors` ADD `major_name` varchar(255);\nALTER TABLE `professors` ADD `tags` json;\nALTER TABLE `professors` ADD `source_url` varchar(500);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute ALTER TABLE `professors` MODIFY COLUMN `university_id` int;\nALTER TABLE `professors` MODIFY COLUMN `department` text;\nALTER TABLE `professors` ADD `university_name` varchar(255);\nALTER TABLE `professors` ADD `major_name` varchar(255);\nALTER TABLE `professors` ADD `tags` json;\nALTER TABLE `professors` ADD `source_url` varchar(500);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 6332
+}
