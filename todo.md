@@ -306,3 +306,23 @@
 - [x] 保存到scraped_projects表
 - [x] 测试端到端流程（成功采集57个教授）
 - [ ] 整合到匹配流程（triggerBackgroundCrawler）
+
+## Tags匹配机制改进
+
+- [x] 修改数据库schema添加tags字段（JSON数组）
+- [x] 运行数据库迁移
+- [x] 修改crawlerService将tags单独存储
+- [x] 清空scraped_projects表旧数据
+- [x] 重新爬取华盛顿大学Information School数据验证tags字段（36个教授）
+- [x] 实现学生tags提取功能（extractStudentTags）
+- [x] 实现基于tags的匹配算法（calculateMatchScore）
+- [ ] 整合到匹配流程（matching.ts）
+- [ ] 端到端测试匹配流程
+
+## Tags词典系统（基于大学+专业）
+- [x] 创建research_tags_dictionary表（包含university和major字段）
+- [x] 从华盛顿大学Information School提取所有tags并去重
+- [x] 统计tags频率并填充词典（151个tags）
+- [x] 修改studentTagsService从词典中选择tags
+- [x] 测试新的词典匹配效果（匹配分数从0提升到22）
+- [x] 集成到主匹配流程（matching.ts Step 6）
