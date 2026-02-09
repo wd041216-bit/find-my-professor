@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
-import { X, Heart, RotateCcw, Sparkles } from 'lucide-react';
+import { X, Heart, RotateCcw, Sparkles, ArrowLeft, Flame } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { Link } from 'wouter';
 
-// Mock data for testing
+// Mock data for testing (email removed for privacy)
 const mockProfessors: Professor[] = [
   {
     id: 1,
@@ -12,7 +13,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Associate Professor",
     department: "Information School",
-    email: "tanumitra@uw.edu",
     personalWebsite: "https://faculty.washington.edu/tanumitra/",
     bio: "I study how AI impacts social media and online communities. My research focuses on understanding algorithmic bias, misinformation, and the role of AI in shaping online discourse.",
     tags: ["machine learning", "natural language processing", "online communities", "algorithmic bias"],
@@ -26,7 +26,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Associate Professor",
     department: "Information School",
-    email: "josephw@uw.edu",
     bio: "My research explores human-AI collaboration, focusing on how people can work effectively with AI systems. I'm interested in crowdsourcing, machine learning, and educational technology.",
     tags: ["artificial intelligence", "machine learning", "crowdsourcing", "human-AI collaboration"],
     displayScore: 88,
@@ -39,7 +38,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Assistant Professor",
     department: "Information School",
-    email: "lingzi@uw.edu",
     bio: "I work on information retrieval, health informatics, and data science. My research aims to develop intelligent systems that can help people find and make sense of health information.",
     tags: ["machine learning", "natural language processing", "data science", "health informatics"],
     displayScore: 78,
@@ -52,7 +50,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Associate Professor",
     department: "Information School",
-    email: "espiro@uw.edu",
     bio: "My research examines online communities and social networks, with a focus on understanding how people coordinate and collaborate in digital spaces.",
     tags: ["online communities", "social networks", "computational social science"],
     displayScore: 71,
@@ -65,7 +62,6 @@ const mockProfessors: Professor[] = [
     majorName: "Information School",
     title: "Professor",
     department: "Information School",
-    email: "dhendry@uw.edu",
     bio: "I research human-computer interaction and user interface design, focusing on how people interact with complex information systems.",
     tags: ["human-computer interaction", "user interface design", "information architecture"],
     displayScore: 62,
@@ -125,27 +121,29 @@ export function Swipe() {
 
   if (currentIndex >= professors.length) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="mb-8">
-            <Sparkles className="w-24 h-24 mx-auto text-purple-500" />
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+              <Sparkles className="w-16 h-16 text-white" />
+            </div>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
             That's all for now!
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-700 mb-8 font-medium">
             You've reviewed all available professors.
             <br />
-            Check out your matches!
+            Check out your matches! 💫
           </p>
           <Button
             size="lg"
             onClick={() => {
-              // Navigate to matches page
               window.location.href = '/matches';
             }}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
           >
+            <Heart className="w-6 h-6 mr-2 fill-white" />
             View My Matches ({likedProfessors.length})
           </Button>
         </div>
@@ -154,19 +152,38 @@ export function Swipe() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex flex-col">
-      {/* Header */}
-      <div className="p-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Find My Professor</h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col">
+      {/* Header with Back Button */}
+      <div className="p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover:bg-purple-100 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back
+            </Button>
+          </Link>
+          <div className="flex items-center gap-2">
+            <Flame className="w-7 h-7 text-orange-500" />
+            <h1 className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Find My Professor
+            </h1>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-semibold text-gray-700 bg-white px-4 py-2 rounded-full shadow-sm">
             {currentIndex + 1} / {professors.length}
           </span>
           <Button
             variant="outline"
             size="sm"
             onClick={() => window.location.href = '/matches'}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 hover:from-purple-700 hover:to-pink-700 font-semibold shadow-md"
           >
+            <Heart className="w-4 h-4 mr-2 fill-white" />
             My Matches ({likedProfessors.length})
           </Button>
         </div>
@@ -174,19 +191,19 @@ export function Swipe() {
 
       {/* Card Stack Container */}
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="relative w-full max-w-md" style={{ height: '600px' }}>
+        <div className="relative w-full max-w-md" style={{ height: '620px' }}>
           {/* Render next 2 cards in background for stack effect */}
           {professors.slice(currentIndex + 1, currentIndex + 3).map((prof, index) => (
             <div
               key={prof.id}
               className="absolute w-full h-full"
               style={{
-                transform: `scale(${1 - (index + 1) * 0.05}) translateY(${(index + 1) * -10}px)`,
+                transform: `scale(${1 - (index + 1) * 0.04}) translateY(${(index + 1) * -8}px)`,
                 zIndex: -index - 1,
-                opacity: 1 - (index + 1) * 0.3,
+                opacity: 1 - (index + 1) * 0.25,
               }}
             >
-              <div className="w-full h-full bg-white rounded-2xl shadow-xl" />
+              <div className="w-full h-full bg-gradient-to-br from-white to-gray-100 rounded-3xl shadow-xl border border-gray-200" />
             </div>
           ))}
 
@@ -202,36 +219,36 @@ export function Swipe() {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="p-8 flex items-center justify-center gap-6">
+      {/* Action Buttons - Tinder style */}
+      <div className="p-8 flex items-center justify-center gap-8">
         <Button
           size="lg"
           variant="outline"
-          className="w-16 h-16 rounded-full border-2 border-red-500 hover:bg-red-50 hover:border-red-600"
+          className="w-20 h-20 rounded-full bg-white border-4 border-red-400 hover:bg-red-50 hover:border-red-500 hover:scale-110 transition-all shadow-xl hover:shadow-2xl"
           onClick={() => handleButtonClick('pass')}
           disabled={!currentProfessor}
         >
-          <X className="w-8 h-8 text-red-500" />
+          <X className="w-10 h-10 text-red-500" strokeWidth={3} />
         </Button>
 
         <Button
           size="lg"
           variant="outline"
-          className="w-14 h-14 rounded-full border-2 border-gray-300 hover:bg-gray-50"
+          className="w-16 h-16 rounded-full bg-white border-3 border-gray-300 hover:bg-gray-50 hover:scale-110 transition-all shadow-lg hover:shadow-xl"
           onClick={handleUndo}
           disabled={currentIndex === 0}
         >
-          <RotateCcw className="w-6 h-6 text-gray-600" />
+          <RotateCcw className="w-7 h-7 text-gray-600" strokeWidth={2.5} />
         </Button>
 
         <Button
           size="lg"
           variant="outline"
-          className="w-16 h-16 rounded-full border-2 border-green-500 hover:bg-green-50 hover:border-green-600"
+          className="w-20 h-20 rounded-full bg-white border-4 border-green-400 hover:bg-green-50 hover:border-green-500 hover:scale-110 transition-all shadow-xl hover:shadow-2xl"
           onClick={() => handleButtonClick('like')}
           disabled={!currentProfessor}
         >
-          <Heart className="w-8 h-8 text-green-500 fill-green-500" />
+          <Heart className="w-10 h-10 text-green-500 fill-green-500" strokeWidth={0} />
         </Button>
       </div>
     </div>

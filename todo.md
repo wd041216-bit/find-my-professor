@@ -370,6 +370,7 @@
 - [x] 创建Swipe页面（主滑动界面+mock数据）
 - [x] 实现左滑/右滑逻辑和动画（卡片堆叠效果）
 - [x] 在主页添加"🔥 Start Swiping"按钮
+- [x] UI全面重构：紫粉橙渐变、移除邮箱、优化滑动手感、添加返回按钮
 - [ ] 创建MyMatches页面（收藏列表）
 - [ ] 修复swipe router的TypeScript类型错误
 - [ ] 将mock数据替换为真实数据（连接tRPC API）
