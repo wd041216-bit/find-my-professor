@@ -428,3 +428,10 @@
   - 个人简介（About Me）
 - [ ] 测试完整用户流程
 - [ ] 保存checkpoint
+
+## 🎨 重新设计标题、封面图和Meta Description（用户要求）
+- [x] 头脑风暴新标题和品牌定位（选择方案一：ProfMatch英文版）
+- [x] 生成Tinder风格的封面图（紫粉橙渐变、教授学生卡片、箭头手势）
+- [ ] 撰写吸引人的Meta Description
+- [ ] 更新网站标题、图片和元数据
+- [ ] 测试并保存checkpoint
