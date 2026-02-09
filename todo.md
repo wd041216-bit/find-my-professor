@@ -286,3 +286,23 @@
 - [ ] 优化图片alt属性
 - [ ] 实施内部链接策略
 - [ ] 优化页面加载速度
+
+## Perplexity搜索策略重构
+
+- [ ] 创建测试脚本验证新的Perplexity搜索策略（按department搜索）
+- [ ] 修改数据库schema支持新的数据结构（项目名称、标签、URL）
+- [ ] 重构Perplexity搜索逻辑实现新策略（降低Token消耗）
+- [ ] 测试华盛顿大学Information School的搜索
+- [ ] 验证数据是否正确保存到数据库
+
+## 数据功能实施（爬虫找教授 + Perplexity生成tags）
+
+- [x] 设计优化策略（爬虫找教授 + Perplexity生成tags）
+- [x] 用Perplexity找faculty页面URL
+- [x] 爬取faculty页面HTML
+- [x] 用LLM提取教授列表
+- [x] 用Perplexity批量生成教授tags
+- [x] 创建crawlerService.ts服务
+- [x] 保存到scraped_projects表
+- [x] 测试端到端流程（成功采集57个教授）
+- [ ] 整合到匹配流程（triggerBackgroundCrawler）

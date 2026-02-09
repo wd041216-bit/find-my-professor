@@ -1,0 +1,35 @@
+{
+  "query": "SELECT professor_name, project_description, source_url FROM scraped_projects LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT professor_name, project_description, source_url FROM scraped_projects LIMIT 5;",
+  "rows": [
+    {
+      "professor_name": "Afra Afsharipour",
+      "project_description": "Research areas: business law, corporate governance, international business law, mergers and acquisitions, cross-border transactions",
+      "source_url": "http://ischool.uw.edu/people/faculty/afra-afsharipour"
+    },
+    {
+      "professor_name": "Ricardo Alaniz",
+      "project_description": "Research areas: information policy, public interest technology, digital equity, community technology access, social justice in tech",
+      "source_url": "http://ischool.uw.edu/people/faculty/ricardo-alaniz"
+    },
+    {
+      "professor_name": "Arjun Anand",
+      "project_description": "Research areas: data science, machine learning, artificial intelligence, information retrieval, fairness in AI",
+      "source_url": "http://ischool.uw.edu/people/faculty/arjun-anand"
+    },
+    {
+      "professor_name": "Jevin West",
+      "project_description": "Research areas: misinformation, science communication, network science, data visualization, human-centered data science",
+      "source_url": "http://ischool.uw.edu/people/faculty/jevin-west"
+    },
+    {
+      "professor_name": "Nam-Joo Cho",
+      "project_description": "Research areas: health informatics, biomedical informatics, patient information seeking, health information behavior, clinical decision support",
+      "source_url": "http://ischool.uw.edu/people/faculty/nam-joo-cho"
+    }
+  ],
+  "messages": [],
+  "stdout": "professor_name\tproject_description\tsource_url\nAfra Afsharipour\tResearch areas: business law, corporate governance, international business law, mergers and acquisitions, cross-border transactions\thttp://ischool.uw.edu/people/faculty/afra-afsharipour\nRicardo Alaniz\tResearch areas: information policy, public interest technology, digital equity, community technology access, social justice in tech\thttp://ischool.uw.edu/people/faculty/ricardo-alaniz\nArjun Anand\tResearch areas: data science, machine learning, artificial intelligence, information retrieval, fairness in AI\thttp://ischool.uw.edu/people/faculty/arjun-anand\nJevin West\tResearch areas: misinformation, science communication, network science, data visualization, human-centered data science\thttp://ischool.uw.edu/people/faculty/jevin-west\nNam-Joo Cho\tResearch areas: health informatics, biomedical informatics, patient information seeking, health information behavior, clinical decision support\thttp://ischool.uw.edu/people/faculty/nam-joo-cho\n",
+  "stderr": "",
+  "execution_time_ms": 1614
+}

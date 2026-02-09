@@ -415,7 +415,7 @@ export const scrapedProjects = mysqlTable("scraped_projects", {
   source: mysqlEnum("source", ["scraped", "llm_generated"]).default("llm_generated"),
   searchScope: mysqlEnum("search_scope", ["university_wide", "major_specific"]).default("major_specific"),
   scrapedAt: timestamp("scraped_at").defaultNow(),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export type ScrapedProject = typeof scrapedProjects.$inferSelect;

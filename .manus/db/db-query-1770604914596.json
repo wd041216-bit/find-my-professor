@@ -1,0 +1,146 @@
+{
+  "query": "SHOW COLUMNS FROM scraped_projects;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SHOW COLUMNS FROM scraped_projects;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "university_name",
+      "Type": "varchar(255)",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "major_name",
+      "Type": "varchar(255)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "degree_level",
+      "Type": "varchar(50)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "all",
+      "Extra": ""
+    },
+    {
+      "Field": "professor_name",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "lab_name",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "research_area",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "project_title",
+      "Type": "varchar(500)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "project_description",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "requirements",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "contact_email",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "source_url",
+      "Type": "varchar(500)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "source",
+      "Type": "enum('scraped','llm_generated')",
+      "Null": "YES",
+      "Key": "",
+      "Default": "llm_generated",
+      "Extra": ""
+    },
+    {
+      "Field": "scraped_at",
+      "Type": "timestamp",
+      "Null": "YES",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    },
+    {
+      "Field": "expires_at",
+      "Type": "timestamp",
+      "Null": "YES",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "created_at",
+      "Type": "timestamp",
+      "Null": "YES",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    },
+    {
+      "Field": "search_scope",
+      "Type": "enum('university_wide','major_specific')",
+      "Null": "YES",
+      "Key": "",
+      "Default": "major_specific",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint(11)\tNO\tPRI\tNULL\tauto_increment\nuniversity_name\tvarchar(255)\tNO\tMUL\tNULL\t\nmajor_name\tvarchar(255)\tNO\t\tNULL\t\ndegree_level\tvarchar(50)\tNO\t\tall\t\nprofessor_name\tvarchar(255)\tYES\t\tNULL\t\nlab_name\tvarchar(255)\tYES\t\tNULL\t\nresearch_area\tvarchar(255)\tYES\t\tNULL\t\nproject_title\tvarchar(500)\tNO\t\tNULL\t\nproject_description\ttext\tYES\t\tNULL\t\nrequirements\ttext\tYES\t\tNULL\t\ncontact_email\tvarchar(255)\tYES\t\tNULL\t\nsource_url\tvarchar(500)\tYES\t\tNULL\t\nsource\tenum('scraped','llm_generated')\tYES\t\tllm_generated\t\nscraped_at\ttimestamp\tYES\t\tCURRENT_TIMESTAMP\t\nexpires_at\ttimestamp\tYES\tMUL\tNULL\t\ncreated_at\ttimestamp\tYES\t\tCURRENT_TIMESTAMP\t\nsearch_scope\tenum('university_wide','major_specific')\tYES\t\tmajor_specific\t\n",
+  "stderr": "",
+  "execution_time_ms": 1835
+}
