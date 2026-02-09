@@ -11,6 +11,7 @@ import { applicationRouter } from "./routers/application";
 // Credits router removed
 import { coverLetterRouter } from "./routers/coverLetter";
 import { errorsRouter } from "./routers/errors";
+import { swipeRouter } from "./routers/swipe";
 // Credits router removed - payment feature not yet launched
 import { NormalizationService } from "./services/normalization";
 import { ScrapingService } from "./services/scraping";
@@ -254,6 +255,7 @@ export const appRouter = router({
   // credits: creditsRouter, // Removed
   coverLetter: coverLetterRouter,
   errors: errorsRouter,
+  swipe: swipeRouter,
 
   notifications: router({
     list: protectedProcedure.query(async ({ ctx }) => {

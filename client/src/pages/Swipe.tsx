@@ -6,65 +6,7 @@ import { Link } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 
-// Mock data for testing (email removed for privacy)
-const mockProfessors: Professor[] = [
-  {
-    id: 1,
-    name: "Dr. Tanu Mitra",
-    universityName: "University of Washington",
-    majorName: "Information School",
-    title: "Associate Professor",
-    department: "Information School",
-    personalWebsite: "https://faculty.washington.edu/tanumitra/",
-    tags: ["machine learning", "natural language processing", "online communities", "algorithmic bias"],
-    displayScore: 88,
-    matchLevel: "excellent",
-  },
-  {
-    id: 2,
-    name: "Dr. Joseph Williams",
-    universityName: "University of Washington",
-    majorName: "Information School",
-    title: "Associate Professor",
-    department: "Information School",
-    tags: ["artificial intelligence", "machine learning", "crowdsourcing", "human-AI collaboration"],
-    displayScore: 88,
-    matchLevel: "excellent",
-  },
-  {
-    id: 3,
-    name: "Dr. Lingzi Hong",
-    universityName: "University of Washington",
-    majorName: "Information School",
-    title: "Assistant Professor",
-    department: "Information School",
-    tags: ["machine learning", "natural language processing", "data science", "health informatics"],
-    displayScore: 78,
-    matchLevel: "good",
-  },
-  {
-    id: 4,
-    name: "Dr. Emma Spiro",
-    universityName: "University of Washington",
-    majorName: "Information School",
-    title: "Associate Professor",
-    department: "Information School",
-    tags: ["online communities", "social networks", "computational social science"],
-    displayScore: 71,
-    matchLevel: "fair",
-  },
-  {
-    id: 5,
-    name: "Dr. David Hendry",
-    universityName: "University of Washington",
-    majorName: "Information School",
-    title: "Professor",
-    department: "Information School",
-    tags: ["human-computer interaction", "user interface design", "information architecture"],
-    displayScore: 62,
-    matchLevel: "fair",
-  },
-];
+// Removed mock data - using real professors from database
 
 export function Swipe() {
   const { user, loading: authLoading } = useAuth();
@@ -72,17 +14,24 @@ export function Swipe() {
     enabled: !!user,
   });
 
-  const [professors, setProfessors] = useState<Professor[]>(mockProfessors);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastAction, setLastAction] = useState<'like' | 'pass' | null>(null);
-
-  const currentProfessor = professors[currentIndex];
-
   // Check if profile is complete
   const isProfileComplete = profile && profile.targetUniversities && profile.targetMajors;
 
+  // Fetch professors from API
+  const { data: professorsData, isLoading: professorsLoading } = trpc.swipe.getProfessorsToSwipe.useQuery(
+    { limit: 10 },
+    { enabled: !!user && !!isProfileComplete }
+  );
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [lastAction, setLastAction] = useState<'like' | 'pass' | null>(null);
+
+  const professors = professorsData?.professors || [];
+
+  const currentProfessor = professors[currentIndex];
+
   // Loading state
-  if (authLoading || profileLoading) {
+  if (authLoading || profileLoading || (isProfileComplete && professorsLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
         <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600"></div>

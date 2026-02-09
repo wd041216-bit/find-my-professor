@@ -23,17 +23,7 @@ export const matchingRouter = router({
     }).optional())
     .mutation(async ({ ctx, input }) => {
     const language = input?.language || 'en';
-    // Step 1: Check credits (40 points for matching, includes normalization)
-    // Skip credit check for admin users
-    if (ctx.user.role !== 'admin') {
-      const currentCredits = await checkAndResetCredits(ctx.user.id);
-      if (currentCredits < 40) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'INSUFFICIENT_CREDITS',
-        });
-      }
-    }
+    // Credits system removed - all features are now free
 
     // Step 2: Get user profile
     const profile = await db.getStudentProfile(ctx.user.id);
@@ -277,11 +267,7 @@ export const matchingRouter = router({
       }
     }
     
-    // Deduct credits uniformly for all search types (40 credits)
-    // All searches cost the same regardless of cache hit, database random, or LLM matching
-    if (ctx.user.role !== 'admin') {
-      await deductCredits(ctx.user.id, 40, 'project_matching');
-    }
+    // Credits system removed - all features are now free
 
     // Step 6.5: Delete old matches for this user to avoid duplicates
     await db.deleteUserMatches(ctx.user.id);

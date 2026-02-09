@@ -82,7 +82,7 @@ export default function Profile() {
         })(),
         bio: profile.bio || "",
       });
-      setAvatarUrl(profile.avatarUrl || "");
+      // Avatar removed - using initials instead
     }
   }, [profile]);
 

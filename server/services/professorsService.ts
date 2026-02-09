@@ -10,6 +10,7 @@ export interface MatchedProfessor {
   name: string;
   universityName: string;
   majorName: string;
+  schoolId?: number | null;
   department?: string | null;
   title?: string | null;
   labName?: string | null;
@@ -24,6 +25,7 @@ export interface MatchedProfessor {
   displayScore?: number;
   matchLevel?: string;
   matchedTags?: string[];
+  schoolImageUrl?: string;
 }
 
 /**
@@ -224,7 +226,7 @@ export async function getProfessorsForSwipe(
     // Extract student tags
     const userProfile = {
       academicLevel: profile.academicLevel || '',
-      gpa: profile.gpa || 0,
+      gpa: profile.gpa ? String(profile.gpa) : undefined,
       skills: profile.skills ? JSON.parse(profile.skills as string) : [],
       interests: profile.interests ? JSON.parse(profile.interests as string) : [],
       bio: profile.bio || '',
@@ -233,8 +235,43 @@ export async function getProfessorsForSwipe(
 
     const studentTags = await extractStudentTags(userProfile, university, major);
 
+    // Convert professors to format expected by rankProfessorsByMatch
+    const professorsForRanking = allProfessors.map(prof => ({
+      professorName: prof.name,
+      projectTitle: prof.title || '',
+      tags: prof.tags || [],
+      sourceUrl: prof.personalWebsite || undefined
+    }));
+
     // Rank professors by match score
-    const rankedProfessors = rankProfessorsByMatch(allProfessors, studentTags);
+    const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
+
+    // Get school images for random selection
+    const { schools, schoolImages } = await import('../../drizzle/schema');
+    const schoolRecords = await db.select().from(schools);
+    const schoolImagesRecords = await db.select().from(schoolImages);
+
+    // Convert MatchResult[] back to MatchedProfessor[] with school images
+    const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
+      const originalProf = allProfessors.find(p => p.name === result.professorName)!;
+      
+      // Find school images for this professor's school
+      const professorSchool = schoolRecords.find(s => s.id === originalProf.schoolId);
+      const schoolImagesList = schoolImagesRecords.filter(img => img.schoolId === originalProf.schoolId);
+      
+      // Randomly select one school image
+      const randomSchoolImage = schoolImagesList.length > 0
+        ? schoolImagesList[Math.floor(Math.random() * schoolImagesList.length)]
+        : null;
+
+      return {
+        ...originalProf,
+        matchScore: result.matchScore,
+        displayScore: result.displayScore,
+        matchedTags: result.matchedTags,
+        schoolImageUrl: randomSchoolImage?.imageUrl || undefined
+      };
+    });
 
     // Return top N professors
     return rankedProfessors.slice(0, limit);
