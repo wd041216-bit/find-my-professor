@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS student_likes (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  student_id INT NOT NULL,\n  professor_id INT NOT NULL,\n  like_type VARCHAR(20) NOT NULL DEFAULT 'like',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_student_professor (student_id, professor_id),\n  FOREIGN KEY (student_id) REFERENCES users(id),\n  FOREIGN KEY (professor_id) REFERENCES professors(id)\n);\n\nCREATE TABLE IF NOT EXISTS student_swipes (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  student_id INT NOT NULL,\n  professor_id INT NOT NULL,\n  action VARCHAR(20) NOT NULL,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_student_professor (student_id, professor_id),\n  FOREIGN KEY (student_id) REFERENCES users(id),\n  FOREIGN KEY (professor_id) REFERENCES professors(id)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute CREATE TABLE IF NOT EXISTS student_likes (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  student_id INT NOT NULL,\n  professor_id INT NOT NULL,\n  like_type VARCHAR(20) NOT NULL DEFAULT 'like',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_student_professor (student_id, professor_id),\n  FOREIGN KEY (student_id) REFERENCES users(id),\n  FOREIGN KEY (professor_id) REFERENCES professors(id)\n);\n\nCREATE TABLE IF NOT EXISTS student_swipes (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  student_id INT NOT NULL,\n  professor_id INT NOT NULL,\n  action VARCHAR(20) NOT NULL,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_student_professor (student_id, professor_id),\n  FOREIGN KEY (student_id) REFERENCES users(id),\n  FOREIGN KEY (professor_id) REFERENCES professors(id)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2258
+}

@@ -26,6 +26,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import Contact from "./pages/Contact";
+import { Swipe } from "./pages/Swipe";
 
 function Router() {
   return (
@@ -36,7 +37,7 @@ function Router() {
       <Route path={"/activities"} component={Activities} />
       <Route path={"/upload-resume"} component={UploadResume} />
       <Route path={"/explore"} component={Explore} />
-      <Route path={"/history"} component={History} />
+      <Route path={"/swipe"} component={Swipe} />      <Route path={"/history"} component={History} />
       <Route path={"/cover-letters"} component={CoverLetters} />
       <Route path={"/project/:id"} component={ProjectDetail} />
       <Route path={"/notifications"} component={Notifications} />

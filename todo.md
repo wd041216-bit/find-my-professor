@@ -360,3 +360,19 @@
 - [x] 修改前端文案：“Research Opportunity” → “Professor”（中英文、SEO、TOS）
 - [x] 更新爬虫逻辑：已在crawlerService中实现教授列表爬取
 - [ ] 测试教授匹配功能
+
+## 🔥 学术版Tinder - Phase 1 核心滑动功能（MVP）
+- [x] 创建student_likes表（学生收藏的教授）
+- [x] 创建student_swipes表（学生滑过的教授记录）
+- [x] 创建tRPC API（swipe router，存在类型错误待修复）
+- [x] 安装framer-motion库
+- [x] 创建ProfessorCard组件（教授卡片UI+滑动动画）
+- [x] 创建Swipe页面（主滑动界面+mock数据）
+- [x] 实现左滑/右滑逻辑和动画（卡片堆叠效果）
+- [x] 在主页添加"🔥 Start Swiping"按钮
+- [ ] 创建MyMatches页面（收藏列表）
+- [ ] 修复swipe router的TypeScript类型错误
+- [ ] 将mock数据替换为真实数据（连接tRPC API）
+- [ ] 删除所有付费相关代码（积分系统、Stripe、价格信息）
+- [ ] 测试完整滑动流程
+- [ ] 保存checkpoint

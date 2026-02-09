@@ -164,3 +164,82 @@ export async function getProfessorById(professorId: number): Promise<MatchedProf
     return null;
   }
 }
+
+/**
+ * 获取用于滑动的教授列表
+ * 根据学生profile计算匹配分数并排序
+ * @param userId 学生ID
+ * @param limit 返回数量限制
+ * @param excludeIds 排除的教授ID列表（已滑过的）
+ * @returns 带匹配分数的教授列表
+ */
+export async function getProfessorsForSwipe(
+  userId: number,
+  limit: number = 10,
+  excludeIds: number[] = []
+): Promise<MatchedProfessor[]> {
+  try {
+    const db = await getDb();
+    if (!db) {
+      console.error('[Professors] Database connection failed');
+      return [];
+    }
+
+    // Import here to avoid circular dependency
+    const { getStudentProfile } = await import('../db');
+    const { extractStudentTags } = await import('./studentTagsService');
+    const { rankProfessorsByMatch } = await import('./tagsMatchingService');
+
+    // Get student profile
+    const profile = await getStudentProfile(userId);
+    if (!profile) {
+      console.error('[Professors] Student profile not found');
+      return [];
+    }
+
+    // Get target university and major
+    const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities as string) : [];
+    const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors as string) : [];
+
+    if (targetUniversities.length === 0 || targetMajors.length === 0) {
+      console.error('[Professors] No target university or major specified');
+      return [];
+    }
+
+    const university = targetUniversities[0];
+    const major = targetMajors[0];
+
+    // Get all professors for this university+major
+    let allProfessors = await getProfessorsFromDatabase(university, major, 1000);
+
+    // Exclude already swiped professors
+    if (excludeIds.length > 0) {
+      allProfessors = allProfessors.filter(prof => !excludeIds.includes(prof.id));
+    }
+
+    if (allProfessors.length === 0) {
+      return [];
+    }
+
+    // Extract student tags
+    const userProfile = {
+      academicLevel: profile.academicLevel || '',
+      gpa: profile.gpa || 0,
+      skills: profile.skills ? JSON.parse(profile.skills as string) : [],
+      interests: profile.interests ? JSON.parse(profile.interests as string) : [],
+      bio: profile.bio || '',
+      activities: [], // Activities are in separate table, skip for now
+    };
+
+    const studentTags = await extractStudentTags(userProfile, university, major);
+
+    // Rank professors by match score
+    const rankedProfessors = rankProfessorsByMatch(allProfessors, studentTags);
+
+    // Return top N professors
+    return rankedProfessors.slice(0, limit);
+  } catch (error) {
+    console.error('[Professors] Error getting professors for swipe:', error);
+    return [];
+  }
+}

@@ -95,12 +95,24 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
               {isAuthenticated ? (
-                <Link href="/dashboard">
-                  <Button size="lg" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8">
-                    {t.home.goToDashboard}
-                    <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
-                  </Button>
-                </Link>
+                <>
+                  <Link href="/swipe">
+                    <Button size="lg" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                      🔥 Start Swiping
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8">
+                      {t.home.goToDashboard}
+                      <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                    </Button>
+                  </Link>
+                  <Link href="/explore" className="w-full sm:w-auto">
+                    <Button size="lg" variant="outline" className="w-full text-base md:text-lg px-6 md:px-8">
+                      {t.home.exploreProjects}
+                    </Button>
+                  </Link>
+                </>
               ) : (
                 <a href={getLoginUrl()} className="w-full sm:w-auto">
                   <Button size="lg" className="w-full text-base md:text-lg px-6 md:px-8">
@@ -109,11 +121,6 @@ export default function Home() {
                   </Button>
                 </a>
               )}
-              <Link href="/explore" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full text-base md:text-lg px-6 md:px-8">
-                  {t.home.exploreProjects}
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

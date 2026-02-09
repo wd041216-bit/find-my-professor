@@ -521,3 +521,37 @@ export const researchTagsDictionary = mysqlTable("research_tags_dictionary", {
 
 export type ResearchTagsDictionary = typeof researchTagsDictionary.$inferSelect;
 export type InsertResearchTagsDictionary = typeof researchTagsDictionary.$inferInsert;
+
+/**
+ * Student likes table
+ * Stores professors that students have liked (swiped right)
+ */
+export const studentLikes = mysqlTable("student_likes", {
+  id: int("id").autoincrement().primaryKey(),
+  studentId: int("student_id").notNull().references(() => users.id),
+  professorId: int("professor_id").notNull().references(() => professors.id),
+  likeType: varchar("like_type", { length: 20 }).notNull().default("like"), // 'like' or 'super_like'
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueStudentProfessor: unique().on(table.studentId, table.professorId),
+}));
+
+export type StudentLike = typeof studentLikes.$inferSelect;
+export type InsertStudentLike = typeof studentLikes.$inferInsert;
+
+/**
+ * Student swipes table
+ * Stores all swipe actions (pass, like, super_like) to avoid showing the same professor twice
+ */
+export const studentSwipes = mysqlTable("student_swipes", {
+  id: int("id").autoincrement().primaryKey(),
+  studentId: int("student_id").notNull().references(() => users.id),
+  professorId: int("professor_id").notNull().references(() => professors.id),
+  action: varchar("action", { length: 20 }).notNull(), // 'pass', 'like', 'super_like'
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueStudentProfessor: unique().on(table.studentId, table.professorId),
+}));
+
+export type StudentSwipe = typeof studentSwipes.$inferSelect;
+export type InsertStudentSwipe = typeof studentSwipes.$inferInsert;
