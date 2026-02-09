@@ -148,6 +148,13 @@
       "when": 1770354361703,
       "tag": "0020_pale_silver_fox",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1770604980028,
+      "tag": "0021_true_gamma_corps",
+      "breakpoints": true
     }
   ]
 }
