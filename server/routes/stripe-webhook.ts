@@ -1,6 +1,7 @@
 import express from "express";
 import Stripe from "stripe";
-import { updateUserCreditsBalance } from "../db";
+// Credits system removed
+// import { updateUserCreditsBalance } from "../db";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -55,19 +56,9 @@ router.post(
             break;
           }
 
-          // Add credits to user account
-          await updateUserCreditsBalance(
-            userId,
-            credits,
-            "purchase",
-            `Purchased ${credits} credits via Stripe`,
-            {
-              stripePaymentIntentId: session.payment_intent,
-              stripeSessionId: session.id,
-            }
-          );
-
-          console.log(`[Webhook] Added ${credits} credits to user ${userId}`);
+          // Credits system removed - no longer adding credits
+          // await updateUserCreditsBalance(...);
+          console.log(`[Webhook] Credits system removed - payment received but no credits added`);
           break;
         }
 

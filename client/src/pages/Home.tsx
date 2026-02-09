@@ -13,9 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const { t } = useLanguage();
-  const { data: creditsData } = trpc.credits.getBalance.useQuery(undefined, {
-    enabled: isAuthenticated,
-  });
+  // Credits system removed
 
   if (loading) {
     return (
@@ -41,14 +39,7 @@ export default function Home() {
           </div>
           <div className="hidden md:flex items-center gap-3 lg:gap-4">
             <ContactDialog />
-            {isAuthenticated && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm">
-                <Coins className="h-5 w-5" />
-                <span className="text-sm font-bold">
-                  {creditsData?.balance ?? 0}
-                </span>
-              </div>
-            )}
+            {/* Credits display removed */}
             <LanguageSwitcher />
             {!isAuthenticated && (
               <a href={getLoginUrl()}>
@@ -58,14 +49,7 @@ export default function Home() {
           </div>
           {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-2">
-            {isAuthenticated && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
-                <Coins className="h-4 w-4" />
-                <span className="text-xs font-bold">
-                  {creditsData?.balance ?? 0}
-                </span>
-              </div>
-            )}
+            {/* Credits display removed */}
             <LanguageSwitcher />
             {!isAuthenticated && (
               <a href={getLoginUrl()}>

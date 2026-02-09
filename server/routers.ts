@@ -8,7 +8,7 @@ import { notifyOwner } from "./_core/notification";
 import { resumeRouter } from "./routers/resume";
 import { matchingRouter } from "./routers/matching";
 import { applicationRouter } from "./routers/application";
-import { creditsRouter } from "./routers/credits";
+// Credits router removed
 import { coverLetterRouter } from "./routers/coverLetter";
 import { errorsRouter } from "./routers/errors";
 // Credits router removed - payment feature not yet launched
@@ -251,7 +251,7 @@ export const appRouter = router({
   resume: resumeRouter,
   matching: matchingRouter,
   application: applicationRouter,
-  credits: creditsRouter,
+  // credits: creditsRouter, // Removed
   coverLetter: coverLetterRouter,
   errors: errorsRouter,
 
