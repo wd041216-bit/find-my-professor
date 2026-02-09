@@ -395,3 +395,13 @@
 - [x] 添加学生信息上传引导流程（在Start Swiping前检查Profile完整性）
 - [ ] 测试完整用户流程
 - [ ] 保存checkpoint
+
+## 🎨 Tinder风格卡片重设计和流程优化（用户要求）
+- [x] 搜索Tinder卡片设计参考
+- [x] 移除页眉的Dashboard和Profile链接（暂时不需要）
+- [x] 重新设计ProfessorCard：大头像/照片占据更大空间填满卡片
+- [x] 将教授信息叠加在头像底部（Tinder风格）
+- [x] 优化Get Started流程：点击后强制先填写Profile
+- [x] 在Swipe页面页眉添加Profile入口（允许修改个人资料）
+- [ ] 测试完整用户流程
+- [ ] 保存checkpoint

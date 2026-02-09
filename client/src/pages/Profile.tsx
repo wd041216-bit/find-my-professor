@@ -86,6 +86,10 @@ export default function Profile() {
   const upsertMutation = trpc.profile.upsert.useMutation({
     onSuccess: () => {
       toast.success(t.common.success);
+      // Redirect to swipe page after successful profile save
+      setTimeout(() => {
+        setLocation('/swipe');
+      }, 1000);
     },
     onError: (error) => {
       toast.error(`${t.common.error}: ${error.message}`);

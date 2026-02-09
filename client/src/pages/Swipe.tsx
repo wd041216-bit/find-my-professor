@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
-import { X, Heart, RotateCcw, Sparkles, ArrowLeft, Flame, User } from 'lucide-react';
+import { X, Heart, RotateCcw, Sparkles, ArrowLeft, Flame, User, UserCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Link } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -213,6 +213,16 @@ export function Swipe() {
           <span className="text-sm font-semibold text-gray-700 bg-white px-4 py-2 rounded-full shadow-sm">
             {currentIndex + 1} / {professors.length}
           </span>
+          <Link href="/profile">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover:bg-pink-100 transition-colors"
+            >
+              <UserCircle className="w-5 h-5 mr-2" />
+              Profile
+            </Button>
+          </Link>
         </div>
       </div>
 
