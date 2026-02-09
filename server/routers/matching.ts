@@ -8,7 +8,7 @@ import { NormalizationService } from "../services/normalization";
 import { getCachedMatches, cacheMatches } from "../services/profileCache";
 import { isSimplifiedProfile, getRandomProjectsFromDatabase, hasSufficientProjects } from "../services/simplifiedMatching";
 import { hasPerplexitySearched } from "../services/perplexitySearchCache";
-import { getProjectsFromScrapedData, hasSufficientScrapedProjects } from "../services/scrapedProjectsService";
+import { getProfessorsFromDatabase, hasSufficientProfessorsData } from "../services/professorsService";
 import { extractStudentTags } from "../services/studentTagsService";
 import { rankProfessorsByMatch } from "../services/tagsMatchingService";
 import { TRPCError } from "@trpc/server";
@@ -132,7 +132,7 @@ export const matchingRouter = router({
     
     if (!isSimplified) {
       // Only use profile cache when scraped_projects has sufficient data (>=50 projects)
-      const hasSufficientData = await hasSufficientScrapedProjects(university, major, 50);
+      const hasSufficientData = await hasSufficientProfessorsData(university, major, 50);
       
       if (hasSufficientData) {
         // Try to get cached matches for detailed profiles
@@ -158,13 +158,13 @@ export const matchingRouter = router({
     
     // Step 6: If no cache hit, try scraped_projects first (Perplexity search results)
     if (matches.length === 0) {
-      console.log(`[Matching] Checking scraped_projects table...`);
+      console.log(`[Matching] Checking professors table...`);
       
-      // Get ALL scraped projects (not limited to 10) for tags matching
-      const allScrapedProjects = await getProjectsFromScrapedData(university, major, 1000);
+      // Get ALL professors (not limited to 10) for tags matching
+      const allProfessors = await getProfessorsFromDatabase(university, major, 1000);
       
-      if (allScrapedProjects.length > 0) {
-        console.log(`[Matching] Found ${allScrapedProjects.length} projects from scraped_projects`);
+      if (allProfessors.length > 0) {
+        console.log(`[Matching] Found ${allProfessors.length} professors from database`);
         
         // Extract student tags from profile using dictionary
         console.log(`[Matching] Extracting student tags using dictionary...`);
@@ -172,19 +172,19 @@ export const matchingRouter = router({
         console.log(`[Matching] Student tags: ${studentTags.join(', ')}`);
         
         // Prepare professors data for matching
-        const professorsForMatching = allScrapedProjects
-          .filter(p => p.tags && Array.isArray(p.tags) && p.tags.length > 0)
-          .map(p => ({
-            professorName: p.professorName || 'Unknown',
-            projectTitle: p.projectName || 'Research Project',
+        const professorsForMatching = allProfessors
+          .filter((p) => p.tags && Array.isArray(p.tags) && p.tags.length > 0)
+          .map((p) => ({
+            professorName: p.name,
+            projectTitle: `${p.name}'s Research`,
             tags: p.tags as string[],
-            sourceUrl: p.url || undefined,
+            sourceUrl: p.sourceUrl || undefined,
             // Keep all original fields for later use
-            lab: p.lab,
-            researchDirection: p.researchDirection,
-            description: p.description,
-            requirements: p.requirements,
-            contactEmail: p.contactEmail,
+            lab: p.labName,
+            researchDirection: p.researchAreas?.join(', '),
+            description: p.bio,
+            requirements: undefined,
+            contactEmail: p.email,
           }));
         
         console.log(`[Matching] ${professorsForMatching.length} professors have valid tags`);
@@ -231,7 +231,7 @@ export const matchingRouter = router({
       
       // Cache the results for future use (only for detailed profiles AND when scraped data is sufficient)
       if (!isSimplified && matches.length > 0) {
-        const hasSufficientData = await hasSufficientScrapedProjects(university, major, 50);
+        const hasSufficientData = await hasSufficientProfessorsData(university, major, 50);
         if (hasSufficientData) {
           const hasSkills = skills && skills.length > 0;
           const hasActivities = activities.length > 0;

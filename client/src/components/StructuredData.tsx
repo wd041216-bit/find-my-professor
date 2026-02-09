@@ -29,7 +29,7 @@ export function StructuredData() {
     '@type': 'WebApplication',
     name: 'Find My Professor',
     applicationCategory: 'EducationalApplication',
-    description: 'AI-powered research opportunity matcher for students. Upload your resume, get matched with professors, and generate application letters instantly.',
+    description: 'AI-powered professor matcher for students. Upload your resume, get matched with top professors, and generate application letters instantly.',
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -55,7 +55,7 @@ export function StructuredData() {
         name: 'How does Find My Professor work?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Find My Professor uses AI to match students with research opportunities based on their academic background, interests, and experience. Simply upload your resume, specify your target university and major, and our AI will find the best matching professors and research projects for you.'
+          text: 'Find My Professor uses AI to match students with professors based on their academic background, interests, and experience. Simply upload your resume, specify your target university and major, and our AI will find the best matching professors for you.'
         }
       },
       {

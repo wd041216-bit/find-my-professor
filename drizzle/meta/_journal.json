@@ -169,6 +169,13 @@
       "when": 1770619616746,
       "tag": "0023_wooden_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1770629415946,
+      "tag": "0024_dazzling_romulus",
+      "breakpoints": true
     }
   ]
 }
