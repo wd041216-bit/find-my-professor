@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Info } from 'lucide-react';
 import { useState } from 'react';
 
 export interface Professor {
@@ -28,6 +28,7 @@ interface ProfessorCardProps {
 export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps) {
   const x = useMotionValue(0);
   const [exitX, setExitX] = useState(0);
+  const [showInfo, setShowInfo] = useState(false);
   
   // Tinder-like rotation (more subtle)
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
@@ -69,59 +70,74 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
       }}
       className="absolute w-full h-full cursor-grab active:cursor-grabbing"
     >
-      <div className="relative w-full h-full bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+      <div className="relative w-full h-full rounded-3xl shadow-2xl overflow-hidden">
         {/* Like/Nope Indicators - Tinder style */}
         <motion.div
           style={{ opacity: likeOpacity }}
-          className="absolute top-12 right-12 z-10 px-8 py-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white font-black text-3xl rounded-2xl rotate-12 shadow-lg"
+          className="absolute top-12 right-12 z-10 px-8 py-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white font-black text-3xl rounded-2xl rotate-12 shadow-lg border-4 border-white"
         >
           LIKE
         </motion.div>
         <motion.div
           style={{ opacity: nopeOpacity }}
-          className="absolute top-12 left-12 z-10 px-8 py-4 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-3xl rounded-2xl -rotate-12 shadow-lg"
+          className="absolute top-12 left-12 z-10 px-8 py-4 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-3xl rounded-2xl -rotate-12 shadow-lg border-4 border-white"
         >
           NOPE
         </motion.div>
 
-        {/* Card Content - Simplified */}
-        <div className="flex flex-col h-full p-8 overflow-y-auto">
-          {/* Header with Avatar */}
-          <div className="flex items-start gap-6 mb-6">
-            {/* Avatar with gradient */}
-            <div className="flex-shrink-0 w-28 h-28 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-              {professor.name.charAt(0)}
-            </div>
-
-            {/* Name and Title */}
-            <div className="flex-1 min-w-0">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                {professor.name}
-              </h2>
-              {professor.title && (
-                <p className="text-lg font-semibold text-gray-700 mb-1">{professor.title}</p>
-              )}
-              <p className="text-base text-gray-600">{professor.department || professor.majorName}</p>
-              <p className="text-base text-gray-500">{professor.universityName}</p>
+        {/* Large Avatar Background - Fills entire card like Tinder */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400">
+          {/* Gradient overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          
+          {/* Large Avatar Circle - Centered */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-64 h-64 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white shadow-2xl border-8 border-white/30">
+              <span className="text-9xl font-black">{professor.name.charAt(0)}</span>
             </div>
           </div>
+        </div>
 
-          {/* Match Score Badge - More prominent */}
-          {professor.displayScore !== undefined && (
-            <div className="mb-8">
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-white rounded-full font-bold text-xl shadow-lg">
-                <Sparkles className="w-6 h-6" />
-                {professor.displayScore}% Match
-              </div>
-            </div>
-          )}
+        {/* Info Toggle Button - Top Right */}
+        <button
+          onClick={() => setShowInfo(!showInfo)}
+          className="absolute top-6 right-6 z-20 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all"
+        >
+          <Info className="w-6 h-6 text-purple-600" />
+        </button>
 
-          {/* Research Interests Tags - More colorful */}
-          {professor.tags && professor.tags.length > 0 && (
-            <div className="mb-6">
+        {/* Bottom Info Overlay - Tinder style */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+          {/* Name and Basic Info */}
+          <div className="mb-4">
+            <h2 className="text-4xl font-black text-white mb-2 drop-shadow-lg">
+              {professor.name}
+              {professor.displayScore !== undefined && (
+                <span className="ml-3 text-2xl">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full">
+                    <Sparkles className="w-5 h-5" />
+                    {professor.displayScore}%
+                  </span>
+                </span>
+              )}
+            </h2>
+            {professor.title && (
+              <p className="text-xl font-semibold text-white/95 drop-shadow-md mb-1">{professor.title}</p>
+            )}
+            <p className="text-lg text-white/90 drop-shadow-md">{professor.department || professor.majorName}</p>
+            <p className="text-lg text-white/85 drop-shadow-md">{professor.universityName}</p>
+          </div>
+
+          {/* Research Interests - Expandable */}
+          {showInfo && professor.tags && professor.tags.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl"
+            >
               <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Research Interests</h3>
               <div className="flex flex-wrap gap-2">
-                {professor.tags.slice(0, 8).map((tag, index) => {
+                {professor.tags.slice(0, 6).map((tag, index) => {
                   const colors = [
                     'bg-gradient-to-r from-blue-400 to-blue-600',
                     'bg-gradient-to-r from-purple-400 to-purple-600',
@@ -135,14 +151,14 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
                   return (
                     <span
                       key={index}
-                      className={`px-4 py-2 ${colorClass} text-white rounded-full text-sm font-semibold shadow-md`}
+                      className={`px-3 py-1.5 ${colorClass} text-white rounded-full text-sm font-semibold shadow-md`}
                     >
                       {tag}
                     </span>
                   );
                 })}
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

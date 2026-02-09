@@ -50,16 +50,7 @@ export default function Home() {
               </div>
             )}
             <LanguageSwitcher />
-            {isAuthenticated ? (
-              <>
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="font-semibold hover:bg-purple-100">{t.nav.dashboard}</Button>
-                </Link>
-                <Link href="/profile">
-                  <Button variant="ghost" size="sm" className="font-semibold hover:bg-pink-100">{t.nav.profile}</Button>
-                </Link>
-              </>
-            ) : (
+            {!isAuthenticated && (
               <a href={getLoginUrl()}>
                 <Button size="sm" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-bold shadow-md">{t.nav.signIn}</Button>
               </a>
