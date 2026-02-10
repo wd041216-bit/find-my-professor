@@ -3,7 +3,7 @@ import { router, protectedProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { studentLikes, studentSwipes, professors } from "../../drizzle/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { getProfessorsForSwipe } from "../services/professorsService";
 
 /**
@@ -14,10 +14,75 @@ export const swipeRouter = router({
    * Get professors for swiping
    * Returns professors sorted by match score, excluding already swiped ones
    */
+  /**
+   * Get filter options (universities and departments)
+   */
+  getFilterOptions: protectedProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      // Get unique universities
+      const universities = await db
+        .selectDistinct({ university: professors.universityName })
+        .from(professors)
+        .where(sql`${professors.universityName} IS NOT NULL AND ${professors.universityName} != ''`)
+        .orderBy(professors.universityName);
+
+      // Get unique departments
+      const departments = await db
+        .selectDistinct({ department: professors.department })
+        .from(professors)
+        .where(sql`${professors.department} IS NOT NULL AND ${professors.department} != ''`)
+        .orderBy(professors.department);
+
+      return {
+        universities: universities.map((u) => u.university).filter(Boolean),
+        departments: departments.map((d) => d.department).filter(Boolean),
+      };
+    }),
+
+  /**
+   * Get departments for a specific university
+   */
+  getDepartmentsByUniversity: protectedProcedure
+    .input(z.object({
+      university: z.string(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      const departments = await db
+        .selectDistinct({ department: professors.department })
+        .from(professors)
+        .where(
+          and(
+            eq(professors.universityName, input.university),
+            sql`${professors.department} IS NOT NULL AND ${professors.department} != ''`
+          )
+        )
+        .orderBy(professors.department);
+
+      return departments.map((d) => d.department).filter(Boolean);
+    }),
+
   getProfessorsToSwipe: protectedProcedure
     .input(z.object({
       limit: z.number().min(1).max(100).default(20),
       offset: z.number().min(0).default(0),
+      university: z.string().optional(),
+      department: z.string().optional(),
     }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
@@ -38,7 +103,14 @@ export const swipeRouter = router({
       const swipedIds = swipedProfessors.map((s) => s.professorId);
 
       // Get professors for this user (with match scores)
-      const matchedProfessors = await getProfessorsForSwipe(userId, input.limit, swipedIds, input.offset);
+      const matchedProfessors = await getProfessorsForSwipe(
+        userId,
+        input.limit,
+        swipedIds,
+        input.offset,
+        input.university,
+        input.department
+      );
 
       return {
         professors: matchedProfessors,

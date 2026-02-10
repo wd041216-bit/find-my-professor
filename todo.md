@@ -581,3 +581,26 @@
   - [x] 移除Swipe.tsx中的所有console.log
 - [x] 测试所有优化功能
 - [x] 保存checkpoint
+
+## 🔍 Swipe页面教授筛选功能
+- [x] 设计筛选功能（按学校、学院筛选）
+- [x] 创建后端API获取筛选选项
+  - [x] 获取所有学校列表（从professors表）
+  - [x] 获取所有学院列表（从professors表）
+  - [x] 支持动态筛选（学校选择后更新学院列表）
+- [x] 修改getProfessorsToSwipe API支持筛选参数
+  - [x] 添加university参数
+  - [x] 添加department参数
+  - [x] 修改查询逻辑应用筛选条件
+- [x] 实现前端筛选UI组件
+  - [x] 创建FilterPanel组件
+  - [x] 添加学校下拉选择器
+  - [x] 添加学院下拉选择器
+  - [x] 添加"Clear Filters"按钮
+  - [x] 添加Apply Filters按钮
+- [x] 集成筛选逻辑到Swipe页面
+  - [x] 添加筛选状态管理
+  - [x] 筛选变化时重置教授列表
+  - [x] 添加Filter按钮到导航栏
+- [x] 测试筛选功能
+- [ ] 保存checkpoint
