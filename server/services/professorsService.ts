@@ -34,7 +34,7 @@ export interface MatchedProfessor {
  */
 
 /**
- * 从professors表获取教授列表
+ * 从professors表获取教授列表（优化版：使用JOIN避免N+1查询）
  * @param university 大学名称
  * @param major 专业名称
  * @param limit 返回数量限制
@@ -52,7 +52,7 @@ export async function getProfessorsFromDatabase(
       return [];
     }
     
-    // 先查询教授数据（使用Drizzle ORM）
+    // 查询教授数据（使用索引加速）
     const professorsList = await db
       .select()
       .from(professors)
@@ -61,7 +61,86 @@ export async function getProfessorsFromDatabase(
       )
       .limit(limit);
     
-    // 为每个教授获取研究领域背景图片
+    if (professorsList.length === 0) {
+      return [];
+    }
+    
+    // 批量获取所有教授的研究领域图片（避免N+1查询）
+    // 1. 收集所有tags
+    const allTags = new Set<string>();
+    for (const prof of professorsList) {
+      if (prof.tags && Array.isArray(prof.tags)) {
+        prof.tags.forEach(tag => {
+          if (tag && typeof tag === 'string') {
+            allTags.add(tag.trim().toLowerCase());
+          }
+        });
+      }
+    }
+    
+    // 2. 批量查询tag映射（一次查询获取所有映射关系）
+    const tagMappingMap = new Map<string, string>();
+    if (allTags.size > 0) {
+      const tagsArray = Array.from(allTags);
+      const placeholders = tagsArray.map((_, i) => `{val${i}}`).join(',');
+      let queryStr = `SELECT LOWER(tag) as tag_lower, research_field_name 
+         FROM research_field_tag_mapping 
+         WHERE LOWER(tag) IN (${placeholders})`;
+      
+      // Replace placeholders with actual values
+      tagsArray.forEach((tag, i) => {
+        queryStr = queryStr.replace(`{val${i}}`, `'${tag.replace(/'/g, "''")}'`);
+      });
+      
+      const tagMappingQuery = sql.raw(queryStr);
+      
+      const tagMappingResult = await db.execute(tagMappingQuery);
+      const tagMappingRows = tagMappingResult[0] as unknown as any[];
+      
+      if (tagMappingRows && tagMappingRows.length > 0) {
+        for (const row of tagMappingRows) {
+          const tagLower = row.tag_lower || row[0];
+          const fieldName = row.research_field_name || row[1];
+          if (tagLower && fieldName) {
+            tagMappingMap.set(tagLower, fieldName);
+          }
+        }
+      }
+    }
+    
+    // 3. 批量查询研究领域图片（一次查询获取所有图片）
+    const researchFields = new Set(tagMappingMap.values());
+    const fieldImageMap = new Map<string, string>();
+    
+    if (researchFields.size > 0) {
+      const fieldsArray = Array.from(researchFields);
+      const placeholders = fieldsArray.map((_, i) => `{val${i}}`).join(',');
+      let imageQueryStr = `SELECT field_name, image_url 
+         FROM research_field_images 
+         WHERE field_name IN (${placeholders})`;
+      
+      // Replace placeholders with actual values
+      fieldsArray.forEach((field, i) => {
+        imageQueryStr = imageQueryStr.replace(`{val${i}}`, `'${field.replace(/'/g, "''")}'`);
+      });
+      
+      const imageQuery = sql.raw(imageQueryStr);
+      
+      const imageResult = await db.execute(imageQuery);
+      const imageRows = imageResult[0] as unknown as any[];
+      
+      if (imageRows && imageRows.length > 0) {
+        for (const row of imageRows) {
+          const fieldName = row.field_name || row[0];
+          const imageUrl = row.image_url || row[1];
+          if (fieldName && imageUrl) {
+            fieldImageMap.set(fieldName, imageUrl);
+          }
+        }
+      }
+    }
+    
+    // 4. 为每个教授分配研究领域图片
     const matchedProfessors: MatchedProfessor[] = [];
     
     for (const prof of professorsList) {
@@ -71,20 +150,13 @@ export async function getProfessorsFromDatabase(
       if (prof.tags && Array.isArray(prof.tags) && prof.tags.length > 0) {
         const tags = prof.tags.map(t => t.trim().toLowerCase()).filter(t => t !== '');
         
-        // 查找每个tag对应的研究领域
+        // 统计每个研究领域出现的次数
         const researchFieldCounts: Record<string, number> = {};
         
         for (const tag of tags) {
-          const result = await db.execute(
-            sql`SELECT research_field_name FROM research_field_tag_mapping WHERE LOWER(tag) = ${tag} LIMIT 1`
-          );
-          const rows = result[0] as unknown as any[];
-          
-          if (rows && rows.length > 0) {
-            const fieldName = rows[0].research_field_name || rows[0][1]; // 兼容两种格式
-            if (fieldName) {
-              researchFieldCounts[fieldName] = (researchFieldCounts[fieldName] || 0) + 1;
-            }
+          const fieldName = tagMappingMap.get(tag);
+          if (fieldName) {
+            researchFieldCounts[fieldName] = (researchFieldCounts[fieldName] || 0) + 1;
           }
         }
         
@@ -99,16 +171,9 @@ export async function getProfessorsFromDatabase(
           }
         }
         
-        // 如果找到了主要研究领域，查找对应的背景图片
+        // 如果找到了主要研究领域，获取对应的背景图片
         if (primaryResearchField) {
-          const imageResult = await db.execute(
-            sql`SELECT image_url FROM research_field_images WHERE field_name = ${primaryResearchField} LIMIT 1`
-          );
-          const imageRows = imageResult[0] as unknown as any[];
-          
-          if (imageRows && imageRows.length > 0) {
-            researchFieldImageUrl = imageRows[0].image_url || imageRows[0][1]; // 兼容两种格式
-          }
+          researchFieldImageUrl = fieldImageMap.get(primaryResearchField);
         }
       }
       
@@ -159,15 +224,13 @@ export async function hasSufficientProfessorsData(
       .select({ count: sql<number>`count(*)` })
       .from(professors)
       .where(
-        sql`LOWER(university_name) = LOWER(${university}) AND LOWER(major_name) = LOWER(${major})`
+        sql`LOWER(${professors.universityName}) = LOWER(${university}) AND LOWER(${professors.majorName}) = LOWER(${major})`
       );
     
-    const count = Number(result[0]?.count || 0);
-    console.log(`[Professors] Data check: ${count} professors (threshold: ${threshold})`);
-    
+    const count = result[0]?.count || 0;
     return count >= threshold;
   } catch (error) {
-    console.error('[Professors] Error checking data sufficiency:', error);
+    console.error('[Professors] Error checking professors data:', error);
     return false;
   }
 }
@@ -212,7 +275,7 @@ export async function getProfessorById(professorId: number): Promise<MatchedProf
 }
 
 /**
- * 获取用于滑动的教授列表
+ * 获取用于滑动的教授列表（优化版：限制查询数量）
  * 根据学生profile计算匹配分数并排序
  * @param userId 学生ID
  * @param limit 返回数量限制
@@ -258,8 +321,10 @@ export async function getProfessorsForSwipe(
     const university = targetUniversities[0];
     const major = targetMajors[0];
 
-    // Get all professors for this university+major
-    let allProfessors = await getProfessorsFromDatabase(university, major, 1000);
+    // 优化：只查询需要的数量（limit * 3，留出排序和筛选的余地）
+    // 而不是查询全部1000个教授
+    const queryLimit = Math.min(limit * 3, 300);
+    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit);
 
     // Apply filters if provided
     if (filterUniversity) {
@@ -305,27 +370,22 @@ export async function getProfessorsForSwipe(
     // Rank professors by match score
     const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
 
-    // School images removed - using research_field_images instead
-
     // Convert MatchResult[] back to MatchedProfessor[] with school images
     const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
       const originalProf = allProfessors.find(p => p.name === result.professorName)!;
       
-      // 使用getProfessorsFromDatabase已经设置好的schoolImageUrl
-      // 不再重新查询，直接使用原有值
+      // 保留原有的schoolImageUrl，不覆盖
       const converted = {
         ...originalProf,
         matchScore: result.matchScore,
         displayScore: result.displayScore,
         matchedTags: result.matchedTags,
-        // 保留原有的schoolImageUrl，不覆盖
       };
       
       return converted;
     });
 
     // Return top N professors with offset support
-    
     return rankedProfessors.slice(offset, offset + limit);
   } catch (error) {
     console.error('[Professors] Error getting professors for swipe:', error);

@@ -20,8 +20,10 @@ export function FilterPanel({ onFilterChange, isOpen, onClose }: FilterPanelProp
   const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>();
   const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>();
 
-  // Get filter options
-  const { data: filterOptions } = trpc.swipe.getFilterOptions.useQuery();
+  // Get filter options (使用5分钟缓存)
+  const { data: filterOptions } = trpc.swipe.getFilterOptions.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000, // 5分钟缓存，期间不会重新请求
+  });
   
   // Get departments for selected university
   const { data: departments } = trpc.swipe.getDepartmentsByUniversity.useQuery(

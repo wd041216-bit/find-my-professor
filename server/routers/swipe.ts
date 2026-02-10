@@ -6,6 +6,7 @@ import { studentLikes, studentSwipes, professors, studentProfiles } from "../../
 import { eq, and, desc, sql } from "drizzle-orm";
 import { getProfessorsForSwipe } from "../services/professorsService";
 import { isMinimalProfile } from "../services/profileCompletenessService";
+import { getCachedFilterOptions, setCachedFilterOptions, getCachedProfileCompleteness, setCachedProfileCompleteness } from "../services/cacheService";
 
 /**
  * Swipe router - handles Tinder-style professor matching
@@ -20,6 +21,15 @@ export const swipeRouter = router({
    */
   getFilterOptions: protectedProcedure
     .query(async () => {
+      // 检查缓存
+      const cached = getCachedFilterOptions();
+      if (cached) {
+        return {
+          universities: cached.universities,
+          departments: cached.departments,
+        };
+      }
+      
       const db = await getDb();
       if (!db) {
         throw new TRPCError({
@@ -42,9 +52,15 @@ export const swipeRouter = router({
         .where(sql`${professors.department} IS NOT NULL AND ${professors.department} != ''`)
         .orderBy(professors.department);
 
+      const universitiesList = universities.map((u) => u.university).filter(Boolean) as string[];
+      const departmentsList = departments.map((d) => d.department).filter(Boolean) as string[];
+      
+      // 设置缓存
+      setCachedFilterOptions(universitiesList, departmentsList);
+      
       return {
-        universities: universities.map((u) => u.university).filter(Boolean),
-        departments: departments.map((d) => d.department).filter(Boolean),
+        universities: universitiesList,
+        departments: departmentsList,
       };
     }),
 
@@ -95,14 +111,22 @@ export const swipeRouter = router({
       }
       const userId = ctx.user.id;
 
-      // Get student profile to check if it's minimal
-      const profile = await db
-        .select()
-        .from(studentProfiles)
-        .where(eq(studentProfiles.userId, userId))
-        .limit(1);
+      // 检查缓存的profile完整度
+      let isMinimal = getCachedProfileCompleteness(userId);
       
-      const isMinimal = profile.length > 0 ? isMinimalProfile(profile[0]) : true;
+      if (isMinimal === null) {
+        // 缓存未命中，查询数据库
+        const profile = await db
+          .select()
+          .from(studentProfiles)
+          .where(eq(studentProfiles.userId, userId))
+          .limit(1);
+        
+        isMinimal = profile.length > 0 ? isMinimalProfile(profile[0]) : true;
+        
+        // 设置缓存
+        setCachedProfileCompleteness(userId, isMinimal);
+      }
 
       // Get list of already swiped professor IDs
       const swipedProfessors = await db
