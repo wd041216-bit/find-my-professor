@@ -91,3 +91,71 @@ export function clearProfileCompletenessCache(userId: number): void {
 export function clearAllProfileCompletenessCache(): void {
   profileCompletenessCache.clear();
 }
+
+// 学生tags缓存
+interface StudentTagsCache {
+  tags: string[];
+  timestamp: number;
+}
+
+const studentTagsCache = new Map<string, StudentTagsCache>();
+const STUDENT_TAGS_CACHE_TTL = 10 * 60 * 1000; // 10分钟缓存（Profile不常变）
+
+/**
+ * 获取缓存的学生tags
+ * @param userId 用户ID
+ * @param university 大学名称
+ * @param major 专业名称
+ */
+export function getCachedStudentTags(userId: number, university: string, major: string): string[] | null {
+  const cacheKey = `${userId}:${university}:${major}`;
+  const cached = studentTagsCache.get(cacheKey);
+  if (!cached) return null;
+  
+  // 检查缓存是否过期
+  const now = Date.now();
+  if (now - cached.timestamp > STUDENT_TAGS_CACHE_TTL) {
+    studentTagsCache.delete(cacheKey);
+    return null;
+  }
+  
+  return cached.tags;
+}
+
+/**
+ * 设置学生tags缓存
+ * @param userId 用户ID
+ * @param university 大学名称
+ * @param major 专业名称
+ * @param tags 学生tags
+ */
+export function setCachedStudentTags(userId: number, university: string, major: string, tags: string[]): void {
+  const cacheKey = `${userId}:${university}:${major}`;
+  studentTagsCache.set(cacheKey, {
+    tags,
+    timestamp: Date.now(),
+  });
+}
+
+/**
+ * 清除特定用户的学生tags缓存
+ * @param userId 用户ID
+ */
+export function clearStudentTagsCache(userId: number): void {
+  // 清除所有以userId开头的缓存
+  const keysToDelete: string[] = [];
+  const allKeys = Array.from(studentTagsCache.keys());
+  for (const key of allKeys) {
+    if (key.startsWith(`${userId}:`)) {
+      keysToDelete.push(key);
+    }
+  }
+  keysToDelete.forEach(key => studentTagsCache.delete(key));
+}
+
+/**
+ * 清除所有学生tags缓存
+ */
+export function clearAllStudentTagsCache(): void {
+  studentTagsCache.clear();
+}

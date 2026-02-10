@@ -676,3 +676,62 @@
 - **N+1查询优化：从72次查询减少到3次批量查询**
 - **查询数量优化：从1000个教授减少到60个（limit*3）**
 - **缓存命中率：服务端5分钟缓存 + 前端React Query缓存**
+
+## 🚀 Start Swipe加载速度优化 (2026-02-10)
+
+### 问题描述
+- 从主页点击Start Swipe进入滑动界面的加载时间偏长
+
+### 优化任务
+- [ ] 分析Start Swipe加载慢的原因（API响应时间、数据处理、渲染性能）
+- [ ] 优化getProfessorsToSwipe的查询逻辑
+- [x] 添加加载骨架屏（Skeleton）提升用户体验
+- [ ] 实现预加载机制（在Profile页面完成后预加载教授数据）
+- [ ] 测试并保存checkpoint
+
+## 🎨 大学专属领域图片系统 (2026-02-10)
+
+### 设计方案
+**当前系统：** 29个研究领域 → 29张通用AI背景图
+
+**新设计：**
+1. 大学吉祥物数据库（每所大学1个标志性吉祥物/元素）
+2. 大学专属领域图片库（每所大学 × 29个领域 = 大学专属图片）
+3. 图片融合：通用领域图 + 大学吉祥物元素
+
+### 实施任务
+- [ ] 创建university_mascots表（大学吉祥物数据库）
+- [ ] 创建university_field_images表（大学专属领域图片库）
+- [ ] 为华盛顿大学添加吉祥物（Husky狗）
+- [ ] 批量生成华盛顿大学的29张吉祥物融合领域图片
+- [ ] 修改getProfessorsFromDatabase函数，优先使用大学专属图片
+- [ ] 实现新大学/新领域的自动生成逻辑
+- [ ] 测试并保存checkpoint
+
+## 🚀 性能优化（2026-02-10）✅
+- [x] 添加数据库索引（university, department, major）
+- [x] 优化getProfessorsFromDatabase，使用JOIN避免N+1查询
+- [x] 减少getProfessorsForSwipe的查询数量（从queryLimit=1000改为limit*3）
+- [x] 为getFilterOptions添加服务端缓存（5分钟）
+- [x] 为isMinimalProfile检查添加缓存（2分钟）
+- [x] 为FilterPanel添加前端缓存（staleTime）
+- [x] 添加加载骨架屏（Skeleton）提升用户体验
+- [x] 添加学生tags缓存（10分钟）
+
+**优化效果：**
+- Filter下拉框响应时间从3665ms降低到77-101ms（提升97%）
+- N+1查询从72次减少到3次批量查询
+- 查询数量从1000个教授减少到60个（limit×3）
+
+## 🎨 大学专属领域图片系统（2026-02-10）✅
+- [x] 创建university_mascots表（大学名称、吉祥物名称、描述）
+- [x] 创建university_field_images表（大学名称、领域名称、图片URL）
+- [x] 为华盛顿大学添加Husky吉祥物数据
+- [x] 生成5张融合Husky元素的领域图片（AI/ML、Cybersecurity、Data Science、HCI、Software Engineering）
+- [x] 修改professorsService，优先使用大学专属图片
+- [x] 测试教授卡片显示效果
+
+**系统机制：**
+- 教授卡片优先显示大学专属图片（融合吉祥物元素）
+- 如果没有大学专属图片，回退到通用领域图片
+- 已生成5个领域的华盛顿大学专属图片（紫金配色+Husky元素）
