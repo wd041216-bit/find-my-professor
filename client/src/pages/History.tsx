@@ -301,20 +301,20 @@ export default function History() {
                     {selectedProfessor.professor.email}
                   </a>
                 )}
-                {selectedProfessor.professor.personal_homepage && (
+                {selectedProfessor.professor.personalWebsite && (
                   <a
-                    href={selectedProfessor.professor.personal_homepage}
+                    href={selectedProfessor.professor.personalWebsite}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
                   >
                     <Globe className="h-4 w-4" />
-                    Personal Homepage
+                    Personal Website
                   </a>
                 )}
-                {selectedProfessor.professor.lab_website && (
+                {selectedProfessor.professor.labWebsite && (
                   <a
-                    href={selectedProfessor.professor.lab_website}
+                    href={selectedProfessor.professor.labWebsite}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
@@ -322,6 +322,9 @@ export default function History() {
                     <FlaskConical className="h-4 w-4" />
                     Lab Website
                   </a>
+                )}
+                {!selectedProfessor.professor.email && !selectedProfessor.professor.personalWebsite && !selectedProfessor.professor.labWebsite && (
+                  <p className="text-sm text-muted-foreground">No contact information available</p>
                 )}
               </div>
             </div>
