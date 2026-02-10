@@ -1,72 +1,82 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, Search, Sparkles } from "lucide-react";
-import { MobileNav } from "@/components/MobileNav";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { ArrowLeft, Loader2, Heart, Mail, Globe, FlaskConical, Sparkles, X, ExternalLink, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { CoverLetterDialog } from "@/components/CoverLetterDialog";
 import { toast } from "sonner";
 
 export default function History() {
   const { user, loading: authLoading } = useAuth();
   const [, setLocation] = useLocation();
-  const { t } = useLanguage();
-  const [showLetterDialog, setShowLetterDialog] = useState(false);
+  const [selectedProfessor, setSelectedProfessor] = useState<any>(null);
+  const [showDetailDialog, setShowDetailDialog] = useState(false);
+  const [showCoverLetterDialog, setShowCoverLetterDialog] = useState(false);
   const [generatingLetter, setGeneratingLetter] = useState(false);
-  const [currentLetter, setCurrentLetter] = useState<{
-    content: string;
-    projectName: string;
-    professorName: string;
-    university: string;
-  } | null>(null);
+  const [coverLetterContent, setCoverLetterContent] = useState("");
 
-  const generateLetterMutation = trpc.coverLetter.generate.useMutation();
-
-  // Fetch match history
-  const { data: matchHistory = [], isLoading } = trpc.matching.getMatchHistory.useQuery(undefined, {
+  // Fetch liked professors
+  const { data: likedProfessors = [], isLoading, refetch } = trpc.swipe.getMyMatches.useQuery(undefined, {
     enabled: !!user,
   });
 
-  const handleGenerateLetter = async (match: any) => {
+  // Unlike professor mutation
+  const unlikeMutation = trpc.swipe.unlikeProfessor.useMutation({
+    onSuccess: () => {
+      toast.success("Removed from matches");
+      refetch();
+    },
+    onError: () => {
+      toast.error("Failed to remove match");
+    },
+  });
+
+  // Cover letter generation mutation
+  const generateLetterMutation = trpc.coverLetter.generateForProfessor.useMutation();
+
+  const handleViewDetails = (match: any) => {
+    setSelectedProfessor(match);
+    setShowDetailDialog(true);
+  };
+
+  const handleGenerateCoverLetter = async (match: any) => {
+    setSelectedProfessor(match);
+    setShowCoverLetterDialog(true);
     setGeneratingLetter(true);
-    setShowLetterDialog(true);
-    setCurrentLetter({
-      content: "",
-      projectName: match.projectName,
-      professorName: match.professorName,
-      university: match.university,
-    });
+    setCoverLetterContent("");
 
     try {
       const result = await generateLetterMutation.mutateAsync({
-        matchId: match.id,
-        tone: "formal",
+        professorId: match.professor.id,
       });
 
-      setCurrentLetter({
-        content: result.content,
-        projectName: result.projectName,
-        professorName: result.professorName,
-        university: result.university,
-      });
+      setCoverLetterContent(result.content);
     } catch (error: any) {
-      toast.error(t.coverLetter?.generateFailed || "文书生成失败");
-      setShowLetterDialog(false);
+      toast.error("Failed to generate cover letter");
+      setShowCoverLetterDialog(false);
     } finally {
       setGeneratingLetter(false);
     }
   };
 
+  const handleUnlike = (professorId: number) => {
+    if (confirm("Remove this professor from your matches?")) {
+      unlikeMutation.mutate({ professorId });
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard!");
+  };
+
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+        <Loader2 className="h-12 w-12 animate-spin text-purple-600" />
       </div>
     );
   }
@@ -77,89 +87,113 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container flex h-14 md:h-16 items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+      {/* Header */}
+      <div className="p-4 md:p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
+        <div className="flex items-center gap-2 md:gap-4">
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover:bg-purple-100 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 md:mr-2" />
+              <span className="hidden md:inline">Back</span>
+            </Button>
+          </Link>
           <div className="flex items-center gap-2">
-            <MobileNav />
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">{t.common.back}</span>
-              </Button>
-            </Link>
+            <Heart className="w-6 h-6 md:w-7 md:h-7 text-pink-500 fill-pink-500" />
+            <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Match History
+            </h1>
           </div>
-          <h1 className="text-lg md:text-xl font-bold">{t.dashboard.matchHistory || "Match History"}</h1>
-          <LanguageSwitcher />
         </div>
-      </nav>
+        <Badge variant="secondary" className="text-sm font-semibold">
+          {likedProfessors.length} {likedProfessors.length === 1 ? "Match" : "Matches"}
+        </Badge>
+      </div>
 
-      <main className="container py-6 md:py-8">
-        {matchHistory.length === 0 ? (
-          <Card>
+      {/* Main Content */}
+      <main className="container py-6 md:py-8 max-w-4xl">
+        {likedProfessors.length === 0 ? (
+          <Card className="border-2 border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12 md:py-16">
-              <Search className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{t.dashboard.noMatches || "No matches yet"}</h3>
+              <Heart className="h-16 w-16 text-gray-300 mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No matches yet</h3>
               <p className="text-muted-foreground mb-6 text-center max-w-md">
-                {t.dashboard.searchProjects || "Start searching for research projects to see your match history"}
+                Start swiping to find professors that match your research interests!
               </p>
-              <Link href="/explore">
-                <Button>{t.dashboard.searchProjects || "Search Projects"}</Button>
+              <Link href="/swipe">
+                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                  <Heart className="w-4 h-4 mr-2" />
+                  Start Swiping
+                </Button>
               </Link>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-muted-foreground">
-                {matchHistory.length} {t.dashboard.matches || "matches"}
-              </p>
-            </div>
-
-            {matchHistory.map((match: any) => (
-              <Card key={match.id} className="hover:shadow-md transition-shadow">
+          <div className="grid gap-4 md:gap-6">
+            {likedProfessors.map((match: any) => (
+              <Card key={match.id} className="hover:shadow-lg transition-all duration-300 bg-white/90 backdrop-blur-sm">
                 <CardHeader className="pb-3">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-lg mb-2">{match.projectName}</CardTitle>
+                      <CardTitle className="text-xl mb-2 flex items-center gap-2">
+                        {match.professor.name}
+                        {match.likeType === "super_like" && (
+                          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                            ⭐ Super Like
+                          </Badge>
+                        )}
+                      </CardTitle>
                       <div className="space-y-1 text-sm text-muted-foreground">
-                        <p className="font-medium">{match.professorName}</p>
-                        {match.lab && <p className="truncate">{match.lab}</p>}
-                        <p>{match.university}</p>
+                        <p className="font-medium">{match.professor.title || "Professor"}</p>
+                        {match.professor.majorName && <p>{match.professor.majorName}</p>}
+                        <p className="font-semibold text-purple-600">{match.professor.university}</p>
                       </div>
                     </div>
-                    <Badge variant="secondary" className="self-start whitespace-nowrap">
-                      {t.explore.matchScore || "匹配分数"}: {match.matchScore}%
-                    </Badge>
+                    <div className="flex flex-col gap-2">
+                      {match.matchScore && (
+                        <Badge variant="secondary" className="self-start whitespace-nowrap bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-bold">
+                          {match.matchScore}% Match
+                        </Badge>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        Liked {new Date(match.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Research Direction */}
-                  <div>
-                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                      <Search className="h-4 w-4" />
-                      {t.explore.researchDirection || "研究方向"}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">{match.researchDirection}</p>
-                  </div>
-
-                  {/* Match Reason */}
-                  {match.matchReasons && (
+                  {/* Research Field */}
+                  {match.professor.research_field && (
                     <div>
-                      <h4 className="font-semibold text-sm mb-2">{t.explore.matchReason || "匹配原因"}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {(() => {
-                          try {
-                            const reasons = typeof match.matchReasons === 'string' 
-                              ? JSON.parse(match.matchReasons) 
-                              : match.matchReasons;
-                            return Array.isArray(reasons) && reasons.length > 0 ? reasons[0] : "暂无匹配原因";
-                          } catch (e) {
-                            return "暂无匹配原因";
-                          }
-                        })()}
-                      </p>
+                      <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                        <FlaskConical className="h-4 w-4 text-purple-600" />
+                        Research Field
+                      </h4>
+                      <Badge variant="outline" className="text-sm">
+                        {match.professor.research_field}
+                      </Badge>
+                    </div>
+                  )}
+
+                  {/* Research Tags */}
+                  {match.professor.tags && match.professor.tags.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2">Research Interests</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {match.professor.tags.slice(0, 5).map((tag: string, index: number) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {match.professor.tags.length > 5 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{match.professor.tags.length - 5} more
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -168,23 +202,30 @@ export default function History() {
                     <Button
                       size="sm"
                       variant="default"
-                      onClick={() => handleGenerateLetter(match)}
-                      className="gap-2"
+                      onClick={() => handleViewDetails(match)}
+                      className="gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      View Details
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleGenerateCoverLetter(match)}
+                      className="gap-2 border-purple-300 hover:bg-purple-50"
                     >
                       <Sparkles className="h-4 w-4" />
-                      {t.coverLetter?.title || "生成文书"}
+                      Generate Cover Letter
                     </Button>
-                    {match.url && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        asChild
-                      >
-                        <a href={match.url} target="_blank" rel="noopener noreferrer">
-                          {t.explore.viewDetails || "查看详情"}
-                        </a>
-                      </Button>
-                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleUnlike(match.professor.id)}
+                      className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Remove
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -193,18 +234,140 @@ export default function History() {
         )}
       </main>
 
-      <Footer />
+      {/* Professor Detail Dialog */}
+      <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              {selectedProfessor?.professor.name}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedProfessor && (
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Position</h4>
+                <p className="text-muted-foreground">
+                  {selectedProfessor.professor.title || "Professor"}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2">Institution</h4>
+                <p className="text-muted-foreground">
+                  {selectedProfessor.professor.majorName && (
+                    <>{selectedProfessor.professor.majorName}, </>
+                  )}
+                  {selectedProfessor.professor.university}
+                </p>
+              </div>
+
+              {selectedProfessor.professor.research_field && (
+                <div>
+                  <h4 className="font-semibold mb-2">Research Field</h4>
+                  <Badge>{selectedProfessor.professor.research_field}</Badge>
+                </div>
+              )}
+
+              {selectedProfessor.professor.tags && selectedProfessor.professor.tags.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Research Interests</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProfessor.professor.tags.map((tag: string, index: number) => (
+                      <Badge key={index} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedProfessor.professor.bio && (
+                <div>
+                  <h4 className="font-semibold mb-2">Bio</h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {selectedProfessor.professor.bio}
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-2 pt-4 border-t">
+                <h4 className="font-semibold mb-2">Contact Information</h4>
+                {selectedProfessor.professor.email && (
+                  <a
+                    href={`mailto:${selectedProfessor.professor.email}`}
+                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
+                  >
+                    <Mail className="h-4 w-4" />
+                    {selectedProfessor.professor.email}
+                  </a>
+                )}
+                {selectedProfessor.professor.personal_homepage && (
+                  <a
+                    href={selectedProfessor.professor.personal_homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
+                  >
+                    <Globe className="h-4 w-4" />
+                    Personal Homepage
+                  </a>
+                )}
+                {selectedProfessor.professor.lab_website && (
+                  <a
+                    href={selectedProfessor.professor.lab_website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
+                  >
+                    <FlaskConical className="h-4 w-4" />
+                    Lab Website
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Cover Letter Dialog */}
-      <CoverLetterDialog
-        open={showLetterDialog}
-        onOpenChange={setShowLetterDialog}
-        content={currentLetter?.content || ""}
-        projectName={currentLetter?.projectName || ""}
-        professorName={currentLetter?.professorName || ""}
-        university={currentLetter?.university || ""}
-        loading={generatingLetter}
-      />
+      <Dialog open={showCoverLetterDialog} onOpenChange={setShowCoverLetterDialog}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-yellow-500" />
+              AI-Generated Cover Letter
+            </DialogTitle>
+          </DialogHeader>
+          {generatingLetter ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-12 w-12 animate-spin text-purple-600 mb-4" />
+              <p className="text-muted-foreground">Generating your personalized cover letter...</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-lg p-6 border">
+                <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+                  {coverLetterContent}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => copyToClipboard(coverLetterContent)}
+                  className="flex-1"
+                >
+                  Copy to Clipboard
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCoverLetterDialog(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

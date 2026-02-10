@@ -28,6 +28,9 @@ export function Swipe() {
 
   const professors = professorsData?.professors || [];
 
+  // Swipe mutation
+  const swipeMutation = trpc.swipe.swipe.useMutation();
+
   const currentProfessor = professors[currentIndex];
 
   // Loading state
@@ -70,11 +73,15 @@ export function Swipe() {
   }
 
   const handleSwipe = (direction: 'left' | 'right', professor: Professor) => {
-    if (direction === 'right') {
-      setLastAction('like');
-    } else {
-      setLastAction('pass');
-    }
+    const action = direction === 'right' ? 'like' : 'pass';
+    setLastAction(action);
+
+    // Save swipe to database
+    swipeMutation.mutate({
+      professorId: professor.id,
+      action,
+      matchScore: professor.matchScore,
+    });
 
     // Move to next professor after a short delay
     setTimeout(() => {
@@ -86,11 +93,14 @@ export function Swipe() {
   const handleButtonClick = (action: 'pass' | 'like') => {
     if (!currentProfessor) return;
 
-    if (action === 'like') {
-      setLastAction('like');
-    } else {
-      setLastAction('pass');
-    }
+    setLastAction(action);
+
+    // Save swipe to database
+    swipeMutation.mutate({
+      professorId: currentProfessor.id,
+      action,
+      matchScore: currentProfessor.matchScore,
+    });
 
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
@@ -139,27 +149,27 @@ export function Swipe() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col">
       {/* Header with Back Button */}
-      <div className="p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
-        <div className="flex items-center gap-4">
+      <div className="p-4 md:p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
+        <div className="flex items-center gap-2 md:gap-4">
           <Link href="/">
             <Button
               variant="ghost"
               size="sm"
               className="hover:bg-purple-100 transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back
+              <ArrowLeft className="w-5 h-5 md:mr-2" />
+              <span className="hidden md:inline">Back</span>
             </Button>
           </Link>
           <div className="flex items-center gap-2">
-            <Flame className="w-7 h-7 text-orange-500" />
-            <h1 className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <Flame className="w-6 h-6 md:w-7 md:h-7 text-orange-500" />
+            <h1 className="hidden md:block text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               Find My Professor
             </h1>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-semibold text-gray-700 bg-white px-4 py-2 rounded-full shadow-sm">
+        <div className="flex items-center gap-2 md:gap-4">
+          <span className="text-xs md:text-sm font-semibold text-gray-700 bg-white px-3 md:px-4 py-1.5 md:py-2 rounded-full shadow-sm">
             {currentIndex + 1} / {professors.length}
           </span>
           <Link href="/profile">
@@ -168,8 +178,8 @@ export function Swipe() {
               size="sm"
               className="hover:bg-pink-100 transition-colors"
             >
-              <UserCircle className="w-5 h-5 mr-2" />
-              Profile
+              <UserCircle className="w-5 h-5 md:mr-2" />
+              <span className="hidden md:inline">Profile</span>
             </Button>
           </Link>
         </div>

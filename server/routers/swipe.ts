@@ -52,6 +52,7 @@ export const swipeRouter = router({
     .input(z.object({
       professorId: z.number(),
       action: z.enum(["pass", "like", "super_like"]),
+      matchScore: z.number().optional(), // Match score at the time of swiping
     }))
     .mutation(async (opts) => {
       const { ctx, input } = opts;
@@ -95,9 +96,11 @@ export const swipeRouter = router({
           studentId: userId,
           professorId: input.professorId,
           likeType: input.action,
+          matchScore: input.matchScore || null,
         }).onDuplicateKeyUpdate({
           set: {
             likeType: input.action,
+            matchScore: input.matchScore || null,
           },
         });
       }
@@ -125,6 +128,7 @@ export const swipeRouter = router({
           id: studentLikes.id,
           likeType: studentLikes.likeType,
           createdAt: studentLikes.createdAt,
+          matchScore: studentLikes.matchScore,
           professor: professors,
         })
         .from(studentLikes)
