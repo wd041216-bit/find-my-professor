@@ -299,16 +299,19 @@ export async function getProfessorsForSwipe(
       
       // 使用getProfessorsFromDatabase已经设置好的schoolImageUrl
       // 不再重新查询，直接使用原有值
-      return {
+      const converted = {
         ...originalProf,
         matchScore: result.matchScore,
         displayScore: result.displayScore,
         matchedTags: result.matchedTags,
         // 保留原有的schoolImageUrl，不覆盖
       };
+      
+      return converted;
     });
 
     // Return top N professors with offset support
+    
     return rankedProfessors.slice(offset, offset + limit);
   } catch (error) {
     console.error('[Professors] Error getting professors for swipe:', error);
