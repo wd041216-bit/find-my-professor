@@ -39,13 +39,11 @@ export interface MatchedProfessor {
  * @param major 专业名称
  * @param limit 返回数量限制
  * @returns 教授列表
- */
-export async function getProfessorsFromDatabase(
+ */export async function getProfessorsFromDatabase(
   university: string,
-  major: string,
+  major: string | null,
   limit: number = 100
-): Promise<MatchedProfessor[]> {
-  try {
+): Promise<MatchedProfessor[]> {  try {
     const db = await getDb();
     if (!db) {
       console.error('[Professors] Database connection failed');
@@ -53,12 +51,14 @@ export async function getProfessorsFromDatabase(
     }
     
     // 查询教授数据（使用索引加速）
+    const whereClause = major 
+      ? sql`LOWER(${professors.universityName}) = LOWER(${university}) AND LOWER(${professors.majorName}) = LOWER(${major})`
+      : sql`LOWER(${professors.universityName}) = LOWER(${university})`;
+    
     const professorsList = await db
       .select()
       .from(professors)
-      .where(
-        sql`LOWER(${professors.universityName}) = LOWER(${university}) AND LOWER(${professors.majorName}) = LOWER(${major})`
-      )
+      .where(whereClause)
       .limit(limit);
     
     if (professorsList.length === 0) {
@@ -200,7 +200,7 @@ export async function getProfessorsFromDatabase(
         id: prof.id,
         name: prof.name,
         universityName: prof.universityName || university,
-        majorName: prof.majorName || major,
+        majorName: prof.majorName || major || 'General',
         department: prof.department,
         title: prof.title,
         labName: prof.labName,
@@ -332,18 +332,24 @@ export async function getProfessorsForSwipe(
     const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities as string) : [];
     const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors as string) : [];
 
-    if (targetUniversities.length === 0 || targetMajors.length === 0) {
-      console.error('[Professors] No target university or major specified');
+    if (targetUniversities.length === 0) {
+      console.error('[Professors] No target university specified');
       return [];
     }
 
+    // Major is optional - if not provided, search all professors at the university
+
     const university = targetUniversities[0];
-    const major = targetMajors[0];
+    const major = targetMajors.length > 0 ? targetMajors[0] : null;
+
+    console.log('[Professors] Querying with university:', university, 'major:', major);
 
     // 优化：只查询需要的数量（limit * 3，留出排序和筛选的余地）
     // 而不是查询全部1000个教授
     const queryLimit = Math.min(limit * 3, 300);
     let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit);
+    
+    console.log('[Professors] Query returned:', allProfessors.length, 'professors');
 
     // Apply filters if provided
     if (filterUniversity) {
@@ -360,9 +366,11 @@ export async function getProfessorsForSwipe(
     // Exclude already swiped professors
     if (excludeIds.length > 0) {
       allProfessors = allProfessors.filter(prof => !excludeIds.includes(prof.id));
+      console.log('[Professors] After excluding swiped:', allProfessors.length);
     }
 
     if (allProfessors.length === 0) {
+      console.log('[Professors] No professors left after filtering');
       return [];
     }
 
@@ -382,10 +390,10 @@ export async function getProfessorsForSwipe(
         activities: [], // Activities are in separate table, skip for now
       };
 
-      studentTags = await extractStudentTags(userProfile, university, major);
+      studentTags = await extractStudentTags(userProfile, university, major || 'Computer Science'); // Default major if not specified
       
       // Cache the result for 10 minutes
-      setCachedStudentTags(userId, university, major, studentTags);
+      setCachedStudentTags(userId, university, major || '', studentTags);
       console.log('[Professors] Student tags extracted and cached:', studentTags.length);
     } else {
       console.log('[Professors] Using cached student tags:', studentTags.length);
@@ -401,6 +409,7 @@ export async function getProfessorsForSwipe(
 
     // Rank professors by match score
     const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
+    console.log('[Professors] Ranked results:', rankedResults.length);
 
     // Convert MatchResult[] back to MatchedProfessor[] with school images
     const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
@@ -418,7 +427,9 @@ export async function getProfessorsForSwipe(
     });
 
     // Return top N professors with offset support
-    return rankedProfessors.slice(offset, offset + limit);
+    const finalResults = rankedProfessors.slice(offset, offset + limit);
+    console.log('[Professors] Returning', finalResults.length, 'professors (offset:', offset, 'limit:', limit, ')');
+    return finalResults;
   } catch (error) {
     console.error('[Professors] Error getting professors for swipe:', error);
     return [];
