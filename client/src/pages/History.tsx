@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, Heart, Mail, Globe, FlaskConical, Sparkles, X, ExternalLink, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Heart, Mail, Globe, FlaskConical, Sparkles, X, ExternalLink, Trash2, Search } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -290,42 +290,29 @@ export default function History() {
                 </div>
               )}
 
-              <div className="space-y-2 pt-4 border-t">
-                <h4 className="font-semibold mb-2">Contact Information</h4>
-                {selectedProfessor.professor.email && (
-                  <a
-                    href={`mailto:${selectedProfessor.professor.email}`}
-                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
-                  >
-                    <Mail className="h-4 w-4" />
-                    {selectedProfessor.professor.email}
-                  </a>
-                )}
-                {selectedProfessor.professor.personalWebsite && (
-                  <a
-                    href={selectedProfessor.professor.personalWebsite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
-                  >
-                    <Globe className="h-4 w-4" />
-                    Personal Website
-                  </a>
-                )}
-                {selectedProfessor.professor.labWebsite && (
-                  <a
-                    href={selectedProfessor.professor.labWebsite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
-                  >
-                    <FlaskConical className="h-4 w-4" />
-                    Lab Website
-                  </a>
-                )}
-                {!selectedProfessor.professor.email && !selectedProfessor.professor.personalWebsite && !selectedProfessor.professor.labWebsite && (
-                  <p className="text-sm text-muted-foreground">No contact information available</p>
-                )}
+              <div className="pt-4 border-t">
+                <Button
+                  onClick={() => {
+                    const professorName = selectedProfessor.professor.name;
+                    const university = selectedProfessor.professor.university;
+                    
+                    // Copy professor name to clipboard
+                    navigator.clipboard.writeText(professorName).then(() => {
+                      toast.success("Professor name copied to clipboard!");
+                    }).catch(() => {
+                      toast.error("Failed to copy to clipboard");
+                    });
+                    
+                    // Open Google search in new tab
+                    const searchQuery = encodeURIComponent(`${professorName} ${university}`);
+                    window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
+                  }}
+                  className="w-full"
+                  variant="default"
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  Find This Professor on Google
+                </Button>
               </div>
             </div>
           )}
