@@ -222,7 +222,8 @@ export async function getProfessorById(professorId: number): Promise<MatchedProf
 export async function getProfessorsForSwipe(
   userId: number,
   limit: number = 10,
-  excludeIds: number[] = []
+  excludeIds: number[] = [],
+  offset: number = 0
 ): Promise<MatchedProfessor[]> {
   try {
     const db = await getDb();
@@ -307,8 +308,8 @@ export async function getProfessorsForSwipe(
       };
     });
 
-    // Return top N professors
-    return rankedProfessors.slice(0, limit);
+    // Return top N professors with offset support
+    return rankedProfessors.slice(offset, offset + limit);
   } catch (error) {
     console.error('[Professors] Error getting professors for swipe:', error);
     return [];

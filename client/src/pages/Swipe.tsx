@@ -1,15 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
-import { X, Heart, RotateCcw, Sparkles, ArrowLeft, Flame, User, UserCircle } from 'lucide-react';
+import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Link } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 
-// Removed mock data - using real professors from database
+// Animation variants for card transitions
+const ANIMATION_VARIANTS = [
+  'fly-left',
+  'fly-right',
+  'rotate-fade',
+  'scale-fade',
+  'flip-out',
+  'explode',
+] as const;
+
+type AnimationVariant = typeof ANIMATION_VARIANTS[number];
+
+interface CardAnimation {
+  variant: AnimationVariant;
+  direction: 'left' | 'right';
+}
 
 export function Swipe() {
   const { user, loading: authLoading } = useAuth();
+  const utils = trpc.useUtils();
+  
   const { data: profile, isLoading: profileLoading } = trpc.profile.get.useQuery(undefined, {
     enabled: !!user,
   });
@@ -17,24 +34,57 @@ export function Swipe() {
   // Check if profile is complete
   const isProfileComplete = profile && profile.targetUniversities && profile.targetMajors;
 
-  // Fetch professors from API
+  // Infinite scroll state
+  const [allProfessors, setAllProfessors] = useState<Professor[]>([]);
+  const [currentBatch, setCurrentBatch] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  // Fetch professors from API - infinite batches
   const { data: professorsData, isLoading: professorsLoading } = trpc.swipe.getProfessorsToSwipe.useQuery(
-    { limit: 10 },
+    { limit: 20, offset: currentBatch * 20 },
     { enabled: !!user && !!isProfileComplete }
   );
 
+  // Append new professors to the list
+  useEffect(() => {
+    if (professorsData?.professors) {
+      setAllProfessors(prev => {
+        // Avoid duplicates
+        const newProfs = professorsData.professors.filter(
+          p => !prev.some(existing => existing.id === p.id)
+        );
+        return [...prev, ...newProfs];
+      });
+      setIsLoadingMore(false);
+    }
+  }, [professorsData]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastAction, setLastAction] = useState<'like' | 'pass' | null>(null);
+  const [cardAnimation, setCardAnimation] = useState<CardAnimation | null>(null);
 
-  const professors = professorsData?.professors || [];
+  const professors = allProfessors;
 
-  // Swipe mutation
-  const swipeMutation = trpc.swipe.swipe.useMutation();
+  // Swipe mutation with optimistic update for Match History
+  const swipeMutation = trpc.swipe.swipe.useMutation({
+    onSuccess: () => {
+      // Immediately invalidate Match History to refresh the list
+      utils.swipe.getMyMatches.invalidate();
+    },
+  });
 
   const currentProfessor = professors[currentIndex];
 
+  // Auto-load more professors when approaching the end
+  useEffect(() => {
+    if (currentIndex >= professors.length - 5 && !isLoadingMore && !professorsLoading) {
+      setIsLoadingMore(true);
+      setCurrentBatch(prev => prev + 1);
+    }
+  }, [currentIndex, professors.length, isLoadingMore, professorsLoading]);
+
   // Loading state
-  if (authLoading || profileLoading || (isProfileComplete && professorsLoading)) {
+  if (authLoading || profileLoading || (isProfileComplete && professorsLoading && professors.length === 0)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
         <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600"></div>
@@ -72,9 +122,19 @@ export function Swipe() {
     );
   }
 
+  const getRandomAnimation = (direction: 'left' | 'right'): AnimationVariant => {
+    return ANIMATION_VARIANTS[Math.floor(Math.random() * ANIMATION_VARIANTS.length)];
+  };
+
   const handleSwipe = (direction: 'left' | 'right', professor: Professor) => {
     const action = direction === 'right' ? 'like' : 'pass';
     setLastAction(action);
+
+    // Set random animation
+    setCardAnimation({
+      variant: getRandomAnimation(direction),
+      direction,
+    });
 
     // Save swipe to database
     swipeMutation.mutate({
@@ -83,17 +143,25 @@ export function Swipe() {
       matchScore: professor.matchScore,
     });
 
-    // Move to next professor after a short delay
+    // Move to next professor after animation completes
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
       setLastAction(null);
-    }, 300);
+      setCardAnimation(null);
+    }, 600);
   };
 
   const handleButtonClick = (action: 'pass' | 'like') => {
     if (!currentProfessor) return;
 
+    const direction = action === 'like' ? 'right' : 'left';
     setLastAction(action);
+
+    // Set random animation
+    setCardAnimation({
+      variant: getRandomAnimation(direction),
+      direction,
+    });
 
     // Save swipe to database
     swipeMutation.mutate({
@@ -102,87 +170,82 @@ export function Swipe() {
       matchScore: currentProfessor.matchScore,
     });
 
+    // Move to next professor after animation completes
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
       setLastAction(null);
-    }, 300);
+      setCardAnimation(null);
+    }, 600);
   };
 
   const handleUndo = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setLastAction(null);
+      setCardAnimation(null);
     }
   };
 
-  if (currentIndex >= professors.length) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
-              <Sparkles className="w-16 h-16 text-white" />
-            </div>
-          </div>
-          <h2 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
-            That's all for now!
-          </h2>
-          <p className="text-xl text-gray-700 mb-8 font-medium">
-            You've reviewed all available professors.
-            <br />
-            Come back later for more! 💫
-          </p>
-          <Link href="/">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
-            >
-              <ArrowLeft className="w-6 h-6 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Get animation CSS class
+  const getAnimationClass = (anim: CardAnimation | null): string => {
+    if (!anim) return '';
+    
+    const baseClass = 'animate-card-exit';
+    const variantClass = `animate-${anim.variant}`;
+    const directionClass = anim.direction === 'left' ? 'exit-left' : 'exit-right';
+    
+    return `${baseClass} ${variantClass} ${directionClass}`;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col">
-      {/* Header with Back Button */}
-      <div className="p-4 md:p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
-        <div className="flex items-center gap-2 md:gap-4">
+      {/* Unified Header - Same as Home Page */}
+      <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          {/* Logo */}
           <Link href="/">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover:bg-purple-100 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 md:mr-2" />
-              <span className="hidden md:inline">Back</span>
-            </Button>
+            <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              </div>
+              <span className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Find My Professor
+              </span>
+            </div>
           </Link>
-          <div className="flex items-center gap-2">
-            <Flame className="w-6 h-6 md:w-7 md:h-7 text-orange-500" />
-            <h1 className="hidden md:block text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Find My Professor
-            </h1>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 md:gap-4">
-          <span className="text-xs md:text-sm font-semibold text-gray-700 bg-white px-3 md:px-4 py-1.5 md:py-2 rounded-full shadow-sm">
-            {currentIndex + 1} / {professors.length}
-          </span>
-          <Link href="/profile">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover:bg-pink-100 transition-colors"
-            >
-              <UserCircle className="w-5 h-5 md:mr-2" />
-              <span className="hidden md:inline">Profile</span>
+
+          {/* Navigation */}
+          <nav className="flex items-center gap-2 md:gap-6">
+            <Link href="/profile">
+              <span className="text-sm md:text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors cursor-pointer">
+                Profile
+              </span>
+            </Link>
+            <Link href="/history">
+              <span className="text-sm md:text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors cursor-pointer">
+                Match History
+              </span>
+            </Link>
+            <Link href="/contact">
+              <Button variant="ghost" size="sm" className="hidden md:flex">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contact
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm" className="hidden md:flex">
+              <Globe className="w-4 h-4 mr-2" />
+              EN
             </Button>
-          </Link>
+          </nav>
         </div>
+      </header>
+
+      {/* Progress Indicator */}
+      <div className="bg-white/80 backdrop-blur-sm px-4 py-2 flex items-center justify-center">
+        <span className="text-sm font-semibold text-gray-700 bg-white px-4 py-1.5 rounded-full shadow-sm">
+          {currentIndex + 1} / {professors.length > 0 ? professors.length : '∞'}
+          {isLoadingMore && <span className="ml-2 text-purple-600">Loading more...</span>}
+        </span>
       </div>
 
       {/* Card Stack Container */}
@@ -205,22 +268,36 @@ export function Swipe() {
 
           {/* Current Card */}
           {currentProfessor && (
-            <ProfessorCard
-              key={currentProfessor.id}
-              professor={currentProfessor}
-              onSwipe={handleSwipe}
-              style={{ zIndex: 1 }}
-            />
+            <div className={cardAnimation ? getAnimationClass(cardAnimation) : ''}>
+              <ProfessorCard
+                key={currentProfessor.id}
+                professor={currentProfessor}
+                onSwipe={handleSwipe}
+                style={{ zIndex: 1 }}
+              />
+            </div>
+          )}
+
+          {/* Loading indicator when no more cards */}
+          {!currentProfessor && isLoadingMore && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600 mx-auto mb-4"></div>
+                <p className="text-gray-600 font-medium">Loading more professors...</p>
+              </div>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Action Buttons - Tinder style */}
+      {/* Action Buttons - Tinder style with enhanced feedback */}
       <div className="p-8 flex items-center justify-center gap-8">
         <Button
           size="lg"
           variant="outline"
-          className="w-20 h-20 rounded-full bg-white border-4 border-red-400 hover:bg-red-50 hover:border-red-500 hover:scale-110 transition-all shadow-xl hover:shadow-2xl"
+          className={`w-20 h-20 rounded-full bg-white border-4 border-red-400 hover:bg-red-50 hover:border-red-500 transition-all shadow-xl hover:shadow-2xl ${
+            lastAction === 'pass' ? 'scale-90 animate-bounce-once' : 'hover:scale-110'
+          }`}
           onClick={() => handleButtonClick('pass')}
           disabled={!currentProfessor}
         >
@@ -240,13 +317,111 @@ export function Swipe() {
         <Button
           size="lg"
           variant="outline"
-          className="w-20 h-20 rounded-full bg-white border-4 border-green-400 hover:bg-green-50 hover:border-green-500 hover:scale-110 transition-all shadow-xl hover:shadow-2xl"
+          className={`w-20 h-20 rounded-full bg-white border-4 border-green-400 hover:bg-green-50 hover:border-green-500 transition-all shadow-xl hover:shadow-2xl ${
+            lastAction === 'like' ? 'scale-90 animate-bounce-once' : 'hover:scale-110'
+          }`}
           onClick={() => handleButtonClick('like')}
           disabled={!currentProfessor}
         >
           <Heart className="w-10 h-10 text-green-500 fill-green-500" strokeWidth={0} />
         </Button>
       </div>
+
+      {/* Custom CSS for animations */}
+      <style>{`
+        @keyframes fly-left {
+          to {
+            transform: translateX(-150%) rotate(-30deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes fly-right {
+          to {
+            transform: translateX(150%) rotate(30deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes rotate-fade {
+          to {
+            transform: rotate(360deg) scale(0);
+            opacity: 0;
+          }
+        }
+
+        @keyframes scale-fade {
+          to {
+            transform: scale(0);
+            opacity: 0;
+          }
+        }
+
+        @keyframes flip-out {
+          to {
+            transform: rotateY(180deg) scale(0.5);
+            opacity: 0;
+          }
+        }
+
+        @keyframes explode {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(0) rotate(180deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes bounce-once {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(0.9);
+          }
+        }
+
+        .animate-card-exit {
+          animation-duration: 0.6s;
+          animation-fill-mode: forwards;
+          animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .animate-fly-left.exit-left {
+          animation-name: fly-left;
+        }
+
+        .animate-fly-right.exit-right {
+          animation-name: fly-right;
+        }
+
+        .animate-rotate-fade {
+          animation-name: rotate-fade;
+        }
+
+        .animate-scale-fade {
+          animation-name: scale-fade;
+        }
+
+        .animate-flip-out {
+          animation-name: flip-out;
+        }
+
+        .animate-explode {
+          animation-name: explode;
+        }
+
+        .animate-bounce-once {
+          animation: bounce-once 0.3s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }
