@@ -49,10 +49,11 @@ Return ONLY the URL, no explanation.`;
   const data = await response.json();
   const url = data.choices[0].message.content.trim();
   
-  // 移除可能的引用标记 [1]
-  const cleanUrl = url.replace(/\[\d+\]$/, '');
+  // 移除可能的引用标记 [1], [2] 等（全局替换）
+  const cleanUrl = url.replace(/\[\d+\]/g, '').trim();
   
   console.log(`[DataLayer] Faculty page URL found: ${cleanUrl}`);
+  console.log(`[DataLayer] Original URL from Perplexity: ${url}`);
   console.log(`[DataLayer] Perplexity tokens: ${data.usage.total_tokens}, cost: $${(data.usage.total_tokens * 0.000005).toFixed(5)}`);
   
   return cleanUrl;

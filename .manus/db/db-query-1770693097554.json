@@ -1,0 +1,14 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(*) FROM scraped_projects WHERE university_name = 'University of Washington') as scraped_count,\n  (SELECT COUNT(*) FROM professors WHERE university_name = 'University of Washington') as professors_count;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT \n  (SELECT COUNT(*) FROM scraped_projects WHERE university_name = 'University of Washington') as scraped_count,\n  (SELECT COUNT(*) FROM professors WHERE university_name = 'University of Washington') as professors_count;",
+  "rows": [
+    {
+      "scraped_count": "123",
+      "professors_count": "36"
+    }
+  ],
+  "messages": [],
+  "stdout": "scraped_count\tprofessors_count\n123\t36\n",
+  "stderr": "",
+  "execution_time_ms": 59
+}

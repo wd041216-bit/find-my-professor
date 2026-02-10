@@ -483,3 +483,23 @@
 - [x] 添加Matches页面到移动端导航栏
 - [x] 测试Matches页面功能
 - [x] 保存checkpoint
+
+## 🌐 扩展教授数据库 - 抓取华盛顿大学各学院教授数据
+- [x] 调研华盛顿大学的学院列表（18个主要学院）
+- [x] 修复爬虫系统的文本解析问题（空行处理）
+- [x] 尝试抓取Paul G. Allen School of CS（遇到教授姓名提取问题）
+- [x] 运行词典去重系统处理新教授tags（151→ 66个tags，减少56.3%）
+- [x] 清理错误数据（删除professor_name为NULL的记录）
+
+**当前状态**：
+- ✅ Information School：36位教授（已迁移到professors表）
+- ❌ Paul G. Allen School of CS：爬虫解析失败，需要修复
+
+**待解决问题**：
+- [ ] 修复解析脚本，确保正确提取教授姓名
+- [ ] 重新抓取CS学院教授数据
+- [ ] 迁移新数据到professors表
+- [ ] 使用LLM分析新教授tags并归类到研究领域
+- [ ] 为新出现的研究领域生成AI背景图片
+- [ ] 测试Swipe页面显示新教授数据
+- [ ] 保存checkpoint
