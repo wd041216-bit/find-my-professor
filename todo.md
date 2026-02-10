@@ -486,3 +486,8 @@
 - [x] 移除错误的学院图片逻辑（schoolImageMap硬编码）
 - [x] 测试教授卡片显示正确的研究领域背景图片
 - [x] 保存checkpoint
+
+## 🗑️ 删除school_images表（避免未来混淆）
+- [x] 确认school_images表的内容
+- [x] 删除school_images表（DROP TABLE）
+- [x] 保存checkpoint
