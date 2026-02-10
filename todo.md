@@ -891,4 +891,12 @@
 - [x] 修复Swipe.tsx：在Link和Button之间添加<a>标签包裹
 - [x] 重新构建生产版本（pnpm run build）
 - [x] 同步到iOS项目（npx cap sync ios）
+- [x] 保存checkpoint (version: 7878dc24)
+
+## 🔒 创建隐私政策页面 (2026-02-11)
+- [x] 起草用户至上的隐私政策内容（透明、清晰、尊重用户）
+- [x] 创建Privacy.tsx页面组件
+- [x] 在App.tsx中添加/privacy路由
+- [x] 测试页面显示效果（布局清晰、内容完整、视觉效果优秀）
+- [x] 重新构建并同步到iOS项目
 - [ ] 保存checkpoint

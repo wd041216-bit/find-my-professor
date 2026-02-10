@@ -11,6 +11,7 @@ import { StructuredData } from "./components/StructuredData";
 import Profile from "./pages/Profile";
 import History from "./pages/History";
 import { Swipe } from "./pages/Swipe";
+import { Privacy } from "./pages/Privacy";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/swipe"} component={Swipe} />
       <Route path={"/profile"} component={Profile} />
       <Route path={"/history"} component={History} />
+      <Route path={"/privacy"} component={Privacy} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
