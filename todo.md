@@ -520,3 +520,10 @@
 - [x] 重新分类所有120位教授（确保所有教授都被正确分类）
 - [x] 验证分类结果（检查未分类教授数量和分布）
 - [ ] 保存checkpoint
+
+## 🗄️ 持久化tag映射字典到数据库
+- [x] 创建research_field_tag_mapping表（字段：id, research_field_name, tag, created_at）
+- [x] 将complete-tag-mapping.json中的70个tags导入数据库
+- [x] 验证数据库中的映射数据（检查tag数量和分布）
+- [ ] 创建自动分类函数（基于数据库中的映射）
+- [ ] 保存checkpoint
