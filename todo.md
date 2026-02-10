@@ -473,3 +473,13 @@
 - [x] 修改ProfessorCard组件使用AI生成的背景图片
 - [x] 测试所有教授卡片的背景图片显示
 - [x] 保存checkpoint
+
+## 💖 Matches页面 - 展示右滑教授列表
+- [x] 检查student_swipes表是否已正确记录右滑操作
+- [x] 检查Swipe页面是否已实现滑动操作持久化
+- [x] 创建Matches页面UI组件（列表展示所有右滑的教授）
+- [x] 创建tRPC API获取用户的匹配教授列表（右滑的教授）
+- [x] 在Matches页面显示教授信息（姓名、头像、联系方式、研究兴趣、匹配分数）
+- [x] 添加Matches页面到移动端导航栏
+- [x] 测试Matches页面功能
+- [x] 保存checkpoint
