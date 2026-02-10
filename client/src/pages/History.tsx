@@ -147,7 +147,6 @@ export default function History() {
                         )}
                       </CardTitle>
                       <div className="space-y-1 text-sm text-muted-foreground">
-                        <p className="font-medium">{match.professor.title || "Professor"}</p>
                         {match.professor.majorName && <p>{match.professor.majorName}</p>}
                         <p className="font-semibold text-purple-600">{match.professor.university}</p>
                       </div>
@@ -244,13 +243,6 @@ export default function History() {
           </DialogHeader>
           {selectedProfessor && (
             <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">Position</h4>
-                <p className="text-muted-foreground">
-                  {selectedProfessor.professor.title || "Professor"}
-                </p>
-              </div>
-
               <div>
                 <h4 className="font-semibold mb-2">Institution</h4>
                 <p className="text-muted-foreground">
