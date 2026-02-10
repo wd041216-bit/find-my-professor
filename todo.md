@@ -795,4 +795,12 @@
 - [x] 显示成功/失败toast提示
 - [x] 测试完整流程（重置后Swipe页面成功显示所有36位教授）
 - [x] 编写单元测试（swipe.resetHistory.test.ts，2个测试用例全部通过）
+- [x] 保存checkpoint (version: 13bcbf77)
+
+## 🖼️ 修复教授卡片图像显示问题 (2026-02-10)
+- [x] 检查getProfessorsForSwipe API返回的数据结构
+- [x] 检查前端ProfessorCard组件的图像渲染逻辑
+- [x] 发现问题：research_field_tag_mapping与university_field_images表的字段名不匹配
+- [x] 修复research_field_tag_mapping表，统一字段名（影响196行）
+- [x] 测试Swipe页面显示定制图像（成功！教授卡片显示华大定制图像）
 - [ ] 保存checkpoint
