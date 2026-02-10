@@ -1,6 +1,6 @@
 import { getDb } from '../db';
 import { professors } from '../../drizzle/schema';
-import { and, eq, sql, or, like } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 /**
  * 教授匹配结果类型
@@ -26,8 +26,6 @@ export interface MatchedProfessor {
   matchLevel?: string;
   matchedTags?: string[];
   schoolImageUrl?: string;
-  researchField?: string | null;
-  researchFieldImageUrl?: string;
 }
 
 /**
@@ -54,9 +52,8 @@ export async function getProfessorsFromDatabase(
       return [];
     }
     
-    // 查询professors表（支持模糊匹配）
-    // 先尝试精确匹配
-    let professorsList = await db
+    // 查询professors表
+    const professorsList = await db
       .select()
       .from(professors)
       .where(
@@ -66,28 +63,6 @@ export async function getProfessorsFromDatabase(
         )
       )
       .limit(limit);
-    
-    // 如果精确匹配没有结果，尝试模糊匹配
-    if (professorsList.length === 0) {
-      console.log(`[Professors] No exact match found, trying fuzzy match for major: ${major}`);
-      professorsList = await db
-        .select()
-        .from(professors)
-        .where(
-          and(
-            eq(professors.universityName, university),
-            or(
-              like(professors.majorName, `%${major}%`),
-              like(sql`LOWER(${professors.majorName})`, `%${major.toLowerCase()}%`)
-            )
-          )
-        )
-        .limit(limit);
-      
-      if (professorsList.length > 0) {
-        console.log(`[Professors] Fuzzy match found ${professorsList.length} professors`);
-      }
-    }
     
     console.log(`[Professors] Found ${professorsList.length} professors for ${university} - ${major}`);
     
@@ -107,7 +82,6 @@ export async function getProfessorsFromDatabase(
       tags: prof.tags || [],
       email: prof.email,
       bio: prof.bio,
-      researchField: prof.researchField,
     }));
     
     return matchedProfessors;
@@ -134,8 +108,7 @@ export async function hasSufficientProfessorsData(
     const db = await getDb();
     if (!db) return false;
     
-    // 先尝试精确匹配
-    let result = await db
+    const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(professors)
       .where(
@@ -145,25 +118,7 @@ export async function hasSufficientProfessorsData(
         )
       );
     
-    let count = Number(result[0]?.count || 0);
-    
-    // 如果精确匹配没有结果，尝试模糊匹配
-    if (count === 0) {
-      result = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(professors)
-        .where(
-          and(
-            eq(professors.universityName, university),
-            or(
-              like(professors.majorName, `%${major}%`),
-              like(sql`LOWER(${professors.majorName})`, `%${major.toLowerCase()}%`)
-            )
-          )
-        );
-      count = Number(result[0]?.count || 0);
-    }
-    
+    const count = Number(result[0]?.count || 0);
     console.log(`[Professors] Data check: ${count} professors (threshold: ${threshold})`);
     
     return count >= threshold;
@@ -291,23 +246,30 @@ export async function getProfessorsForSwipe(
     // Rank professors by match score
     const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
 
-    // Get research field images
-    const { researchFieldImages } = await import('../../drizzle/schema');
-    const fieldImagesRecords = await db.select().from(researchFieldImages);
+    // Get school images for random selection
+    const { schools, schoolImages } = await import('../../drizzle/schema');
+    const schoolRecords = await db.select().from(schools);
+    const schoolImagesRecords = await db.select().from(schoolImages);
 
-    // Convert MatchResult[] back to MatchedProfessor[] with research field images
+    // Convert MatchResult[] back to MatchedProfessor[] with school images
     const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
       const originalProf = allProfessors.find(p => p.name === result.professorName)!;
       
-      // Find research field image for this professor
-      const fieldImage = fieldImagesRecords.find(img => img.fieldName === originalProf.researchField);
+      // Find school images for this professor's school
+      const professorSchool = schoolRecords.find(s => s.id === originalProf.schoolId);
+      const schoolImagesList = schoolImagesRecords.filter(img => img.schoolId === originalProf.schoolId);
+      
+      // Randomly select one school image
+      const randomSchoolImage = schoolImagesList.length > 0
+        ? schoolImagesList[Math.floor(Math.random() * schoolImagesList.length)]
+        : null;
 
       return {
         ...originalProf,
         matchScore: result.matchScore,
         displayScore: result.displayScore,
         matchedTags: result.matchedTags,
-        researchFieldImageUrl: fieldImage?.imageUrl || undefined
+        schoolImageUrl: randomSchoolImage?.imageUrl || undefined
       };
     });
 

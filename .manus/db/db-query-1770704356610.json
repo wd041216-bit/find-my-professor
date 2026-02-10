@@ -1,0 +1,16 @@
+{
+  "query": "SELECT DISTINCT major_name FROM scraped_projects LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT DISTINCT major_name FROM scraped_projects LIMIT 20",
+  "rows": [
+    {
+      "major_name": "Information School"
+    },
+    {
+      "major_name": "Paul G. Allen School of Computer Science & Engineering"
+    }
+  ],
+  "messages": [],
+  "stdout": "major_name\nInformation School\nPaul G. Allen School of Computer Science & Engineering\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

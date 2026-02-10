@@ -14,7 +14,8 @@ import { toast } from "sonner";
 import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { AutocompleteInput } from "@/components/AutocompleteInput";
+import { SmartInput } from "@/components/SmartInput";
+import { getUniversitySuggestions, getMajorSuggestions, normalizeUniversity, normalizeMajor } from "@shared/translations";
 
 export default function Profile() {
   const { user, loading: authLoading } = useAuth();
@@ -24,14 +25,6 @@ export default function Profile() {
   const { data: profile, isLoading: profileLoading } = trpc.profile.get.useQuery(undefined, {
     enabled: !!user,
   });
-
-  // Fetch distinct universities and majors from database
-  const { data: universityData = [] } = trpc.universities.getDistinctNames.useQuery();
-  const { data: majorData = [] } = trpc.professors.getDistinctMajors.useQuery();
-  
-  // Filter out null values
-  const universityOptions = universityData.filter((u): u is string => u !== null);
-  const majorOptions = majorData.filter((m): m is string => m !== null);
 
   const [formData, setFormData] = useState({
     academicLevel: "" as "high_school" | "undergraduate" | "graduate" | "",
@@ -141,8 +134,8 @@ export default function Profile() {
 
   const addItem = (type: "targetMajors" | "skills" | "interests", value: string) => {
     if (value.trim()) {
-      // Use value directly (no normalization needed)
-      const normalizedValue = value.trim();
+      // Normalize major input if it's Chinese
+      const normalizedValue = type === "targetMajors" ? normalizeMajor(value.trim()) : value.trim();
       
       setFormData(prev => ({
         ...prev,
@@ -308,13 +301,14 @@ export default function Profile() {
                 <Label htmlFor="targetUniversity" className="text-xl font-bold text-gray-800">
                   Target University *
                 </Label>
-                <AutocompleteInput
+                <SmartInput
                   value={formData.targetUniversity}
                   onChange={(value) => setFormData(prev => ({ ...prev, targetUniversity: value }))}
-                  options={universityOptions}
-                  placeholder="e.g., University of Washington"
-                  emptyMessage="No university found."
+                  placeholder="e.g., Stanford University"
+                  type="university"
                   className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
+                  getSuggestions={getUniversitySuggestions}
+                  normalize={normalizeUniversity}
                 />
               </div>
 
@@ -324,13 +318,15 @@ export default function Profile() {
                   Target Major *
                 </Label>
                 <div className="flex gap-2">
-                  <AutocompleteInput
+                  <SmartInput
                     value={targetMajorInput}
                     onChange={setTargetMajorInput}
-                    options={majorOptions}
-                    placeholder="e.g., Information School"
-                    emptyMessage="No major found."
+                    onBlur={() => {}}
+                    placeholder="e.g., Computer Science"
+                    type="major"
                     className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
+                    getSuggestions={getMajorSuggestions}
+                    normalize={normalizeMajor}
                   />
                   <Button type="button" onClick={() => addItem("targetMajors", targetMajorInput)} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl h-12 px-6">
                     Add

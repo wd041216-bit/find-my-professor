@@ -1,0 +1,18 @@
+{
+  "query": "SELECT major_name, COUNT(*) as count FROM scraped_projects GROUP BY major_name",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT major_name, COUNT(*) as count FROM scraped_projects GROUP BY major_name",
+  "rows": [
+    {
+      "major_name": "Information School",
+      "count": "36"
+    },
+    {
+      "major_name": "Paul G. Allen School of Computer Science & Engineering",
+      "count": "87"
+    }
+  ],
+  "messages": [],
+  "stdout": "major_name\tcount\nInformation School\t36\nPaul G. Allen School of Computer Science & Engineering\t87\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

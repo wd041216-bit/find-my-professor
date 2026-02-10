@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `research_field_tag_mapping` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `research_field_name` varchar(100) NOT NULL,\n  `tag` varchar(100) NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  `updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `research_field_tag_mapping_id` PRIMARY KEY(`id`),\n  CONSTRAINT `research_field_tag_mapping_tag_unique` UNIQUE(`tag`),\n  INDEX `field_idx` (`research_field_name`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute CREATE TABLE IF NOT EXISTS `research_field_tag_mapping` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `research_field_name` varchar(100) NOT NULL,\n  `tag` varchar(100) NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  `updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `research_field_tag_mapping_id` PRIMARY KEY(`id`),\n  CONSTRAINT `research_field_tag_mapping_tag_unique` UNIQUE(`tag`),\n  INDEX `field_idx` (`research_field_name`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 276
-}
