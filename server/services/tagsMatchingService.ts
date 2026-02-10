@@ -144,7 +144,14 @@ export function rankProfessorsByMatch(
 ): MatchResult[] {
   const results: MatchResult[] = professors.map(prof => {
     const matchScore = calculateMatchScore(studentTags, prof.tags);
-    const displayScore = convertCoverageToDisplayScore(matchScore / 100);
+    let displayScore = convertCoverageToDisplayScore(matchScore / 100);
+    
+    // 添加±3%的随机波动，避免连续相同分数
+    const randomOffset = (Math.random() * 6) - 3; // -3到+3之间的随机数
+    displayScore = Math.round(displayScore + randomOffset);
+    // 确保分数在0-100之间
+    displayScore = Math.max(0, Math.min(100, displayScore));
+    
     const matchedTags = getMatchedTags(studentTags, prof.tags);
     
     return {

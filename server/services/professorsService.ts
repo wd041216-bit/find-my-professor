@@ -196,6 +196,12 @@ export interface MatchedProfessor {
         }
       }
       
+      // Fallback: 如果没有找到任何研究领域图片，使用默认图片
+      if (!researchFieldImageUrl && fieldImageMap.size > 0) {
+        // 使用第一个可用的领域图片作为fallback
+        researchFieldImageUrl = Array.from(fieldImageMap.values())[0];
+      }
+      
       matchedProfessors.push({
         id: prof.id,
         name: prof.name,
