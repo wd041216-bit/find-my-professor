@@ -138,7 +138,7 @@ export default function History() {
                 <CardHeader className="pb-3">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-xl mb-2 flex items-center gap-2">
+                      <CardTitle className="text-xl mb-1 flex items-center gap-2">
                         {match.professor.name}
                         {match.likeType === "super_like" && (
                           <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
@@ -146,7 +146,7 @@ export default function History() {
                           </Badge>
                         )}
                       </CardTitle>
-                      <div className="space-y-1 text-sm text-muted-foreground">
+                      <div className="space-y-0.5 text-sm text-muted-foreground">
                         {match.professor.majorName && <p>{match.professor.majorName}</p>}
                         <p className="font-semibold text-purple-600">{match.professor.university}</p>
                       </div>
