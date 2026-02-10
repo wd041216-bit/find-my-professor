@@ -1,0 +1,70 @@
+{
+  "query": "SELECT major_name, COUNT(*) as count FROM professors WHERE university_name = 'University of Washington' GROUP BY major_name LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT major_name, COUNT(*) as count FROM professors WHERE university_name = 'University of Washington' GROUP BY major_name LIMIT 20;",
+  "rows": [
+    {
+      "major_name": "School of Social Work",
+      "count": "161"
+    },
+    {
+      "major_name": "Henry M. Jackson School of International Studies",
+      "count": "5"
+    },
+    {
+      "major_name": "School of Nursing",
+      "count": "51"
+    },
+    {
+      "major_name": "School of Pharmacy",
+      "count": "5"
+    },
+    {
+      "major_name": "College of the Environment",
+      "count": "203"
+    },
+    {
+      "major_name": "School of Public Health",
+      "count": "54"
+    },
+    {
+      "major_name": "College of Engineering",
+      "count": "333"
+    },
+    {
+      "major_name": "Paul G. Allen School of Computer Science & Engineering",
+      "count": "84"
+    },
+    {
+      "major_name": "School of Dentistry",
+      "count": "88"
+    },
+    {
+      "major_name": "Information School",
+      "count": "36"
+    },
+    {
+      "major_name": "School of Law",
+      "count": "364"
+    },
+    {
+      "major_name": "School of Medicine",
+      "count": "48"
+    },
+    {
+      "major_name": "Daniel J. Evans School of Public Policy & Governance",
+      "count": "328"
+    },
+    {
+      "major_name": "College of Built Environments",
+      "count": "218"
+    },
+    {
+      "major_name": "Michael G. Foster School of Business",
+      "count": "575"
+    }
+  ],
+  "messages": [],
+  "stdout": "major_name\tcount\nSchool of Social Work\t161\nHenry M. Jackson School of International Studies\t5\nSchool of Nursing\t51\nSchool of Pharmacy\t5\nCollege of the Environment\t203\nSchool of Public Health\t54\nCollege of Engineering\t333\nPaul G. Allen School of Computer Science & Engineering\t84\nSchool of Dentistry\t88\nInformation School\t36\nSchool of Law\t364\nSchool of Medicine\t48\nDaniel J. Evans School of Public Policy & Governance\t328\nCollege of Built Environments\t218\nMichael G. Foster School of Business\t575\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}
