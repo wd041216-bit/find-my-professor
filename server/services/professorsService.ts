@@ -1,6 +1,6 @@
 import { getDb } from '../db';
 import { professors } from '../../drizzle/schema';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, sql, or, like } from 'drizzle-orm';
 
 /**
  * 教授匹配结果类型
@@ -52,8 +52,9 @@ export async function getProfessorsFromDatabase(
       return [];
     }
     
-    // 查询professors表
-    const professorsList = await db
+    // 查询professors表（支持模糊匹配）
+    // 先尝试精确匹配
+    let professorsList = await db
       .select()
       .from(professors)
       .where(
@@ -63,6 +64,28 @@ export async function getProfessorsFromDatabase(
         )
       )
       .limit(limit);
+    
+    // 如果精确匹配没有结果，尝试模糊匹配
+    if (professorsList.length === 0) {
+      console.log(`[Professors] No exact match found, trying fuzzy match for major: ${major}`);
+      professorsList = await db
+        .select()
+        .from(professors)
+        .where(
+          and(
+            eq(professors.universityName, university),
+            or(
+              like(professors.majorName, `%${major}%`),
+              like(sql`LOWER(${professors.majorName})`, `%${major.toLowerCase()}%`)
+            )
+          )
+        )
+        .limit(limit);
+      
+      if (professorsList.length > 0) {
+        console.log(`[Professors] Fuzzy match found ${professorsList.length} professors`);
+      }
+    }
     
     console.log(`[Professors] Found ${professorsList.length} professors for ${university} - ${major}`);
     
@@ -108,7 +131,8 @@ export async function hasSufficientProfessorsData(
     const db = await getDb();
     if (!db) return false;
     
-    const result = await db
+    // 先尝试精确匹配
+    let result = await db
       .select({ count: sql<number>`count(*)` })
       .from(professors)
       .where(
@@ -118,7 +142,25 @@ export async function hasSufficientProfessorsData(
         )
       );
     
-    const count = Number(result[0]?.count || 0);
+    let count = Number(result[0]?.count || 0);
+    
+    // 如果精确匹配没有结果，尝试模糊匹配
+    if (count === 0) {
+      result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(professors)
+        .where(
+          and(
+            eq(professors.universityName, university),
+            or(
+              like(professors.majorName, `%${major}%`),
+              like(sql`LOWER(${professors.majorName})`, `%${major.toLowerCase()}%`)
+            )
+          )
+        );
+      count = Number(result[0]?.count || 0);
+    }
+    
     console.log(`[Professors] Data check: ${count} professors (threshold: ${threshold})`);
     
     return count >= threshold;
