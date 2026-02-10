@@ -853,4 +853,28 @@
 - [x] 移除主页介绍页面，App启动直接进入Swipe（修改App.tsx根路径）
 - [x] 保留Profile、Swipe、Match History三个核心功能
 - [x] 测试移动端App体验（根路径直接进入Swipe，卡片间距优化正常）
+- [x] 保存checkpoint (version: 5cb24f5a)
+
+## 🧹 代码清理 + iOS应用打包 (2026-02-11)
+
+### 前端清理
+- [x] 分析并列出需要删除的页面文件
+- [x] 删除不需要的页面文件（Dashboard、Activities、UploadResume、Explore、CoverLetters、ProjectDetail、Notifications、AdminMessages、AdminAnnouncements、Skills、TermsOfService、PrivacyPolicy、RefundPolicy、Contact、Home）
+- [x] 清理App.tsx路由配置，只保留Swipe、Profile、History、NotFound
+- [x] 删除不需要的组件文件（ContactDialog、Footer）
+
+### 后端清理
+- [x] 分析tRPC路由，删除不需要的procedures（保留scraping、删除activities/notifications/contact/announcements）
+- [x] 删除子路由文件（application.ts、errors.ts、matching.ts、resume.ts）
+- [ ] 清理数据库schema（可选，不影响App打包）
+- [ ] 清理server/db.ts中不需要的查询函数（可选，不影响App打包）
+
+### 测试和打包
+- [x] 测试清理后的核心功能（Swipe、Profile、History）
+- [x] 安装Capacitor依赖（@capacitor/core, @capacitor/cli, @capacitor/ios）
+- [x] 初始化Capacitor配置（capacitor.config.ts）
+- [x] 构建Web应用（pnpm run build）
+- [x] 添加iOS平台（npx cap add ios）
+- [x] 同步Web资源到iOS项目（npx cap sync ios）
+- [x] 创建iOS打包说明文档（iOS-BUILD-INSTRUCTIONS.md）
 - [ ] 保存checkpoint
