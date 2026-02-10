@@ -899,4 +899,11 @@
 - [x] 在App.tsx中添加/privacy路由
 - [x] 测试页面显示效果（布局清晰、内容完整、视觉效果优秀）
 - [x] 重新构建并同步到iOS项目
+- [x] 保存checkpoint (version: 36b9e302)
+
+## 🐛 修复生产环境URL配置错误 (2026-02-11)
+- [x] 检查当前main.tsx中的URL配置（发现硬编码https://www.findmyprofessor.xyz）
+- [x] 确认正确的生产环境后端地址（应使用相对路径）
+- [x] 修夏URL配置（改为相对路径/api/trpc）
+- [x] 重新构建并同步到iOS项目
 - [ ] 保存checkpoint
