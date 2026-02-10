@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
+import { ProfessorCardSkeleton } from '../components/ProfessorCardSkeleton';
 import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe, Filter } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Link } from 'wouter';
@@ -116,17 +117,33 @@ export function Swipe() {
   // Auto-load more professors when approaching the end
   useEffect(() => {
     // Only trigger auto-load if we have professors and approaching the end
-    if (professors.length > 0 && currentIndex >= professors.length - 5 && !isLoadingMore && !professorsLoading) {
+    // Changed from -5 to -3 to reduce unnecessary preloading
+    if (professors.length > 0 && currentIndex >= professors.length - 3 && !isLoadingMore && !professorsLoading && professorsData?.hasMore) {
       setIsLoadingMore(true);
       setCurrentBatch(prev => prev + 1);
     }
-  }, [currentIndex, professors.length, isLoadingMore, professorsLoading]);
+  }, [currentIndex, professors.length, isLoadingMore, professorsLoading, professorsData?.hasMore]);
 
-  // Loading state
+  // Loading state - show skeleton
   if (authLoading || profileLoading || (isProfileComplete && professorsLoading && professors.length === 0)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xl font-bold">🔥</span>
+              </div>
+              <span className="text-xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">Find My Professor</span>
+            </a>
+          </div>
+        </header>
+        
+        {/* Skeleton content */}
+        <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+          <ProfessorCardSkeleton />
+        </div>
       </div>
     );
   }

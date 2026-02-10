@@ -108,27 +108,41 @@ export async function getProfessorsFromDatabase(
       }
     }
     
-    // 3. 批量查询研究领域图片（一次查询获取所有图片）
+    // 3. 批量查询研究领域图片（优先使用大学专属图片）
     const researchFields = new Set(tagMappingMap.values());
     const fieldImageMap = new Map<string, string>();
+    const universityFieldImageMap = new Map<string, string>();
     
     if (researchFields.size > 0) {
       const fieldsArray = Array.from(researchFields);
       const placeholders = fieldsArray.map((_, i) => `{val${i}}`).join(',');
-      let imageQueryStr = `SELECT field_name, image_url 
-         FROM research_field_images 
-         WHERE field_name IN (${placeholders})`;
       
-      // Replace placeholders with actual values
+      // 3.1 查询大学专属领域图片（university_field_images表）
+      let universityImageQueryStr = `SELECT research_field_name, image_url FROM university_field_images WHERE university_name = '${university.replace(/'/g, "''")}' AND research_field_name IN (${placeholders})`;
+      fieldsArray.forEach((field, i) => {
+        universityImageQueryStr = universityImageQueryStr.replace(`{val${i}}`, `'${field.replace(/'/g, "''")}'`);
+      });
+      const universityImageQuery = sql.raw(universityImageQueryStr);
+      const universityImageResult = await db.execute(universityImageQuery);
+      const universityImageRows = universityImageResult[0] as unknown as any[];
+      if (universityImageRows && universityImageRows.length > 0) {
+        for (const row of universityImageRows) {
+          const fieldName = row.research_field_name || row[0];
+          const imageUrl = row.image_url || row[1];
+          if (fieldName && imageUrl) {
+            universityFieldImageMap.set(fieldName, imageUrl);
+          }
+        }
+      }
+      
+      // 3.2 查询通用领域图片（research_field_images表）作为回退
+      let imageQueryStr = `SELECT field_name, image_url FROM research_field_images WHERE field_name IN (${placeholders})`;
       fieldsArray.forEach((field, i) => {
         imageQueryStr = imageQueryStr.replace(`{val${i}}`, `'${field.replace(/'/g, "''")}'`);
       });
-      
       const imageQuery = sql.raw(imageQueryStr);
-      
       const imageResult = await db.execute(imageQuery);
       const imageRows = imageResult[0] as unknown as any[];
-      
       if (imageRows && imageRows.length > 0) {
         for (const row of imageRows) {
           const fieldName = row.field_name || row[0];
@@ -171,9 +185,14 @@ export async function getProfessorsFromDatabase(
           }
         }
         
-        // 如果找到了主要研究领域，获取对应的背景图片
+        // 如果找到了主要研究领域，获取对应的背景图片（优先使用大学专属图片）
         if (primaryResearchField) {
-          researchFieldImageUrl = fieldImageMap.get(primaryResearchField);
+          // 优先使用大学专属图片
+          researchFieldImageUrl = universityFieldImageMap.get(primaryResearchField);
+          // 如果没有大学专属图片，使用通用领域图片
+          if (!researchFieldImageUrl) {
+            researchFieldImageUrl = fieldImageMap.get(primaryResearchField);
+          }
         }
       }
       
@@ -347,17 +366,30 @@ export async function getProfessorsForSwipe(
       return [];
     }
 
-    // Extract student tags
-    const userProfile = {
-      academicLevel: profile.academicLevel || '',
-      gpa: profile.gpa ? String(profile.gpa) : undefined,
-      skills: profile.skills ? JSON.parse(profile.skills as string) : [],
-      interests: profile.interests ? JSON.parse(profile.interests as string) : [],
-      bio: profile.bio || '',
-      activities: [], // Activities are in separate table, skip for now
-    };
+    // Extract student tags (with caching)
+    const { getCachedStudentTags, setCachedStudentTags } = await import('./cacheService');
+    
+    let studentTags = getCachedStudentTags(userId, university, major);
+    
+    if (!studentTags) {
+      // Cache miss, extract tags from profile
+      const userProfile = {
+        academicLevel: profile.academicLevel || '',
+        gpa: profile.gpa ? String(profile.gpa) : undefined,
+        skills: profile.skills ? JSON.parse(profile.skills as string) : [],
+        interests: profile.interests ? JSON.parse(profile.interests as string) : [],
+        bio: profile.bio || '',
+        activities: [], // Activities are in separate table, skip for now
+      };
 
-    const studentTags = await extractStudentTags(userProfile, university, major);
+      studentTags = await extractStudentTags(userProfile, university, major);
+      
+      // Cache the result for 10 minutes
+      setCachedStudentTags(userId, university, major, studentTags);
+      console.log('[Professors] Student tags extracted and cached:', studentTags.length);
+    } else {
+      console.log('[Professors] Using cached student tags:', studentTags.length);
+    }
 
     // Convert professors to format expected by rankProfessorsByMatch
     const professorsForRanking = allProfessors.map(prof => ({
