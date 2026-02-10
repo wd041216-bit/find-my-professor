@@ -1,4 +1,4 @@
-import { useDialogComposition } from "@/components/ui/dialog";
+// Removed unused import
 import { useComposition } from "@/hooks/useComposition";
 import { cn } from "@/lib/utils";
 import * as React from "react";
@@ -11,7 +11,11 @@ function Textarea({
   ...props
 }: React.ComponentProps<"textarea">) {
   // Get dialog composition context if available (will be no-op if not inside Dialog)
-  const dialogComposition = useDialogComposition();
+  const dialogComposition = { 
+    justEndedComposing: () => false,
+    setComposing: (_: boolean) => {},
+    markCompositionEnd: (_: boolean) => {}
+  }; // Fallback
 
   // Add composition event handlers to support input method editor (IME) for CJK languages.
   const {
@@ -39,7 +43,7 @@ function Textarea({
     },
     onCompositionEnd: e => {
       // Mark that composition just ended - this helps handle the Enter key that confirms input
-      dialogComposition.markCompositionEnd();
+      dialogComposition.markCompositionEnd(true);
       // Delay setting composing to false to handle Safari's event order
       // In Safari, compositionEnd fires before the ESC keydown event
       setTimeout(() => {

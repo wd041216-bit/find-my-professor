@@ -209,6 +209,22 @@ export const appRouter = router({
       return db.getAllUniversities();
     }),
     
+    // Get distinct university names from professors table
+    getDistinctNames: publicProcedure.query(async () => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return [];
+      
+      const { professors } = await import('../drizzle/schema');
+      const { sql } = await import('drizzle-orm');
+      
+      const results = await dbConn
+        .selectDistinct({ universityName: professors.universityName })
+        .from(professors)
+        .where(sql`${professors.universityName} IS NOT NULL AND ${professors.universityName} != ''`);
+      
+      return results.map(r => r.universityName).filter(Boolean).sort();
+    }),
+    
     get: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
@@ -217,6 +233,22 @@ export const appRouter = router({
   }),
 
   professors: router({
+    // Get distinct major names from professors table
+    getDistinctMajors: publicProcedure.query(async () => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return [];
+      
+      const { professors } = await import('../drizzle/schema');
+      const { sql } = await import('drizzle-orm');
+      
+      const results = await dbConn
+        .selectDistinct({ majorName: professors.majorName })
+        .from(professors)
+        .where(sql`${professors.majorName} IS NOT NULL AND ${professors.majorName} != ''`);
+      
+      return results.map(r => r.majorName).filter(Boolean).sort();
+    }),
+    
     getByUniversity: publicProcedure
       .input(z.object({ universityId: z.number() }))
       .query(async ({ input }) => {
