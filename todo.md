@@ -785,4 +785,14 @@
 - [x] 修复Swipe.tsx的profile检查逻辑（处理JSON字符串）
 - [x] 发现并解决excludeIds导致的空结果问题（清空swipe历史）
 - [x] 测试Swipe页面加载效果（成功显示教授卡片）
-- [ ] 保存最终checkpoint
+- [x] 保存最终checkpoint (version: afd9b385)
+
+## 🔄 添加"重置Swipe历史"功能 (2026-02-10)
+- [x] 在swipe router中添加resetSwipeHistory API
+- [x] 在Profile页面添加"重置Swipe历史"按钮
+- [x] 添加确认对话框（AlertDialog）防止误操作
+- [x] 集成tRPC mutation调用后端API
+- [x] 显示成功/失败toast提示
+- [x] 测试完整流程（重置后Swipe页面成功显示所有36位教授）
+- [x] 编写单元测试（swipe.resetHistory.test.ts，2个测试用例全部通过）
+- [ ] 保存checkpoint

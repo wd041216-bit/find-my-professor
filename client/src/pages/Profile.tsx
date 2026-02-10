@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Save, Loader2, GraduationCap, Camera } from "lucide-react";
+import { ArrowLeft, Save, Loader2, GraduationCap, Camera, RotateCcw } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -16,6 +16,17 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SmartInput } from "@/components/SmartInput";
 import { getUniversitySuggestions, getMajorSuggestions, normalizeUniversity, normalizeMajor } from "@shared/translations";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Profile() {
   const { user, loading: authLoading } = useAuth();
@@ -98,6 +109,19 @@ export default function Profile() {
       toast.error(`${t.common.error}: ${error.message}`);
     },
   });
+
+  const resetSwipeMutation = trpc.swipe.resetSwipeHistory.useMutation({
+    onSuccess: () => {
+      toast.success('Swipe history reset successfully! You can now re-swipe all professors.');
+    },
+    onError: (error) => {
+      toast.error(`Failed to reset swipe history: ${error.message}`);
+    },
+  });
+
+  const handleResetSwipeHistory = () => {
+    resetSwipeMutation.mutate();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,18 +223,49 @@ export default function Profile() {
         <h1 className="text-3xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
           Edit Profile
         </h1>
-        <Button
-          onClick={handleSubmit}
-          disabled={upsertMutation.isPending}
-          className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold rounded-full shadow-lg"
-        >
-          {upsertMutation.isPending ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4 mr-2" />
-          )}
-          Save
-        </Button>
+        <div className="flex gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="rounded-full border-2 border-gray-300 hover:border-purple-500 hover:bg-purple-50"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset Swipe History
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset Swipe History?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will clear all your swipe records, allowing you to re-swipe professors you've already seen. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleResetSwipeHistory}
+                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700"
+                >
+                  Reset
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          
+          <Button
+            onClick={handleSubmit}
+            disabled={upsertMutation.isPending}
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold rounded-full shadow-lg"
+          >
+            {upsertMutation.isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
+            Save
+          </Button>
+        </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pb-8">
