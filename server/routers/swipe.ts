@@ -220,4 +220,28 @@ export const swipeRouter = router({
 
       return { success: true };
     }),
+
+  /**
+   * Reset swipe history - clear all swipe records for the current user
+   * This allows users to re-swipe professors they've already seen
+   */
+  resetSwipeHistory: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      // Delete all swipe records for this user
+      await db
+        .delete(studentSwipes)
+        .where(eq(studentSwipes.studentId, ctx.user.id));
+
+      console.log('[Swipe] Reset swipe history for user', ctx.user.id);
+
+      return { success: true };
+    }),
 });
