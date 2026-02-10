@@ -290,10 +290,7 @@ export async function getProfessorsForSwipe(
     // Rank professors by match score
     const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
 
-    // Get school images for random selection
-    const { schools, schoolImages } = await import('../../drizzle/schema');
-    const schoolRecords = await db.select().from(schools);
-    const schoolImagesRecords = await db.select().from(schoolImages);
+    // School images removed - using research_field_images instead
 
     // Convert MatchResult[] back to MatchedProfessor[] with school images
     const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {

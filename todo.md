@@ -491,3 +491,11 @@
 - [x] 确认school_images表的内容
 - [x] 删除school_images表（DROP TABLE）
 - [x] 保存checkpoint
+
+## 🔗 恢复电脑端导航功能（Profile和收藏列表）
+- [x] 检查当前App.tsx的路由配置
+- [x] 检查当前导航栏组件（Header/Navigation）
+- [x] 恢复Profile页面的导航链接
+- [x] 恢复Favorites（收藏教授列表）页面的导航链接
+- [x] 测试电脑端和移动端的导航功能
+- [ ] 保存checkpoint
