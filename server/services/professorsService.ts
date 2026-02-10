@@ -52,16 +52,22 @@ export async function getProfessorsFromDatabase(
       return [];
     }
     
-    // 查询professors表（大小写不敏感）
+    // 先查询教授数据（使用Drizzle ORM）
     const professorsList = await db
       .select()
       .from(professors)
       .where(
-        sql`LOWER(university_name) = LOWER(${university}) AND LOWER(major_name) = LOWER(${major})`
+        sql`LOWER(${professors.universityName}) = LOWER(${university}) AND LOWER(${professors.majorName}) = LOWER(${major})`
       )
       .limit(limit);
     
-    console.log(`[Professors] Found ${professorsList.length} professors for ${university} - ${major}`);
+    // 学院图片映射表（临时解决方案）
+    const schoolImageMap: Record<string, string> = {
+      'information school': 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/TPWiBjDxceQPezjJ.jpg',
+      'paul g. allen school of computer science & engineering': 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/TPWiBjDxceQPezjJ.jpg', // 使用默认图片
+    };
+    
+    const schoolImageUrl = schoolImageMap[major.toLowerCase()] || null;
     
     // 转换为MatchedProfessor格式
     const matchedProfessors: MatchedProfessor[] = professorsList.map((prof) => ({
@@ -79,6 +85,7 @@ export async function getProfessorsFromDatabase(
       tags: prof.tags || [],
       email: prof.email,
       bio: prof.bio,
+      schoolImageUrl: schoolImageUrl || undefined,
     }));
     
     return matchedProfessors;
@@ -249,21 +256,14 @@ export async function getProfessorsForSwipe(
     const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
       const originalProf = allProfessors.find(p => p.name === result.professorName)!;
       
-      // Find school images for this professor's school
-      const professorSchool = schoolRecords.find(s => s.id === originalProf.schoolId);
-      const schoolImagesList = schoolImagesRecords.filter(img => img.schoolId === originalProf.schoolId);
-      
-      // Randomly select one school image
-      const randomSchoolImage = schoolImagesList.length > 0
-        ? schoolImagesList[Math.floor(Math.random() * schoolImagesList.length)]
-        : null;
-
+      // 使用getProfessorsFromDatabase已经设置好的schoolImageUrl
+      // 不再重新查询，直接使用原有值
       return {
         ...originalProf,
         matchScore: result.matchScore,
         displayScore: result.displayScore,
         matchedTags: result.matchedTags,
-        schoolImageUrl: randomSchoolImage?.imageUrl || undefined
+        // 保留原有的schoolImageUrl，不覆盖
       };
     });
 
