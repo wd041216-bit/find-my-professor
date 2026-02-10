@@ -189,9 +189,16 @@ export const swipeRouter = router({
       .where(eq(studentLikes.studentId, ctx.user.id))
       .orderBy(desc(studentLikes.createdAt));
 
+    // Return data in the format expected by History.tsx
     return liked.map((l) => ({
-      ...l.professor,
+      professor: {
+        ...l.professor,
+        university: l.professor.universityName,
+      },
       likedAt: l.createdAt,
+      createdAt: l.createdAt,
+      matchScore: null,
+      likeType: "like",
     }));
   }),
 

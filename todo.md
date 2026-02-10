@@ -803,4 +803,11 @@
 - [x] 发现问题：research_field_tag_mapping与university_field_images表的字段名不匹配
 - [x] 修复research_field_tag_mapping表，统一字段名（影响196行）
 - [x] 测试Swipe页面显示定制图像（成功！教授卡片显示华大定制图像）
+- [x] 保存checkpoint (version: 93aa527d)
+
+## 🐛 修复Match History页面报错 (2026-02-10)
+- [x] 检查浏览器控制台和服务器日志
+- [x] 定位错误根源：getLikedProfessors返回的数据结构与History.tsx期望不匹配
+- [x] 修复getLikedProfessors API，返回嵌套的professor对象
+- [x] 测试Match History页面（成功！显示28个匹配记录）
 - [ ] 保存checkpoint
