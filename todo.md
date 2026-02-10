@@ -619,4 +619,13 @@
   - [x] 提示信息使用小字体和白色半透明背景
   - [x] 添加点击跳转到Profile页面的功能
 - [x] 测试简化profile的显示效果（成功显示提示信息）
+- [x] 保存checkpoint
+
+## 🐛 修复isMinimalProfile判断逻辑
+- [x] 分析当前问题：判断逻辑过于严格（即使填写了skills，但Academic Level未填写就返回true）
+- [x] 修改isMinimalProfile函数
+  - [x] 移除hasBasicInfo检查，直接检查额外信息
+  - [x] 只要填写了任何额外信息（skills/GPA/interests/bio）→ 返回false（显示匹配分数）
+  - [x] 没有填写任何额外信息 → 返回true（显示提示信息）
+- [x] 测试修复效果（成功显示71%匹配度）
 - [ ] 保存checkpoint

@@ -6,24 +6,16 @@ import type { StudentProfile } from "../../drizzle/schema";
  * 完整信息还包括：skills, gpa, interests等
  */
 export function isMinimalProfile(student: StudentProfile): boolean {
-  // 检查是否填写了基本的必填字段
-  const hasBasicInfo =
-    !!student.academicLevel && !!student.targetUniversities && !!student.targetMajors;
-
-  if (!hasBasicInfo) {
-    // 如果连基本信息都没填，也算作minimal
-    return true;
-  }
-
   // 检查是否填写了额外的详细信息
   const hasSkills = !!student.skills && student.skills.trim().length > 0;
   const hasGpa = !!student.gpa;
   const hasInterests = !!student.interests && student.interests.trim().length > 0;
   const hasBio = !!student.bio && student.bio.trim().length > 0;
 
-  // 如果没有填写任何额外信息，则为minimal profile
+  // 只要填写了任何额外信息（skills/GPA/interests/bio），就不是 minimal profile
   const hasAnyAdditionalInfo = hasSkills || hasGpa || hasInterests || hasBio;
 
+  // 如果有额外信息，就显示匹配分数；否则显示提示信息
   return !hasAnyAdditionalInfo;
 }
 
