@@ -885,3 +885,10 @@
 - [x] 同步到iOS项目（npx cap sync ios）
 - [x] 更新iOS-BUILD-INSTRUCTIONS.md，添加最终上架步骤
 - [ ] 保存checkpoint
+
+## 🐛 修复Complete Profile按钮点击无效问题 (2026-02-11)
+- [x] 定位问题：生产环境Complete Profile按钮点击无反应
+- [x] 修复Swipe.tsx：在Link和Button之间添加<a>标签包裹
+- [x] 重新构建生产版本（pnpm run build）
+- [x] 同步到iOS项目（npx cap sync ios）
+- [ ] 保存checkpoint
