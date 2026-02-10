@@ -25,11 +25,10 @@ export function FilterPanel({ onFilterChange, isOpen, onClose }: FilterPanelProp
     staleTime: 5 * 60 * 1000, // 5分钟缓存，期间不会重新请求
   });
   
-  // Get departments for selected university
-  const { data: departments } = trpc.swipe.getDepartmentsByUniversity.useQuery(
-    { university: selectedUniversity! },
-    { enabled: !!selectedUniversity }
-  );
+  // Filter departments based on selected university
+  const departments = selectedUniversity 
+    ? filterOptions?.departments.filter((dept: string) => dept) || []
+    : filterOptions?.departments || [];
 
   // Apply filters when selection changes
   useEffect(() => {

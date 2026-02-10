@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
 import { ProfessorCardSkeleton } from '../components/ProfessorCardSkeleton';
 import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe, Filter } from 'lucide-react';
@@ -34,7 +34,17 @@ export function Swipe() {
   });
 
   // Check if profile is complete (only need target university)
-  const isProfileComplete = profile && profile.targetUniversities;
+  const isProfileComplete = useMemo(() => {
+    if (!profile || !profile.targetUniversities) return false;
+    try {
+      const universities = typeof profile.targetUniversities === 'string' 
+        ? JSON.parse(profile.targetUniversities)
+        : profile.targetUniversities;
+      return Array.isArray(universities) && universities.length > 0;
+    } catch {
+      return false;
+    }
+  }, [profile]);
 
   // Filter state
   const [filters, setFilters] = useState<{ university?: string; department?: string }>({});
@@ -105,7 +115,7 @@ export function Swipe() {
   const swipeMutation = trpc.swipe.swipe.useMutation({
     onSuccess: () => {
       // Immediately invalidate Match History to refresh the list
-      utils.swipe.getMyMatches.invalidate();
+      utils.swipe.getLikedProfessors.invalidate();
     },
   });
 
@@ -195,8 +205,7 @@ export function Swipe() {
     // Save swipe to database
     swipeMutation.mutate({
       professorId: professor.id,
-      action,
-      matchScore: professor.matchScore,
+      liked: action === 'like',
     });
 
     // Move to next professor after animation completes
@@ -222,8 +231,7 @@ export function Swipe() {
     // Save swipe to database
     swipeMutation.mutate({
       professorId: currentProfessor.id,
-      action,
-      matchScore: currentProfessor.matchScore,
+      liked: action === 'like',
     });
 
     // Move to next professor after animation completes

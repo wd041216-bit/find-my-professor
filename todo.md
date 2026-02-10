@@ -763,3 +763,26 @@
 - [x] 移除matchScore预计算代码，恢复实时计算
 - [ ] 测试Swipe页面加载效果（发现API错误，需要修复）
 - [ ] 保存checkpoint
+
+## 🐛 修复Swipe页面API错误 (2026-02-10)
+- [x] 修复Swipe页面的TypeScript错误（getMyMatches, unlikeProfessor不存在）
+- [x] 修复History页面的TypeScript错误（unlikeProfessor不存在）
+- [x] 修复swipe mutation的action字段错误
+- [ ] 测试Swipe页面加载效果
+- [ ] 保存最终checkpoint
+
+## 🔧 修复Swipe页面loading + 完成华大卡片库 (2026-02-10)
+- [x] 尝试生成剩余19个领域的华大卡片（已完成，29/29全部生成）
+- [ ] 修复Swipe页面的Profile完整度检查逻辑（只要求目标大学）
+- [ ] 修复getProfessorsForSwipe函数，支持只填写目标大学
+- [ ] 测试Swipe页面加载效果
+- [ ] 保存最终checkpoint
+
+## 🔧 修复Swipe页面loading + 完成华大卡片库 (2026-02-10)
+- [x] 尝试生成剩余19个领域的华大卡片（已完成，29/29全部生成）
+- [x] 上传19张卡片到S3并保存到数据库
+- [x] 修复getProfessorsForSwipe函数，支持只填写目标大学（移除target_major必填要求）
+- [x] 修复Swipe.tsx的profile检查逻辑（处理JSON字符串）
+- [x] 发现并解决excludeIds导致的空结果问题（清空swipe历史）
+- [x] 测试Swipe页面加载效果（成功显示教授卡片）
+- [ ] 保存最终checkpoint

@@ -19,12 +19,12 @@ export default function History() {
   const [coverLetterContent, setCoverLetterContent] = useState("");
 
   // Fetch liked professors
-  const { data: likedProfessors = [], isLoading, refetch } = trpc.swipe.getMyMatches.useQuery(undefined, {
+  const { data: likedProfessors = [], isLoading, refetch } = trpc.swipe.getLikedProfessors.useQuery(undefined, {
     enabled: !!user,
   });
 
   // Unlike professor mutation
-  const unlikeMutation = trpc.swipe.unlikeProfessor.useMutation({
+  const unlikeMutation = trpc.swipe.unlike.useMutation({
     onSuccess: () => {
       toast.success("Removed from matches");
       refetch();

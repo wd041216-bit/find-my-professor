@@ -1,0 +1,30 @@
+{
+  "query": "SELECT * FROM student_profiles WHERE user_id = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT * FROM student_profiles WHERE user_id = 1;",
+  "rows": [
+    {
+      "id": "1",
+      "user_id": "1",
+      "current_university": "NULL",
+      "current_university_id": "NULL",
+      "current_major": "NULL",
+      "current_major_id": "NULL",
+      "academic_level": "undergraduate",
+      "gpa": "3.90",
+      "target_universities": "[\"University of Washington\"]",
+      "target_university_ids": "NULL",
+      "target_majors": "[\"information school\"]",
+      "target_major_ids": "NULL",
+      "skills": "[\"Python\", \"R\", \"Java\", \"SQL\", \"Machine Learning\", \"Data Visualization\", \"Statistical Analysis\", \"Research Design\", \"Academic Writing\", \"Critical Thinking\"]",
+      "interests": "NULL",
+      "bio": "NULL",
+      "createdAt": "2026-02-01 15:08:38",
+      "updatedAt": "2026-02-10 13:15:34",
+      "resume_url": "https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/resumes/1/1770275766898-DA WEI.pdf"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuser_id\tcurrent_university\tcurrent_university_id\tcurrent_major\tcurrent_major_id\tacademic_level\tgpa\ttarget_universities\ttarget_university_ids\ttarget_majors\ttarget_major_ids\tskills\tinterests\tbio\tcreatedAt\tupdatedAt\tresume_url\n1\t1\tNULL\tNULL\tNULL\tNULL\tundergraduate\t3.90\t[\"University of Washington\"]\tNULL\t[\"information school\"]\tNULL\t[\"Python\", \"R\", \"Java\", \"SQL\", \"Machine Learning\", \"Data Visualization\", \"Statistical Analysis\", \"Research Design\", \"Academic Writing\", \"Critical Thinking\"]\tNULL\tNULL\t2026-02-01 15:08:38\t2026-02-10 13:15:34\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/resumes/1/1770275766898-DA WEI.pdf\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

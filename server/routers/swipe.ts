@@ -111,6 +111,7 @@ export const swipeRouter = router({
         .where(eq(studentSwipes.studentId, userId));
 
       const swipedIds = swipedProfessors.map((s) => s.professorId);
+      console.log('[Swipe Router] Excluding', swipedIds.length, 'swiped professors');
 
       // Use real-time match score calculation
       const matchedProfessors = await getProfessorsForSwipe(
