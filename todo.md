@@ -818,4 +818,14 @@
 - [x] 在Match History的View Details对话框修复字段名（personalWebsite, labWebsite）
 - [x] 添加“无联系信息”提示
 - [x] 测试联系信息展示（成功！显示"No contact information available"）
+- [x] 保存checkpoint (version: f1100dcb)
+
+## 🔍 替换Contact Information为Find This Professor按钮 (2026-02-10)
+- [x] 移除History.tsx中的Contact Information板块
+- [x] 添加"Find This Professor on Google"按钮
+- [x] 实现点击后复制教授姓名到剪贴板
+- [x] 实现点击后打开Google搜索（教授名字 + 大学名字）
+- [x] 显示toast提示"Professor name copied to clipboard!"
+- [x] 添加Search图标import
+- [x] 测试功能（成功！点击后打开Google搜索新标签页）
 - [ ] 保存checkpoint
