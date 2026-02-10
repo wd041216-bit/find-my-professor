@@ -31,7 +31,7 @@ import { Swipe } from "./pages/Swipe";
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path={"/"} component={Swipe} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/profile"} component={Profile} />
       <Route path={"/activities"} component={Activities} />

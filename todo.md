@@ -845,4 +845,12 @@
 - [x] 修改ProfessorCard组件，移除title/position显示
 - [x] 修改History页面详情对话框，移除title/position显示
 - [x] 测试Swipe和Match History页面
+- [x] 保存checkpoint (version: a3272fc5)
+
+## 📱 Match History排版优化 + 改造为独立App (2026-02-11)
+- [x] 修复Match History页面卡片内部间距过大问题（mb-2→mb-1, space-y-1→space-y-0.5）
+- [x] 将Swipe功能改造为独立移动App
+- [x] 移除主页介绍页面，App启动直接进入Swipe（修改App.tsx根路径）
+- [x] 保留Profile、Swipe、Match History三个核心功能
+- [x] 测试移动端App体验（根路径直接进入Swipe，卡片间距优化正常）
 - [ ] 保存checkpoint
