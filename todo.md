@@ -470,3 +470,10 @@
 - [x] 测试电脑端profile输入和教授匹配流程
 - [x] 修复数据库查询大小写敏感问题（导致无法匹配教授）
 - [ ] 保存checkpoint
+
+## 🖼️ 教授卡片背景图片显示问题
+- [x] 分析ProfessorCard组件的图片显示逻辑
+- [x] 检查schoolImageUrl字段是否正确传递
+- [x] 修夏getProfessorsForSwipe函数覆盖schoolImageUrl的问题
+- [x] 测试所有设备上的图片显示效果
+- [x] 保存checkpoint

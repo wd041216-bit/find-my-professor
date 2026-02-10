@@ -1,0 +1,30 @@
+{
+  "query": "SELECT field_name, image_url FROM research_field_images WHERE field_name LIKE '%Information%' OR field_name LIKE '%Computer%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT field_name, image_url FROM research_field_images WHERE field_name LIKE '%Information%' OR field_name LIKE '%Computer%' LIMIT 5;",
+  "rows": [
+    {
+      "field_name": "Human-Computer Interaction",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/AYYaRcMEjNElSolU.png"
+    },
+    {
+      "field_name": "Information Retrieval & NLP",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lvkZjkLeEnMRnbRv.png"
+    },
+    {
+      "field_name": "Theoretical Computer Science & Algorithms",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/nnlpvxfbgxRbuYUT.png"
+    },
+    {
+      "field_name": "Robotics & Computer Vision",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/CBSYKfGNJevnKKwl.png"
+    },
+    {
+      "field_name": "Computer Graphics & Extended Reality",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/cJfUBuKpKkdBbHvb.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "field_name\timage_url\nHuman-Computer Interaction\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/AYYaRcMEjNElSolU.png\nInformation Retrieval & NLP\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lvkZjkLeEnMRnbRv.png\nTheoretical Computer Science & Algorithms\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/nnlpvxfbgxRbuYUT.png\nRobotics & Computer Vision\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/CBSYKfGNJevnKKwl.png\nComputer Graphics & Extended Reality\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/cJfUBuKpKkdBbHvb.png\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}
