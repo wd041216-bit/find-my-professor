@@ -315,7 +315,7 @@ export default function Profile() {
               {/* Target Majors */}
               <div className="space-y-4">
                 <Label className="text-xl font-bold text-gray-800">
-                  Target Major *
+                  Target Major
                 </Label>
                 <div className="flex gap-2">
                   <SmartInput
