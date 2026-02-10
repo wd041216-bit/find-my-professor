@@ -1,1 +1,0 @@
-ALTER TABLE `scraped_projects` ADD `tags` json;

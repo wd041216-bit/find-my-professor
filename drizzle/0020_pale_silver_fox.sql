@@ -1,1 +1,0 @@
-ALTER TABLE `scraped_projects` DROP COLUMN `expires_at`;

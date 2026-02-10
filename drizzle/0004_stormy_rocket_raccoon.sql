@@ -1,1 +1,0 @@
-ALTER TABLE `contact_messages` ADD `message_type` enum('business','support') DEFAULT 'support' NOT NULL;

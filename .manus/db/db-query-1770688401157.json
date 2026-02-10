@@ -1,0 +1,38 @@
+{
+  "query": "SELECT research_field, COUNT(*) as count FROM professors GROUP BY research_field ORDER BY count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT research_field, COUNT(*) as count FROM professors GROUP BY research_field ORDER BY count DESC;",
+  "rows": [
+    {
+      "research_field": "Human-Computer Interaction",
+      "count": "14"
+    },
+    {
+      "research_field": "Social Computing & Networks",
+      "count": "7"
+    },
+    {
+      "research_field": "Education Technology",
+      "count": "5"
+    },
+    {
+      "research_field": "Information Retrieval & NLP",
+      "count": "4"
+    },
+    {
+      "research_field": "AI & Machine Learning",
+      "count": "3"
+    },
+    {
+      "research_field": "Data Science & Analytics",
+      "count": "2"
+    },
+    {
+      "research_field": "Privacy & Security",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "research_field\tcount\nHuman-Computer Interaction\t14\nSocial Computing & Networks\t7\nEducation Technology\t5\nInformation Retrieval & NLP\t4\nAI & Machine Learning\t3\nData Science & Analytics\t2\nPrivacy & Security\t1\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}
