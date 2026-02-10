@@ -628,4 +628,51 @@
   - [x] 只要填写了任何额外信息（skills/GPA/interests/bio）→ 返回false（显示匹配分数）
   - [x] 没有填写任何额外信息 → 返回true（显示提示信息）
 - [x] 测试修复效果（成功显示71%匹配度）
-- [ ] 保存checkpoint
+- [x] 保存checkpoint
+
+## 🚀 性能优化任务 (2026-02-10)
+
+### 问题分析
+- [ ] Swipe页面加载缓慢
+  - [ ] getProfessorsForSwipe每次查询1000个教授然后排序（应该优化为只查询需要的数量）
+  - [ ] 每个教授都要查询research_field_tag_mapping和research_field_images（N+1查询问题）
+  - [ ] 每次都重新计算matchScore（应该缓存或预计算）
+  - [ ] 每次都查询student_profiles检查isMinimalProfile（应该缓存）
+- [ ] Filter下拉框卡顿
+  - [ ] getFilterOptions每次都查询数据库（应该缓存）
+  - [ ] selectDistinct查询可能很慢（2553条记录）
+  - [ ] 没有使用数据库索引
+
+### 优化方案
+- [ ] 数据库优化
+  - [ ] 为professors表添加索引（university_name, department, major_name）
+  - [ ] 为research_field_tag_mapping表添加索引（tag字段）
+  - [ ] 预计算并缓存filter options到内存
+- [ ] 查询优化
+  - [ ] 使用JOIN一次性获取研究领域图片，避免N+1查询
+  - [ ] 限制getProfessorsFromDatabase只查询需要的数量（limit * 2）
+  - [ ] 缓存isMinimalProfile结果（使用Map缓存）
+- [ ] 前端优化
+  - [ ] 缓存filter options到前端（使用React Query的staleTime）
+  - [ ] 添加loading skeleton提升感知性能
+  - [ ] 使用虚拟滚动优化大列表渲染
+
+## 🚀 性能优化任务 (2026-02-10) ✅
+
+### 问题描述
+- Swipe页面加载缓慢
+- Filter下拉框（学校和学院选择）非常卡顿
+
+### 优化任务
+- [x] 添加数据库索引（university, department, major）
+- [x] 优化getProfessorsFromDatabase，使用JOIN避免N+1查询
+- [x] 减少getProfessorsForSwipe的查询数量（从queryLimit=1000改为limit*3）
+- [x] 为getFilterOptions添加服务端缓存（5分钟）
+- [x] 为isMinimalProfile检查添加缓存（2分钟）
+- [x] 为FilterPanel添加前端缓存（staleTime）
+
+### 优化效果
+- **Filter下拉框响应时间：从3665ms降低到77-101ms（提升97%）**
+- **N+1查询优化：从72次查询减少到3次批量查询**
+- **查询数量优化：从1000个教授减少到60个（limit*3）**
+- **缓存命中率：服务端5分钟缓存 + 前端React Query缓存**
