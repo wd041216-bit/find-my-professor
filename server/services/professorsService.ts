@@ -223,7 +223,9 @@ export async function getProfessorsForSwipe(
   userId: number,
   limit: number = 10,
   excludeIds: number[] = [],
-  offset: number = 0
+  offset: number = 0,
+  filterUniversity?: string,
+  filterDepartment?: string
 ): Promise<MatchedProfessor[]> {
   try {
     const db = await getDb();
@@ -258,6 +260,18 @@ export async function getProfessorsForSwipe(
 
     // Get all professors for this university+major
     let allProfessors = await getProfessorsFromDatabase(university, major, 1000);
+
+    // Apply filters if provided
+    if (filterUniversity) {
+      allProfessors = allProfessors.filter(prof => 
+        prof.universityName.toLowerCase() === filterUniversity.toLowerCase()
+      );
+    }
+    if (filterDepartment) {
+      allProfessors = allProfessors.filter(prof => 
+        prof.department?.toLowerCase() === filterDepartment.toLowerCase()
+      );
+    }
 
     // Exclude already swiped professors
     if (excludeIds.length > 0) {

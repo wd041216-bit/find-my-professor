@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
-import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe } from 'lucide-react';
+import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe, Filter } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Link } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import { FilterPanel } from '../components/FilterPanel';
 
 // Animation variants for card transitions
 const ANIMATION_VARIANTS = [
@@ -34,6 +35,10 @@ export function Swipe() {
   // Check if profile is complete
   const isProfileComplete = profile && profile.targetUniversities && profile.targetMajors;
 
+  // Filter state
+  const [filters, setFilters] = useState<{ university?: string; department?: string }>({});
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+
   // Infinite scroll state
   const [allProfessors, setAllProfessors] = useState<Professor[]>([]);
   const [currentBatch, setCurrentBatch] = useState(0);
@@ -47,9 +52,31 @@ export function Swipe() {
     setIsLoadingMore(false);
   }, []); // Empty dependency array = only run on mount
 
-  // Fetch professors from API - infinite batches
+  // Handle filter changes
+  const handleFilterChange = useCallback((newFilters: { university?: string; department?: string }) => {
+    // Convert "__all__" to undefined
+    const processedFilters = {
+      university: newFilters.university === '__all__' ? undefined : newFilters.university,
+      department: newFilters.department === '__all__' ? undefined : newFilters.department,
+    };
+    
+    setFilters(processedFilters);
+    
+    // Reset state when filters change
+    setAllProfessors([]);
+    setCurrentBatch(0);
+    setCurrentIndex(0);
+    setIsLoadingMore(false);
+  }, []);
+
+  // Fetch professors from API - infinite batches with filters
   const { data: professorsData, isLoading: professorsLoading } = trpc.swipe.getProfessorsToSwipe.useQuery(
-    { limit: 20, offset: currentBatch * 20 },
+    { 
+      limit: 20, 
+      offset: currentBatch * 20,
+      university: filters.university,
+      department: filters.department,
+    },
     { enabled: !!user && !!isProfileComplete }
   );
 
@@ -82,6 +109,9 @@ export function Swipe() {
   });
 
   const currentProfessor = professors[currentIndex];
+
+  // Count active filters
+  const activeFilterCount = [filters.university, filters.department].filter(Boolean).length;
 
   // Auto-load more professors when approaching the end
   useEffect(() => {
@@ -235,6 +265,20 @@ export function Swipe() {
                 Match History
               </span>
             </Link>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setIsFilterPanelOpen(true)}
+              className="relative"
+            >
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 text-white text-xs rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </Button>
             <Link href="/contact">
               <Button variant="ghost" size="sm" className="hidden md:flex">
                 <MessageCircle className="w-4 h-4 mr-2" />
@@ -471,6 +515,13 @@ export function Swipe() {
           animation: bounce-once 0.3s ease-in-out;
         }
       `}</style>
+
+      {/* Filter Panel */}
+      <FilterPanel
+        isOpen={isFilterPanelOpen}
+        onClose={() => setIsFilterPanelOpen(false)}
+        onFilterChange={handleFilterChange}
+      />
     </div>
   );
 }
