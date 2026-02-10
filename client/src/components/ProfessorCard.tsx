@@ -24,9 +24,10 @@ interface ProfessorCardProps {
   professor: Professor;
   onSwipe: (direction: 'left' | 'right', professor: Professor) => void;
   style?: React.CSSProperties;
+  isMinimalProfile?: boolean; // Whether user has minimal profile
 }
 
-export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps) {
+export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = false }: ProfessorCardProps) {
   const x = useMotionValue(0);
   const [exitX, setExitX] = useState(0);
   const [showInfo, setShowInfo] = useState(false);
@@ -116,7 +117,18 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
           <div className="mb-4">
             <h2 className="text-4xl font-black text-white mb-2 drop-shadow-lg">
               {professor.name}
-              {professor.displayScore !== undefined && (
+              {isMinimalProfile ? (
+                <span className="ml-3 text-sm">
+                  <a 
+                    href="/profile" 
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white/90 hover:text-white transition-all duration-200 text-sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Complete profile for match score
+                  </a>
+                </span>
+              ) : professor.displayScore !== undefined && (
                 <span className="ml-3 text-2xl">
                   <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full">
                     <Sparkles className="w-5 h-5" />

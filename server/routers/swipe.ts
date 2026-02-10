@@ -2,9 +2,10 @@ import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { studentLikes, studentSwipes, professors } from "../../drizzle/schema";
+import { studentLikes, studentSwipes, professors, studentProfiles } from "../../drizzle/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { getProfessorsForSwipe } from "../services/professorsService";
+import { isMinimalProfile } from "../services/profileCompletenessService";
 
 /**
  * Swipe router - handles Tinder-style professor matching
@@ -94,6 +95,15 @@ export const swipeRouter = router({
       }
       const userId = ctx.user.id;
 
+      // Get student profile to check if it's minimal
+      const profile = await db
+        .select()
+        .from(studentProfiles)
+        .where(eq(studentProfiles.userId, userId))
+        .limit(1);
+      
+      const isMinimal = profile.length > 0 ? isMinimalProfile(profile[0]) : true;
+
       // Get list of already swiped professor IDs
       const swipedProfessors = await db
         .select({ professorId: studentSwipes.professorId })
@@ -115,6 +125,7 @@ export const swipeRouter = router({
       return {
         professors: matchedProfessors,
         hasMore: matchedProfessors.length === input.limit,
+        isMinimalProfile: isMinimal,
       };
     }),
 

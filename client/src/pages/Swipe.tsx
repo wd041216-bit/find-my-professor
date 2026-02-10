@@ -327,6 +327,7 @@ export function Swipe() {
                 professor={currentProfessor}
                 onSwipe={handleSwipe}
                 style={{ zIndex: 1 }}
+                isMinimalProfile={professorsData?.isMinimalProfile}
               />
             </div>
           )}
