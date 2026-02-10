@@ -52,15 +52,12 @@ export async function getProfessorsFromDatabase(
       return [];
     }
     
-    // 查询professors表
+    // 查询professors表（大小写不敏感）
     const professorsList = await db
       .select()
       .from(professors)
       .where(
-        and(
-          eq(professors.universityName, university),
-          eq(professors.majorName, major)
-        )
+        sql`LOWER(university_name) = LOWER(${university}) AND LOWER(major_name) = LOWER(${major})`
       )
       .limit(limit);
     
@@ -112,10 +109,7 @@ export async function hasSufficientProfessorsData(
       .select({ count: sql<number>`count(*)` })
       .from(professors)
       .where(
-        and(
-          eq(professors.universityName, university),
-          eq(professors.majorName, major)
-        )
+        sql`LOWER(university_name) = LOWER(${university}) AND LOWER(major_name) = LOWER(${major})`
       );
     
     const count = Number(result[0]?.count || 0);
