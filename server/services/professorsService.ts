@@ -208,7 +208,7 @@ export interface MatchedProfessor {
         personalWebsite: prof.personalWebsite,
         sourceUrl: prof.sourceUrl,
         researchAreas: prof.researchAreas ? JSON.parse(prof.researchAreas as string) : null,
-        tags: prof.tags || [],
+        tags: Array.isArray(prof.tags) ? prof.tags : (prof.tags ? [prof.tags] : []),
         email: prof.email,
         bio: prof.bio,
         schoolImageUrl: researchFieldImageUrl,
@@ -346,8 +346,10 @@ export async function getProfessorsForSwipe(
 
     // 优化：只查询需要的数量（limit * 3，留出排序和筛选的余地）
     // 而不是查询全部1000个教授
+    // 如果用户没有使用Filter功能选择学院，则随机匹配全校教授（忽略target major）
     const queryLimit = Math.min(limit * 3, 300);
-    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit);
+    const shouldSearchAllDepartments = !filterDepartment;
+    let allProfessors = await getProfessorsFromDatabase(university, shouldSearchAllDepartments ? null : major, queryLimit);
     
     console.log('[Professors] Query returned:', allProfessors.length, 'professors');
 
@@ -426,8 +428,12 @@ export async function getProfessorsForSwipe(
       return converted;
     });
 
+    // Filter out professors with 0 match score
+    const filteredProfessors = rankedProfessors.filter(prof => (prof.displayScore || 0) > 0);
+    console.log('[Professors] After filtering 0-score professors:', filteredProfessors.length, 'remaining');
+    
     // Return top N professors with offset support
-    const finalResults = rankedProfessors.slice(offset, offset + limit);
+    const finalResults = filteredProfessors.slice(offset, offset + limit);
     console.log('[Professors] Returning', finalResults.length, 'professors (offset:', offset, 'limit:', limit, ')');
     return finalResults;
   } catch (error) {
