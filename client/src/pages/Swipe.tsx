@@ -33,8 +33,8 @@ export function Swipe() {
     enabled: !!user,
   });
 
-  // Check if profile is complete
-  const isProfileComplete = profile && profile.targetUniversities && profile.targetMajors;
+  // Check if profile is complete (only need target university)
+  const isProfileComplete = profile && profile.targetUniversities;
 
   // Filter state
   const [filters, setFilters] = useState<{ university?: string; department?: string }>({});

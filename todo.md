@@ -747,3 +747,19 @@
 - ✅ 已成功生成10个领域的华大专属卡片（多元风格）
 - ⏸️ 剩余19个领域因图片生成额度用尽暂停
 - 📋 已生成领域：AI/ML, Bioinformatics, Biomedical Engineering, Cloud Computing, Cybersecurity, Data Science, Database Systems, Distributed Systems, Education Technology, Environmental Science
+
+## 🎯 matchScore预计算系统 (2026-02-10)
+- [ ] 生成剩余19个领域的华大专属卡片
+- [x] 创建professor_match_scores表（user_id, professor_id, match_score, updated_at）
+- [x] 实现Profile完整度检查（必须填写完整才能进入Swipe） - 已存在
+- [x] 在Profile提交后触发matchScore预计算
+- [x] 修改Swipe页面使用预计算分数（不再实时计算）
+- [ ] 添加后台任务定期更新matchScore（可选）
+- [ ] 测试并保存checkpoint
+
+## 🔧 修复Swipe页面和简化Profile必填项 (2026-02-10)
+- [x] 修复Swipe页面的Profile完整度判断逻辑（只需目标大学即可进入）
+- [x] 移除Profile页面的target_major必填标记
+- [x] 移除matchScore预计算代码，恢复实时计算
+- [ ] 测试Swipe页面加载效果（发现API错误，需要修复）
+- [ ] 保存checkpoint

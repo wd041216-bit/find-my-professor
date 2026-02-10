@@ -52,56 +52,28 @@ export const swipeRouter = router({
         .where(sql`${professors.department} IS NOT NULL AND ${professors.department} != ''`)
         .orderBy(professors.department);
 
-      const universitiesList = universities.map((u) => u.university).filter(Boolean) as string[];
-      const departmentsList = departments.map((d) => d.department).filter(Boolean) as string[];
-      
-      // 设置缓存
-      setCachedFilterOptions(universitiesList, departmentsList);
-      
-      return {
-        universities: universitiesList,
-        departments: departmentsList,
+      const result = {
+        universities: universities.map((u) => u.university).filter((u): u is string => !!u),
+        departments: departments.map((d) => d.department).filter((d): d is string => !!d),
       };
-    }),
-
-  /**
-   * Get departments for a specific university
-   */
-  getDepartmentsByUniversity: protectedProcedure
-    .input(z.object({
-      university: z.string(),
-    }))
-    .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database connection failed",
-        });
-      }
-
-      const departments = await db
-        .selectDistinct({ department: professors.department })
-        .from(professors)
-        .where(
-          and(
-            eq(professors.universityName, input.university),
-            sql`${professors.department} IS NOT NULL AND ${professors.department} != ''`
-          )
-        )
-        .orderBy(professors.department);
-
-      return departments.map((d) => d.department).filter(Boolean);
+      
+      // 缓存结果（5分钟）
+      setCachedFilterOptions(result.universities, result.departments);
+      
+      return result;
     }),
 
   getProfessorsToSwipe: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(20),
-      offset: z.number().min(0).default(0),
-      university: z.string().optional(),
-      department: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        limit: z.number().default(20),
+        offset: z.number().default(0),
+        university: z.string().optional(),
+        department: z.string().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
+      const userId = ctx.user.id;
       const db = await getDb();
       if (!db) {
         throw new TRPCError({
@@ -109,34 +81,38 @@ export const swipeRouter = router({
           message: "Database connection failed",
         });
       }
-      const userId = ctx.user.id;
 
-      // 检查缓存的profile完整度
-      let isMinimal = getCachedProfileCompleteness(userId);
+      // Check if user profile is complete
+      const profile = await db
+        .select()
+        .from(studentProfiles)
+        .where(eq(studentProfiles.userId, userId))
+        .limit(1);
+
+      if (!profile || profile.length === 0) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Please complete your profile first",
+        });
+      }
+
+      // Check if profile is minimal (only target university)
+      const cached = getCachedProfileCompleteness(userId);
+      const isMinimal = cached !== null ? cached : isMinimalProfile(profile[0]);
       
-      if (isMinimal === null) {
-        // 缓存未命中，查询数据库
-        const profile = await db
-          .select()
-          .from(studentProfiles)
-          .where(eq(studentProfiles.userId, userId))
-          .limit(1);
-        
-        isMinimal = profile.length > 0 ? isMinimalProfile(profile[0]) : true;
-        
-        // 设置缓存
+      if (cached === null) {
         setCachedProfileCompleteness(userId, isMinimal);
       }
 
-      // Get list of already swiped professor IDs
+      // Get already swiped professors
       const swipedProfessors = await db
-        .select({ professorId: studentSwipes.professorId })
+        .select()
         .from(studentSwipes)
         .where(eq(studentSwipes.studentId, userId));
 
       const swipedIds = swipedProfessors.map((s) => s.professorId);
 
-      // Get professors for this user (with match scores)
+      // Use real-time match score calculation
       const matchedProfessors = await getProfessorsForSwipe(
         userId,
         input.limit,
@@ -157,13 +133,13 @@ export const swipeRouter = router({
    * Record a swipe action
    */
   swipe: protectedProcedure
-    .input(z.object({
-      professorId: z.number(),
-      action: z.enum(["pass", "like", "super_like"]),
-      matchScore: z.number().optional(), // Match score at the time of swiping
-    }))
-    .mutation(async (opts) => {
-      const { ctx, input } = opts;
+    .input(
+      z.object({
+        professorId: z.number(),
+        liked: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) {
         throw new TRPCError({
@@ -171,45 +147,19 @@ export const swipeRouter = router({
           message: "Database connection failed",
         });
       }
-      const userId = ctx.user.id;
-
-      // Check if professor exists
-      const professor = await db
-        .select()
-        .from(professors)
-        .where(eq(professors.id, input.professorId))
-        .limit(1);
-
-      if (professor.length === 0) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Professor not found",
-        });
-      }
 
       // Record swipe
       await db.insert(studentSwipes).values({
-        studentId: userId,
+        studentId: ctx.user.id,
         professorId: input.professorId,
-        action: input.action,
-      }).onDuplicateKeyUpdate({
-        set: {
-          action: input.action,
-        },
+        action: input.liked ? 'like' : 'pass',
       });
 
-      // If like or super_like, also add to likes table
-      if (input.action === "like" || input.action === "super_like") {
+      // If liked, also add to likes table
+      if (input.liked) {
         await db.insert(studentLikes).values({
-          studentId: userId,
+          studentId: ctx.user.id,
           professorId: input.professorId,
-          likeType: input.action,
-          matchScore: input.matchScore || null,
-        }).onDuplicateKeyUpdate({
-          set: {
-            likeType: input.action,
-            matchScore: input.matchScore || null,
-          },
         });
       }
 
@@ -217,45 +167,39 @@ export const swipeRouter = router({
     }),
 
   /**
-   * Get user's liked professors (My Matches)
+   * Get liked professors (favorites)
    */
-  getMyMatches: protectedProcedure
-    .query(async (opts) => {
-      const { ctx } = opts;
-      const db = await getDb();
-      if (!db) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Database connection failed",
-        });
-      }
-      const userId = ctx.user.id;
+  getLikedProfessors: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Database connection failed",
+      });
+    }
 
-      const likes = await db
-        .select({
-          id: studentLikes.id,
-          likeType: studentLikes.likeType,
-          createdAt: studentLikes.createdAt,
-          matchScore: studentLikes.matchScore,
-          professor: professors,
-        })
-        .from(studentLikes)
-        .innerJoin(professors, eq(studentLikes.professorId, professors.id))
-        .where(eq(studentLikes.studentId, userId))
-        .orderBy(desc(studentLikes.createdAt));
+    const liked = await db
+      .select({
+        professor: professors,
+        createdAt: studentLikes.createdAt,
+      })
+      .from(studentLikes)
+      .innerJoin(professors, eq(studentLikes.professorId, professors.id))
+      .where(eq(studentLikes.studentId, ctx.user.id))
+      .orderBy(desc(studentLikes.createdAt));
 
-      return likes;
-    }),
+    return liked.map((l) => ({
+      ...l.professor,
+      likedAt: l.createdAt,
+    }));
+  }),
 
   /**
-   * Remove a professor from likes
+   * Unlike a professor (remove from favorites)
    */
-  unlikeProfessor: protectedProcedure
-    .input(z.object({
-      professorId: z.number(),
-    }))
-    .mutation(async (opts) => {
-      const { ctx, input } = opts;
+  unlike: protectedProcedure
+    .input(z.object({ professorId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) {
         throw new TRPCError({
@@ -263,13 +207,12 @@ export const swipeRouter = router({
           message: "Database connection failed",
         });
       }
-      const userId = ctx.user.id;
 
       await db
         .delete(studentLikes)
         .where(
           and(
-            eq(studentLikes.studentId, userId),
+            eq(studentLikes.studentId, ctx.user.id),
             eq(studentLikes.professorId, input.professorId)
           )
         );

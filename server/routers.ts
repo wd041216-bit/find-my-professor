@@ -118,7 +118,7 @@ export const appRouter = router({
         // Save raw input without normalization
         // Normalization will be performed during matching to avoid wasting tokens on multiple edits
         // Handle empty arrays - convert to null to avoid SQL errors
-        return db.upsertStudentProfile({
+        const result = await db.upsertStudentProfile({
           userId: ctx.user.id,
           currentUniversity: input.currentUniversity || null,
           currentMajor: input.currentMajor || null,
@@ -130,6 +130,10 @@ export const appRouter = router({
           interests: input.interests && input.interests.length > 0 ? JSON.stringify(input.interests) : null,
           bio: input.bio || null,
         });
+        
+        // matchScore is now calculated in real-time during swipe
+        
+        return result;
       }),
   }),
 
