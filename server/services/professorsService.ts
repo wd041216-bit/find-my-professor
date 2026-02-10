@@ -26,6 +26,8 @@ export interface MatchedProfessor {
   matchLevel?: string;
   matchedTags?: string[];
   schoolImageUrl?: string;
+  researchField?: string | null;
+  researchFieldImageUrl?: string;
 }
 
 /**
@@ -105,6 +107,7 @@ export async function getProfessorsFromDatabase(
       tags: prof.tags || [],
       email: prof.email,
       bio: prof.bio,
+      researchField: prof.researchField,
     }));
     
     return matchedProfessors;
@@ -288,30 +291,23 @@ export async function getProfessorsForSwipe(
     // Rank professors by match score
     const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
 
-    // Get school images for random selection
-    const { schools, schoolImages } = await import('../../drizzle/schema');
-    const schoolRecords = await db.select().from(schools);
-    const schoolImagesRecords = await db.select().from(schoolImages);
+    // Get research field images
+    const { researchFieldImages } = await import('../../drizzle/schema');
+    const fieldImagesRecords = await db.select().from(researchFieldImages);
 
-    // Convert MatchResult[] back to MatchedProfessor[] with school images
+    // Convert MatchResult[] back to MatchedProfessor[] with research field images
     const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
       const originalProf = allProfessors.find(p => p.name === result.professorName)!;
       
-      // Find school images for this professor's school
-      const professorSchool = schoolRecords.find(s => s.id === originalProf.schoolId);
-      const schoolImagesList = schoolImagesRecords.filter(img => img.schoolId === originalProf.schoolId);
-      
-      // Randomly select one school image
-      const randomSchoolImage = schoolImagesList.length > 0
-        ? schoolImagesList[Math.floor(Math.random() * schoolImagesList.length)]
-        : null;
+      // Find research field image for this professor
+      const fieldImage = fieldImagesRecords.find(img => img.fieldName === originalProf.researchField);
 
       return {
         ...originalProf,
         matchScore: result.matchScore,
         displayScore: result.displayScore,
         matchedTags: result.matchedTags,
-        schoolImageUrl: randomSchoolImage?.imageUrl || undefined
+        researchFieldImageUrl: fieldImage?.imageUrl || undefined
       };
     });
 

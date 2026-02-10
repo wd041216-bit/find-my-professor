@@ -97,6 +97,7 @@ export const professors = mysqlTable("professors", {
   title: text("title"),
   researchAreas: text("research_areas"), // JSON array
   tags: json("tags").$type<string[]>(), // 研究tags（用于匹配算法）
+  researchField: varchar("research_field", { length: 100 }), // 研究领域分类（用于选择背景图片）
   labName: text("lab_name"),
   labWebsite: text("lab_website"),
   personalWebsite: text("personal_website"),
@@ -109,6 +110,22 @@ export const professors = mysqlTable("professors", {
 
 export type Professor = typeof professors.$inferSelect;
 export type InsertProfessor = typeof professors.$inferInsert;
+
+/**
+ * Research field images
+ * Maps research fields to AI-generated background images
+ */
+export const researchFieldImages = mysqlTable("research_field_images", {
+  id: int("id").autoincrement().primaryKey(),
+  fieldName: varchar("field_name", { length: 100 }).notNull().unique(), // e.g., "AI & Machine Learning"
+  imageUrl: varchar("image_url", { length: 500 }).notNull(), // S3 URL
+  prompt: text("prompt"), // AI generation prompt for reference
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ResearchFieldImage = typeof researchFieldImages.$inferSelect;
+export type InsertResearchFieldImage = typeof researchFieldImages.$inferInsert;
 
 /**
  * Research projects

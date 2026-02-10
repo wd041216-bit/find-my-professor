@@ -18,6 +18,7 @@ export interface Professor {
   displayScore?: number;
   matchLevel?: string;
   schoolImageUrl?: string;
+  researchFieldImageUrl?: string;
 }
 
 interface ProfessorCardProps {
@@ -86,11 +87,11 @@ export function ProfessorCard({ professor, onSwipe, style }: ProfessorCardProps)
           NOPE
         </motion.div>
 
-        {/* School Image Background - Fills entire card like Tinder */}
+        {/* Research Field Image Background - Fills entire card like Tinder */}
         <div className="absolute inset-0">
-          {professor.schoolImageUrl ? (
+          {professor.researchFieldImageUrl ? (
             <img 
-              src={professor.schoolImageUrl} 
+              src={professor.researchFieldImageUrl} 
               alt={professor.majorName}
               className="w-full h-full object-cover"
             />

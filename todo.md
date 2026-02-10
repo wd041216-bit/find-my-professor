@@ -461,3 +461,15 @@
 - [x] 集成到Profile页面替换原有的文本输入
 - [x] 测试自动补全功能（输入部分文字查看建议列表）
 - [x] 保存checkpoint
+
+## 🎨 教授卡片AI背景图片生成
+- [x] 设计研究领域分类系统（定义主要研究领域列表）
+- [x] 更新数据库schema添加research_field字段到professors表
+- [x] 创建research_field_images表存储领域→图片URL映射
+- [x] 使用LLM分析所有教授的tags并归类到研究领域
+- [x] 为每个研究领域生成AI图片（使用内置图片生成API）
+- [x] 上传图片到S3并保存URL到数据库
+- [x] 更新getProfessorsForSwipe API返回research_field_image_url
+- [x] 修改ProfessorCard组件使用AI生成的背景图片
+- [x] 测试所有教授卡片的背景图片显示
+- [x] 保存checkpoint
