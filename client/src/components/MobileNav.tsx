@@ -16,6 +16,7 @@ import {
   Home,
   User,
   Flame,
+  Heart,
   LogOut,
   LogIn,
   Globe,
@@ -40,6 +41,7 @@ export function MobileNav({ unreadCount = 0 }: MobileNavProps) {
     ...(isAuthenticated
       ? [
           { href: "/swipe", icon: Flame, label: "🔥 Swipe" },
+          { href: "/matches", icon: Heart, label: "💖 Matches" },
           { href: "/profile", icon: User, label: t.nav.profile },
         ]
       : []),

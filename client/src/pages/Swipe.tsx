@@ -28,6 +28,9 @@ export function Swipe() {
 
   const professors = professorsData?.professors || [];
 
+  // Swipe mutation to save swipe action to database
+  const swipeMutation = trpc.swipe.swipe.useMutation();
+
   const currentProfessor = professors[currentIndex];
 
   // Loading state
@@ -70,11 +73,14 @@ export function Swipe() {
   }
 
   const handleSwipe = (direction: 'left' | 'right', professor: Professor) => {
-    if (direction === 'right') {
-      setLastAction('like');
-    } else {
-      setLastAction('pass');
-    }
+    const action = direction === 'right' ? 'like' : 'pass';
+    setLastAction(action);
+
+    // Save swipe to database
+    swipeMutation.mutate({
+      professorId: professor.id,
+      action: action,
+    });
 
     // Move to next professor after a short delay
     setTimeout(() => {
@@ -86,11 +92,13 @@ export function Swipe() {
   const handleButtonClick = (action: 'pass' | 'like') => {
     if (!currentProfessor) return;
 
-    if (action === 'like') {
-      setLastAction('like');
-    } else {
-      setLastAction('pass');
-    }
+    setLastAction(action);
+
+    // Save swipe to database
+    swipeMutation.mutate({
+      professorId: currentProfessor.id,
+      action: action,
+    });
 
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
