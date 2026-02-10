@@ -603,4 +603,20 @@
   - [x] 筛选变化时重置教授列表
   - [x] 添加Filter按钮到导航栏
 - [x] 测试筛选功能
+- [x] 保存checkpoint
+
+## 📊 简化Profile用户的匹配度显示优化
+- [x] 设计profile完整度检测逻辑
+  - [x] 定义最低限度信息（academicLevel, targetUniversities, targetMajors）
+  - [x] 定义完整信息（包含skills, gpa, interests, bio）
+  - [x] 创建isMinimalProfile检测函数（profileCompletenessService.ts）
+- [x] 修改后端API返回profile完整度标识
+  - [x] 在getProfessorsToSwipe API中添加isMinimalProfile字段
+  - [x] 查询student_profiles表并调用isMinimalProfile函数
+- [x] 修改ProfessorCard组件显示逻辑
+  - [x] 当isMinimalProfile=true时隐藏匹配百分比
+  - [x] 显示简短提示信息（"Complete profile for match score"）
+  - [x] 提示信息使用小字体和白色半透明背景
+  - [x] 添加点击跳转到Profile页面的功能
+- [x] 测试简化profile的显示效果（成功显示提示信息）
 - [ ] 保存checkpoint
