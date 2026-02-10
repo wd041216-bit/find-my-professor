@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, Save, Loader2, GraduationCap, Camera, RotateCcw } from "lucide-react";
-import { Footer } from "@/components/Footer";
+
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MobileNav } from "@/components/MobileNav";
