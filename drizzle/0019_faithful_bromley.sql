@@ -1,0 +1,1 @@
+ALTER TABLE `scraped_projects` ADD `search_scope` enum('university_wide','major_specific') DEFAULT 'major_specific';

@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, unique, json, index } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, unique, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -97,7 +97,6 @@ export const professors = mysqlTable("professors", {
   title: text("title"),
   researchAreas: text("research_areas"), // JSON array
   tags: json("tags").$type<string[]>(), // 研究tags（用于匹配算法）
-  researchField: varchar("research_field", { length: 100 }), // 研究领域分类（用于选择背景图片）
   labName: text("lab_name"),
   labWebsite: text("lab_website"),
   personalWebsite: text("personal_website"),
@@ -110,44 +109,6 @@ export const professors = mysqlTable("professors", {
 
 export type Professor = typeof professors.$inferSelect;
 export type InsertProfessor = typeof professors.$inferInsert;
-
-/**
- * Research field images
- * Maps research fields to AI-generated background images
- */
-export const researchFieldImages = mysqlTable("research_field_images", {
-  id: int("id").autoincrement().primaryKey(),
-  fieldName: varchar("field_name", { length: 100 }).notNull().unique(), // e.g., "AI & Machine Learning"
-  imageUrl: varchar("image_url", { length: 500 }).notNull(), // S3 URL
-  prompt: text("prompt"), // AI generation prompt for reference
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type ResearchFieldImage = typeof researchFieldImages.$inferSelect;
-export type InsertResearchFieldImage = typeof researchFieldImages.$inferInsert;
-
-/**
- * Research field tag mapping
- * Maps tags to research fields for automatic professor classification
- */
-export const researchFieldTagMapping = mysqlTable("research_field_tag_mapping", {
-  id: int("id").autoincrement().primaryKey(),
-  researchFieldName: varchar("research_field_name", { length: 100 }).notNull(), // e.g., "AI & Machine Learning"
-  tag: varchar("tag", { length: 100 }).notNull(), // e.g., "machine learning"
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-}, (table) => {
-  return {
-    // Composite unique constraint: one tag can only map to one field
-    tagUnique: unique().on(table.tag),
-    // Index for fast lookup by field
-    fieldIdx: index("field_idx").on(table.researchFieldName),
-  };
-});
-
-export type ResearchFieldTagMapping = typeof researchFieldTagMapping.$inferSelect;
-export type InsertResearchFieldTagMapping = typeof researchFieldTagMapping.$inferInsert;
 
 /**
  * Research projects
