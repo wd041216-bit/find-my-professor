@@ -571,19 +571,4 @@ export const schools = mysqlTable("schools", {
 export type School = typeof schools.$inferSelect;
 export type InsertSchool = typeof schools.$inferInsert;
 
-/**
- * School images for professor card backgrounds
- * Each school can have multiple images displayed on professor cards
- */
-export const schoolImages = mysqlTable("school_images", {
-  id: int("id").autoincrement().primaryKey(),
-  schoolId: int("school_id").notNull(),
-  imageUrl: text("image_url").notNull(), // S3 URL
-  imageOrder: int("image_order").default(0), // For ordering images
-  description: text("description"), // Optional description
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type SchoolImage = typeof schoolImages.$inferSelect;
-export type InsertSchoolImage = typeof schoolImages.$inferInsert;
+// School images table removed - using research_field_images instead

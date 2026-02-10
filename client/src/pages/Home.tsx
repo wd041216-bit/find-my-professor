@@ -38,6 +38,16 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-3 lg:gap-4">
+            {isAuthenticated && (
+              <>
+                <Link href="/profile">
+                  <Button variant="ghost" size="sm" className="font-semibold">{t.nav.profile}</Button>
+                </Link>
+                <Link href="/history">
+                  <Button variant="ghost" size="sm" className="font-semibold">{t.dashboard?.matchHistory || "Favorites"}</Button>
+                </Link>
+              </>
+            )}
             <ContactDialog />
             {/* Credits display removed */}
             <LanguageSwitcher />
