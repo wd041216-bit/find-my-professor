@@ -828,4 +828,21 @@
 - [x] 显示toast提示"Professor name copied to clipboard!"
 - [x] 添加Search图标import
 - [x] 测试功能（成功！点击后打开Google搜索新标签页）
+- [x] 保存checkpoint (version: a01e487e)
+
+## 🔧 修复教授职位显示问题 - 改进爬虫重新抓取 (2026-02-10)
+- [x] 查找项目中的爬虫代码文件（scrape-12-schools-real.ts, migrate-all-professors.ts）
+- [x] 检查现有爬虫的职位解析逻辑（发现问题：正则提取了职位但被删除）
+- [x] 创建新的爬虫脚本 scrape-professor-titles.ts，使用LLM从教授个人页面提取职位
+- [x] 发现问题：数据库中的sourceUrl不准确，导致404错误
+- [x] 创建新的爬虫脚本 scrape-professor-titles-with-llm.ts，使用LLM联网搜索教授职位
+- [ ] 运行LLM联网搜索爬虫，重新抓取华盛顿大学Information School教授数据
+- [ ] 验证数据库中的title字段是否更新正确
+- [ ] 测试Swipe和Match History页面的职位显示
+- [ ] 保存checkpoint
+
+## 🎨 移除教授职位显示 (2026-02-10)
+- [x] 修改ProfessorCard组件，移除title/position显示
+- [x] 修改History页面详情对话框，移除title/position显示
+- [x] 测试Swipe和Match History页面
 - [ ] 保存checkpoint

@@ -137,9 +137,6 @@ export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = fa
                 </span>
               )}
             </h2>
-            {professor.title && (
-              <p className="text-xl font-semibold text-white/95 drop-shadow-md mb-1">{professor.title}</p>
-            )}
             <p className="text-lg text-white/90 drop-shadow-md">{professor.department || professor.majorName}</p>
             <p className="text-lg text-white/85 drop-shadow-md">{professor.universityName}</p>
           </div>
