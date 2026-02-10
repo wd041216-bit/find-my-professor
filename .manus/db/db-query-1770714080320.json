@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, name, tags, research_field FROM professors LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, name, tags, research_field FROM professors LIMIT 5;",
+  "rows": [
+    {
+      "id": "60011",
+      "name": "Daniela Rosner",
+      "tags": "[\"feminist design\", \"critical making\", \"human-computer interaction\", \"design justice\", \"feminism and technology\", \"participatory design\", \"value sensitive design\"]",
+      "research_field": "Human-Computer Interaction"
+    },
+    {
+      "id": "60012",
+      "name": "David Hendry",
+      "tags": "[\"human-computer interaction\", \"information visualization\", \"privacy design\", \"value sensitive design\", \"user interface design\", \"personal data management\"]",
+      "research_field": "Human-Computer Interaction"
+    },
+    {
+      "id": "60013",
+      "name": "Elisa Kendall",
+      "tags": "[\"semantic web\", \"ontologies\", \"knowledge representation\", \"linked data\", \"information organization\", \"data semantics\"]",
+      "research_field": "Information Retrieval & NLP"
+    },
+    {
+      "id": "60014",
+      "name": "Emma Spiro",
+      "tags": "[\"social networks\", \"crisis informatics\", \"information diffusion\", \"online communities\", \"computational social science\", \"network analysis\"]",
+      "research_field": "Social Computing & Networks"
+    },
+    {
+      "id": "60015",
+      "name": "Gina Neff",
+      "tags": "[\"science and technology studies\", \"artificial intelligence\", \"work and technology\", \"predictive analytics\", \"sociology of technology\", \"AI ethics\"]",
+      "research_field": "AI & Machine Learning"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\ttags\tresearch_field\n60011\tDaniela Rosner\t[\"feminist design\", \"critical making\", \"human-computer interaction\", \"design justice\", \"feminism and technology\", \"participatory design\", \"value sensitive design\"]\tHuman-Computer Interaction\n60012\tDavid Hendry\t[\"human-computer interaction\", \"information visualization\", \"privacy design\", \"value sensitive design\", \"user interface design\", \"personal data management\"]\tHuman-Computer Interaction\n60013\tElisa Kendall\t[\"semantic web\", \"ontologies\", \"knowledge representation\", \"linked data\", \"information organization\", \"data semantics\"]\tInformation Retrieval & NLP\n60014\tEmma Spiro\t[\"social networks\", \"crisis informatics\", \"information diffusion\", \"online communities\", \"computational social science\", \"network analysis\"]\tSocial Computing & Networks\n60015\tGina Neff\t[\"science and technology studies\", \"artificial intelligence\", \"work and technology\", \"predictive analytics\", \"sociology of technology\", \"AI ethics\"]\tAI & Machine Learning\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

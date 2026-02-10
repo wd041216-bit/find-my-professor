@@ -477,3 +477,12 @@
 - [x] 修夏getProfessorsForSwipe函数覆盖schoolImageUrl的问题
 - [x] 测试所有设备上的图片显示效果
 - [x] 保存checkpoint
+
+## 🎨 修复教授卡片背景图片逻辑（使用研究领域AI图片）
+- [x] 分析research_field_tag_mapping表的映射逻辑（414个tag→29个研究领域）
+- [x] 修改getProfessorsFromDatabase函数：根据教授tags查询research_field_tag_mapping
+- [x] 获取对应的研究领域名称
+- [x] 从reseach_field_images表获取研究领域的AI背景图片URL
+- [x] 移除错误的学院图片逻辑（schoolImageMap硬编码）
+- [x] 测试教授卡片显示正确的研究领域背景图片
+- [x] 保存checkpoint

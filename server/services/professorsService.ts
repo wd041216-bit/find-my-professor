@@ -61,32 +61,75 @@ export async function getProfessorsFromDatabase(
       )
       .limit(limit);
     
-    // 学院图片映射表（临时解决方案）
-    const schoolImageMap: Record<string, string> = {
-      'information school': 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/TPWiBjDxceQPezjJ.jpg',
-      'paul g. allen school of computer science & engineering': 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/TPWiBjDxceQPezjJ.jpg', // 使用默认图片
-    };
+    // 为每个教授获取研究领域背景图片
+    const matchedProfessors: MatchedProfessor[] = [];
     
-    const schoolImageUrl = schoolImageMap[major.toLowerCase()] || null;
-    
-    // 转换为MatchedProfessor格式
-    const matchedProfessors: MatchedProfessor[] = professorsList.map((prof) => ({
-      id: prof.id,
-      name: prof.name,
-      universityName: prof.universityName || university,
-      majorName: prof.majorName || major,
-      department: prof.department,
-      title: prof.title,
-      labName: prof.labName,
-      labWebsite: prof.labWebsite,
-      personalWebsite: prof.personalWebsite,
-      sourceUrl: prof.sourceUrl,
-      researchAreas: prof.researchAreas ? JSON.parse(prof.researchAreas as string) : null,
-      tags: prof.tags || [],
-      email: prof.email,
-      bio: prof.bio,
-      schoolImageUrl: schoolImageUrl || undefined,
-    }));
+    for (const prof of professorsList) {
+      let researchFieldImageUrl: string | undefined = undefined;
+      
+      // 如果教授有tags，根据tags查找研究领域
+      if (prof.tags && Array.isArray(prof.tags) && prof.tags.length > 0) {
+        const tags = prof.tags.map(t => t.trim().toLowerCase()).filter(t => t !== '');
+        
+        // 查找每个tag对应的研究领域
+        const researchFieldCounts: Record<string, number> = {};
+        
+        for (const tag of tags) {
+          const result = await db.execute(
+            sql`SELECT research_field_name FROM research_field_tag_mapping WHERE LOWER(tag) = ${tag} LIMIT 1`
+          );
+          const rows = result[0] as unknown as any[];
+          
+          if (rows && rows.length > 0) {
+            const fieldName = rows[0].research_field_name || rows[0][1]; // 兼容两种格式
+            if (fieldName) {
+              researchFieldCounts[fieldName] = (researchFieldCounts[fieldName] || 0) + 1;
+            }
+          }
+        }
+        
+        // 选择出现次数最多的研究领域
+        let primaryResearchField: string | null = null;
+        let maxCount = 0;
+        
+        for (const [field, count] of Object.entries(researchFieldCounts)) {
+          if (count > maxCount) {
+            maxCount = count;
+            primaryResearchField = field;
+          }
+        }
+        
+        // 如果找到了主要研究领域，查找对应的背景图片
+        if (primaryResearchField) {
+          const imageResult = await db.execute(
+            sql`SELECT image_url FROM research_field_images WHERE field_name = ${primaryResearchField} LIMIT 1`
+          );
+          const imageRows = imageResult[0] as unknown as any[];
+          
+          if (imageRows && imageRows.length > 0) {
+            researchFieldImageUrl = imageRows[0].image_url || imageRows[0][1]; // 兼容两种格式
+          }
+        }
+      }
+      
+      matchedProfessors.push({
+        id: prof.id,
+        name: prof.name,
+        universityName: prof.universityName || university,
+        majorName: prof.majorName || major,
+        department: prof.department,
+        title: prof.title,
+        labName: prof.labName,
+        labWebsite: prof.labWebsite,
+        personalWebsite: prof.personalWebsite,
+        sourceUrl: prof.sourceUrl,
+        researchAreas: prof.researchAreas ? JSON.parse(prof.researchAreas as string) : null,
+        tags: prof.tags || [],
+        email: prof.email,
+        bio: prof.bio,
+        schoolImageUrl: researchFieldImageUrl,
+      });
+    }
     
     return matchedProfessors;
   } catch (error) {
