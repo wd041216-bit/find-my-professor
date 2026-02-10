@@ -44,7 +44,9 @@ queryClient.getMutationCache().subscribe(event => {
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: import.meta.env.PROD 
+        ? "https://www.findmyprofessor.xyz/api/trpc"
+        : "/api/trpc",
       transformer: superjson,
       fetch(input, init) {
         return globalThis.fetch(input, {

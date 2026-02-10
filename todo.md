@@ -877,4 +877,11 @@
 - [x] 添加iOS平台（npx cap add ios）
 - [x] 同步Web资源到iOS项目（npx cap sync ios）
 - [x] 创建iOS打包说明文档（iOS-BUILD-INSTRUCTIONS.md）
+- [x] 保存checkpoint (version: 39dfeb00)
+
+## 🌐 配置生产环境URL + 准备App Store上架 (2026-02-11)
+- [x] 修改client/src/main.tsx，配置生产URL（https://www.findmyprofessor.xyz）
+- [x] 重新构建Web应用（pnpm run build）
+- [x] 同步到iOS项目（npx cap sync ios）
+- [x] 更新iOS-BUILD-INSTRUCTIONS.md，添加最终上架步骤
 - [ ] 保存checkpoint
