@@ -503,3 +503,13 @@
 - [ ] 为新出现的研究领域生成AI背景图片
 - [ ] 测试Swipe页面显示新教授数据
 - [ ] 保存checkpoint
+## 🔧 修复CS学院数据抓取
+- [ ] 创建测试脚本验证markdown文件格式和解析逻辑
+- [ ] 修复parse-cs-faculty-fixed.ts中的教授姓名提取逻辑
+- [ ] 重新运行解析脚本抓取CS学院79位教授数据
+- [ ] 验证scraped_projects表中的数据完整性（professor_name非NULL）
+- [ ] 运行增量迁移脚本将CS学院教授迁移到professors表
+- [ ] 运行LLM分类脚本分析CS学院教授的研究领域
+- [ ] 检查是否有新的研究领域需要生成AI背景图片
+- [ ] 测试Swipe页面显示115位教授数据
+- [ ] 保存checkpoint
