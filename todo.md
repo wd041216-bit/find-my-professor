@@ -515,3 +515,28 @@
 - [ ] 添加自荐信生成功能（基于学生profile和教授研究方向）
 - [ ] 测试完整功能流程
 - [ ] 保存checkpoint
+
+## 🎨 Swipe页面用户体验优化
+- [x] 实现多种卡片切换动画特效（随机选择）
+  - [x] 飞出特效（向左/向右飞出屏幕）
+  - [x] 旋转消失特效
+  - [x] 缩放淡出特效
+  - [x] 翻转特效
+  - [x] 爆炸粒子特效
+- [x] 添加按钮点击反馈动画
+  - [x] 按钮按下缩放效果（bounce-once动画）
+  - [x] 视觉反馈（lastAction状态）
+- [x] 实现无限滑动功能
+  - [x] 移除10个教授的限制（改为20个一批）
+  - [x] 实现自动加载下一批教授（滑到倒数第5个时触发）
+  - [x] 添加加载状态指示器（isLoadingMore状态）
+  - [x] 添加offset参数支持分页
+- [x] 统一Swipe页面页眉设计
+  - [x] 使用首页相同的页眉组件
+  - [x] 保留Profile、Match History导航链接
+  - [x] 确保移动端和桌面端一致
+- [x] 修复Match History同步问题
+  - [x] Swipe后立即刷新Match History（使用invalidate）
+  - [x] 使用optimistic updates（onSuccess回调）
+- [x] 测试所有优化功能
+- [ ] 保存checkpoint

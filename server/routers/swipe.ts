@@ -16,7 +16,8 @@ export const swipeRouter = router({
    */
   getProfessorsToSwipe: protectedProcedure
     .input(z.object({
-      limit: z.number().min(1).max(50).default(10),
+      limit: z.number().min(1).max(100).default(20),
+      offset: z.number().min(0).default(0),
     }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
@@ -37,7 +38,7 @@ export const swipeRouter = router({
       const swipedIds = swipedProfessors.map((s) => s.professorId);
 
       // Get professors for this user (with match scores)
-      const matchedProfessors = await getProfessorsForSwipe(userId, input.limit, swipedIds);
+      const matchedProfessors = await getProfessorsForSwipe(userId, input.limit, swipedIds, input.offset);
 
       return {
         professors: matchedProfessors,
