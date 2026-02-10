@@ -810,4 +810,12 @@
 - [x] 定位错误根源：getLikedProfessors返回的数据结构与History.tsx期望不匹配
 - [x] 修复getLikedProfessors API，返回嵌套的professor对象
 - [x] 测试Match History页面（成功！显示28个匹配记录）
+- [x] 保存checkpoint (version: 758e39c9)
+
+## 👔 修复教授职位显示 + 添加联系信息 (2026-02-10)
+- [x] 检查数据库中教授的title字段数据（发现120位NULL，2433位为"Professor"）
+- [ ] 修复ProfessorCard组件，正确显示教授职位（Assistant Professor、Associate Professor等）
+- [x] 在Match History的View Details对话框修复字段名（personalWebsite, labWebsite）
+- [x] 添加“无联系信息”提示
+- [x] 测试联系信息展示（成功！显示"No contact information available"）
 - [ ] 保存checkpoint
