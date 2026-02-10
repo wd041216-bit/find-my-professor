@@ -39,6 +39,14 @@ export function Swipe() {
   const [currentBatch, setCurrentBatch] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  // Reset state when component mounts
+  useEffect(() => {
+    setAllProfessors([]);
+    setCurrentBatch(0);
+    setCurrentIndex(0);
+    setIsLoadingMore(false);
+  }, []); // Empty dependency array = only run on mount
+
   // Fetch professors from API - infinite batches
   const { data: professorsData, isLoading: professorsLoading } = trpc.swipe.getProfessorsToSwipe.useQuery(
     { limit: 20, offset: currentBatch * 20 },
@@ -77,7 +85,8 @@ export function Swipe() {
 
   // Auto-load more professors when approaching the end
   useEffect(() => {
-    if (currentIndex >= professors.length - 5 && !isLoadingMore && !professorsLoading) {
+    // Only trigger auto-load if we have professors and approaching the end
+    if (professors.length > 0 && currentIndex >= professors.length - 5 && !isLoadingMore && !professorsLoading) {
       setIsLoadingMore(true);
       setCurrentBatch(prev => prev + 1);
     }
@@ -148,7 +157,7 @@ export function Swipe() {
       setCurrentIndex(currentIndex + 1);
       setLastAction(null);
       setCardAnimation(null);
-    }, 600);
+    }, 1000); // Increased from 600ms to 1000ms for more visible animation
   };
 
   const handleButtonClick = (action: 'pass' | 'like') => {
@@ -175,7 +184,7 @@ export function Swipe() {
       setCurrentIndex(currentIndex + 1);
       setLastAction(null);
       setCardAnimation(null);
-    }, 600);
+    }, 1000); // Increased from 600ms to 1000ms for more visible animation
   };
 
   const handleUndo = () => {
@@ -330,52 +339,92 @@ export function Swipe() {
       {/* Custom CSS for animations */}
       <style>{`
         @keyframes fly-left {
-          to {
-            transform: translateX(-150%) rotate(-30deg);
+          0% {
+            transform: translateX(0) rotate(0deg) scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(-200%) rotate(-45deg) scale(0.8);
             opacity: 0;
           }
         }
 
         @keyframes fly-right {
-          to {
-            transform: translateX(150%) rotate(30deg);
+          0% {
+            transform: translateX(0) rotate(0deg) scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(200%) rotate(45deg) scale(0.8);
             opacity: 0;
           }
         }
 
         @keyframes rotate-fade {
-          to {
-            transform: rotate(360deg) scale(0);
+          0% {
+            transform: rotate(0deg) scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: rotate(180deg) scale(1.1);
+            opacity: 0.5;
+          }
+          100% {
+            transform: rotate(540deg) scale(0);
             opacity: 0;
           }
         }
 
         @keyframes scale-fade {
-          to {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.7;
+          }
+          100% {
             transform: scale(0);
             opacity: 0;
           }
         }
 
         @keyframes flip-out {
-          to {
-            transform: rotateY(180deg) scale(0.5);
+          0% {
+            transform: rotateY(0deg) scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: rotateY(90deg) scale(1.1);
+            opacity: 0.8;
+          }
+          100% {
+            transform: rotateY(180deg) scale(0.3);
             opacity: 0;
           }
         }
 
         @keyframes explode {
           0% {
-            transform: scale(1);
+            transform: scale(1) rotate(0deg);
             opacity: 1;
+            filter: blur(0px);
           }
-          50% {
-            transform: scale(1.2);
-            opacity: 0.8;
+          30% {
+            transform: scale(1.3) rotate(10deg);
+            opacity: 0.9;
+            filter: blur(0px);
+          }
+          70% {
+            transform: scale(1.5) rotate(-10deg);
+            opacity: 0.5;
+            filter: blur(2px);
           }
           100% {
-            transform: scale(0) rotate(180deg);
+            transform: scale(0) rotate(360deg);
             opacity: 0;
+            filter: blur(5px);
           }
         }
 
@@ -389,7 +438,7 @@ export function Swipe() {
         }
 
         .animate-card-exit {
-          animation-duration: 0.6s;
+          animation-duration: 1s;
           animation-fill-mode: forwards;
           animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }

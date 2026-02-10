@@ -77,19 +77,29 @@ export function calculateMatchScore(
   professorTags: string[]
 ): number {
   if (studentTags.length === 0 || professorTags.length === 0) {
+    console.log('[MatchScore] Empty tags:', { studentTags: studentTags.length, professorTags: professorTags.length });
     return 0;
   }
   
   // 计算匹配的tags数量（完全匹配）
   const matchedTags = getMatchedTags(studentTags, professorTags);
+  console.log('[MatchScore] Matched tags:', matchedTags, 'from', studentTags.length, 'student tags and', professorTags.length, 'professor tags');
   const matchedCount = matchedTags.length;
   
   // 覆盖率 = 匹配tags数 / 学生tags数
-  // 这样关注的是"教授能覆盖学生多少兴趣"
+  // 这样关注的是“教授能覆盖学生多少兴趣”
   const coverageRate = matchedCount / studentTags.length;
   
   // 转换为0-100分
   const finalScore = coverageRate * 100;
+  
+  console.log('[MatchScore] Calculation:', {
+    matchedCount,
+    studentTagsLength: studentTags.length,
+    coverageRate,
+    finalScore,
+    rounded: Math.round(finalScore)
+  });
   
   return Math.round(finalScore);
 }
@@ -101,21 +111,27 @@ export function getMatchedTags(
   studentTags: string[],
   professorTags: string[]
 ): string[] {
-  const normalized1 = studentTags.map(t => t.toLowerCase());
-  const normalized2 = professorTags.map(t => t.toLowerCase());
+  const normalized1 = studentTags.map(t => t.toLowerCase().trim());
+  const normalized2 = professorTags.map(t => t.toLowerCase().trim());
+  
+  console.log('[GetMatchedTags] Student tags (normalized):', normalized1.slice(0, 3));
+  console.log('[GetMatchedTags] Professor tags (normalized):', normalized2.slice(0, 3));
   
   const matched = new Set<string>();
   
   for (let i = 0; i < studentTags.length; i++) {
     for (let j = 0; j < professorTags.length; j++) {
       if (normalized1[i] === normalized2[j]) {
+        console.log('[GetMatchedTags] Exact match found:', normalized1[i], '===', normalized2[j]);
         matched.add(professorTags[j]);  // 使用原始大小写
       } else if (normalized1[i].includes(normalized2[j]) || normalized2[j].includes(normalized1[i])) {
+        console.log('[GetMatchedTags] Partial match found:', normalized1[i], 'vs', normalized2[j]);
         matched.add(professorTags[j]);
       }
     }
   }
   
+  console.log('[GetMatchedTags] Total matched:', matched.size);
   return Array.from(matched);
 }
 
