@@ -97,6 +97,7 @@ export const professors = mysqlTable("professors", {
   title: text("title"),
   researchAreas: text("research_areas"), // JSON array
   tags: json("tags").$type<string[]>(), // 研究tags（用于匹配算法）
+  research_field: varchar("research_field", { length: 255 }), // Research field category
   labName: text("lab_name"),
   labWebsite: text("lab_website"),
   personalWebsite: text("personal_website"),
@@ -199,7 +200,7 @@ export type InsertProfileCache = typeof profileCache.$inferInsert;
 export const coverLetters = mysqlTable("cover_letters", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("user_id").notNull(),
-  matchId: int("match_id").notNull(), // Links to project_matches table
+  matchId: int("match_id"), // Links to project_matches table (optional for professor-based letters)
   
   // Project context (denormalized for easy access)
   projectName: varchar("project_name", { length: 500 }).notNull(),
@@ -529,6 +530,7 @@ export const studentLikes = mysqlTable("student_likes", {
   studentId: int("student_id").notNull().references(() => users.id),
   professorId: int("professor_id").notNull().references(() => professors.id),
   likeType: varchar("like_type", { length: 20 }).notNull().default("like"), // 'like' or 'super_like'
+  matchScore: int("match_score"), // Match score at the time of liking (0-100)
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
   uniqueStudentProfessor: unique().on(table.studentId, table.professorId),
