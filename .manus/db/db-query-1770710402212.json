@@ -1,0 +1,18 @@
+{
+  "query": "SELECT * FROM research_field_images LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT * FROM research_field_images LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "field_name": "AI & Machine Learning",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/IwHiJJMtdWLRlZyw.png",
+      "prompt": "Abstract visualization of artificial intelligence and machine learning. Neural network patterns, glowing nodes and connections, flowing data streams, circuit board aesthetics, holographic elements.",
+      "createdAt": "2026-02-10 01:56:58",
+      "updatedAt": "2026-02-10 01:56:58"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tfield_name\timage_url\tprompt\tcreatedAt\tupdatedAt\n1\tAI & Machine Learning\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/IwHiJJMtdWLRlZyw.png\tAbstract visualization of artificial intelligence and machine learning. Neural network patterns, glowing nodes and connections, flowing data streams, circuit board aesthetics, holographic elements.\t2026-02-10 01:56:58\t2026-02-10 01:56:58\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

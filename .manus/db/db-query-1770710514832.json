@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO research_field_images (field_name, image_url) VALUES ('Test Field', 'https://test.com/image.png');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute INSERT INTO research_field_images (field_name, image_url) VALUES ('Test Field', 'https://test.com/image.png');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 70
+}

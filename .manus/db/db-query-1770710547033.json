@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, MAX(id) as max_id FROM research_field_images;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT COUNT(*) as total, MAX(id) as max_id FROM research_field_images;",
+  "rows": [
+    {
+      "total": "29",
+      "max_id": "60012"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tmax_id\n29\t60012\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}
