@@ -220,21 +220,6 @@ export type InsertStudentSwipe = typeof studentSwipes.$inferInsert;
 
 /**
  * Research field images (generic field images)
- * Stores image URLs for different research fields
- */
-export const researchFieldImages = mysqlTable("research_field_images", {
-  id: int("id").autoincrement().primaryKey(),
-  fieldName: varchar("field_name", { length: 100 }).notNull().unique(),
-  imageUrl: varchar("image_url", { length: 500 }).notNull(),
-  prompt: text("prompt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type ResearchFieldImage = typeof researchFieldImages.$inferSelect;
-export type InsertResearchFieldImage = typeof researchFieldImages.$inferInsert;
-
-/**
  * University field images (university-specific field images with mascot branding)
  * Stores university-branded image URLs for different research fields
  */
