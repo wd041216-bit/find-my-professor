@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { swipeRouter } from "./routers/swipe";
+import { coverLetterRouter } from "./routers/coverLetter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -82,6 +83,7 @@ export const appRouter = router({
 
 
   swipe: swipeRouter,
+  coverLetter: coverLetterRouter,
 });
 
 export type AppRouter = typeof appRouter;

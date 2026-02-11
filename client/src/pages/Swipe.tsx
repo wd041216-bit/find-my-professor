@@ -266,7 +266,7 @@ export function Swipe() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-16 md:pb-0">
       {/* Unified Header - Same as Home Page */}
       <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -331,8 +331,8 @@ export function Swipe() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="flex-1 flex items-center justify-center p-4 md:p-6">
-        <div className="relative w-full max-w-sm md:max-w-md" style={{ height: 'min(580px, 75vh)' }}>
+      <div className="flex-1 flex items-center justify-center p-2 md:p-6">
+        <div className="relative w-full max-w-sm md:max-w-md" style={{ height: 'min(480px, 60vh)' }}>
           {/* Render next 2 cards in background for stack effect */}
           {professors.slice(currentIndex + 1, currentIndex + 3).map((prof, index) => (
             <div
@@ -373,7 +373,7 @@ export function Swipe() {
       </div>
 
       {/* Action Buttons - Tinder style with enhanced feedback */}
-      <div className="p-8 flex items-center justify-center gap-8">
+      <div className="p-4 md:p-8 flex items-center justify-center gap-4 md:gap-8">
         <Button
           size="lg"
           variant="outline"

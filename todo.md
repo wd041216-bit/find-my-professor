@@ -13,3 +13,11 @@
 - [x] 在后端添加匹配值计算逻辑
 - [x] 更新前端Match History页面显示匹配值
 - [x] 测试并保存checkpoint
+
+## 移动端UI优化和Cover Letter功能
+
+- [x] 优化Swipe页面手机端卡片尺寸（确保一屏显示所有功能）
+- [x] 修复Generate Cover Letter功能（目前被禁用）
+- [x] 创建Cover Letter管理页面
+- [x] 创建移动端底部导航栏（整合页眉功能 + Cover Letter入口）
+- [x] 测试并保存checkpoint
