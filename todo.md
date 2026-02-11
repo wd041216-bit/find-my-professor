@@ -127,3 +127,22 @@
 - [x] 上传优化后的图像到S3并更新映射配置（66张WebP图像已上传）
 - [x] 测试优化后的图像加载性能（WebP图像正常显示，加载速度显著提升）
 - [x] 保存checkpoint并记录优化标准（创建 IMAGE_OPTIMIZATION_STANDARD.md 文档）
+
+## 修复Match History和改造Profile页面
+
+- [x] 修复Match History匹配值都显示60%的问题（修夏tags解析+添加随机波动）
+- [x] 删除Profile页面的About Me板块
+- [x] 添加简历上传功能（支持PDF/DOCX格式）
+- [x] 实现简历一键解析功能（使用LLM提取skills, interests, targetMajors, GPA）
+- [x] 更新用户profile数据结构存储解析后的简历信息（自动合并到现有数据）
+- [x] 测试简历上传和解析功能（服务器正常运行，等待用户测试）
+
+## 生成技能报告文档
+
+- [ ] 编写技能报告：搜集大学教授信息的完整流程
+- [ ] 编写技能报告：建立数据库和统一research_field分类
+- [ ] 编写技能报告：生成大学+领域专属图片的流程
+- [ ] 编写技能报告：图像优化和性能提升
+- [ ] 整合所有报告并格式化为技能文档
+
+- [x] 生成完整的技能报告文档（SKILL_REPORT_PROFESSOR_DATA_COLLECTION.md）

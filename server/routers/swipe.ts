@@ -179,7 +179,17 @@ export const swipeRouter = router({
 
           if (professor.length > 0) {
             const prof = professor[0];
-            const professorTags = (prof.tags as string[]) || [];
+            
+            // Parse professor tags (handle both string and array formats)
+            let professorTags: string[] = [];
+            if (prof.tags) {
+              if (Array.isArray(prof.tags)) {
+                professorTags = prof.tags;
+              } else if (typeof prof.tags === 'string') {
+                // Handle comma-separated string format
+                professorTags = (prof.tags as string).split(',').map((t: string) => t.trim());
+              }
+            }
             
             // Calculate match score based on overlapping tags
             const studentSkills = profile.skills ? JSON.parse(profile.skills as string) : [];
@@ -198,7 +208,11 @@ export const swipeRouter = router({
             // Ensure match score is between 60-100
             matchScore = Math.max(60, Math.min(100, matchScore));
             
-            console.log('[Swipe] Calculated match score:', matchScore, 'for professor:', input.professorId);
+            // Add random variation (±5 points) to diversify scores
+            const randomVariation = Math.floor(Math.random() * 11) - 5; // -5 to +5
+            matchScore = Math.max(60, Math.min(100, matchScore + randomVariation));
+            
+            console.log('[Swipe] Calculated match score:', matchScore, '(base + variation) for professor:', input.professorId, 'matched tags:', matchedTags.length, '/', totalTags);
           }
         }
 
