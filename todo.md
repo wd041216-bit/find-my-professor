@@ -57,3 +57,12 @@
 - [x] 修改脚本使用内置LLM API（替代Perplexity）
 - [x] 运行脚本收集Princeton数据（261位教授）
 - [x] 验证数据并保存checkpoint
+
+## 修复Filter功能并收集其他大学数据
+
+- [x] 修复Filter研究领域筛选功能（应用后不显示教授）
+- [x] 优化数据收集脚本减少token消耗（简化prompt，使用gpt-4o-mini）
+- [ ] 收集MIT教授数据
+- [ ] 收集Harvard教授数据
+- [ ] 收集Stanford教授数据
+- [ ] 测试并保存checkpoint
