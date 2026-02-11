@@ -173,3 +173,9 @@
 - [x] 优化头像区域尺寸（w-32 h-32 → w-24 h-24）
 - [x] 优化表单字段间距（space-y-6 → space-y-4, 标题text-xl → text-lg）
 - [x] 测试并保存checkpoint（所有修复已验证成功）
+
+## Profile页面剩余问题修复
+- [x] 修复Resume Upload文件选择按钮显示中文（用自定义按钮替换默认file input，显示"Choose File"）
+- [x] 将"Reset Swipe History"按钮从Profile页面移动到Swipe页面右上角
+- [x] 测试移动端布局（Save按钮不再超出屏幕）
+- [x] 保存checkpoint
