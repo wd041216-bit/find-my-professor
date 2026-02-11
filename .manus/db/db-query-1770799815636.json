@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, name, title, department, university_name, JSON_LENGTH(tags) as tag_count FROM professors LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, name, title, department, university_name, JSON_LENGTH(tags) as tag_count FROM professors LIMIT 10;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "Sven D. Haakanson",
+      "title": "Department Chair & Professor",
+      "department": "Anthropology",
+      "university_name": "University of Washington",
+      "tag_count": "6"
+    },
+    {
+      "id": "150002",
+      "name": "Rachel R. Chapman",
+      "title": "Professor",
+      "department": "Anthropology",
+      "university_name": "University of Washington",
+      "tag_count": "8"
+    },
+    {
+      "id": "150003",
+      "name": "Steven M. Goodreau",
+      "title": "Professor",
+      "department": "Anthropology",
+      "university_name": "University of Washington",
+      "tag_count": "8"
+    },
+    {
+      "id": "150004",
+      "name": "James T. Pfeiffer",
+      "title": "Professor WOT",
+      "department": "Anthropology",
+      "university_name": "University of Washington",
+      "tag_count": "3"
+    },
+    {
+      "id": "150005",
+      "name": "Ann S. Anagnost",
+      "title": "Professor",
+      "department": "Anthropology",
+      "university_name": "University of Washington",
+      "tag_count": "3"
+    },
+    {
+      "id": "150006",
+      "name": "Adair Rounthwaite",
+      "title": "Professor, Art History (Chair, Division of Art History)",
+      "department": "Art History",
+      "university_name": "University of Washington",
+      "tag_count": "7"
+    },
+    {
+      "id": "150007",
+      "name": "Stuart Lingo",
+      "title": "Professor, Art History (Donald E. Petersen Endowed Professor)",
+      "department": "Art History",
+      "university_name": "University of Washington",
+      "tag_count": "7"
+    },
+    {
+      "id": "150008",
+      "name": "Haicheng Wang",
+      "title": "Professor, Art History (Mary and Cheney Cowles Endowed Professor)",
+      "department": "Art History",
+      "university_name": "University of Washington",
+      "tag_count": "8"
+    },
+    {
+      "id": "150009",
+      "name": "Marek Wieczorek",
+      "title": "Associate Professor, Art History (Joff Hanauer Distinguished Professor)",
+      "department": "Art History",
+      "university_name": "University of Washington",
+      "tag_count": "7"
+    },
+    {
+      "id": "150010",
+      "name": "Juliet Sperling",
+      "title": "Assistant Professor, Art History (Kollar Endowed Chair in American Art)",
+      "department": "Art History",
+      "university_name": "University of Washington",
+      "tag_count": "7"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\ttitle\tdepartment\tuniversity_name\ttag_count\n150001\tSven D. Haakanson\tDepartment Chair & Professor\tAnthropology\tUniversity of Washington\t6\n150002\tRachel R. Chapman\tProfessor\tAnthropology\tUniversity of Washington\t8\n150003\tSteven M. Goodreau\tProfessor\tAnthropology\tUniversity of Washington\t8\n150004\tJames T. Pfeiffer\tProfessor WOT\tAnthropology\tUniversity of Washington\t3\n150005\tAnn S. Anagnost\tProfessor\tAnthropology\tUniversity of Washington\t3\n150006\tAdair Rounthwaite\tProfessor, Art History (Chair, Division of Art History)\tArt History\tUniversity of Washington\t7\n150007\tStuart Lingo\tProfessor, Art History (Donald E. Petersen Endowed Professor)\tArt History\tUniversity of Washington\t7\n150008\tHaicheng Wang\tProfessor, Art History (Mary and Cheney Cowles Endowed Professor)\tArt History\tUniversity of Washington\t8\n150009\tMarek Wieczorek\tAssociate Professor, Art History (Joff Hanauer Distinguished Professor)\tArt History\tUniversity of Washington\t7\n150010\tJuliet Sperling\tAssistant Professor, Art History (Kollar Endowed Chair in American Art)\tArt History\tUniversity of Washington\t7\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}
