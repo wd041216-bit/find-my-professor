@@ -45,20 +45,10 @@ export function MobileNav({ unreadCount = 0 }: MobileNavProps) {
     { href: "/", icon: Home, label: t.nav.home },
     ...(isAuthenticated
       ? [
-          { href: "/dashboard", icon: LayoutDashboard, label: t.nav.dashboard },
           { href: "/profile", icon: User, label: t.nav.profile },
-          { href: "/activities", icon: FileText, label: t.nav.activities },
-          { href: "/explore", icon: Search, label: t.nav.explore },
           { href: "/history", icon: History, label: t.dashboard?.matchHistory || "Match History" },
-          { href: "/cover-letters", icon: Sparkles, label: t.dashboard?.yourCoverLetters || "Cover Letters" },
-          {
-            href: "/notifications",
-            icon: Bell,
-            label: t.nav.notifications,
-            badge: unreadCount,
-          },
         ]
-      : [{ href: "/explore", icon: Search, label: t.nav.explore }]),
+      : []),
   ];
 
   const isActive = (href: string) => location === href;
@@ -93,11 +83,6 @@ export function MobileNav({ unreadCount = 0 }: MobileNavProps) {
                 >
                   <item.icon className="h-5 w-5" />
                   <span className="flex-1">{item.label}</span>
-                  {item.badge && item.badge > 0 && (
-                    <span className="bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {item.badge}
-                    </span>
-                  )}
                 </div>
               </Link>
             ))}
