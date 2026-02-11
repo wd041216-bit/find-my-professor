@@ -1,0 +1,1808 @@
+INVALID PROFESSOR IDS (Total: 361)
+================================================================================
+
+ID: 120003
+Name: People Feed
+Department: College of Built Environments
+Matched patterns: Feed
+--------------------------------------------------------------------------------
+ID: 120007
+Name: Open Sans
+Department: College of Built Environments
+Matched patterns: Sans
+--------------------------------------------------------------------------------
+ID: 120008
+Name: Encode Sans Normal
+Department: College of Built Environments
+Matched patterns: Sans, Encode
+--------------------------------------------------------------------------------
+ID: 120009
+Name: Encode Sans Compressed
+Department: College of Built Environments
+Matched patterns: Sans, Encode
+--------------------------------------------------------------------------------
+ID: 120011
+Name: Helpful Links
+Department: College of Built Environments
+Matched patterns: Link, ^Helpful 
+--------------------------------------------------------------------------------
+ID: 120013
+Name: Husky-Card-Services
+Department: College of Built Environments
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 120016
+Name: Quick Links
+Department: College of Built Environments
+Matched patterns: Link, ^Quick 
+--------------------------------------------------------------------------------
+ID: 120017
+Name: Architectural Studies
+Department: College of Built Environments
+Matched patterns:  Studies$
+--------------------------------------------------------------------------------
+ID: 120029
+Name: Emeritus Faculty
+Department: College of Built Environments
+Matched patterns: Faculty$, Emeritus
+--------------------------------------------------------------------------------
+ID: 120034
+Name: Faculty Research
+Department: College of Built Environments
+Matched patterns: Search, ^Faculty ,  Research$
+--------------------------------------------------------------------------------
+ID: 120035
+Name: Research Profiles
+Department: College of Built Environments
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120037
+Name: Department Publications
+Department: College of Built Environments
+Matched patterns: Publications
+--------------------------------------------------------------------------------
+ID: 120040
+Name: Faculty Resources
+Department: College of Built Environments
+Matched patterns: ^Faculty , Resources
+--------------------------------------------------------------------------------
+ID: 120041
+Name: Architecture Faculty
+Department: College of Built Environments
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 120042
+Name: Primary Faculty
+Department: College of Built Environments
+Matched patterns: Faculty$, ^Primary 
+--------------------------------------------------------------------------------
+ID: 120070
+Name: Affiliate Faculty
+Department: College of Built Environments
+Matched patterns: Faculty$, Affiliate
+--------------------------------------------------------------------------------
+ID: 120102
+Name: Career Services
+Department: College of Built Environments
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 120104
+Name: Student Resources
+Department: College of Built Environments
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 120113
+Name: Department Meetings
+Department: College of Built Environments
+Matched patterns: Meetings
+--------------------------------------------------------------------------------
+ID: 120169
+Name: Mega Menu
+Department: College of Built Environments
+Matched patterns: Menu
+--------------------------------------------------------------------------------
+ID: 120175
+Name: Adjunct Faculty
+Department: College of Built Environments
+Matched patterns: Faculty$, Adjunct
+--------------------------------------------------------------------------------
+ID: 120178
+Name: Faculty Publications
+Department: College of Built Environments
+Matched patterns: ^Faculty , Publications
+--------------------------------------------------------------------------------
+ID: 120779
+Name: Page Not Found
+Department: School of Dentistry
+Matched patterns: Page, Not Found
+--------------------------------------------------------------------------------
+ID: 120780
+Name: Washington School
+Department: School of Dentistry
+Matched patterns: Washington School
+--------------------------------------------------------------------------------
+ID: 120782
+Name: Washington-School
+Department: School of Dentistry
+Matched patterns: Washington-School
+--------------------------------------------------------------------------------
+ID: 120790
+Name: Northwest Center
+Department: School of Dentistry
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 120807
+Name: Regional Affairs
+Department: School of Dentistry
+Matched patterns: Affairs
+--------------------------------------------------------------------------------
+ID: 120808
+Name: Rouen Center
+Department: School of Dentistry
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 120823
+Name: Student Research
+Department: School of Dentistry
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 120825
+Name: Administrative Resources
+Department: School of Dentistry
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 120826
+Name: Academic Resources
+Department: School of Dentistry
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 120828
+Name: Building Resources
+Department: School of Dentistry
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 120842
+Name: Research Labs
+Department: School of Dentistry
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120843
+Name: Research Day
+Department: School of Dentistry
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120845
+Name: Fall Institute
+Department: School of Dentistry
+Matched patterns:  Institute$
+--------------------------------------------------------------------------------
+ID: 120846
+Name: Clinical Research Methods
+Department: School of Dentistry
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120855
+Name: Affiliate Faculty Volunteers
+Department: School of Dentistry
+Matched patterns: Affiliate
+--------------------------------------------------------------------------------
+ID: 120858
+Name: Post Graduate Student Services
+Department: School of Dentistry
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 120863
+Name: Faculty Finder
+Department: College of Engineering
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 120867
+Name: Toggle Main Menu
+Department: College of Engineering
+Matched patterns: Menu, Toggle
+--------------------------------------------------------------------------------
+ID: 120873
+Name: Toggle Main Menu Links
+Department: College of Engineering
+Matched patterns: Menu, Toggle, Link
+--------------------------------------------------------------------------------
+ID: 120874
+Name: Additional Links
+Department: College of Engineering
+Matched patterns: Link
+--------------------------------------------------------------------------------
+ID: 120875
+Name: Toggle Main Menu Search
+Department: College of Engineering
+Matched patterns: Menu, Toggle, Search
+--------------------------------------------------------------------------------
+ID: 120877
+Name: Search Field
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120878
+Name: Research Filter
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120879
+Name: Faculty Member
+Department: College of Engineering
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 120880
+Name: Research Areas
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120882
+Name: Professor James
+Department: College of Engineering
+Matched patterns: ^Professor 
+--------------------------------------------------------------------------------
+ID: 120888
+Name: Adjunct Associate Professor
+Department: College of Engineering
+Matched patterns: Professor$, Adjunct
+--------------------------------------------------------------------------------
+ID: 120893
+Name: Science Institute
+Department: College of Engineering
+Matched patterns:  Institute$
+--------------------------------------------------------------------------------
+ID: 120894
+Name: Boeing Professor
+Department: College of Engineering
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 120897
+Name: Adjunct Professor
+Department: College of Engineering
+Matched patterns: Professor$, Adjunct
+--------------------------------------------------------------------------------
+ID: 120898
+Name: Boeing Advanced Research Collaboration
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120899
+Name: Minn Endowed Research Professor
+Department: College of Engineering
+Matched patterns: Search, Professor$
+--------------------------------------------------------------------------------
+ID: 120914
+Name: Degree Program
+Department: College of Engineering
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 120925
+Name: Any Research Area
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120926
+Name: Strategic Research Areas
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120927
+Name: Departmental Research Areas
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 120932
+Name: Henry Roy Berg Endowed Professor
+Department: College of Engineering
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 120933
+Name: Constitutive Modeling
+Department: College of Engineering
+Matched patterns: Mode, Modeling$
+--------------------------------------------------------------------------------
+ID: 120937
+Name: Conner Endowed Professor
+Department: College of Engineering
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 120938
+Name: Transportation Network System Modeling
+Department: College of Engineering
+Matched patterns: Mode, Modeling$
+--------------------------------------------------------------------------------
+ID: 120939
+Name: Urban Traffic System Modeling
+Department: College of Engineering
+Matched patterns: Mode, Modeling$
+--------------------------------------------------------------------------------
+ID: 120956
+Name: Research Assistant Professor
+Department: College of Engineering
+Matched patterns: Search, Professor$
+--------------------------------------------------------------------------------
+ID: 120959
+Name: Boeing Department
+Department: College of Engineering
+Matched patterns:  Department$
+--------------------------------------------------------------------------------
+ID: 120966
+Name: Aerospace Research
+Department: College of Engineering
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 120972
+Name: Model Predictive Control
+Department: College of Engineering
+Matched patterns: Mode, Control$
+--------------------------------------------------------------------------------
+ID: 120974
+Name: Heat Transfer
+Department: College of Engineering
+Matched patterns: Transfer$
+--------------------------------------------------------------------------------
+ID: 120983
+Name: Research Associate Professor
+Department: College of Engineering
+Matched patterns: Search, Professor$
+--------------------------------------------------------------------------------
+ID: 120995
+Name: Engineering Discovery Days
+Department: College of Engineering
+Matched patterns: Cover
+--------------------------------------------------------------------------------
+ID: 121002
+Name: Materials Modeling
+Department: College of Engineering
+Matched patterns: Mode, Modeling$
+--------------------------------------------------------------------------------
+ID: 121004
+Name: Applied Masters Program
+Department: College of Engineering
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121011
+Name: Boeing Steiner Professor
+Department: College of Engineering
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121019
+Name: Faculty Videos
+Department: College of Engineering
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121025
+Name: Undergraduate Program
+Department: College of Engineering
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121032
+Name: Internship Resources
+Department: College of Engineering
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121036
+Name: Operations Research
+Department: College of Engineering
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121042
+Name: Simulation Models
+Department: College of Engineering
+Matched patterns: Mode
+--------------------------------------------------------------------------------
+ID: 121049
+Name: Human Performance Modeling
+Department: College of Engineering
+Matched patterns: Mode, Modeling$
+--------------------------------------------------------------------------------
+ID: 121052
+Name: Faculty Promotions
+Department: College of Engineering
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121056
+Name: Washington Department
+Department: College of Engineering
+Matched patterns:  Department$
+--------------------------------------------------------------------------------
+ID: 121058
+Name: Apple Touch Icon
+Department: College of Engineering
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121059
+Name: Android Icon
+Department: College of Engineering
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121060
+Name: Edge Icon
+Department: College of Engineering
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121066
+Name: Toggle Navigation
+Department: College of Engineering
+Matched patterns: Toggle
+--------------------------------------------------------------------------------
+ID: 121087
+Name: Research Themes
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121088
+Name: Research Centers
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121089
+Name: Featured Publications
+Department: College of Engineering
+Matched patterns: Publications
+--------------------------------------------------------------------------------
+ID: 121090
+Name: Core Faculty
+Department: College of Engineering
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 121093
+Name: Academic Services Staff
+Department: College of Engineering
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 121096
+Name: Professor Albert Folch
+Department: College of Engineering
+Matched patterns: ^Professor 
+--------------------------------------------------------------------------------
+ID: 121119
+Name: Parent Page
+Department: College of Engineering
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 121123
+Name: Academic Services
+Department: College of Engineering
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 121157
+Name: Internal Resources
+Department: College of Engineering
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121161
+Name: Research Scientists
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121163
+Name: Directed Research Groups
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121164
+Name: Research Impact
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121165
+Name: Research Updates
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121168
+Name: Research Showcase
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121172
+Name: Research Speaker Series
+Department: College of Engineering
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121184
+Name: Alumni Directory
+Department: College of Engineering
+Matched patterns: Directory
+--------------------------------------------------------------------------------
+ID: 121191
+Name: Department Logo
+Department: College of the Environment
+Matched patterns: Logo
+--------------------------------------------------------------------------------
+ID: 121198
+Name: Faculty Authored Books
+Department: College of the Environment
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121199
+Name: Graduate Program
+Department: College of the Environment
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121201
+Name: Academic Program
+Department: College of the Environment
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121212
+Name: Research Frequently Asked Questions
+Department: College of the Environment
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121215
+Name: Class Web Pages
+Department: College of the Environment
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 121221
+Name: Faculty Meeting Schedule
+Department: College of the Environment
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121226
+Name: Northwest Modeling
+Department: College of the Environment
+Matched patterns: Mode, Modeling$
+--------------------------------------------------------------------------------
+ID: 121229
+Name: Weather Icon
+Department: College of the Environment
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121230
+Name: Radar Icon
+Department: College of the Environment
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121233
+Name: Weather Modeling Icon
+Department: College of the Environment
+Matched patterns: Mode, Icon
+--------------------------------------------------------------------------------
+ID: 121234
+Name: Washington Observations Icon
+Department: College of the Environment
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121235
+Name: Forecasts Icon
+Department: College of the Environment
+Matched patterns: Icon
+--------------------------------------------------------------------------------
+ID: 121236
+Name: Meet Our World-Class Faculty
+Department: College of the Environment
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 121237
+Name: Research Overview
+Department: College of the Environment
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121241
+Name: Aerosol Research
+Department: College of the Environment
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121250
+Name: Regional Center
+Department: College of the Environment
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121251
+Name: Cooperative Institute
+Department: College of the Environment
+Matched patterns:  Institute$
+--------------------------------------------------------------------------------
+ID: 121252
+Name: Ecosystem Studies
+Department: College of the Environment
+Matched patterns:  Studies$
+--------------------------------------------------------------------------------
+ID: 121253
+Name: Related Research Centers
+Department: College of the Environment
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121255
+Name: Astrobiology Program
+Department: College of the Environment
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121256
+Name: Space Sciences Department
+Department: College of the Environment
+Matched patterns:  Department$
+--------------------------------------------------------------------------------
+ID: 121259
+Name: Environment Logo
+Department: College of the Environment
+Matched patterns: Logo
+--------------------------------------------------------------------------------
+ID: 121268
+Name: Environmental Affairs
+Department: College of the Environment
+Matched patterns: Affairs
+--------------------------------------------------------------------------------
+ID: 121270
+Name: Quaternary Research Center
+Department: College of the Environment
+Matched patterns: Search,  Center$
+--------------------------------------------------------------------------------
+ID: 121276
+Name: Not Found
+Department: College of the Environment
+Matched patterns: Not Found
+--------------------------------------------------------------------------------
+ID: 121285
+Name: Student Services
+Department: College of the Environment
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 121290
+Name: Former Faculty
+Department: College of the Environment
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 121298
+Name: File Not Found
+Department: College of the Environment
+Matched patterns: Not Found
+--------------------------------------------------------------------------------
+ID: 121303
+Name: Search Site
+Department: College of the Environment
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121305
+Name: Regular Faculty
+Department: College of the Environment
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 121306
+Name: Clinical Faculty
+Department: College of the Environment
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 121310
+Name: Faculty Positions
+Department: College of the Environment
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121312
+Name: Funded Research
+Department: College of the Environment
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121331
+Name: Toxicology Training Program
+Department: College of the Environment
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121334
+Name: Supporting Undergraduate Research Experiences
+Department: College of the Environment
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121345
+Name: Field Research
+Department: College of the Environment
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121362
+Name: Student Support Resources
+Department: College of the Environment
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121371
+Name: Faculty Meetings
+Department: College of the Environment
+Matched patterns: ^Faculty , Meetings
+--------------------------------------------------------------------------------
+ID: 121374
+Name: Conflict Resolution Resources
+Department: College of the Environment
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121378
+Name: Home Page
+Department: College of the Environment
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 121391
+Name: Search Button
+Department: School of Law
+Matched patterns: Search, Button
+--------------------------------------------------------------------------------
+ID: 121392
+Name: User Menu
+Department: School of Law
+Matched patterns: Menu
+--------------------------------------------------------------------------------
+ID: 121396
+Name: Staff Directory
+Department: School of Law
+Matched patterns: Directory
+--------------------------------------------------------------------------------
+ID: 121399
+Name: Visiting Scholars Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121413
+Name: Gates Public Service Law Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121414
+Name: Gregoire Fellows Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121418
+Name: Career Development Resource Center
+Department: School of Law
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121425
+Name: Law Student Resources
+Department: School of Law
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121426
+Name: Staff Resources
+Department: School of Law
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121428
+Name: Legal Research Guides
+Department: School of Law
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121429
+Name: Discovery Podcast
+Department: School of Law
+Matched patterns: Cover
+--------------------------------------------------------------------------------
+ID: 121436
+Name: Juvenile Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121437
+Name: Endowed Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121444
+Name: Marijuana Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121445
+Name: Susan Brotman Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121446
+Name: Health Care Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121448
+Name: Prentice Bloedel Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121451
+Name: Legal Research
+Department: School of Law
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121452
+Name: Stone Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121453
+Name: Refugee Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121458
+Name: Telecommunications Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121459
+Name: Associate Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121460
+Name: Native American Law Center
+Department: School of Law
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121462
+Name: Criminal Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121467
+Name: Constitutional Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121470
+Name: Military Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121473
+Name: Dean Emeritus Roland
+Department: School of Law
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 121474
+Name: Hjorth Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121475
+Name: Acting Assistant Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121477
+Name: Technology Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121479
+Name: Stimson Bullitt Endowed Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121480
+Name: Environmental Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121481
+Name: Administrative Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121484
+Name: Toni Rembe Dean
+Department: School of Law
+Matched patterns: Dean$
+--------------------------------------------------------------------------------
+ID: 121485
+Name: Associate Dean
+Department: School of Law
+Matched patterns: Associate Dean, Dean$
+--------------------------------------------------------------------------------
+ID: 121487
+Name: Sustainable International Development Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121488
+Name: Dan Fenno Henderson Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121489
+Name: East Asian Legal Studies
+Department: School of Law
+Matched patterns:  Studies$
+--------------------------------------------------------------------------------
+ID: 121490
+Name: Comparative Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121492
+Name: Islamic Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121495
+Name: Election Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121498
+Name: American Indian Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121499
+Name: Natural Resources Law
+Department: School of Law
+Matched patterns:  Law$, Resources
+--------------------------------------------------------------------------------
+ID: 121500
+Name: Tribal Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121501
+Name: Water Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121505
+Name: Asian Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121506
+Name: Banking Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121507
+Name: Corporate Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121508
+Name: Commercial Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121510
+Name: Entrepreneurial Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121513
+Name: Trade Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121514
+Name: Licensing Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121515
+Name: Technology Transfer
+Department: School of Law
+Matched patterns: Transfer$
+--------------------------------------------------------------------------------
+ID: 121519
+Name: Copyright Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121520
+Name: Music Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121523
+Name: Managing Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121527
+Name: Senior Associate Dean
+Department: School of Law
+Matched patterns: Associate Dean, Dean$
+--------------------------------------------------------------------------------
+ID: 121528
+Name: Faculty Affairs
+Department: School of Law
+Matched patterns: ^Faculty , Affairs
+--------------------------------------------------------------------------------
+ID: 121530
+Name: Mental Health Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121532
+Name: Mifflin University Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121534
+Name: Student Affairs
+Department: School of Law
+Matched patterns: Affairs
+--------------------------------------------------------------------------------
+ID: 121535
+Name: Family Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121539
+Name: International Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121544
+Name: Public Health Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121545
+Name: Employment Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121547
+Name: Associate Dean Emeritus
+Department: School of Law
+Matched patterns: Emeritus, Associate Dean
+--------------------------------------------------------------------------------
+ID: 121550
+Name: Municipal Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121551
+Name: Washington State Constitutional Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121552
+Name: Washington Research Foundation
+Department: School of Law
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121553
+Name: Hunter Simpson Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121554
+Name: Patent Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121555
+Name: Trademark Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121556
+Name: Instructional Services
+Department: School of Law
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 121557
+Name: Policy Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121558
+Name: Regulatory Environmental Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121561
+Name: Wildlife Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121562
+Name: Co-Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121564
+Name: Cyber Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121570
+Name: Affiliate Assistant Professor
+Department: School of Law
+Matched patterns: Professor$, Affiliate
+--------------------------------------------------------------------------------
+ID: 121576
+Name: Gender Studies
+Department: School of Law
+Matched patterns:  Studies$
+--------------------------------------------------------------------------------
+ID: 121585
+Name: Global Business Law Institute
+Department: School of Law
+Matched patterns:  Institute$
+--------------------------------------------------------------------------------
+ID: 121587
+Name: Faculty Affiliate
+Department: School of Law
+Matched patterns: ^Faculty , Affiliate
+--------------------------------------------------------------------------------
+ID: 121600
+Name: Gertrud Tamaki Endowed Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121602
+Name: International Studies
+Department: School of Law
+Matched patterns:  Studies$
+--------------------------------------------------------------------------------
+ID: 121604
+Name: Ellison Professor
+Department: School of Law
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121605
+Name: Eurasian Studies
+Department: School of Law
+Matched patterns:  Studies$
+--------------------------------------------------------------------------------
+ID: 121611
+Name: Empirical Research
+Department: School of Law
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121613
+Name: Scholarship Discovery Law Librarian
+Department: School of Law
+Matched patterns: Cover
+--------------------------------------------------------------------------------
+ID: 121622
+Name: Deputy Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121627
+Name: Maritime Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121628
+Name: National Security Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121632
+Name: Property Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121634
+Name: Principal Lecturer Emeritus
+Department: School of Law
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 121637
+Name: Software Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121638
+Name: Teaching Professor Emeritus
+Department: School of Law
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 121639
+Name: Librarian Emeritus
+Department: School of Law
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 121640
+Name: Law Emeritus
+Department: School of Law
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 121642
+Name: Public Interest Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121643
+Name: Stone Professor Emeritus
+Department: School of Law
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 121645
+Name: Medical Research Ethics
+Department: School of Law
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121654
+Name: Assistant Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121655
+Name: Assistant Dean
+Department: School of Law
+Matched patterns: Assistant Dean, Dean$
+--------------------------------------------------------------------------------
+ID: 121667
+Name: Human Resources Specialist
+Department: School of Law
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121670
+Name: Advancement Services Officer
+Department: School of Law
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 121673
+Name: Clinical Law Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121679
+Name: Executive Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121681
+Name: Human Resources
+Department: School of Law
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121690
+Name: Shared Services Analyst
+Department: School of Law
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 121701
+Name: Interim Executive Director
+Department: School of Law
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121711
+Name: Asian Law Center
+Department: School of Law
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121712
+Name: Barer Institute
+Department: School of Law
+Matched patterns:  Institute$
+--------------------------------------------------------------------------------
+ID: 121716
+Name: Public Service Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121725
+Name: Faculty Support
+Department: School of Law
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121727
+Name: Gates Public Service Law Scholarship Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121728
+Name: General Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121729
+Name: Health Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121730
+Name: Intellectual Property Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121731
+Name: Law Program
+Department: School of Law
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121732
+Name: Tax Law
+Department: School of Law
+Matched patterns:  Law$
+--------------------------------------------------------------------------------
+ID: 121736
+Name: Moderate Means Program
+Department: School of Law
+Matched patterns: Mode,  Program$
+--------------------------------------------------------------------------------
+ID: 121738
+Name: Font Awesome Free
+Department: School of Law
+Matched patterns: Font, Awesome
+--------------------------------------------------------------------------------
+ID: 121744
+Name: Section Menu
+Department: School of Law
+Matched patterns: Menu
+--------------------------------------------------------------------------------
+ID: 121746
+Name: Mobile Menu Icon
+Department: School of Medicine
+Matched patterns: Menu, Icon
+--------------------------------------------------------------------------------
+ID: 121747
+Name: Fries Menu
+Department: School of Medicine
+Matched patterns: Menu
+--------------------------------------------------------------------------------
+ID: 121748
+Name: Open Menu Icon
+Department: School of Medicine
+Matched patterns: Menu, Icon
+--------------------------------------------------------------------------------
+ID: 121749
+Name: Close Menu Icon
+Department: School of Medicine
+Matched patterns: Menu, Icon
+--------------------------------------------------------------------------------
+ID: 121754
+Name: Visitor Resources
+Department: School of Medicine
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121762
+Name: Research Programs
+Department: School of Medicine
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121768
+Name: Research Events
+Department: School of Medicine
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121769
+Name: Research Facilities
+Department: School of Medicine
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121772
+Name: Harborview Medical Center
+Department: School of Medicine
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121773
+Name: Medical Center
+Department: School of Medicine
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121775
+Name: Medical Conditions Directory
+Department: School of Medicine
+Matched patterns: Directory
+--------------------------------------------------------------------------------
+ID: 121776
+Name: Patient Resources
+Department: School of Medicine
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 121781
+Name: Fred Hutchinson Cancer Center
+Department: School of Medicine
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121784
+Name: Give Website Feedback
+Department: School of Medicine
+Matched patterns: Feed
+--------------------------------------------------------------------------------
+ID: 121816
+Name: Simulation Center
+Department: School of Nursing
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 121820
+Name: Nursing Research
+Department: School of Nursing
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121822
+Name: Palliative Education Network
+Department: School of Nursing
+Matched patterns: Network$
+--------------------------------------------------------------------------------
+ID: 121827
+Name: Interprofessional Education Research
+Department: School of Nursing
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 121836
+Name: Evans School Directory
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Directory
+--------------------------------------------------------------------------------
+ID: 121843
+Name: Bakery Page Builder
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 121855
+Name: International Program
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 121860
+Name: Faculty Members
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 121861
+Name: Research News
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 121872
+Name: Evans School Faculty
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 121884
+Name: Evans Endowed Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121887
+Name: Marc Lindenberg Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121892
+Name: Emeritus Dean
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Emeritus, Dean$
+--------------------------------------------------------------------------------
+ID: 121893
+Name: Evans School Dean
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Dean$
+--------------------------------------------------------------------------------
+ID: 121904
+Name: Program Director
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121919
+Name: Weyerhaeuser Endowed Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121941
+Name: Senior Director
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121971
+Name: Undergraduate Program Director
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 121981
+Name: Public Affairs
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Affairs
+--------------------------------------------------------------------------------
+ID: 121987
+Name: Nancy Bell Evans Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121994
+Name: Marguerite Walker Corbally Endowed Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 121998
+Name: Senior Lecturer Emeritus
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 122006
+Name: Boeing International Professor Emeritus
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 122047
+Name: Senior Research Scientist
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122059
+Name: Research Scientist
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122065
+Name: Page-Photo
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 122066
+Name: Stephen Page
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 122067
+Name: Steve Page
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Page
+--------------------------------------------------------------------------------
+ID: 122073
+Name: Evans Professor Emeritus
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Emeritus
+--------------------------------------------------------------------------------
+ID: 122112
+Name: Development Director
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Director$
+--------------------------------------------------------------------------------
+ID: 122116
+Name: Adjunct Assistant Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$, Adjunct
+--------------------------------------------------------------------------------
+ID: 122119
+Name: Colleen Willoughby Endowed Professor
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Professor$
+--------------------------------------------------------------------------------
+ID: 122148
+Name: Research Consultant
+Department: Daniel J. Evans School of Public Policy & Governance
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122161
+Name: Mobile Menu
+Department: School of Public Health
+Matched patterns: Menu
+--------------------------------------------------------------------------------
+ID: 122163
+Name: Office Directory
+Department: School of Public Health
+Matched patterns: Directory
+--------------------------------------------------------------------------------
+ID: 122166
+Name: Biostatistics Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122168
+Name: Occupational Health Sciences Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122169
+Name: Epidemiology Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122170
+Name: Global Health Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122173
+Name: Population Health Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122174
+Name: Program Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122177
+Name: Endowed Faculty
+Department: School of Public Health
+Matched patterns: Faculty$
+--------------------------------------------------------------------------------
+ID: 122178
+Name: Faculty Jobs
+Department: School of Public Health
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 122179
+Name: Career Resources
+Department: School of Public Health
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122189
+Name: Faculty Profiles
+Department: School of Public Health
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 122191
+Name: About Our Research
+Department: School of Public Health
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 122195
+Name: Teaching Resources
+Department: School of Public Health
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122199
+Name: Hans Rosling Center
+Department: School of Public Health
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 122200
+Name: Faculty Partnership Map
+Department: School of Public Health
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 122201
+Name: Search All Faculty By Name
+Department: School of Public Health
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122202
+Name: Faculty Name
+Department: School of Public Health
+Matched patterns: ^Faculty 
+--------------------------------------------------------------------------------
+ID: 122203
+Name: Search All Faculty By Research Interests
+Department: School of Public Health
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122204
+Name: Research Interests
+Department: School of Public Health
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122207
+Name: Noto Sans
+Department: School of Social Work
+Matched patterns: Sans, Noto
+--------------------------------------------------------------------------------
+ID: 122208
+Name: Liberation Sans
+Department: School of Social Work
+Matched patterns: Sans, Liberation
+--------------------------------------------------------------------------------
+ID: 122210
+Name: Noto Color Emoji
+Department: School of Social Work
+Matched patterns: Noto
+--------------------------------------------------------------------------------
+ID: 122215
+Name: Font Awesome
+Department: School of Social Work
+Matched patterns: Font, Awesome
+--------------------------------------------------------------------------------
+ID: 122226
+Name: New Instructor Resources
+Department: School of Social Work
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122227
+Name: Canvas Directory Faculty
+Department: School of Social Work
+Matched patterns: Faculty$, Directory
+--------------------------------------------------------------------------------
+ID: 122228
+Name: Staff News School Resources
+Department: School of Social Work
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122229
+Name: Site-Logo
+Department: School of Social Work
+Matched patterns: Logo
+--------------------------------------------------------------------------------
+ID: 122247
+Name: Tacoma Program
+Department: School of Social Work
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 122254
+Name: Media Services
+Department: School of Social Work
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 122255
+Name: Communications Services
+Department: School of Social Work
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 122257
+Name: Published Research
+Department: School of Social Work
+Matched patterns: Search,  Research$
+--------------------------------------------------------------------------------
+ID: 122258
+Name: Research Projects
+Department: School of Social Work
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122263
+Name: School Resources
+Department: School of Social Work
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122288
+Name: Kelly Ethnic Cultural Center
+Department: School of Social Work
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 122290
+Name: Seattle Convention Center
+Department: School of Social Work
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 122295
+Name: Research Commons Room
+Department: School of Social Work
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122297
+Name: Research Commons
+Department: School of Social Work
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122301
+Name: Washington Center
+Department: School of Social Work
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 122314
+Name: Events Search
+Department: School of Social Work
+Matched patterns: Search
+--------------------------------------------------------------------------------
+ID: 122321
+Name: Staff Joint Meetings
+Department: School of Social Work
+Matched patterns: Meetings
+--------------------------------------------------------------------------------
+ID: 122322
+Name: Staff Meetings
+Department: School of Social Work
+Matched patterns: Meetings
+--------------------------------------------------------------------------------
+ID: 122323
+Name: Emergency Services
+Department: School of Social Work
+Matched patterns: Services
+--------------------------------------------------------------------------------
+ID: 122330
+Name: Advanced Standing Program
+Department: School of Social Work
+Matched patterns:  Program$
+--------------------------------------------------------------------------------
+ID: 122331
+Name: Student Institute
+Department: School of Social Work
+Matched patterns:  Institute$
+--------------------------------------------------------------------------------
+ID: 122341
+Name: Writing Center
+Department: School of Social Work
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 122342
+Name: The Social Work Writing Center
+Department: School of Social Work
+Matched patterns:  Center$
+--------------------------------------------------------------------------------
+ID: 122347
+Name: Writing Resources
+Department: School of Social Work
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122350
+Name: Safety Resources
+Department: School of Social Work
+Matched patterns: Resources
+--------------------------------------------------------------------------------
+ID: 122351
+Name: Police Department
+Department: School of Social Work
+Matched patterns:  Department$
+--------------------------------------------------------------------------------
