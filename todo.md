@@ -64,6 +64,8 @@
 - [x] 优化数据收集脚本减少token消耗（简化prompt，使用gpt-4o-mini）
 - [x] 修复数据库列名问题（university_name vs universityName）
 - [x] 使用Perplexity API收集MIT完整教授数据（联网LLM，覆盖现有60位，实际收集69位）
+- [x] 搜索MIT完整本科专业列表（只考虑本科专业，不含研究生/博士） - 58个专业
+- [x] 重新收集MIT数据（57个本科专业，成功43个，收集127位教授）
 - [ ] 收集Harvard教授数据
 - [ ] 收集Stanford教授数据
 - [ ] 统一所有大学的research_field分类体系
