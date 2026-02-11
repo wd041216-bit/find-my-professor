@@ -1031,3 +1031,12 @@
 - 仍有25-37%的垃圾数据残留（估计200-300条）
 - Email字段100%为空
 - Tags覆盖率仅20%，Research Field覆盖率仅14%
+
+## 🗑️ 清空所有教授数据（用户要求 - 策略调整）
+- [x] 清空professors表（删除所有教授记录）
+- [x] 清空student_likes表（删除所有收藏记录）
+- [x] 清空student_swipes表（删除所有滑动记录）
+- [x] 保留research_field_tag_mapping表（470条tags映射）
+- [x] 保留research_field_images表（29个研究领域图片）
+- [x] 验证数据删除完整性
+- [ ] 更新应用逻辑以适应新的按需爬取策略
