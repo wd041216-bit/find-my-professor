@@ -97,9 +97,15 @@ export function Swipe() {
   // Append new professors to the list
   useEffect(() => {
     if (professorsData?.professors) {
+      // Map research_field to researchField for frontend compatibility
+      const mappedProfessors = professorsData.professors.map((prof: any) => ({
+        ...prof,
+        researchField: prof.research_field, // Map research_field to researchField
+      }));
+      
       setAllProfessors(prev => {
         // Avoid duplicates
-        const newProfs = professorsData.professors.filter(
+        const newProfs = mappedProfessors.filter(
           p => !prev.some(existing => existing.id === p.id)
         );
         return [...prev, ...newProfs];

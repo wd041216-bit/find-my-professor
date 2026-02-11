@@ -1,12 +1,14 @@
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Sparkles, Info } from 'lucide-react';
 import { useState } from 'react';
+import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
 
 export interface Professor {
   id: number;
   name: string;
   universityName: string;
   department: string;
+  researchField?: string; // Standardized research field
   title?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
@@ -112,15 +114,25 @@ export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = fa
 
         {/* School Image Background - Fills entire card like Tinder */}
         <div className="absolute inset-0">
-          {professor.schoolImageUrl ? (
-            <img 
-              src={professor.schoolImageUrl} 
-              alt={professor.department}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400" />
-          )}
+          {(() => {
+            // Try to get university-specific field image first
+            const fieldImage = professor.researchField 
+              ? getProfessorBackgroundImage(professor.universityName, professor.researchField)
+              : null;
+            
+            // Fallback to schoolImageUrl, then generic gradient
+            const imageUrl = fieldImage || professor.schoolImageUrl;
+            
+            return imageUrl ? (
+              <img 
+                src={imageUrl} 
+                alt={`${professor.universityName} ${professor.researchField || professor.department}`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400" />
+            );
+          })()}
           
           {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
