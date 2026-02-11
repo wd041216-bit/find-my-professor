@@ -285,7 +285,21 @@ export function Swipe() {
 
       {/* Card Stack Container */}
       <div className="flex-1 flex items-center justify-center p-2 md:p-6">
-        <div className="relative w-full max-w-sm md:max-w-md" style={{ height: 'min(480px, 60vh)' }}>
+        <div 
+          id="card-stack-container"
+          className="relative w-full max-w-sm md:max-w-md" 
+          style={{ 
+            height: 'min(480px, 60vh)' // Mobile: smaller height for one-screen display
+          }}
+        >
+          {/* Desktop/Tablet: use larger height via media query */}
+          <style>{`
+            @media (min-width: 768px) {
+              #card-stack-container {
+                height: min(580px, 75vh) !important;
+              }
+            }
+          `}</style>
           {/* Render next 2 cards in background for stack effect */}
           {professors.slice(currentIndex + 1, currentIndex + 3).map((prof, index) => (
             <div
