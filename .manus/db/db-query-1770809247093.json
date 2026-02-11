@@ -1,0 +1,17 @@
+{
+  "query": "SELECT * FROM student_swipes WHERE student_id = 1 AND professor_id = 150047;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT * FROM student_swipes WHERE student_id = 1 AND professor_id = 150047;",
+  "rows": [
+    {
+      "id": "360004",
+      "student_id": "1",
+      "professor_id": "150047",
+      "action": "pass",
+      "created_at": "2026-02-11 11:25:20"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tstudent_id\tprofessor_id\taction\tcreated_at\n360004\t1\t150047\tpass\t2026-02-11 11:25:20\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

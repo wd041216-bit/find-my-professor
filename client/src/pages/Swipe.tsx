@@ -223,7 +223,7 @@ export function Swipe() {
   const handleButtonClick = (action: 'pass' | 'like') => {
     if (!currentProfessor) return;
 
-    const direction = action === 'like' ? 'right' : 'left';
+    const direction: 'left' | 'right' = action === 'like' ? 'right' : 'left';
     setLastAction(action);
 
     // Set random animation
@@ -276,9 +276,9 @@ export function Swipe() {
               <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
                 <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
-              <span className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 Find My Professor
-              </span>
+              </h1>
             </div>
           </Link>
 
@@ -331,8 +331,8 @@ export function Swipe() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="relative w-full max-w-md" style={{ height: '620px' }}>
+      <div className="flex-1 flex items-center justify-center p-4 md:p-6">
+        <div className="relative w-full max-w-sm md:max-w-md" style={{ height: 'min(580px, 75vh)' }}>
           {/* Render next 2 cards in background for stack effect */}
           {professors.slice(currentIndex + 1, currentIndex + 3).map((prof, index) => (
             <div
@@ -350,15 +350,14 @@ export function Swipe() {
 
           {/* Current Card */}
           {currentProfessor && (
-            <div className={cardAnimation ? getAnimationClass(cardAnimation) : ''}>
-              <ProfessorCard
-                key={currentProfessor.id}
-                professor={currentProfessor}
-                onSwipe={handleSwipe}
-                style={{ zIndex: 1 }}
-                isMinimalProfile={professorsData?.isMinimalProfile}
-              />
-            </div>
+            <ProfessorCard
+              key={currentProfessor.id}
+              professor={currentProfessor}
+              onSwipe={handleSwipe}
+              style={{ zIndex: 1 }}
+              isMinimalProfile={professorsData?.isMinimalProfile}
+              animation={cardAnimation}
+            />
           )}
 
           {/* Loading indicator when no more cards */}
