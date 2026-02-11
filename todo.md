@@ -146,3 +146,10 @@
 - [ ] 整合所有报告并格式化为技能文档
 
 - [x] 生成完整的技能报告文档（SKILL_REPORT_PROFESSOR_DATA_COLLECTION.md）
+
+## Match Score Bug Fixes
+- [x] 修复匹配算法bug：单字母标签（如"R"）误匹配所有包含该字母的标签
+- [x] 改进匹配逻辑：使用词边界匹配而非简单的includes（短标签<3字符要求精确匹配）
+- [x] 修改无匹配时的显示：不显示虚假的60-85%分数，改为友好提示"Different research area"
+- [x] 重新计算所有现有likes的match scores（11条记录全部更新为NULL）
+- [x] 测试验证修复效果（Match History页面正确显示"Different research area"）
