@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM professors WHERE university_name = 'University of Washington' AND department LIKE '%Foster%' AND name IN ('Internet Explorer', 'Faculty Directory', 'Foster School');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute DELETE FROM professors WHERE university_name = 'University of Washington' AND department LIKE '%Foster%' AND name IN ('Internet Explorer', 'Faculty Directory', 'Foster School');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 94
+}

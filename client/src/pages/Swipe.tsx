@@ -66,12 +66,14 @@ export function Swipe() {
 
   // Handle filter changes
   const handleFilterChange = useCallback((newFilters: { university?: string; department?: string; minMatchScore?: number }) => {
+    console.log('[Swipe] handleFilterChange received:', newFilters);
     // Convert "__all__" to undefined
     const processedFilters = {
       university: newFilters.university === '__all__' ? undefined : newFilters.university,
       department: newFilters.department === '__all__' ? undefined : newFilters.department,
       minMatchScore: newFilters.minMatchScore,
     };
+    console.log('[Swipe] processedFilters:', processedFilters);
     
     setFilters(processedFilters);
     
@@ -550,6 +552,7 @@ export function Swipe() {
         onClose={() => setIsFilterPanelOpen(false)}
         onFilterChange={handleFilterChange}
         isProfileComplete={isProfileComplete}
+        currentFilters={filters}
       />
     </div>
   );
