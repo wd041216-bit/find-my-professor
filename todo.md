@@ -966,3 +966,10 @@
 - [x] 测试Match History页面正常显示（36个liked教授，tags正常显示）
 - [x] 验证完整用户流程：主页、Profile、Swipe、Match History全部正常
 - [x] 保存checkpoint
+
+## 🗑️ 删除或修复Dashboard 404页面 (2026-02-11)
+- [x] 检查App.tsx中的Dashboard路由（未定义）
+- [x] 检查MobileNav.tsx中的Dashboard链接（第48行）
+- [x] 删除MobileNav中的无效Dashboard、activities、explore、cover-letters、notifications链接
+- [x] 测试验证：导航栏只显示Profile和Match History
+- [x] 保存checkpoint
