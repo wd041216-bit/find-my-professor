@@ -1061,3 +1061,12 @@
 - [ ] 提取教授信息（name, department, title, research_areas, tags）
 - [ ] 保存到professors表
 - [ ] 验证数据质量
+
+## 🗑️ 数据库和代码彻底清理（用户要求）
+- [ ] 列出所有数据库表并分类（必需 vs 无关）
+- [ ] 删除所有无关的数据库表
+- [ ] 删除与无关表相关的代码（tRPC routers、services、types）
+- [ ] 更新drizzle schema.ts（移除已删除表的定义）
+- [ ] 验证数据库完整性和代码编译
+- [ ] 生成最终的数据库结构文档
+- [ ] 保存checkpoint

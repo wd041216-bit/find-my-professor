@@ -34,8 +34,8 @@ export default function History() {
     },
   });
 
-  // Cover letter generation mutation
-  const generateLetterMutation = trpc.coverLetter.generateForProfessor.useMutation();
+  // Cover letter generation mutation - DISABLED (feature removed)
+  // const generateLetterMutation = trpc.coverLetter.generateForProfessor.useMutation();
 
   const handleViewDetails = (match: any) => {
     setSelectedProfessor(match);
@@ -43,23 +43,27 @@ export default function History() {
   };
 
   const handleGenerateCoverLetter = async (match: any) => {
-    setSelectedProfessor(match);
-    setShowCoverLetterDialog(true);
-    setGeneratingLetter(true);
-    setCoverLetterContent("");
+    // Cover letter feature temporarily disabled
+    toast.error("Cover letter feature is currently unavailable");
+    return;
+    
+    // setSelectedProfessor(match);
+    // setShowCoverLetterDialog(true);
+    // setGeneratingLetter(true);
+    // setCoverLetterContent("");
 
-    try {
-      const result = await generateLetterMutation.mutateAsync({
-        professorId: match.professor.id,
-      });
+    // try {
+    //   const result = await generateLetterMutation.mutateAsync({
+    //     professorId: match.professor.id,
+    //   });
 
-      setCoverLetterContent(result.content);
-    } catch (error: any) {
-      toast.error("Failed to generate cover letter");
-      setShowCoverLetterDialog(false);
-    } finally {
-      setGeneratingLetter(false);
-    }
+    //   setCoverLetterContent(result.content);
+    // } catch (error: any) {
+    //   toast.error("Failed to generate cover letter");
+    //   setShowCoverLetterDialog(false);
+    // } finally {
+    //   setGeneratingLetter(false);
+    // }
   };
 
   const handleUnlike = (professorId: number) => {

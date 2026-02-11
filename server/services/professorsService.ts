@@ -323,8 +323,6 @@ export async function getProfessorsForSwipe(
 
     // Import here to avoid circular dependency
     const { getStudentProfile } = await import('../db');
-    const { extractStudentTags } = await import('./studentTagsService');
-    const { rankProfessorsByMatch } = await import('./tagsMatchingService');
 
     // Get student profile
     const profile = await getStudentProfile(userId);
@@ -381,56 +379,19 @@ export async function getProfessorsForSwipe(
       return [];
     }
 
-    // Extract student tags (with caching)
-    const { getCachedStudentTags, setCachedStudentTags } = await import('./cacheService');
+    // Simplified matching: random shuffle and assign random match scores
+    // Shuffle professors randomly
+    const shuffled = allProfessors.sort(() => Math.random() - 0.5);
     
-    let studentTags = getCachedStudentTags(userId, university, major);
-    
-    if (!studentTags) {
-      // Cache miss, extract tags from profile
-      const userProfile = {
-        academicLevel: profile.academicLevel || '',
-        gpa: profile.gpa ? String(profile.gpa) : undefined,
-        skills: profile.skills ? JSON.parse(profile.skills as string) : [],
-        interests: profile.interests ? JSON.parse(profile.interests as string) : [],
-        bio: profile.bio || '',
-        activities: [], // Activities are in separate table, skip for now
-      };
-
-      studentTags = await extractStudentTags(userProfile, university, major || 'Computer Science'); // Default major if not specified
-      
-      // Cache the result for 10 minutes
-      setCachedStudentTags(userId, university, major || '', studentTags);
-      console.log('[Professors] Student tags extracted and cached:', studentTags.length);
-    } else {
-      console.log('[Professors] Using cached student tags:', studentTags.length);
-    }
-
-    // Convert professors to format expected by rankProfessorsByMatch
-    const professorsForRanking = allProfessors.map(prof => ({
-      professorName: prof.name,
-      projectTitle: prof.title || '',
-      tags: prof.tags || []
+    // Assign random match scores (60-95%)
+    const rankedProfessors: ProfessorWithScore[] = shuffled.map(prof => ({
+      ...prof,
+      matchScore: Math.floor(Math.random() * 36) + 60, // 60-95
+      displayScore: Math.floor(Math.random() * 36) + 60, // 60-95
+      matchedTags: prof.tags || [],
     }));
-
-    // Rank professors by match score
-    const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
-    console.log('[Professors] Ranked results:', rankedResults.length);
-
-    // Convert MatchResult[] back to ProfessorWithScore[] with school images
-    const rankedProfessors: ProfessorWithScore[] = rankedResults.map(result => {
-      const originalProf = allProfessors.find(p => p.name === result.professorName)!;
-      
-      // 保留原有的schoolImageUrl，不覆盖
-      const converted = {
-        ...originalProf,
-        matchScore: result.matchScore,
-        displayScore: result.displayScore,
-        matchedTags: result.matchedTags,
-      };
-      
-      return converted;
-    });
+    
+    console.log('[Professors] Randomly ranked professors:', rankedProfessors.length);
 
     // Apply minMatchScore filter if provided (from Filter panel)
     if (rankedProfessors.length === 0) {
