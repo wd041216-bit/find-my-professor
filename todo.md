@@ -989,3 +989,9 @@
 - [x] 移除自动过滤逻辑，返回所有教授
 - [x] 实现Filter滑动条过滤器（带Profile完整性检查）
 - [ ] 测试验证并保存checkpoint
+
+## 🐛 修复Filter体验问题 (2026-02-11)
+- [x] 修复Filter状态回退问题：移除自动触发的useEffect，只在点击Apply时应用
+- [x] 调查Foster商学院匹配失败原因：department过滤使用了严格相等，改为includes()
+- [x] 添加__all__检查，避免过滤"All Universities"/"All Departments"
+- [ ] 测试验证并保存checkpoint

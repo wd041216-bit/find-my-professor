@@ -15,12 +15,22 @@ interface FilterPanelProps {
   isOpen: boolean;
   onClose: () => void;
   isProfileComplete: boolean; // Whether user has complete profile (GPA, skills, etc.)
+  currentFilters: { university?: string; department?: string; minMatchScore?: number }; // Current filter values
 }
 
-export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete }: FilterPanelProps) {
-  const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>();
-  const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>();
-  const [minMatchScore, setMinMatchScore] = useState<number>(0);
+export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete, currentFilters }: FilterPanelProps) {
+  const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>(currentFilters.university);
+  const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>(currentFilters.department);
+  const [minMatchScore, setMinMatchScore] = useState<number>(currentFilters.minMatchScore || 0);
+
+  // Sync local state with currentFilters when panel opens
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedUniversity(currentFilters.university);
+      setSelectedDepartment(currentFilters.department);
+      setMinMatchScore(currentFilters.minMatchScore || 0);
+    }
+  }, [isOpen, currentFilters]);
 
   // Get filter options (使用5分钟缓存)
   const { data: filterOptions } = trpc.swipe.getFilterOptions.useQuery(undefined, {
@@ -32,14 +42,21 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
     ? filterOptions?.departments.filter((dept: string) => dept) || []
     : filterOptions?.departments || [];
 
-  // Apply filters when selection changes
-  useEffect(() => {
+  // Apply filters only when user clicks "Apply Filters" button
+  const handleApplyFilters = () => {
+    console.log('[FilterPanel] Apply Filters clicked:', {
+      selectedUniversity,
+      selectedDepartment,
+      minMatchScore,
+      isProfileComplete
+    });
     onFilterChange({
       university: selectedUniversity,
       department: selectedDepartment,
       minMatchScore: isProfileComplete ? minMatchScore : undefined,
     });
-  }, [selectedUniversity, selectedDepartment, minMatchScore, isProfileComplete, onFilterChange]);
+    onClose();
+  };
 
   const handleClearFilters = () => {
     setSelectedUniversity(undefined);
@@ -153,7 +170,7 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
             Clear Filters
           </Button>
           <Button
-            onClick={onClose}
+            onClick={handleApplyFilters}
             className="flex-1"
           >
             Apply Filters

@@ -42,7 +42,8 @@ export interface MatchedProfessor {
  */export async function getProfessorsFromDatabase(
   university: string,
   major: string | null,
-  limit: number = 100
+  limit: number = 100,
+  department?: string | null
 ): Promise<MatchedProfessor[]> {  try {
     const db = await getDb();
     if (!db) {
@@ -51,9 +52,24 @@ export interface MatchedProfessor {
     }
     
     // 查询教授数据（使用索引加速）
-    const whereClause = major 
-      ? sql`LOWER(${professors.universityName}) = LOWER(${university}) AND LOWER(${professors.majorName}) = LOWER(${major})`
-      : sql`LOWER(${professors.universityName}) = LOWER(${university})`;
+    let whereClause;
+    if (department) {
+      // 如果指定了department，按department查询（部分匹配）
+      const deptPattern = `%${department}%`;
+      whereClause = and(
+        sql`LOWER(${professors.universityName}) = LOWER(${university})`,
+        sql`LOWER(${professors.department}) LIKE LOWER(${deptPattern})`
+      );
+    } else if (major) {
+      // 如果指定了major，按major查询
+      whereClause = and(
+        sql`LOWER(${professors.universityName}) = LOWER(${university})`,
+        sql`LOWER(${professors.majorName}) = LOWER(${major})`
+      );
+    } else {
+      // 否则只按university查询
+      whereClause = sql`LOWER(${professors.universityName}) = LOWER(${university})`;
+    }
     
     const professorsList = await db
       .select()
@@ -218,7 +234,14 @@ export interface MatchedProfessor {
         labWebsite: prof.labWebsite,
         personalWebsite: prof.personalWebsite,
         sourceUrl: prof.sourceUrl,
-        researchAreas: prof.researchAreas ? JSON.parse(prof.researchAreas as string) : null,
+        researchAreas: prof.researchAreas ? (() => {
+          try {
+            return JSON.parse(prof.researchAreas as string);
+          } catch (e) {
+            // If researchAreas is not valid JSON, treat it as a single string
+            return [prof.researchAreas as string];
+          }
+        })() : null,
         tags: Array.isArray(prof.tags) ? prof.tags : (prof.tags ? [prof.tags] : []),
         email: prof.email,
         bio: prof.bio,
@@ -351,31 +374,31 @@ export async function getProfessorsForSwipe(
 
     // Major is optional - if not provided, search all professors at the university
 
-    const university = targetUniversities[0];
-    const major = targetMajors.length > 0 ? targetMajors[0] : null;
+    // 如果用户通过Filter选择了university，使用Filter的university；否则使用profile的target university
+    const university = filterUniversity || targetUniversities[0];
+    
+    // 如果用户通过Filter选择了department，忽略profile的targetMajors，查询全校教授然后通过filter过滤
+    // 否则使用profile的targetMajors
+    const shouldUseProfileMajor = !filterDepartment && targetMajors.length > 0;
+    const major = shouldUseProfileMajor ? targetMajors[0] : null;
 
-    console.log('[Professors] Querying with university:', university, 'major:', major);
+    console.log('[Professors] Querying with university:', university, 'major:', major, 'filterDepartment:', filterDepartment);
 
     // 优化：只查询需要的数量（limit * 3，留出排序和筛选的余地）
     // 而不是查询全部1000个教授
-    // 如果用户没有使用Filter功能选择学院，则随机匹配全校教授（忽略target major）
+    // 如果用户使用了Filter功能选择学院，则直接在数据库查询中过滤department
     const queryLimit = Math.min(limit * 3, 300);
-    const shouldSearchAllDepartments = !filterDepartment;
-    let allProfessors = await getProfessorsFromDatabase(university, shouldSearchAllDepartments ? null : major, queryLimit);
+    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, filterDepartment);
     
     console.log('[Professors] Query returned:', allProfessors.length, 'professors');
 
     // Apply filters if provided
-    if (filterUniversity) {
+    if (filterUniversity && filterUniversity !== '__all__') {
       allProfessors = allProfessors.filter(prof => 
         prof.universityName.toLowerCase() === filterUniversity.toLowerCase()
       );
     }
-    if (filterDepartment) {
-      allProfessors = allProfessors.filter(prof => 
-        prof.department?.toLowerCase() === filterDepartment.toLowerCase()
-      );
-    }
+    // Department filtering is now done in database query (getProfessorsFromDatabase)
 
     // Exclude already swiped professors
     if (excludeIds.length > 0) {
