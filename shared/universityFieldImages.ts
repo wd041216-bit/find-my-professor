@@ -10,6 +10,7 @@ export const universityFieldImages: Record<string, Record<string, string>> = {
     "Literature & Languages": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lhBNAKpiFbwYcgTF.png",
     "Sociology & Anthropology": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/kJqbesehokOUVSdR.png",
     "History": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/tVtfMhjeSWojnnRR.png",
+    "Economics": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UuLAjwnKnDqHpCnv.png",
   },
   "Princeton University": {
     "Computer Science": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/iZMyzTeIuImUsvjR.png",
@@ -17,6 +18,7 @@ export const universityFieldImages: Record<string, Record<string, string>> = {
     "Sociology & Anthropology": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/KuQqZpxhYiPuJIMc.png",
     "Physics": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/PBkLtswuZRMbGJrZ.png",
     "Engineering": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/ciRmogRkDaWAVveU.png",
+    "Economics": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/wLbVaKQiRBHZDiLe.png",
   },
   "University of Washington": {
     "Computer Science": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/nniCrMJMudYfMKNS.png",
@@ -24,6 +26,7 @@ export const universityFieldImages: Record<string, Record<string, string>> = {
     "Sociology & Anthropology": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/RoNWsKRlHXFSVQsy.png",
     "Engineering": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/BsBhykelAAVYAlMV.png",
     "Education": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bxzKhqqjcNlJVCWR.png",
+    "Economics": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/KUlNoZjWUKfCtOCH.png",
   },
 };
 
