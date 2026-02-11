@@ -16,17 +16,41 @@ export interface Professor {
   schoolImageUrl?: string;
 }
 
+type AnimationVariant = 'fly-left' | 'fly-right' | 'rotate-fade' | 'scale-fade' | 'flip-out' | 'explode';
+
+interface CardAnimation {
+  variant: AnimationVariant;
+  direction: 'left' | 'right';
+}
+
 interface ProfessorCardProps {
   professor: Professor;
   onSwipe: (direction: 'left' | 'right', professor: Professor) => void;
   style?: React.CSSProperties;
   isMinimalProfile?: boolean; // Whether user has minimal profile
+  animation?: CardAnimation | null; // Animation to play
 }
 
-export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = false }: ProfessorCardProps) {
+export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = false, animation = null }: ProfessorCardProps) {
   const x = useMotionValue(0);
   const [exitX, setExitX] = useState(0);
   const [showInfo, setShowInfo] = useState(false);
+  
+  // Get animation config based on variant
+  const getAnimationConfig = (anim: CardAnimation | null) => {
+    if (!anim) return {};
+    
+    const animations = {
+      'fly-left': { x: -1500, rotate: -60, scale: 0.5, opacity: 0 },
+      'fly-right': { x: 1500, rotate: 60, scale: 0.5, opacity: 0 },
+      'rotate-fade': { rotate: 720, scale: 0, opacity: 0 },
+      'scale-fade': { scale: 0, opacity: 0 },
+      'flip-out': { rotateY: 180, scale: 0.1, opacity: 0 },
+      'explode': { scale: 0, rotate: 540, opacity: 0 },
+    };
+    
+    return animations[anim.variant] || {};
+  };
   
   // Tinder-like rotation (more subtle)
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
@@ -51,16 +75,19 @@ export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = fa
   return (
     <motion.div
       style={{
-        x,
-        rotate,
+        // Only apply drag styles when no animation is playing
+        ...(animation ? {} : { x, rotate }),
         ...style,
       }}
-      drag="x"
+      drag={animation ? false : "x"}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.7}
       onDragEnd={handleDragEnd}
-      animate={{ x: exitX }}
-      transition={{ 
+      animate={animation ? getAnimationConfig(animation) : { x: exitX }}
+      transition={animation ? {
+        duration: 0.6,
+        ease: 'easeInOut'
+      } : { 
         type: 'spring', 
         stiffness: 200, 
         damping: 20,
