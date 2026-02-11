@@ -104,7 +104,19 @@
 - [ ] 批量生成University of Washington剩余领域图像
 - [x] 上传MIT新图像到S3并更新映射配置（13个领域已完成）
 - [ ] 生成Princeton剩余领域图像并上传
-- [ ] 生成University of Washington剩余领域图像并上传
+- [x] 生成University of Washington剩余领域图像并上传（8个领域已完成）
 - [x] 优化图像加载性能（使用S3 CDN，图像已优化）
 - [x] 测试MIT图像显示（所有领域正常显示）
-- [ ] 保存checkpoint
+- [x] 保存checkpoint（version: 5cd1d47f）
+
+## 完成Princeton和UW图像并收集Top 10大学数据
+
+- [x] 生成Princeton剩余13个领域的专属图像并上传到S3（已完成）
+- [x] 生成University of Washington剩余8个领域的专属图像并上传到S3（已完成）
+- [ ] 搜索Harvard、Stanford、Yale、Columbia、Caltech等Top大学的本科专业列表
+- [ ] 使用改进的Perplexity脚本收集Harvard数据（预计100-150位教授）
+- [ ] 收集Stanford数据
+- [ ] 收集Yale数据
+- [ ] 收集Columbia数据
+- [ ] 收集Caltech数据
+- [ ] 测试并保存最终checkpoint
