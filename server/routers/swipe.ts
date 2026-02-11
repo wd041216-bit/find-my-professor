@@ -70,6 +70,7 @@ export const swipeRouter = router({
         offset: z.number().default(0),
         university: z.string().optional(),
         department: z.string().optional(),
+        minMatchScore: z.number().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -120,7 +121,8 @@ export const swipeRouter = router({
         swipedIds,
         input.offset,
         input.university,
-        input.department
+        input.department,
+        input.minMatchScore
       );
 
       return {

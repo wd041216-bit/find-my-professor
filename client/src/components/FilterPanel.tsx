@@ -11,14 +11,16 @@ import {
 import { trpc } from '@/lib/trpc';
 
 interface FilterPanelProps {
-  onFilterChange: (filters: { university?: string; department?: string }) => void;
+  onFilterChange: (filters: { university?: string; department?: string; minMatchScore?: number }) => void;
   isOpen: boolean;
   onClose: () => void;
+  isProfileComplete: boolean; // Whether user has complete profile (GPA, skills, etc.)
 }
 
-export function FilterPanel({ onFilterChange, isOpen, onClose }: FilterPanelProps) {
+export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete }: FilterPanelProps) {
   const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>();
   const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>();
+  const [minMatchScore, setMinMatchScore] = useState<number>(0);
 
   // Get filter options (使用5分钟缓存)
   const { data: filterOptions } = trpc.swipe.getFilterOptions.useQuery(undefined, {
@@ -35,15 +37,17 @@ export function FilterPanel({ onFilterChange, isOpen, onClose }: FilterPanelProp
     onFilterChange({
       university: selectedUniversity,
       department: selectedDepartment,
+      minMatchScore: isProfileComplete ? minMatchScore : undefined,
     });
-  }, [selectedUniversity, selectedDepartment, onFilterChange]);
+  }, [selectedUniversity, selectedDepartment, minMatchScore, isProfileComplete, onFilterChange]);
 
   const handleClearFilters = () => {
     setSelectedUniversity(undefined);
     setSelectedDepartment(undefined);
+    setMinMatchScore(0);
   };
 
-  const hasActiveFilters = selectedUniversity || selectedDepartment;
+  const hasActiveFilters = selectedUniversity || selectedDepartment || (isProfileComplete && minMatchScore > 0);
 
   if (!isOpen) return null;
 
@@ -112,6 +116,29 @@ export function FilterPanel({ onFilterChange, isOpen, onClose }: FilterPanelProp
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Match Score Filter */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Minimum Match Score</label>
+              <span className="text-sm font-semibold text-primary">{minMatchScore}%</span>
+            </div>
+            {!isProfileComplete ? (
+              <div className="p-4 bg-muted rounded-lg text-sm text-muted-foreground text-center">
+                Complete your profile (GPA, skills, etc.) to unlock match score filtering
+              </div>
+            ) : (
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={minMatchScore}
+                onChange={(e) => setMinMatchScore(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+              />
+            )}
           </div>
         </div>
 

@@ -48,7 +48,7 @@ export function Swipe() {
   }, [profile]);
 
   // Filter state
-  const [filters, setFilters] = useState<{ university?: string; department?: string }>({});
+  const [filters, setFilters] = useState<{ university?: string; department?: string; minMatchScore?: number }>({});
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   // Infinite scroll state
@@ -65,11 +65,12 @@ export function Swipe() {
   }, []); // Empty dependency array = only run on mount
 
   // Handle filter changes
-  const handleFilterChange = useCallback((newFilters: { university?: string; department?: string }) => {
+  const handleFilterChange = useCallback((newFilters: { university?: string; department?: string; minMatchScore?: number }) => {
     // Convert "__all__" to undefined
     const processedFilters = {
       university: newFilters.university === '__all__' ? undefined : newFilters.university,
       department: newFilters.department === '__all__' ? undefined : newFilters.department,
+      minMatchScore: newFilters.minMatchScore,
     };
     
     setFilters(processedFilters);
@@ -88,6 +89,7 @@ export function Swipe() {
       offset: currentBatch * 20,
       university: filters.university,
       department: filters.department,
+      minMatchScore: filters.minMatchScore,
     },
     { enabled: !!user && !!isProfileComplete }
   );
@@ -547,6 +549,7 @@ export function Swipe() {
         isOpen={isFilterPanelOpen}
         onClose={() => setIsFilterPanelOpen(false)}
         onFilterChange={handleFilterChange}
+        isProfileComplete={isProfileComplete}
       />
     </div>
   );

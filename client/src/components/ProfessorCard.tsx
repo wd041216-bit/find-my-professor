@@ -117,25 +117,7 @@ export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = fa
           <div className="mb-4">
             <h2 className="text-4xl font-black text-white mb-2 drop-shadow-lg">
               {professor.name}
-              {isMinimalProfile ? (
-                <span className="ml-3 text-sm">
-                  <a 
-                    href="/profile" 
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white/90 hover:text-white transition-all duration-200 text-sm"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Complete profile for match score
-                  </a>
-                </span>
-              ) : professor.displayScore !== undefined && (
-                <span className="ml-3 text-2xl">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 rounded-full">
-                    <Sparkles className="w-5 h-5" />
-                    {professor.displayScore}%
-                  </span>
-                </span>
-              )}
+              {/* Match score removed from swipe cards - only shown in Match History */}
             </h2>
             <p className="text-lg text-white/90 drop-shadow-md">{professor.department || professor.majorName}</p>
             <p className="text-lg text-white/85 drop-shadow-md">{professor.universityName}</p>

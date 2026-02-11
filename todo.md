@@ -973,3 +973,19 @@
 - [x] 删除MobileNav中的无效Dashboard、activities、explore、cover-letters、notifications链接
 - [x] 测试验证：导航栏只显示Profile和Match History
 - [x] 保存checkpoint
+
+## 🎨 重新设计匹配界面 (2026-02-11)
+- [ ] 移除主页Swipe卡片的匹配值显示（不论Profile是否完整）
+- [ ] 移除自动过滤逻辑，返回所有教授（不基于matchScore过滤）
+- [ ] 保留Match History页面的匹配值显示
+- [ ] 实现Filter滑动条过滤器（0-100%）
+- [ ] 添加Profile完整性检查：只有满足条件才启用滑动条
+- [ ] 未完成Profile时显示友好提示："Complete your profile to unlock match filtering"
+- [ ] 测试验证所有改动
+- [ ] 保存checkpoint
+
+## 🎨 重新设计匹配界面 (2026-02-11)
+- [x] 移除主页Swipe卡片的匹配值显示
+- [x] 移除自动过滤逻辑，返回所有教授
+- [x] 实现Filter滑动条过滤器（带Profile完整性检查）
+- [ ] 测试验证并保存checkpoint
