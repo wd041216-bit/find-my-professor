@@ -1,0 +1,64 @@
+{
+  "query": "SELECT DISTINCT p.research_field \nFROM professors p\nLEFT JOIN research_field_images r ON p.research_field = r.field_name\nWHERE p.research_field IS NOT NULL \n  AND p.research_field != ''\n  AND r.field_name IS NULL\nORDER BY p.research_field;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT DISTINCT p.research_field \nFROM professors p\nLEFT JOIN research_field_images r ON p.research_field = r.field_name\nWHERE p.research_field IS NOT NULL \n  AND p.research_field != ''\n  AND r.field_name IS NULL\nORDER BY p.research_field;",
+  "rows": [
+    {
+      "research_field": "Artificial Intelligence & Machine Learning"
+    },
+    {
+      "research_field": "Biomedical Engineering & Health Tech"
+    },
+    {
+      "research_field": "Business & Economics"
+    },
+    {
+      "research_field": "Education & Learning Sciences"
+    },
+    {
+      "research_field": "Environmental Science & Sustainability"
+    },
+    {
+      "research_field": "History & Cultural Studies"
+    },
+    {
+      "research_field": "Law & Justice"
+    },
+    {
+      "research_field": "Linguistics & Communication"
+    },
+    {
+      "research_field": "Mathematics & Statistics"
+    },
+    {
+      "research_field": "Mechanical & Aerospace Engineering"
+    },
+    {
+      "research_field": "Medicine & Clinical Research"
+    },
+    {
+      "research_field": "Molecular Biology & Genetics"
+    },
+    {
+      "research_field": "Pharmacy & Drug Development"
+    },
+    {
+      "research_field": "Physics & Astronomy"
+    },
+    {
+      "research_field": "Psychology & Cognitive Science"
+    },
+    {
+      "research_field": "Public Health & Epidemiology"
+    },
+    {
+      "research_field": "Quantum Physics & Materials Science"
+    },
+    {
+      "research_field": "Social Sciences & Policy"
+    }
+  ],
+  "messages": [],
+  "stdout": "research_field\nArtificial Intelligence & Machine Learning\nBiomedical Engineering & Health Tech\nBusiness & Economics\nEducation & Learning Sciences\nEnvironmental Science & Sustainability\nHistory & Cultural Studies\nLaw & Justice\nLinguistics & Communication\nMathematics & Statistics\nMechanical & Aerospace Engineering\nMedicine & Clinical Research\nMolecular Biology & Genetics\nPharmacy & Drug Development\nPhysics & Astronomy\nPsychology & Cognitive Science\nPublic Health & Epidemiology\nQuantum Physics & Materials Science\nSocial Sciences & Policy\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

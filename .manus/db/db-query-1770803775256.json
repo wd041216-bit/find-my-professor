@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, \n  COUNT(DISTINCT research_field_name) as unique_fields\nFROM university_field_images \nWHERE university_name = 'University of Washington';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT COUNT(*) as total, \n  COUNT(DISTINCT research_field_name) as unique_fields\nFROM university_field_images \nWHERE university_name = 'University of Washington';",
+  "rows": [
+    {
+      "total": "29",
+      "unique_fields": "29"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tunique_fields\n29\t29\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
