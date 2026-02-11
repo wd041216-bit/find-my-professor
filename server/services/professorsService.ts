@@ -77,15 +77,14 @@ interface ProfessorWithScore {
       }
     }
     
-    // 2. 批量查询研究领域图片（优先使用大学专属图片）
-    const fieldImageMap = new Map<string, string>();
+    // 2. 批量查询大学专属领域图片（university_field_images表）
     const universityFieldImageMap = new Map<string, string>();
     
     if (researchFields.size > 0) {
       const fieldsArray = Array.from(researchFields);
       const placeholders = fieldsArray.map((_, i) => `{val${i}}`).join(',');
       
-      // 3.1 查询大学专属领域图片（university_field_images表）
+      // 查询大学专属领域图片（university_field_images表）
       let universityImageQueryStr = `SELECT research_field_name, image_url FROM university_field_images WHERE university_name = '${university.replace(/'/g, "''")}' AND research_field_name IN (${placeholders})`;
       fieldsArray.forEach((field, i) => {
         universityImageQueryStr = universityImageQueryStr.replace(`{val${i}}`, `'${field.replace(/'/g, "''")}'`);
@@ -102,24 +101,6 @@ interface ProfessorWithScore {
           }
         }
       }
-      
-      // 3.2 查询通用领域图片（research_field_images表）作为回退
-      let imageQueryStr = `SELECT field_name, image_url FROM research_field_images WHERE field_name IN (${placeholders})`;
-      fieldsArray.forEach((field, i) => {
-        imageQueryStr = imageQueryStr.replace(`{val${i}}`, `'${field.replace(/'/g, "''")}'`);
-      });
-      const imageQuery = sql.raw(imageQueryStr);
-      const imageResult = await db.execute(imageQuery);
-      const imageRows = imageResult[0] as unknown as any[];
-      if (imageRows && imageRows.length > 0) {
-        for (const row of imageRows) {
-          const fieldName = row.field_name || row[0];
-          const imageUrl = row.image_url || row[1];
-          if (fieldName && imageUrl) {
-            fieldImageMap.set(fieldName, imageUrl);
-          }
-        }
-      }
     }
     
     // 4. 为每个教授分配研究领域图片
@@ -128,15 +109,10 @@ interface ProfessorWithScore {
     for (const prof of professorsList) {
       let researchFieldImageUrl: string | undefined = undefined;
       
-      // 直接使用教授的research_field字段获取领域图片
+      // 直接使用教授的research_field字段获取大学专属领域图片
       if (prof.research_field && typeof prof.research_field === 'string') {
         const fieldName = prof.research_field.trim();
-        // 优先使用大学专属图片
         researchFieldImageUrl = universityFieldImageMap.get(fieldName);
-        // 如果没有大学专属图片，使用通用领域图片
-        if (!researchFieldImageUrl) {
-          researchFieldImageUrl = fieldImageMap.get(fieldName);
-        }
       }
       
       // Fallback: 如果没有找到任何研究领域图片，不设置schoolImageUrl
