@@ -190,16 +190,33 @@ export const swipeRouter = router({
       .orderBy(desc(studentLikes.createdAt));
 
     // Return data in the format expected by History.tsx
-    return liked.map((l) => ({
-      professor: {
-        ...l.professor,
-        university: l.professor.universityName,
-      },
-      likedAt: l.createdAt,
-      createdAt: l.createdAt,
-      matchScore: null,
-      likeType: "like",
-    }));
+    return liked.map((l) => {
+      // Ensure tags is always an array
+      let tags: string[] = [];
+      if (l.professor.tags) {
+        if (Array.isArray(l.professor.tags)) {
+          tags = l.professor.tags;
+        } else if (typeof l.professor.tags === 'string') {
+          try {
+            tags = JSON.parse(l.professor.tags);
+          } catch {
+            tags = [];
+          }
+        }
+      }
+
+      return {
+        professor: {
+          ...l.professor,
+          university: l.professor.universityName,
+          tags, // Use the parsed tags array
+        },
+        likedAt: l.createdAt,
+        createdAt: l.createdAt,
+        matchScore: null,
+        likeType: "like",
+      };
+    });
   }),
 
   /**
