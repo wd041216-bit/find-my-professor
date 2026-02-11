@@ -94,10 +94,10 @@ ${activitiesContext || "No activities listed"}
 - Name: ${professor.name}
 - Title: ${professor.title || "Professor"}
 - University: ${professor.universityName || "Not specified"}
-- Department/School: ${professor.majorName || "Not specified"}
+- Department/School: ${professor.department || "Not specified"}
 - Research Field: ${professor.research_field || "Not specified"}
 - Research Interests: ${professor.tags ? professor.tags.join(", ") : "Not specified"}
-- Bio: ${professor.bio || "Not specified"}
+
 
 **Task:**
 Write a personalized cover letter (approximately 300-400 words) for this student expressing interest in research opportunities with this professor. ${toneInstructions[tone]}

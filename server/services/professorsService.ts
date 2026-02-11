@@ -5,26 +5,16 @@ import { and, eq, sql } from 'drizzle-orm';
 /**
  * 教授匹配结果类型
  */
-export interface MatchedProfessor {
+interface ProfessorWithScore {
   id: number;
   name: string;
   universityName: string;
-  majorName: string;
-  schoolId?: number | null;
-  department?: string | null;
+  department: string;
   title?: string | null;
-  labName?: string | null;
-  labWebsite?: string | null;
-  personalWebsite?: string | null;
-  sourceUrl?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
-  email?: string | null;
-  bio?: string | null;
   matchScore?: number;
   displayScore?: number;
-  matchLevel?: string;
-  matchedTags?: string[];
   schoolImageUrl?: string;
 }
 
@@ -44,7 +34,7 @@ export interface MatchedProfessor {
   major: string | null,
   limit: number = 100,
   department?: string | null
-): Promise<MatchedProfessor[]> {  try {
+): Promise<ProfessorWithScore[]> {  try {
     const db = await getDb();
     if (!db) {
       console.error('[Professors] Database connection failed');
@@ -62,10 +52,7 @@ export interface MatchedProfessor {
       );
     } else if (major) {
       // 如果指定了major，按major查询
-      whereClause = and(
-        sql`LOWER(${professors.universityName}) = LOWER(${university})`,
-        sql`LOWER(${professors.majorName}) = LOWER(${major})`
-      );
+      whereClause = sql`LOWER(${professors.universityName}) = LOWER(${university})`;
     } else {
       // 否则只按university查询
       whereClause = sql`LOWER(${professors.universityName}) = LOWER(${university})`;
@@ -171,7 +158,7 @@ export interface MatchedProfessor {
     }
     
     // 4. 为每个教授分配研究领域图片
-    const matchedProfessors: MatchedProfessor[] = [];
+    const matchedProfessors: ProfessorWithScore[] = [];
     
     for (const prof of professorsList) {
       let researchFieldImageUrl: string | undefined = undefined;
@@ -222,13 +209,8 @@ export interface MatchedProfessor {
         id: prof.id,
         name: prof.name,
         universityName: prof.universityName || university,
-        majorName: prof.majorName || major || 'General',
-        department: prof.department,
+        department: prof.department || '',
         title: prof.title,
-        labName: prof.labName,
-        labWebsite: prof.labWebsite,
-        personalWebsite: prof.personalWebsite,
-        sourceUrl: prof.sourceUrl,
         researchAreas: prof.researchAreas ? (() => {
           try {
             return JSON.parse(prof.researchAreas as string);
@@ -238,8 +220,6 @@ export interface MatchedProfessor {
           }
         })() : null,
         tags: Array.isArray(prof.tags) ? prof.tags : (prof.tags ? [prof.tags] : []),
-        email: prof.email,
-        bio: prof.bio,
         schoolImageUrl: researchFieldImageUrl,
       });
     }
@@ -272,7 +252,7 @@ export async function hasSufficientProfessorsData(
       .select({ count: sql<number>`count(*)` })
       .from(professors)
       .where(
-        sql`LOWER(${professors.universityName}) = LOWER(${university}) AND LOWER(${professors.majorName}) = LOWER(${major})`
+        sql`LOWER(${professors.universityName}) = LOWER(${university})`
       );
     
     const count = result[0]?.count || 0;
@@ -288,7 +268,7 @@ export async function hasSufficientProfessorsData(
  * @param professorId 教授ID
  * @returns 教授详情
  */
-export async function getProfessorById(professorId: number): Promise<MatchedProfessor | null> {
+export async function getProfessorById(professorId: number): Promise<ProfessorWithScore | null> {
   try {
     const db = await getDb();
     if (!db) return null;
@@ -306,13 +286,8 @@ export async function getProfessorById(professorId: number): Promise<MatchedProf
       id: prof.id,
       name: prof.name,
       universityName: prof.universityName || '',
-      majorName: prof.majorName || '',
-      department: prof.department,
+      department: prof.department || '',
       title: prof.title,
-      labName: prof.labName,
-      labWebsite: prof.labWebsite,
-      personalWebsite: prof.personalWebsite,
-      sourceUrl: prof.sourceUrl,
       researchAreas: prof.researchAreas ? JSON.parse(prof.researchAreas as string) : null,
       tags: prof.tags || [],
     };
@@ -338,7 +313,7 @@ export async function getProfessorsForSwipe(
   filterUniversity?: string,
   filterDepartment?: string,
   minMatchScore?: number
-): Promise<MatchedProfessor[]> {
+): Promise<ProfessorWithScore[]> {
   try {
     const db = await getDb();
     if (!db) {
@@ -435,16 +410,15 @@ export async function getProfessorsForSwipe(
     const professorsForRanking = allProfessors.map(prof => ({
       professorName: prof.name,
       projectTitle: prof.title || '',
-      tags: prof.tags || [],
-      sourceUrl: prof.personalWebsite || undefined
+      tags: prof.tags || []
     }));
 
     // Rank professors by match score
     const rankedResults = rankProfessorsByMatch(studentTags, professorsForRanking);
     console.log('[Professors] Ranked results:', rankedResults.length);
 
-    // Convert MatchResult[] back to MatchedProfessor[] with school images
-    const rankedProfessors: MatchedProfessor[] = rankedResults.map(result => {
+    // Convert MatchResult[] back to ProfessorWithScore[] with school images
+    const rankedProfessors: ProfessorWithScore[] = rankedResults.map(result => {
       const originalProf = allProfessors.find(p => p.name === result.professorName)!;
       
       // 保留原有的schoolImageUrl，不覆盖

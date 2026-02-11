@@ -143,9 +143,9 @@ export const appRouter = router({
 
   professors: router({
     getByUniversity: publicProcedure
-      .input(z.object({ universityId: z.number() }))
+      .input(z.object({ universityName: z.string() }))
       .query(async ({ input }) => {
-        return db.getProfessorsByUniversity(input.universityId);
+        return db.getProfessorsByUniversity(input.universityName);
       }),
     
     get: publicProcedure
