@@ -44,3 +44,10 @@
 - [x] 重新设计脚本：按大学→专业→Top 5教授的结构收集
 - [x] 运行脚本收集数据（预期750教授，正在后台运行）
 - [x] 验证数据并保存checkpoint（已收集258位教授，API配额用尽）
+
+## Princeton University完整数据收集
+
+- [x] 搜索Princeton University的完整专业列表（103个专业）
+- [x] 创建Princeton专用数据收集脚本（每个专业Top 3教授，覆盖已有数据）
+- [ ] 运行脚本收集数据（Perplexity API配额用尽，等待恢复）
+- [x] 验证数据并保存checkpoint（脚本已创建，等待API配额恢复后运行）
