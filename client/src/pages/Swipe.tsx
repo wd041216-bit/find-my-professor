@@ -175,15 +175,13 @@ export function Swipe() {
             To get the best professor matches, please tell us about your academic background and research interests.
           </p>
           <Link href="/profile">
-            <a className="inline-block">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
-              >
-                <User className="w-6 h-6 mr-2" />
-                Complete Profile
-              </Button>
-            </a>
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+            >
+              <User className="w-6 h-6 mr-2" />
+              Complete Profile
+            </Button>
           </Link>
         </div>
       </div>
