@@ -51,3 +51,9 @@
 - [x] 创建Princeton专用数据收集脚本（每个专业Top 3教授，覆盖已有数据）
 - [ ] 运行脚本收集数据（Perplexity API配额用尽，等待恢复）
 - [x] 验证数据并保存checkpoint（脚本已创建，等待API配额恢复后运行）
+
+## 使用内置LLM API收集Princeton数据
+
+- [x] 修改脚本使用内置LLM API（替代Perplexity）
+- [x] 运行脚本收集Princeton数据（261位教授）
+- [x] 验证数据并保存checkpoint
