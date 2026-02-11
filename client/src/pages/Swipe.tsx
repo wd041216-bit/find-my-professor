@@ -3,7 +3,7 @@ import { ProfessorCard, Professor } from '../components/ProfessorCard';
 import { ProfessorCardSkeleton } from '../components/ProfessorCardSkeleton';
 import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe, Filter } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { FilterPanel } from '../components/FilterPanel';
@@ -28,6 +28,7 @@ interface CardAnimation {
 export function Swipe() {
   const { user, loading: authLoading } = useAuth();
   const utils = trpc.useUtils();
+  const [, setLocation] = useLocation();
   
   const { data: profile, isLoading: profileLoading } = trpc.profile.get.useQuery(undefined, {
     enabled: !!user,
@@ -174,15 +175,14 @@ export function Swipe() {
           <p className="text-xl text-gray-700 mb-8 font-medium">
             To get the best professor matches, please tell us about your academic background and research interests.
           </p>
-          <Link href="/profile">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
-            >
-              <User className="w-6 h-6 mr-2" />
-              Complete Profile
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            onClick={() => setLocation('/profile')}
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+          >
+            <User className="w-6 h-6 mr-2" />
+            Complete Profile
+          </Button>
         </div>
       </div>
     );

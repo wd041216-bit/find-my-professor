@@ -953,3 +953,9 @@
 - [x] 修复嵌套链接问题（移除内层`<a>`标签）
 - [x] 测试验证错误已消失（02:56:06之后无新错误）
 - [x] 保存checkpoint
+
+## 🐛 修复Complete Profile按钮点击无反应 (2026-02-11)
+- [x] 检查Link组件的正确用法（wouter库）
+- [x] 修复Complete Profile按钮：使用useLocation导航替代Link包裹
+- [x] 测试验证：前端日志无错误，页面正常显示
+- [x] 保存checkpoint
