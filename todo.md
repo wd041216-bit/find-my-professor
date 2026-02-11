@@ -959,3 +959,10 @@
 - [x] 修复Complete Profile按钮：使用useLocation导航替代Link包裹
 - [x] 测试验证：前端日志无错误，页面正常显示
 - [x] 保存checkpoint
+
+## 🐛 修复Match History页面tags.map错误 (2026-02-11)
+- [x] 读取History.tsx第290行代码
+- [x] 修复tags数据类型问题：在server/routers/swipe.ts中确俟tags被解析为数组
+- [x] 测试Match History页面正常显示（36个liked教授，tags正常显示）
+- [x] 验证完整用户流程：主页、Profile、Swipe、Match History全部正常
+- [x] 保存checkpoint
