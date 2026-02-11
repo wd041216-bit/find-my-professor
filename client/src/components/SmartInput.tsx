@@ -158,11 +158,7 @@ export function SmartInput({
         </div>
       )}
       
-      {inputValue && !showSuggestions && (
-        <div className="mt-1 text-xs text-muted-foreground">
-          {type === 'university' ? '提示：支持中英文输入，保存时自动转换为英文' : '提示：支持中英文输入，保存时自动转换为英文'}
-        </div>
-      )}
+
     </div>
   );
 }
