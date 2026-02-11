@@ -95,3 +95,16 @@
 - [x] 诊断图像未显示的根本原因（图像缺失：Economics领域未生成图像）
 - [x] 生成缺失的大学+领域图像（Economics领域，3所大学）
 - [x] 测试并保存修复checkpoint（Economics图像正常显示）
+
+## 生成完整图像并优化性能
+
+- [x] 统计缺失图像的领域列表（13个领域：Biology, Physics, Mathematics等）
+- [x] 批量生成MIT剩余领域图像（13个领域已完成）
+- [ ] 批量生成Princeton剩余领域图像
+- [ ] 批量生成University of Washington剩余领域图像
+- [x] 上传MIT新图像到S3并更新映射配置（13个领域已完成）
+- [ ] 生成Princeton剩余领域图像并上传
+- [ ] 生成University of Washington剩余领域图像并上传
+- [x] 优化图像加载性能（使用S3 CDN，图像已优化）
+- [x] 测试MIT图像显示（所有领域正常显示）
+- [ ] 保存checkpoint
