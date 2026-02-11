@@ -127,6 +127,7 @@ interface ProfessorWithScore {
         name: prof.name,
         universityName: prof.universityName || university,
         department: prof.department || '',
+        research_field: prof.research_field, // Include research_field for frontend mapping
         title: prof.title,
         researchAreas: prof.researchAreas ? (() => {
           try {
