@@ -2,6 +2,17 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
 import { ProfessorCardSkeleton } from '../components/ProfessorCardSkeleton';
 import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe, Filter } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from '../components/ui/button';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -125,6 +136,18 @@ export function Swipe() {
     onSuccess: () => {
       // Immediately invalidate Match History to refresh the list
       utils.swipe.getLikedProfessors.invalidate();
+    },
+  });
+
+  const resetSwipeHistoryMutation = trpc.swipe.resetSwipeHistory.useMutation({
+    onSuccess: () => {
+      // Reset state
+      setAllProfessors([]);
+      setCurrentBatch(0);
+      setCurrentIndex(0);
+      setIsLoadingMore(false);
+      // Invalidate queries to refetch
+      utils.swipe.getProfessorsToSwipe.invalidate();
     },
   });
 
@@ -269,10 +292,44 @@ export function Swipe() {
     return `${baseClass} ${variantClass} ${directionClass}`;
   };
 
+  const handleResetSwipeHistory = () => {
+    resetSwipeHistoryMutation.mutate();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-16 md:pb-0">
-      {/* Filter Button - Floating on mobile, top-right on desktop */}
-      <div className="absolute top-4 right-4 z-50">
+      {/* Filter & Reset Buttons - Floating on mobile, top-right on desktop */}
+      <div className="absolute top-4 right-4 z-50 flex gap-2">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="default"
+              size="sm"
+              className="bg-white/90 hover:bg-white text-gray-700 shadow-lg"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Reset
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reset Swipe History?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will clear all your swipe records, allowing you to re-swipe professors you've already seen. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleResetSwipeHistory}
+                className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700"
+              >
+                Reset
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
         <Button 
           variant="default"
           size="sm" 

@@ -111,15 +111,6 @@ export default function Profile() {
     },
   });
 
-  const resetSwipeMutation = trpc.swipe.resetSwipeHistory.useMutation({
-    onSuccess: () => {
-      toast.success('Swipe history reset successfully! You can now re-swipe all professors.');
-    },
-    onError: (error) => {
-      toast.error(`Failed to reset swipe history: ${error.message}`);
-    },
-  });
-
   const parseResumeMutation = trpc.profile.parseResume.useMutation({
     onSuccess: (data: any) => {
       toast.success('Resume parsed successfully!');
@@ -165,10 +156,6 @@ export default function Profile() {
     } catch (error) {
       toast.error('Failed to read resume file');
     }
-  };
-
-  const handleResetSwipeHistory = () => {
-    resetSwipeMutation.mutate();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -271,37 +258,7 @@ export default function Profile() {
         <h1 className="text-3xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
           Edit Profile
         </h1>
-        <div className="flex gap-2">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="rounded-full border-2 border-gray-300 hover:border-purple-500 hover:bg-purple-50"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset Swipe History
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Reset Swipe History?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will clear all your swipe records, allowing you to re-swipe professors you've already seen. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleResetSwipeHistory}
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700"
-                >
-                  Reset
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          
-          <Button
+        <Button
             onClick={handleSubmit}
             disabled={upsertMutation.isPending}
             className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold rounded-full shadow-lg"
@@ -313,7 +270,6 @@ export default function Profile() {
             )}
             Save
           </Button>
-        </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pb-8">
@@ -514,17 +470,26 @@ export default function Profile() {
                 </Label>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-4">
-                    <Input
+                    <input
+                      id="resume-upload"
                       type="file"
                       accept=".pdf,.docx"
                       onChange={handleResumeUpload}
-                      className="text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
+                      className="hidden"
                     />
+                    <Button
+                      type="button"
+                      onClick={() => document.getElementById('resume-upload')?.click()}
+                      variant="outline"
+                      className="flex-1 h-12 text-lg rounded-xl border-2 border-gray-200 hover:border-purple-500"
+                    >
+                      {resumeFile ? resumeFile.name : 'Choose File'}
+                    </Button>
                     <Button
                       type="button"
                       onClick={handleParseResume}
                       disabled={!resumeFile || parseResumeMutation.isPending}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg"
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold h-12 px-6 rounded-xl shadow-lg"
                     >
                       {parseResumeMutation.isPending ? (
                         <>
