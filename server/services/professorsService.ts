@@ -10,6 +10,7 @@ interface ProfessorWithScore {
   name: string;
   universityName: string;
   department: string;
+  research_field?: string | null;
   title?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
@@ -227,7 +228,7 @@ export async function getProfessorsForSwipe(
   excludeIds: number[] = [],
   offset: number = 0,
   filterUniversity?: string,
-  filterDepartment?: string,
+  filterResearchField?: string,
   minMatchScore?: number
 ): Promise<ProfessorWithScore[]> {
   try {
@@ -261,18 +262,18 @@ export async function getProfessorsForSwipe(
     // 如果用户通过Filter选择了university，使用Filter的university；否则使用profile的target university
     const university = filterUniversity || targetUniversities[0];
     
-    // 如果用户通过Filter选择了department，忽略profile的targetMajors，查询全校教授然后通过filter过滤
+    // 如果用户通过Filter选择了research field，忽略profile的targetMajors，查询全校教授然后通过filter过滤
     // 否则使用profile的targetMajors
-    const shouldUseProfileMajor = !filterDepartment && targetMajors.length > 0;
+    const shouldUseProfileMajor = !filterResearchField && targetMajors.length > 0;
     const major = shouldUseProfileMajor ? targetMajors[0] : null;
 
-    console.log('[Professors] Querying with university:', university, 'major:', major, 'filterDepartment:', filterDepartment);
+    console.log('[Professors] Querying with university:', university, 'major:', major, 'filterResearchField:', filterResearchField);
 
     // 优化：只查询需要的数量（limit * 3，留出排序和筛选的余地）
     // 而不是查询全部1000个教授
-    // 如果用户使用了Filter功能选择学院，则直接在数据库查询中过滤department
+    // 如果用户使用了Filter功能选择research field，则直接在数据库查询中过滤
     const queryLimit = Math.min(limit * 3, 300);
-    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, filterDepartment);
+    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, undefined); // Pass undefined for department, will filter by research field later
     
     console.log('[Professors] Query returned:', allProfessors.length, 'professors');
 
@@ -282,7 +283,14 @@ export async function getProfessorsForSwipe(
         prof.universityName.toLowerCase() === filterUniversity.toLowerCase()
       );
     }
-    // Department filtering is now done in database query (getProfessorsFromDatabase)
+    
+    // Filter by research field if provided
+    if (filterResearchField && filterResearchField !== '__all__') {
+      allProfessors = allProfessors.filter(prof => 
+        prof.research_field?.toLowerCase() === filterResearchField.toLowerCase()
+      );
+      console.log('[Professors] Filtered by research field:', filterResearchField, '- remaining:', allProfessors.length);
+    }
 
     // Exclude already swiped professors
     if (excludeIds.length > 0) {
@@ -295,35 +303,21 @@ export async function getProfessorsForSwipe(
       return [];
     }
 
-    // Simplified matching: random shuffle and assign random match scores
-    // Shuffle professors randomly
+    // Shuffle professors randomly for swipe recommendations
+    // No match score calculation - will be calculated only when user likes a professor
     const shuffled = allProfessors.sort(() => Math.random() - 0.5);
     
-    // Assign random match scores (60-95%)
     const rankedProfessors: ProfessorWithScore[] = shuffled.map(prof => ({
       ...prof,
-      matchScore: Math.floor(Math.random() * 36) + 60, // 60-95
-      displayScore: Math.floor(Math.random() * 36) + 60, // 60-95
+      matchScore: undefined, // No match score for swipe recommendations
+      displayScore: undefined,
       matchedTags: prof.tags || [],
     }));
     
-    console.log('[Professors] Randomly ranked professors:', rankedProfessors.length);
-
-    // Apply minMatchScore filter if provided (from Filter panel)
-    if (rankedProfessors.length === 0) {
-      return [];
-    }
-    
-    let filteredProfessors = rankedProfessors;
-    if (minMatchScore !== undefined && minMatchScore > 0) {
-      filteredProfessors = rankedProfessors.filter(prof => (prof.matchScore || 0) >= minMatchScore);
-      console.log('[Professors] Filtered by minMatchScore:', minMatchScore, '- remaining:', filteredProfessors.length);
-    } else {
-      console.log('[Professors] No minMatchScore filter applied');
-    }
+    console.log('[Professors] Randomly shuffled professors for swipe:', rankedProfessors.length);
     
     // Return top N professors with offset support
-    const finalResults = filteredProfessors.slice(offset, offset + limit);
+    const finalResults = rankedProfessors.slice(offset, offset + limit);
     console.log('[Professors] Returning', finalResults.length, 'professors (offset:', offset, 'limit:', limit, ')');
     return finalResults;
   } catch (error) {

@@ -21,3 +21,14 @@
 - [x] 创建Cover Letter管理页面
 - [x] 创建移动端底部导航栏（整合页眉功能 + Cover Letter入口）
 - [x] 测试并保存checkpoint
+
+## Swipe页面UI和Filter逻辑优化
+
+- [x] 移除Swipe页面顶部页眉（已有底部导航栏）
+- [x] 隐藏教授加载计数显示（1/20等）
+- [x] 重构Filter组件：Department改为Research Field（研究领域）
+- [x] 支持独立筛选：可以只选领域、只选大学、或两者组合
+- [x] 移除匹配度滑动条
+- [x] 调整后端API：移除minMatchScore参数
+- [x] 调整匹配值计算逻辑：仅在like后计算并保存
+- [x] 测试并保存checkpoint
