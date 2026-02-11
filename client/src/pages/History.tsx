@@ -34,8 +34,8 @@ export default function History() {
     },
   });
 
-  // Cover letter generation mutation - DISABLED (feature removed)
-  // const generateLetterMutation = trpc.coverLetter.generateForProfessor.useMutation();
+  // Cover letter generation mutation
+  const generateLetterMutation = trpc.coverLetter.generateForProfessor.useMutation();
 
   const handleViewDetails = (match: any) => {
     setSelectedProfessor(match);
@@ -43,27 +43,24 @@ export default function History() {
   };
 
   const handleGenerateCoverLetter = async (match: any) => {
-    // Cover letter feature temporarily disabled
-    toast.error("Cover letter feature is currently unavailable");
-    return;
-    
-    // setSelectedProfessor(match);
-    // setShowCoverLetterDialog(true);
-    // setGeneratingLetter(true);
-    // setCoverLetterContent("");
+    setSelectedProfessor(match);
+    setShowCoverLetterDialog(true);
+    setGeneratingLetter(true);
+    setCoverLetterContent("");
 
-    // try {
-    //   const result = await generateLetterMutation.mutateAsync({
-    //     professorId: match.professor.id,
-    //   });
+    try {
+      const result = await generateLetterMutation.mutateAsync({
+        professorId: match.professor.id,
+        tone: "formal",
+      });
 
-    //   setCoverLetterContent(result.content);
-    // } catch (error: any) {
-    //   toast.error("Failed to generate cover letter");
-    //   setShowCoverLetterDialog(false);
-    // } finally {
-    //   setGeneratingLetter(false);
-    // }
+      setCoverLetterContent(result.content);
+    } catch (error: any) {
+      toast.error("Failed to generate cover letter");
+      setShowCoverLetterDialog(false);
+    } finally {
+      setGeneratingLetter(false);
+    }
   };
 
   const handleUnlike = (professorId: number) => {
@@ -91,7 +88,7 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 pb-16 md:pb-0">
       {/* Header */}
       <div className="p-4 md:p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
         <div className="flex items-center gap-2 md:gap-4">

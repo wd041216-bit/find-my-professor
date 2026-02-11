@@ -211,7 +211,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 pb-16 md:pb-0">
       {/* Navigation */}
       <div className="max-w-2xl mx-auto px-4 pt-6 pb-4 flex items-center justify-between">
         <Link href="/swipe">
