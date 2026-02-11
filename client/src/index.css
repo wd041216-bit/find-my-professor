@@ -179,3 +179,108 @@
     }
   }
 }
+/* Card Exit Animations */
+@keyframes fly-left {
+  to {
+    transform: translateX(-150%) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fly-right {
+  to {
+    transform: translateX(150%) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate-fade {
+  to {
+    transform: rotate(180deg) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes scale-fade {
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes flip-out {
+  to {
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+
+.animate-card-exit {
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation-fill-mode: forwards;
+}
+
+.animate-fly-left {
+  animation-name: fly-left;
+}
+
+.animate-fly-right {
+  animation-name: fly-right;
+}
+
+.animate-rotate-fade {
+  animation-name: rotate-fade;
+}
+
+.animate-scale-fade {
+  animation-name: scale-fade;
+}
+
+.animate-flip-out {
+  animation-name: flip-out;
+}
+
+.animate-explode {
+  animation-name: explode;
+}
+
+/* Direction-specific adjustments */
+.exit-left.animate-fly-left,
+.exit-left.animate-rotate-fade {
+  animation-direction: normal;
+}
+
+.exit-right.animate-fly-right,
+.exit-right.animate-rotate-fade {
+  animation-direction: normal;
+}
+
+/* Bounce animation for button feedback */
+@keyframes bounce-once {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+}
+
+.animate-bounce-once {
+  animation: bounce-once 0.3s ease-in-out;
+}

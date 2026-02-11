@@ -1,0 +1,130 @@
+{
+  "query": "SELECT \n  p.name, \n  p.department, \n  p.research_field,\n  ufi.image_url\nFROM professors p\nLEFT JOIN university_field_images ufi \n  ON p.research_field = ufi.research_field_name \n  AND ufi.university_name = 'University of Washington'\nWHERE p.university_name = 'University of Washington'\nORDER BY RAND()\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT \n  p.name, \n  p.department, \n  p.research_field,\n  ufi.image_url\nFROM professors p\nLEFT JOIN university_field_images ufi \n  ON p.research_field = ufi.research_field_name \n  AND ufi.university_name = 'University of Washington'\nWHERE p.university_name = 'University of Washington'\nORDER BY RAND()\nLIMIT 20;",
+  "rows": [
+    {
+      "name": "Conor Mayo-Wilson",
+      "department": "Philosophy",
+      "research_field": "Social Sciences & Humanities",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png"
+    },
+    {
+      "name": "Vicente L. Rafael",
+      "department": "History",
+      "research_field": "Social Sciences & Humanities",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png"
+    },
+    {
+      "name": "Eric Schnapper",
+      "department": "Law",
+      "research_field": "Law & Policy",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UFAztOOZSUqCgJeN.png"
+    },
+    {
+      "name": "Jon Wakefield",
+      "department": "Statistics",
+      "research_field": "Computational Biology & Health Informatics",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lECPRPTlWkjOHqSt.png"
+    },
+    {
+      "name": "Peter S. Rabinovitch",
+      "department": "Pathology",
+      "research_field": "Health & Social Sciences",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/USKfoezLQxEOINul.png"
+    },
+    {
+      "name": "Chris Longenecker",
+      "department": "Global Health",
+      "research_field": "Health & Social Sciences",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/USKfoezLQxEOINul.png"
+    },
+    {
+      "name": "Alberto Aliseda",
+      "department": "Mechanical Engineering",
+      "research_field": "Materials Science & Engineering",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/tnwyoflrZcXRkpJM.png"
+    },
+    {
+      "name": "Randy Nichols",
+      "department": "Communication",
+      "research_field": "Law & Policy",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UFAztOOZSUqCgJeN.png"
+    },
+    {
+      "name": "Julie Kientz",
+      "department": "Human Centered Design & Engineering",
+      "research_field": "Human-Computer Interaction",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/QksGQTCBNtEgPuwX.png"
+    },
+    {
+      "name": "David S. Ginger",
+      "department": "Chemistry",
+      "research_field": "Chemistry & Chemical Engineering",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/pNHLzGDrXfXeRSSe.png"
+    },
+    {
+      "name": "Peggy Hannon",
+      "department": "Health Services",
+      "research_field": "Health & Social Sciences",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/USKfoezLQxEOINul.png"
+    },
+    {
+      "name": "Ann S. Anagnost",
+      "department": "Anthropology",
+      "research_field": "Social Sciences & Humanities",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png"
+    },
+    {
+      "name": "Meredith I. Honig",
+      "department": "Educational Leadership & Policy Studies",
+      "research_field": "Education Studies",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/poLgHpYnAghIxlrA.png"
+    },
+    {
+      "name": "Stephen Turnovsky",
+      "department": "Economics",
+      "research_field": "Economics & Finance",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/pjWPnNwtQCnGafqw.png"
+    },
+    {
+      "name": "Brian G. Leroux",
+      "department": "Biostatistics",
+      "research_field": "Data Science & Analytics",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jSWBHkpWMAHutHPT.png"
+    },
+    {
+      "name": "Kathleen F. Kerr",
+      "department": "Biostatistics",
+      "research_field": "Computational Biology & Health Informatics",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lECPRPTlWkjOHqSt.png"
+    },
+    {
+      "name": "Jeffrey A. Bilmes",
+      "department": "Computer Science & Engineering",
+      "research_field": "AI & Machine Learning",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/FXQxKqwdwQCmkpVb.png"
+    },
+    {
+      "name": "Emily M. Bender",
+      "department": "Linguistics",
+      "research_field": "Information Retrieval & NLP",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/CjCWTIIOcpjeBFrd.png"
+    },
+    {
+      "name": "Robert Gomulkiewicz",
+      "department": "Law",
+      "research_field": "Law & Policy",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UFAztOOZSUqCgJeN.png"
+    },
+    {
+      "name": "Richard Wright",
+      "department": "Linguistics",
+      "research_field": "Social Sciences & Humanities",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\tdepartment\tresearch_field\timage_url\nConor Mayo-Wilson\tPhilosophy\tSocial Sciences & Humanities\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png\nVicente L. Rafael\tHistory\tSocial Sciences & Humanities\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png\nEric Schnapper\tLaw\tLaw & Policy\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UFAztOOZSUqCgJeN.png\nJon Wakefield\tStatistics\tComputational Biology & Health Informatics\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lECPRPTlWkjOHqSt.png\nPeter S. Rabinovitch\tPathology\tHealth & Social Sciences\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/USKfoezLQxEOINul.png\nChris Longenecker\tGlobal Health\tHealth & Social Sciences\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/USKfoezLQxEOINul.png\nAlberto Aliseda\tMechanical Engineering\tMaterials Science & Engineering\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/tnwyoflrZcXRkpJM.png\nRandy Nichols\tCommunication\tLaw & Policy\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UFAztOOZSUqCgJeN.png\nJulie Kientz\tHuman Centered Design & Engineering\tHuman-Computer Interaction\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/QksGQTCBNtEgPuwX.png\nDavid S. Ginger\tChemistry\tChemistry & Chemical Engineering\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/pNHLzGDrXfXeRSSe.png\nPeggy Hannon\tHealth Services\tHealth & Social Sciences\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/USKfoezLQxEOINul.png\nAnn S. Anagnost\tAnthropology\tSocial Sciences & Humanities\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png\nMeredith I. Honig\tEducational Leadership & Policy Studies\tEducation Studies\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/poLgHpYnAghIxlrA.png\nStephen Turnovsky\tEconomics\tEconomics & Finance\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/pjWPnNwtQCnGafqw.png\nBrian G. Leroux\tBiostatistics\tData Science & Analytics\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jSWBHkpWMAHutHPT.png\nKathleen F. Kerr\tBiostatistics\tComputational Biology & Health Informatics\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/lECPRPTlWkjOHqSt.png\nJeffrey A. Bilmes\tComputer Science & Engineering\tAI & Machine Learning\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/FXQxKqwdwQCmkpVb.png\nEmily M. Bender\tLinguistics\tInformation Retrieval & NLP\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/CjCWTIIOcpjeBFrd.png\nRobert Gomulkiewicz\tLaw\tLaw & Policy\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UFAztOOZSUqCgJeN.png\nRichard Wright\tLinguistics\tSocial Sciences & Humanities\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/bNGjBzqKKgqMWkQB.png\n",
+  "stderr": "",
+  "execution_time_ms": 110
+}
