@@ -48,7 +48,7 @@ export function Swipe() {
   }, [profile]);
 
   // Filter state
-  const [filters, setFilters] = useState<{ university?: string; department?: string; minMatchScore?: number }>({});
+  const [filters, setFilters] = useState<{ university?: string; researchField?: string }>({});
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   // Infinite scroll state
@@ -65,13 +65,12 @@ export function Swipe() {
   }, []); // Empty dependency array = only run on mount
 
   // Handle filter changes
-  const handleFilterChange = useCallback((newFilters: { university?: string; department?: string; minMatchScore?: number }) => {
+  const handleFilterChange = useCallback((newFilters: { university?: string; researchField?: string }) => {
     console.log('[Swipe] handleFilterChange received:', newFilters);
     // Convert "__all__" to undefined
     const processedFilters = {
       university: newFilters.university === '__all__' ? undefined : newFilters.university,
-      department: newFilters.department === '__all__' ? undefined : newFilters.department,
-      minMatchScore: newFilters.minMatchScore,
+      researchField: newFilters.researchField === '__all__' ? undefined : newFilters.researchField,
     };
     console.log('[Swipe] processedFilters:', processedFilters);
     
@@ -90,8 +89,7 @@ export function Swipe() {
       limit: 20, 
       offset: currentBatch * 20,
       university: filters.university,
-      department: filters.department,
-      minMatchScore: filters.minMatchScore,
+      researchField: filters.researchField,
     },
     { enabled: !!user && !!isProfileComplete }
   );
@@ -127,7 +125,7 @@ export function Swipe() {
   const currentProfessor = professors[currentIndex];
 
   // Count active filters
-  const activeFilterCount = [filters.university, filters.department].filter(Boolean).length;
+  const activeFilterCount = [filters.university, filters.researchField].filter(Boolean).length;
 
   // Auto-load more professors when approaching the end
   useEffect(() => {
@@ -267,67 +265,22 @@ export function Swipe() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-16 md:pb-0">
-      {/* Unified Header - Same as Home Page */}
-      <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/">
-            <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-white" />
-              </div>
-              <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Find My Professor
-              </h1>
-            </div>
-          </Link>
-
-          {/* Navigation */}
-          <nav className="flex items-center gap-2 md:gap-6">
-            <Link href="/profile">
-              <span className="text-sm md:text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors cursor-pointer">
-                Profile
-              </span>
-            </Link>
-            <Link href="/history">
-              <span className="text-sm md:text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors cursor-pointer">
-                Match History
-              </span>
-            </Link>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setIsFilterPanelOpen(true)}
-              className="relative"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-              {activeFilterCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 text-white text-xs rounded-full flex items-center justify-center">
-                  {activeFilterCount}
-                </span>
-              )}
-            </Button>
-            <Link href="/contact">
-              <Button variant="ghost" size="sm" className="hidden md:flex">
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Contact
-              </Button>
-            </Link>
-            <Button variant="ghost" size="sm" className="hidden md:flex">
-              <Globe className="w-4 h-4 mr-2" />
-              EN
-            </Button>
-          </nav>
-        </div>
-      </header>
-
-      {/* Progress Indicator */}
-      <div className="bg-white/80 backdrop-blur-sm px-4 py-2 flex items-center justify-center">
-        <span className="text-sm font-semibold text-gray-700 bg-white px-4 py-1.5 rounded-full shadow-sm">
-          {currentIndex + 1} / {professors.length > 0 ? professors.length : '∞'}
-          {isLoadingMore && <span className="ml-2 text-purple-600">Loading more...</span>}
-        </span>
+      {/* Filter Button - Floating on mobile, top-right on desktop */}
+      <div className="absolute top-4 right-4 z-50">
+        <Button 
+          variant="default"
+          size="sm" 
+          onClick={() => setIsFilterPanelOpen(true)}
+          className="relative bg-white/90 hover:bg-white text-gray-700 shadow-lg"
+        >
+          <Filter className="w-4 h-4 mr-2" />
+          Filter
+          {activeFilterCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 text-white text-xs rounded-full flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+        </Button>
       </div>
 
       {/* Card Stack Container */}

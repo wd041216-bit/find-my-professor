@@ -11,24 +11,22 @@ import {
 import { trpc } from '@/lib/trpc';
 
 interface FilterPanelProps {
-  onFilterChange: (filters: { university?: string; department?: string; minMatchScore?: number }) => void;
+  onFilterChange: (filters: { university?: string; researchField?: string }) => void;
   isOpen: boolean;
   onClose: () => void;
   isProfileComplete: boolean; // Whether user has complete profile (GPA, skills, etc.)
-  currentFilters: { university?: string; department?: string; minMatchScore?: number }; // Current filter values
+  currentFilters: { university?: string; researchField?: string }; // Current filter values
 }
 
 export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete, currentFilters }: FilterPanelProps) {
   const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>(currentFilters.university);
-  const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>(currentFilters.department);
-  const [minMatchScore, setMinMatchScore] = useState<number>(currentFilters.minMatchScore || 0);
+  const [selectedResearchField, setSelectedResearchField] = useState<string | undefined>(currentFilters.researchField);
 
   // Sync local state with currentFilters when panel opens
   useEffect(() => {
     if (isOpen) {
       setSelectedUniversity(currentFilters.university);
-      setSelectedDepartment(currentFilters.department);
-      setMinMatchScore(currentFilters.minMatchScore || 0);
+      setSelectedResearchField(currentFilters.researchField);
     }
   }, [isOpen, currentFilters]);
 
@@ -37,34 +35,28 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
     staleTime: 5 * 60 * 1000, // 5分钟缓存，期间不会重新请求
   });
   
-  // Filter departments based on selected university
-  const departments = selectedUniversity 
-    ? filterOptions?.departments.filter((dept: string) => dept) || []
-    : filterOptions?.departments || [];
+  // Research fields are independent of university selection
+  const researchFields = filterOptions?.researchFields || [];
 
   // Apply filters only when user clicks "Apply Filters" button
   const handleApplyFilters = () => {
     console.log('[FilterPanel] Apply Filters clicked:', {
       selectedUniversity,
-      selectedDepartment,
-      minMatchScore,
-      isProfileComplete
+      selectedResearchField,
     });
     onFilterChange({
       university: selectedUniversity,
-      department: selectedDepartment,
-      minMatchScore: isProfileComplete ? minMatchScore : undefined,
+      researchField: selectedResearchField,
     });
     onClose();
   };
 
   const handleClearFilters = () => {
     setSelectedUniversity(undefined);
-    setSelectedDepartment(undefined);
-    setMinMatchScore(0);
+    setSelectedResearchField(undefined);
   };
 
-  const hasActiveFilters = selectedUniversity || selectedDepartment || (isProfileComplete && minMatchScore > 0);
+  const hasActiveFilters = selectedUniversity || selectedResearchField;
 
   if (!isOpen) return null;
 
@@ -96,7 +88,7 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
               value={selectedUniversity}
               onValueChange={(value) => {
                 setSelectedUniversity(value);
-                setSelectedDepartment(undefined); // Reset department when university changes
+                // Research fields are now independent of university, no need to reset
               }}
             >
               <SelectTrigger>
@@ -113,49 +105,25 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
             </Select>
           </div>
 
-          {/* Department Filter */}
+          {/* Research Field Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Department / School</label>
+            <label className="text-sm font-medium">Research Field</label>
             <Select
-              value={selectedDepartment}
-              onValueChange={setSelectedDepartment}
-              disabled={!selectedUniversity || selectedUniversity === '__all__'}
+              value={selectedResearchField}
+              onValueChange={setSelectedResearchField}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All Departments" />
+                <SelectValue placeholder="All Research Fields" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">All Departments</SelectItem>
-                {(selectedUniversity && selectedUniversity !== '__all__' ? departments : filterOptions?.departments)?.map((dept) => (
-                  <SelectItem key={dept!} value={dept!}>
-                    {dept}
+                <SelectItem value="__all__">All Research Fields</SelectItem>
+                {researchFields.map((field) => (
+                  <SelectItem key={field!} value={field!}>
+                    {field}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Match Score Filter */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Minimum Match Score</label>
-              <span className="text-sm font-semibold text-primary">{minMatchScore}%</span>
-            </div>
-            {!isProfileComplete ? (
-              <div className="p-4 bg-muted rounded-lg text-sm text-muted-foreground text-center">
-                Complete your profile (GPA, skills, etc.) to unlock match score filtering
-              </div>
-            ) : (
-              <input
-                type="range"
-                min="0"
-                max="100"
-                step="5"
-                value={minMatchScore}
-                onChange={(e) => setMinMatchScore(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
-              />
-            )}
           </div>
         </div>
 
@@ -184,9 +152,9 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
             {selectedUniversity && selectedUniversity !== '__all__' && (
               <span className="font-medium">{selectedUniversity}</span>
             )}
-            {selectedUniversity && selectedUniversity !== '__all__' && selectedDepartment && selectedDepartment !== '__all__' && ' → '}
-            {selectedDepartment && selectedDepartment !== '__all__' && (
-              <span className="font-medium">{selectedDepartment}</span>
+            {selectedUniversity && selectedUniversity !== '__all__' && selectedResearchField && selectedResearchField !== '__all__' && ' + '}
+            {selectedResearchField && selectedResearchField !== '__all__' && (
+              <span className="font-medium">{selectedResearchField}</span>
             )}
           </div>
         )}

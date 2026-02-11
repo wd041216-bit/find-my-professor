@@ -17,7 +17,7 @@ export const swipeRouter = router({
    * Returns professors sorted by match score, excluding already swiped ones
    */
   /**
-   * Get filter options (universities and departments)
+   * Get filter options (universities and research fields)
    */
   getFilterOptions: protectedProcedure
     .query(async () => {
@@ -26,7 +26,7 @@ export const swipeRouter = router({
       if (cached) {
         return {
           universities: cached.universities,
-          departments: cached.departments,
+          researchFields: cached.departments, // Reuse departments cache key for backward compatibility
         };
       }
       
@@ -45,20 +45,20 @@ export const swipeRouter = router({
         .where(sql`${professors.universityName} IS NOT NULL AND ${professors.universityName} != ''`)
         .orderBy(professors.universityName);
 
-      // Get unique departments
-      const departments = await db
-        .selectDistinct({ department: professors.department })
+      // Get unique research fields
+      const researchFields = await db
+        .selectDistinct({ field: professors.research_field })
         .from(professors)
-        .where(sql`${professors.department} IS NOT NULL AND ${professors.department} != ''`)
-        .orderBy(professors.department);
+        .where(sql`${professors.research_field} IS NOT NULL AND ${professors.research_field} != ''`)
+        .orderBy(professors.research_field);
 
       const result = {
         universities: universities.map((u) => u.university).filter((u): u is string => !!u),
-        departments: departments.map((d) => d.department).filter((d): d is string => !!d),
+        researchFields: researchFields.map((f) => f.field).filter((f): f is string => !!f),
       };
       
-      // 缓存结果（5分钟）
-      setCachedFilterOptions(result.universities, result.departments);
+      // 缓存结果（5分钟）- reuse departments key for backward compatibility
+      setCachedFilterOptions(result.universities, result.researchFields);
       
       return result;
     }),
@@ -69,8 +69,7 @@ export const swipeRouter = router({
         limit: z.number().default(20),
         offset: z.number().default(0),
         university: z.string().optional(),
-        department: z.string().optional(),
-        minMatchScore: z.number().optional(),
+        researchField: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -121,8 +120,8 @@ export const swipeRouter = router({
         swipedIds,
         input.offset,
         input.university,
-        input.department,
-        input.minMatchScore
+        input.researchField,
+        undefined // minMatchScore removed - no longer filter by match score
       );
 
       return {
@@ -158,11 +157,56 @@ export const swipeRouter = router({
         action: input.liked ? 'like' : 'pass',
       });
 
-      // If liked, also add to likes table
+      // If liked, calculate match score and add to likes table
       if (input.liked) {
+        // Get student profile for match score calculation
+        const studentProfile = await db
+          .select()
+          .from(studentProfiles)
+          .where(eq(studentProfiles.userId, ctx.user.id))
+          .limit(1);
+
+        const profile = studentProfile[0];
+        let matchScore = 0;
+
+        if (profile) {
+          // Get professor data
+          const professor = await db
+            .select()
+            .from(professors)
+            .where(eq(professors.id, input.professorId))
+            .limit(1);
+
+          if (professor.length > 0) {
+            const prof = professor[0];
+            const professorTags = (prof.tags as string[]) || [];
+            
+            // Calculate match score based on overlapping tags
+            const studentSkills = profile.skills ? JSON.parse(profile.skills as string) : [];
+            const studentInterests = profile.interests ? JSON.parse(profile.interests as string) : [];
+            const studentTags = [...studentSkills, ...studentInterests].map(t => t.toLowerCase());
+            
+            const matchedTags = professorTags.filter(tag => 
+              studentTags.some(st => st.includes(tag.toLowerCase()) || tag.toLowerCase().includes(st))
+            );
+            
+            const totalTags = Math.max(professorTags.length, studentTags.length);
+            matchScore = totalTags > 0 
+              ? Math.round((matchedTags.length / totalTags) * 100)
+              : 70; // Default score if no tags
+            
+            // Ensure match score is between 60-100
+            matchScore = Math.max(60, Math.min(100, matchScore));
+            
+            console.log('[Swipe] Calculated match score:', matchScore, 'for professor:', input.professorId);
+          }
+        }
+
+        // Insert like with match score
         await db.insert(studentLikes).values({
           studentId: ctx.user.id,
           professorId: input.professorId,
+          matchScore, // Save calculated match score
         });
       }
 
@@ -181,19 +225,11 @@ export const swipeRouter = router({
       });
     }
 
-    // Get student profile for matching calculation
-    const studentProfile = await db
-      .select()
-      .from(studentProfiles)
-      .where(eq(studentProfiles.userId, ctx.user.id))
-      .limit(1);
-
-    const profile = studentProfile[0];
-
     const liked = await db
       .select({
         professor: professors,
         createdAt: studentLikes.createdAt,
+        matchScore: studentLikes.matchScore, // Get saved match score
       })
       .from(studentLikes)
       .innerJoin(professors, eq(studentLikes.professorId, professors.id))
@@ -216,48 +252,8 @@ export const swipeRouter = router({
         }
       }
 
-      // Calculate match score based on student profile
-      let matchScore = 0;
-      if (profile) {
-        // Parse student skills and interests
-        let studentSkills: string[] = [];
-        let studentInterests: string[] = [];
-        
-        if (profile.skills) {
-          try {
-            studentSkills = typeof profile.skills === 'string' ? JSON.parse(profile.skills) : profile.skills;
-          } catch {}
-        }
-        
-        if (profile.interests) {
-          try {
-            studentInterests = typeof profile.interests === 'string' ? JSON.parse(profile.interests) : profile.interests;
-          } catch {}
-        }
-
-        // Combine student skills and interests for matching
-        const studentKeywords = [...studentSkills, ...studentInterests].map(k => k.toLowerCase());
-        const professorKeywords = tags.map(t => t.toLowerCase());
-
-        // Calculate overlap
-        if (studentKeywords.length > 0 && professorKeywords.length > 0) {
-          const matches = studentKeywords.filter(sk => 
-            professorKeywords.some(pk => pk.includes(sk) || sk.includes(pk))
-          ).length;
-          
-          // Calculate percentage (weighted by student keywords)
-          matchScore = Math.min(100, Math.round((matches / studentKeywords.length) * 100));
-          
-          // Ensure minimum score of 60 for liked professors
-          if (matchScore < 60) matchScore = 60 + Math.floor(Math.random() * 20);
-        } else {
-          // Default score if no profile data
-          matchScore = 70 + Math.floor(Math.random() * 20);
-        }
-      } else {
-        // No profile, use random score
-        matchScore = 70 + Math.floor(Math.random() * 20);
-      }
+      // Use saved match score from database (calculated when user liked the professor)
+      const matchScore = l.matchScore || 70; // Default to 70 if no score saved
 
       return {
         professor: {
