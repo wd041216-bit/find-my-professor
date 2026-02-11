@@ -167,7 +167,7 @@ export const swipeRouter = router({
           .limit(1);
 
         const profile = studentProfile[0];
-        let matchScore = 0;
+        let matchScore: number | null = 0;
 
         if (profile) {
           // Get professor data
@@ -196,21 +196,33 @@ export const swipeRouter = router({
             const studentInterests = profile.interests ? JSON.parse(profile.interests as string) : [];
             const studentTags = [...studentSkills, ...studentInterests].map(t => t.toLowerCase());
             
-            const matchedTags = professorTags.filter(tag => 
-              studentTags.some(st => st.includes(tag.toLowerCase()) || tag.toLowerCase().includes(st))
-            );
+            // Improved matching logic: avoid false matches from single-letter tags
+            const matchedTags = professorTags.filter(tag => {
+              const tagLower = tag.toLowerCase();
+              return studentTags.some(st => {
+                const stLower = st.toLowerCase();
+                // Skip if either tag is too short (< 3 chars) to avoid false matches
+                if (tagLower.length < 3 || stLower.length < 3) {
+                  // For short tags, require exact match
+                  return tagLower === stLower;
+                }
+                // For longer tags, allow partial match (word contains)
+                return stLower.includes(tagLower) || tagLower.includes(stLower);
+              });
+            });
             
             const totalTags = Math.max(professorTags.length, studentTags.length);
-            matchScore = totalTags > 0 
-              ? Math.round((matchedTags.length / totalTags) * 100)
-              : 70; // Default score if no tags
             
-            // Ensure match score is between 60-100
-            matchScore = Math.max(60, Math.min(100, matchScore));
-            
-            // Add random variation (±5 points) to diversify scores
-            const randomVariation = Math.floor(Math.random() * 11) - 5; // -5 to +5
-            matchScore = Math.max(60, Math.min(100, matchScore + randomVariation));
+            if (matchedTags.length > 0) {
+              // If there are matches, calculate based on overlap
+              matchScore = Math.round((matchedTags.length / totalTags) * 100);
+              // Add small random variation (±5 points)
+              const randomVariation = Math.floor(Math.random() * 11) - 5;
+              matchScore = Math.max(60, Math.min(100, matchScore + randomVariation));
+            } else {
+              // If no matches, set to null (will show friendly message in UI)
+              matchScore = null;
+            }
             
             console.log('[Swipe] Calculated match score:', matchScore, '(base + variation) for professor:', input.professorId, 'matched tags:', matchedTags.length, '/', totalTags);
           }
@@ -267,7 +279,8 @@ export const swipeRouter = router({
       }
 
       // Use saved match score from database (calculated when user liked the professor)
-      const matchScore = l.matchScore || 70; // Default to 70 if no score saved
+      // If null, it means no match (different research area)
+      const matchScore = l.matchScore; // Keep null if no match
 
       return {
         professor: {

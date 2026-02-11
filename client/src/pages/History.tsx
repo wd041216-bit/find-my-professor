@@ -153,9 +153,13 @@ export default function History() {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      {match.matchScore && (
+                      {match.matchScore ? (
                         <Badge variant="secondary" className="self-start whitespace-nowrap bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-bold">
                           {match.matchScore}% Match
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="self-start whitespace-nowrap text-gray-500 text-xs">
+                          Different research area
                         </Badge>
                       )}
                       <p className="text-xs text-muted-foreground">
