@@ -197,9 +197,14 @@ export interface MatchedProfessor {
       }
       
       // Fallback: 如果没有找到任何研究领域图片，使用默认图片
-      if (!researchFieldImageUrl && fieldImageMap.size > 0) {
-        // 使用第一个可用的领域图片作为fallback
-        researchFieldImageUrl = Array.from(fieldImageMap.values())[0];
+      if (!researchFieldImageUrl) {
+        // 优先使用华盛顿大学专属图片（任意一张）
+        if (universityFieldImageMap.size > 0) {
+          researchFieldImageUrl = Array.from(universityFieldImageMap.values())[0];
+        } else if (fieldImageMap.size > 0) {
+          // 如果没有华盛顿大学专属图片，使用通用领域图片
+          researchFieldImageUrl = Array.from(fieldImageMap.values())[0];
+        }
       }
       
       matchedProfessors.push({
@@ -434,9 +439,18 @@ export async function getProfessorsForSwipe(
       return converted;
     });
 
-    // Filter out professors with 0 match score
-    const filteredProfessors = rankedProfessors.filter(prof => (prof.displayScore || 0) > 0);
-    console.log('[Professors] After filtering 0-score professors:', filteredProfessors.length, 'remaining');
+    // Filter out professors with lowest 10% match scores
+    // Calculate the 10th percentile score
+    if (rankedProfessors.length === 0) {
+      return [];
+    }
+    
+    const scores = rankedProfessors.map(prof => prof.displayScore || 0).sort((a, b) => a - b);
+    const percentile10Index = Math.floor(scores.length * 0.1);
+    const minScore = scores[percentile10Index] || 0;
+    
+    const filteredProfessors = rankedProfessors.filter(prof => (prof.displayScore || 0) > minScore);
+    console.log('[Professors] After filtering lowest 10% (minScore:', minScore, '):', filteredProfessors.length, 'remaining');
     
     // Return top N professors with offset support
     const finalResults = filteredProfessors.slice(offset, offset + limit);

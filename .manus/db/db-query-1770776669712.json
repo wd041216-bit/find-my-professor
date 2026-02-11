@@ -1,0 +1,14 @@
+{
+  "query": "SELECT name, tags FROM professors WHERE name = 'Nam-Joo Cin';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT name, tags FROM professors WHERE name = 'Nam-Joo Cin';",
+  "rows": [
+    {
+      "name": "Nam-Joo Cin",
+      "tags": "[\"learning sciences\", \"educational technology\", \"immersive media\", \"virtual reality\", \"motivation\", \"digital learning\", \"human-computer interaction\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\ttags\nNam-Joo Cin\t[\"learning sciences\", \"educational technology\", \"immersive media\", \"virtual reality\", \"motivation\", \"digital learning\", \"human-computer interaction\"]\n",
+  "stderr": "",
+  "execution_time_ms": 73
+}
