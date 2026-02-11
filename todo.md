@@ -87,3 +87,11 @@
 - [x] 生成University of Washington大学+领域专属图像（紫色+哈士奇主题，5个主要领域）
 - [x] 更新前端代码使用大学+领域专属图像（ProfessorCard + Swipe页面）
 - [x] 测试并保存最终checkpoint（服务器正常，图像成功应用）
+
+## 修复部分教授卡片图像未显示问题
+
+- [x] 检查Economics专业教授的research_field字段值（确认为"Economics"）
+- [x] 检查universityFieldImages.ts映射配置是否覆盖所有领域（未包含Economics）
+- [x] 诊断图像未显示的根本原因（图像缺失：Economics领域未生成图像）
+- [x] 生成缺失的大学+领域图像（Economics领域，3所大学）
+- [x] 测试并保存修复checkpoint（Economics图像正常显示）
