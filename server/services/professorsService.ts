@@ -318,7 +318,8 @@ export async function getProfessorsForSwipe(
   excludeIds: number[] = [],
   offset: number = 0,
   filterUniversity?: string,
-  filterDepartment?: string
+  filterDepartment?: string,
+  minMatchScore?: number
 ): Promise<MatchedProfessor[]> {
   try {
     const db = await getDb();
@@ -439,18 +440,18 @@ export async function getProfessorsForSwipe(
       return converted;
     });
 
-    // Filter out professors with lowest 10% match scores
-    // Calculate the 10th percentile score
+    // Apply minMatchScore filter if provided (from Filter panel)
     if (rankedProfessors.length === 0) {
       return [];
     }
     
-    const scores = rankedProfessors.map(prof => prof.displayScore || 0).sort((a, b) => a - b);
-    const percentile10Index = Math.floor(scores.length * 0.1);
-    const minScore = scores[percentile10Index] || 0;
-    
-    const filteredProfessors = rankedProfessors.filter(prof => (prof.displayScore || 0) > minScore);
-    console.log('[Professors] After filtering lowest 10% (minScore:', minScore, '):', filteredProfessors.length, 'remaining');
+    let filteredProfessors = rankedProfessors;
+    if (minMatchScore !== undefined && minMatchScore > 0) {
+      filteredProfessors = rankedProfessors.filter(prof => (prof.matchScore || 0) >= minMatchScore);
+      console.log('[Professors] Filtered by minMatchScore:', minMatchScore, '- remaining:', filteredProfessors.length);
+    } else {
+      console.log('[Professors] No minMatchScore filter applied');
+    }
     
     // Return top N professors with offset support
     const finalResults = filteredProfessors.slice(offset, offset + limit);
