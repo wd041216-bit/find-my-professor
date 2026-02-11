@@ -1,0 +1,30 @@
+{
+  "query": "SHOW CREATE TABLE professors;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SHOW CREATE TABLE professors;",
+  "rows": [
+    {
+      "Table": "professors",
+      "Create Table": "CREATE TABLE `professors` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `name` text NOT NULL,",
+    "  `department` text DEFAULT NULL,",
+    "  `title` text DEFAULT NULL,",
+    "  `research_areas` text DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  `university_name` varchar(255) DEFAULT NULL,",
+    "  `tags` json DEFAULT NULL,",
+    "  `research_field` varchar(100) DEFAULT NULL,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,",
+    "  KEY `idx_professors_university` (`university_name`),",
+    "  KEY `` (`university_name`(255)),",
+    "  KEY `idx_professors_department` (`department`(255))",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=180001"
+  ],
+  "stdout": "Table\tCreate Table\nprofessors\tCREATE TABLE `professors` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `name` text NOT NULL,\n  `department` text DEFAULT NULL,\n  `title` text DEFAULT NULL,\n  `research_areas` text DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `university_name` varchar(255) DEFAULT NULL,\n  `tags` json DEFAULT NULL,\n  `research_field` varchar(100) DEFAULT NULL,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,\n  KEY `idx_professors_university` (`university_name`),\n  KEY `` (`university_name`(255)),\n  KEY `idx_professors_department` (`department`(255))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=180001\n",
+  "stderr": "",
+  "execution_time_ms": 83
+}
