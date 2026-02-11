@@ -6,14 +6,10 @@ export interface Professor {
   id: number;
   name: string;
   universityName: string;
-  majorName: string;
+  department: string;
   title?: string | null;
-  department?: string | null;
-  email?: string | null;
-  personalWebsite?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
-  bio?: string | null;
   matchScore?: number;
   displayScore?: number;
   matchLevel?: string;
@@ -92,7 +88,7 @@ export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = fa
           {professor.schoolImageUrl ? (
             <img 
               src={professor.schoolImageUrl} 
-              alt={professor.majorName}
+              alt={professor.department}
               className="w-full h-full object-cover"
             />
           ) : (
@@ -119,7 +115,7 @@ export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = fa
               {professor.name}
               {/* Match score removed from swipe cards - only shown in Match History */}
             </h2>
-            <p className="text-lg text-white/90 drop-shadow-md">{professor.department || professor.majorName}</p>
+            <p className="text-lg text-white/90 drop-shadow-md">{professor.department}</p>
             <p className="text-lg text-white/85 drop-shadow-md">{professor.universityName}</p>
           </div>
 

@@ -84,26 +84,17 @@ export type University = typeof universities.$inferSelect;
 export type InsertUniversity = typeof universities.$inferInsert;
 
 /**
- * Professors and their labs
+ * Professors (simplified schema - only essential fields)
  */
 export const professors = mysqlTable("professors", {
   id: int("id").autoincrement().primaryKey(),
-  universityId: int("university_id"),
-  universityName: varchar("university_name", { length: 255 }),
-  majorName: varchar("major_name", { length: 255 }),
+  universityName: varchar("university_name", { length: 255 }).notNull(),
+  department: text("department").notNull(), // School/Department name
   name: text("name").notNull(),
-  email: varchar("email", { length: 320 }),
-  department: text("department"),
-  title: text("title"),
-  researchAreas: text("research_areas"), // JSON array
-  tags: json("tags").$type<string[]>(), // 研究tags（用于匹配算法）
+  title: text("title"), // e.g., "Professor", "Associate Professor"
+  researchAreas: text("research_areas"), // JSON array of research areas
+  tags: json("tags").$type<string[]>(), // Research tags for matching algorithm
   research_field: varchar("research_field", { length: 255 }), // Research field category
-  labName: text("lab_name"),
-  labWebsite: text("lab_website"),
-  personalWebsite: text("personal_website"),
-  sourceUrl: varchar("source_url", { length: 500 }), // 教授主页URL
-  bio: text("bio"),
-  acceptingStudents: boolean("accepting_students").default(true),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

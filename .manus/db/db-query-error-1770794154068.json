@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE professors \nDROP COLUMN IF EXISTS email,\nDROP COLUMN IF EXISTS bio,\nDROP COLUMN IF EXISTS personal_website,\nDROP COLUMN IF EXISTS lab_website,\nDROP COLUMN IF EXISTS lab_name,\nDROP COLUMN IF EXISTS source_url,\nDROP COLUMN IF EXISTS accepting_students,\nDROP COLUMN IF EXISTS university_id,\nDROP COLUMN IF EXISTS major_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute ALTER TABLE professors \nDROP COLUMN IF EXISTS email,\nDROP COLUMN IF EXISTS bio,\nDROP COLUMN IF EXISTS personal_website,\nDROP COLUMN IF EXISTS lab_website,\nDROP COLUMN IF EXISTS lab_name,\nDROP COLUMN IF EXISTS source_url,\nDROP COLUMN IF EXISTS accepting_students,\nDROP COLUMN IF EXISTS university_id,\nDROP COLUMN IF EXISTS major_name;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 8200 (HY000) at line 1: can't drop column major_name with composite index covered or Primary Key covered now"
+  ]
+}

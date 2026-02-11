@@ -216,10 +216,10 @@ export async function createUniversity(university: InsertUniversity) {
 
 // ===== Professor Management =====
 
-export async function getProfessorsByUniversity(universityId: number) {
+export async function getProfessorsByUniversity(universityName: string) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(professors).where(eq(professors.universityId, universityId));
+  return db.select().from(professors).where(eq(professors.universityName, universityName));
 }
 
 export async function getProfessorById(id: number) {

@@ -1040,3 +1040,24 @@
 - [x] 保留research_field_images表（29个研究领域图片）
 - [x] 验证数据删除完整性
 - [ ] 更新应用逻辑以适应新的按需爬取策略
+
+## 🔧 重构professors表schema并采集UW top教授（用户要求）
+- [ ] 修改drizzle/schema.ts，删除不需要的字段（email, bio, personalWebsite, labWebsite, labName, sourceUrl, acceptingStudents）
+- [ ] 保留核心字段（id, universityName, department, name, title, researchAreas, tags, research_field, createdAt, updatedAt）
+- [ ] 运行pnpm db:push应用schema变更
+- [ ] 确定华盛顿大学14个学院的所有专业列表
+- [ ] 使用LLM联网搜索每个专业的top 5教授
+- [ ] 提取教授信息（name, department, title, research_areas, tags）
+- [ ] 批量保存到professors表
+- [ ] 验证数据质量和完整性
+
+## 🔧 重构professors表schema并采集UW教授数据（用户要求）
+- [x] 删除professors表中的废弃字段（email, bio, personal_website, lab_website, lab_name, source_url, accepting_students, university_id, major_name）
+- [x] 删除索引idx_professors_major和idx_professors_uni_major
+- [x] 更新drizzle schema保持一致
+- [x] 修复所有引用已删除字段的代码（professorsService.ts, db.ts, coverLetter.ts, routers.ts, ProfessorCard.tsx）
+- [ ] 识别华盛顿大学14个学院的所有专业
+- [ ] 使用LLM联网搜索每个专业的top 5教授
+- [ ] 提取教授信息（name, department, title, research_areas, tags）
+- [ ] 保存到professors表
+- [ ] 验证数据质量
