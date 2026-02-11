@@ -65,6 +65,97 @@ export const appRouter = router({
         
         return result;
       }),
+
+    parseResume: protectedProcedure
+      .input(z.object({
+        fileContent: z.string(), // base64 encoded file
+        fileName: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { invokeLLM } = await import("./_core/llm");
+        
+        // Extract file content from base64
+        const base64Data = input.fileContent.split(',')[1];
+        const fileBuffer = Buffer.from(base64Data, 'base64');
+        
+        // Convert PDF/DOCX to text (simplified - in production use proper parsers)
+        let resumeText = '';
+        if (input.fileName.endsWith('.pdf')) {
+          // For PDF, use a simple text extraction (in production use pdf-parse)
+          resumeText = fileBuffer.toString('utf-8');
+        } else if (input.fileName.endsWith('.docx')) {
+          // For DOCX, use a simple text extraction (in production use mammoth)
+          resumeText = fileBuffer.toString('utf-8');
+        } else {
+          throw new Error('Unsupported file format. Please upload PDF or DOCX.');
+        }
+        
+        // Use LLM to parse resume
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a resume parser. Extract structured information from resumes and return JSON only.'
+            },
+            {
+              role: 'user',
+              content: `Parse the following resume and extract:
+1. Skills (array of strings)
+2. Research interests (array of strings)
+3. Target majors/fields (array of strings)
+4. GPA (string, if available)
+
+Resume content:
+${resumeText.substring(0, 4000)}
+
+Return ONLY a JSON object with this structure:
+{
+  "skills": ["skill1", "skill2", ...],
+  "interests": ["interest1", "interest2", ...],
+  "targetMajors": ["major1", "major2", ...],
+  "gpa": "3.8" or null
+}`
+            }
+          ],
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'resume_parse',
+              strict: true,
+              schema: {
+                type: 'object',
+                properties: {
+                  skills: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'List of skills extracted from resume'
+                  },
+                  interests: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'List of research interests extracted from resume'
+                  },
+                  targetMajors: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'List of target majors or fields'
+                  },
+                  gpa: {
+                    type: ['string', 'null'],
+                    description: 'GPA if available'
+                  }
+                },
+                required: ['skills', 'interests', 'targetMajors', 'gpa'],
+                additionalProperties: false
+              }
+            }
+          }
+        });
+        
+        const content = response.choices[0].message.content;
+        const parsed = JSON.parse(typeof content === 'string' ? content : JSON.stringify(content));
+        return parsed;
+      }),
   }),
 
   professors: router({

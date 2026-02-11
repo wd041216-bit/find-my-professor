@@ -53,6 +53,7 @@ export default function Profile() {
   const [interestInput, setInterestInput] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const fileInputRef = useState<HTMLInputElement | null>(null)[0];
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -118,6 +119,53 @@ export default function Profile() {
       toast.error(`Failed to reset swipe history: ${error.message}`);
     },
   });
+
+  const parseResumeMutation = trpc.profile.parseResume.useMutation({
+    onSuccess: (data: any) => {
+      toast.success('Resume parsed successfully!');
+      // Update form data with parsed information
+      setFormData(prev => ({
+        ...prev,
+        skills: Array.from(new Set([...prev.skills, ...data.skills])),
+        interests: Array.from(new Set([...prev.interests, ...data.interests])),
+        targetMajors: data.targetMajors.length > 0 ? data.targetMajors : prev.targetMajors,
+        gpa: data.gpa || prev.gpa,
+      }));
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to parse resume: ${error.message}`);
+    },
+  });
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setResumeFile(file);
+      toast.info(`Resume file selected: ${file.name}`);
+    }
+  };
+
+  const handleParseResume = async () => {
+    if (!resumeFile) {
+      toast.error('Please select a resume file first');
+      return;
+    }
+
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64 = e.target?.result as string;
+        await parseResumeMutation.mutateAsync({
+          fileContent: base64,
+          fileName: resumeFile.name,
+        });
+      };
+      reader.readAsDataURL(resumeFile);
+    } catch (error) {
+      toast.error('Failed to read resume file');
+    }
+  };
 
   const handleResetSwipeHistory = () => {
     resetSwipeMutation.mutate();
@@ -459,21 +507,39 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Bio */}
+              {/* Resume Upload */}
               <div className="space-y-4">
                 <Label className="text-xl font-bold text-gray-800">
-                  About Me
+                  Resume Upload & Parse
                 </Label>
-                <Textarea
-                  value={formData.bio}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  placeholder="Tell us about yourself, your research interests, and your academic goals..."
-                  rows={5}
-                  className="text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500 resize-none"
-                />
-                <p className="text-sm text-gray-500">
-                  {formData.bio.length} / 500 characters
-                </p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="file"
+                      accept=".pdf,.docx"
+                      onChange={handleResumeUpload}
+                      className="text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleParseResume}
+                      disabled={!resumeFile || parseResumeMutation.isPending}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg"
+                    >
+                      {parseResumeMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Parsing...
+                        </>
+                      ) : (
+                        'Parse Resume'
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    Upload your resume (PDF or DOCX) and click "Parse Resume" to automatically extract your education, skills, and interests.
+                  </p>
+                </div>
               </div>
             </form>
           </CardContent>
