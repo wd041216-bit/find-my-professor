@@ -62,7 +62,9 @@
 
 - [x] 修复Filter研究领域筛选功能（应用后不显示教授）
 - [x] 优化数据收集脚本减少token消耗（简化prompt，使用gpt-4o-mini）
-- [ ] 收集MIT教授数据
+- [x] 修复数据库列名问题（university_name vs universityName）
+- [x] 使用Perplexity API收集MIT完整教授数据（联网LLM，覆盖现有60位，实际收集69位）
 - [ ] 收集Harvard教授数据
 - [ ] 收集Stanford教授数据
+- [ ] 统一所有大学的research_field分类体系
 - [ ] 测试并保存checkpoint
