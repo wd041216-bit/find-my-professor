@@ -42,8 +42,8 @@ export const swipeRouter = router({
       const universities = await db
         .selectDistinct({ university: professors.universityName })
         .from(professors)
-        .where(sql`${professors.universityName} IS NOT NULL AND ${professors.universityName} != ''`)
-        .orderBy(professors.universityName);
+        .where(sql`university_name IS NOT NULL AND university_name != ''`)
+        .orderBy(sql`university_name`);
 
       // Get unique research fields
       const researchFields = await db

@@ -48,15 +48,15 @@ interface ProfessorWithScore {
       // 如果指定了department，按department查询（部分匹配）
       const deptPattern = `%${department}%`;
       whereClause = and(
-        sql`LOWER(${professors.universityName}) = LOWER(${university})`,
-        sql`LOWER(${professors.department}) LIKE LOWER(${deptPattern})`
+        sql`LOWER(university_name) = LOWER(${university})`,
+        sql`LOWER(department) LIKE LOWER(${deptPattern})`
       );
     } else if (major) {
       // 如果指定了major，按major查询
-      whereClause = sql`LOWER(${professors.universityName}) = LOWER(${university})`;
+      whereClause = sql`LOWER(university_name) = LOWER(${university})`;
     } else {
       // 否则只按university查询
-      whereClause = sql`LOWER(${professors.universityName}) = LOWER(${university})`;
+      whereClause = sql`LOWER(university_name) = LOWER(${university})`;
     }
     
     const professorsList = await db
@@ -169,7 +169,7 @@ export async function hasSufficientProfessorsData(
       .select({ count: sql<number>`count(*)` })
       .from(professors)
       .where(
-        sql`LOWER(${professors.universityName}) = LOWER(${university})`
+        sql`LOWER(university_name) = LOWER(${university})`
       );
     
     const count = result[0]?.count || 0;
@@ -269,11 +269,10 @@ export async function getProfessorsForSwipe(
 
     console.log('[Professors] Querying with university:', university, 'major:', major, 'filterResearchField:', filterResearchField);
 
-    // 优化：只查询需要的数量（limit * 3，留出排序和筛选的余地）
-    // 而不是查询全部1000个教授
-    // 如果用户使用了Filter功能选择research field，则直接在数据库查询中过滤
-    const queryLimit = Math.min(limit * 3, 300);
-    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, undefined); // Pass undefined for department, will filter by research field later
+    // 优化：如果用户选择了research field，查询更多教授以确保有足够的结果
+    // 因为research field筛选会大幅减少结果数量
+    const queryLimit = filterResearchField ? 1000 : Math.min(limit * 3, 300);
+    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, undefined);
     
     console.log('[Professors] Query returned:', allProfessors.length, 'professors');
 
