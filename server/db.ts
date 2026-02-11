@@ -7,16 +7,8 @@ import {
   InsertStudentProfile,
   activities,
   InsertActivity,
-  universities,
-  InsertUniversity,
   professors,
   InsertProfessor,
-  projectMatches,
-  InsertProjectMatch,
-  applicationLetters,
-  InsertApplicationLetter,
-  notifications,
-  InsertNotification,
   announcements,
   InsertAnnouncement,
   // userCredits, // Removed
@@ -191,28 +183,6 @@ export async function deleteActivity(id: number) {
   await db.delete(activities).where(eq(activities.id, id));
 }
 
-// ===== University Management =====
-
-export async function getAllUniversities() {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(universities).orderBy(universities.ranking);
-}
-
-export async function getUniversityById(id: number) {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(universities).where(eq(universities.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
-}
-
-export async function createUniversity(university: InsertUniversity) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.insert(universities).values(university);
-  const inserted = await db.select().from(universities).orderBy(desc(universities.id)).limit(1);
-  return inserted[0]?.id ?? 0;
-}
 
 // ===== Professor Management =====
 
@@ -235,132 +205,6 @@ export async function createProfessor(professor: InsertProfessor) {
   await db.insert(professors).values(professor);
   const inserted = await db.select().from(professors).orderBy(desc(professors.id)).limit(1);
   return inserted[0]?.id ?? 0;
-}
-
-// ===== Research Project Management =====
-
-// ===== Project Match Management =====
-
-export async function getUserMatches(userId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(projectMatches)
-    .where(eq(projectMatches.userId, userId))
-    .orderBy(desc(projectMatches.matchScore));
-}
-
-export async function deleteUserMatches(userId: number) {
-  const db = await getDb();
-  if (!db) return;
-  await db.delete(projectMatches).where(eq(projectMatches.userId, userId));
-}
-
-export async function getMatchByUserAndProject(userId: number, projectId: number) {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(projectMatches)
-    .where(and(
-      eq(projectMatches.userId, userId),
-      eq(projectMatches.projectId, projectId)
-    ))
-    .limit(1);
-  return result.length > 0 ? result[0] : undefined;
-}
-
-export async function createProjectMatch(match: InsertProjectMatch) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.insert(projectMatches).values(match);
-  const inserted = await db.select().from(projectMatches).orderBy(desc(projectMatches.id)).limit(1);
-  return inserted[0]?.id ?? 0;
-}
-
-export async function upsertProjectMatch(match: InsertProjectMatch) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  const existing = match.projectId ? await getMatchByUserAndProject(match.userId, match.projectId) : undefined;
-  
-  if (existing) {
-    await db.update(projectMatches)
-      .set({ ...match, updatedAt: new Date() })
-      .where(eq(projectMatches.id, existing.id));
-    return existing.id;
-  } else {
-    await db.insert(projectMatches).values(match);
-    const inserted = await db.select().from(projectMatches).orderBy(desc(projectMatches.id)).limit(1);
-    return inserted[0]?.id ?? 0;
-  }
-}
-
-export async function getMatchById(id: number) {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(projectMatches).where(eq(projectMatches.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
-}
-
-export async function updateMatchStatus(id: number, updates: { viewed?: boolean; saved?: boolean; applied?: boolean }) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.update(projectMatches).set({ ...updates, updatedAt: new Date() }).where(eq(projectMatches.id, id));
-}
-
-// ===== Application Letter Management =====
-
-export async function createApplicationLetter(letter: InsertApplicationLetter) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.insert(applicationLetters).values(letter);
-  const inserted = await db.select().from(applicationLetters).orderBy(desc(applicationLetters.id)).limit(1);
-  return inserted[0]?.id ?? 0;
-}
-
-export async function getUserApplicationLetters(userId: number, projectId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(applicationLetters)
-    .where(and(
-      eq(applicationLetters.userId, userId),
-      eq(applicationLetters.projectId, projectId)
-    ))
-    .orderBy(desc(applicationLetters.version));
-}
-
-// ===== Notification Management =====
-
-export async function createNotification(notification: InsertNotification) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.insert(notifications).values(notification);
-  const inserted = await db.select().from(notifications).orderBy(desc(notifications.id)).limit(1);
-  return inserted[0]?.id ?? 0;
-}
-
-export async function getUserNotifications(userId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(notifications)
-    .where(eq(notifications.userId, userId))
-    .orderBy(desc(notifications.createdAt));
-}
-
-export async function markNotificationAsRead(id: number) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.update(notifications).set({ read: true }).where(eq(notifications.id, id));
-}
-
-export async function getUnreadNotificationCount(userId: number) {
-  const db = await getDb();
-  if (!db) return 0;
-  const result = await db.select({ count: sql<number>`count(*)` })
-    .from(notifications)
-    .where(and(
-      eq(notifications.userId, userId),
-      eq(notifications.read, false)
-    ));
-  return result[0]?.count ?? 0;
 }
 
 // ===== Announcement Management =====
@@ -396,57 +240,6 @@ export async function deleteAnnouncement(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(announcements).where(eq(announcements.id, id));
-}
-
-// ===== Contact Message Management =====
-
-import { contactMessages, InsertContactMessage } from "../drizzle/schema";
-
-export async function createContactMessage(message: InsertContactMessage) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.insert(contactMessages).values(message);
-  const inserted = await db.select().from(contactMessages).orderBy(desc(contactMessages.id)).limit(1);
-  return inserted[0]?.id ?? 0;
-}
-
-export async function getUserContactMessages(userId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(contactMessages)
-    .where(eq(contactMessages.userId, userId))
-    .orderBy(desc(contactMessages.createdAt));
-}
-
-export async function getAllContactMessages() {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(contactMessages)
-    .orderBy(desc(contactMessages.createdAt));
-}
-
-export async function getContactMessageById(id: number) {
-  const db = await getDb();
-  if (!db) return undefined;
-  const result = await db.select().from(contactMessages).where(eq(contactMessages.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
-}
-
-export async function updateContactMessageStatus(id: number, status: "pending" | "read" | "replied" | "closed") {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.update(contactMessages).set({ status, updatedAt: new Date() }).where(eq(contactMessages.id, id));
-}
-
-export async function replyToContactMessage(id: number, adminReply: string) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  await db.update(contactMessages).set({ 
-    adminReply, 
-    status: "replied",
-    repliedAt: new Date(),
-    updatedAt: new Date() 
-  }).where(eq(contactMessages.id, id));
 }
 
 export async function getAdminUsers() {
