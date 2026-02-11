@@ -113,6 +113,7 @@
 
 - [x] 生成Princeton剩余13个领域的专属图像并上传到S3（已完成）
 - [x] 生成University of Washington剩余8个领域的专属图像并上传到S3（已完成）
+- [x] 保存checkpoint（version: ddf72003）
 - [ ] 搜索Harvard、Stanford、Yale、Columbia、Caltech等Top大学的本科专业列表
 - [ ] 使用改进的Perplexity脚本收集Harvard数据（预计100-150位教授）
 - [ ] 收集Stanford数据
@@ -120,3 +121,9 @@
 - [ ] 收集Columbia数据
 - [ ] 收集Caltech数据
 - [ ] 测试并保存最终checkpoint
+
+## 优化图像加载性能
+- [x] 转换所有现有PNG图像为WebP格式并压缩到01MB以下（66张，314.68MB→12MB，压缩率96.2%）
+- [x] 上传优化后的图像到S3并更新映射配置（66张WebP图像已上传）
+- [x] 测试优化后的图像加载性能（WebP图像正常显示，加载速度显著提升）
+- [x] 保存checkpoint并记录优化标准（创建 IMAGE_OPTIMIZATION_STANDARD.md 文档）
