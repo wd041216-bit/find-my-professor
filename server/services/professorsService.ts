@@ -69,50 +69,15 @@ interface ProfessorWithScore {
     }
     
     // 批量获取所有教授的研究领域图片（避免N+1查询）
-    // 1. 收集所有tags
-    const allTags = new Set<string>();
+    // 1. 收集所有教授的research_field
+    const researchFields = new Set<string>();
     for (const prof of professorsList) {
-      if (prof.tags && Array.isArray(prof.tags)) {
-        prof.tags.forEach(tag => {
-          if (tag && typeof tag === 'string') {
-            allTags.add(tag.trim().toLowerCase());
-          }
-        });
+      if (prof.research_field && typeof prof.research_field === 'string') {
+        researchFields.add(prof.research_field.trim());
       }
     }
     
-    // 2. 批量查询tag映射（一次查询获取所有映射关系）
-    const tagMappingMap = new Map<string, string>();
-    if (allTags.size > 0) {
-      const tagsArray = Array.from(allTags);
-      const placeholders = tagsArray.map((_, i) => `{val${i}}`).join(',');
-      let queryStr = `SELECT LOWER(tag) as tag_lower, research_field_name 
-         FROM research_field_tag_mapping 
-         WHERE LOWER(tag) IN (${placeholders})`;
-      
-      // Replace placeholders with actual values
-      tagsArray.forEach((tag, i) => {
-        queryStr = queryStr.replace(`{val${i}}`, `'${tag.replace(/'/g, "''")}'`);
-      });
-      
-      const tagMappingQuery = sql.raw(queryStr);
-      
-      const tagMappingResult = await db.execute(tagMappingQuery);
-      const tagMappingRows = tagMappingResult[0] as unknown as any[];
-      
-      if (tagMappingRows && tagMappingRows.length > 0) {
-        for (const row of tagMappingRows) {
-          const tagLower = row.tag_lower || row[0];
-          const fieldName = row.research_field_name || row[1];
-          if (tagLower && fieldName) {
-            tagMappingMap.set(tagLower, fieldName);
-          }
-        }
-      }
-    }
-    
-    // 3. 批量查询研究领域图片（优先使用大学专属图片）
-    const researchFields = new Set(tagMappingMap.values());
+    // 2. 批量查询研究领域图片（优先使用大学专属图片）
     const fieldImageMap = new Map<string, string>();
     const universityFieldImageMap = new Map<string, string>();
     
@@ -163,39 +128,14 @@ interface ProfessorWithScore {
     for (const prof of professorsList) {
       let researchFieldImageUrl: string | undefined = undefined;
       
-      // 如果教授有tags，根据tags查找研究领域
-      if (prof.tags && Array.isArray(prof.tags) && prof.tags.length > 0) {
-        const tags = prof.tags.map(t => t.trim().toLowerCase()).filter(t => t !== '');
-        
-        // 统计每个研究领域出现的次数
-        const researchFieldCounts: Record<string, number> = {};
-        
-        for (const tag of tags) {
-          const fieldName = tagMappingMap.get(tag);
-          if (fieldName) {
-            researchFieldCounts[fieldName] = (researchFieldCounts[fieldName] || 0) + 1;
-          }
-        }
-        
-        // 选择出现次数最多的研究领域
-        let primaryResearchField: string | null = null;
-        let maxCount = 0;
-        
-        for (const [field, count] of Object.entries(researchFieldCounts)) {
-          if (count > maxCount) {
-            maxCount = count;
-            primaryResearchField = field;
-          }
-        }
-        
-        // 如果找到了主要研究领域，获取对应的背景图片（优先使用大学专属图片）
-        if (primaryResearchField) {
-          // 优先使用大学专属图片
-          researchFieldImageUrl = universityFieldImageMap.get(primaryResearchField);
-          // 如果没有大学专属图片，使用通用领域图片
-          if (!researchFieldImageUrl) {
-            researchFieldImageUrl = fieldImageMap.get(primaryResearchField);
-          }
+      // 直接使用教授的research_field字段获取领域图片
+      if (prof.research_field && typeof prof.research_field === 'string') {
+        const fieldName = prof.research_field.trim();
+        // 优先使用大学专属图片
+        researchFieldImageUrl = universityFieldImageMap.get(fieldName);
+        // 如果没有大学专属图片，使用通用领域图片
+        if (!researchFieldImageUrl) {
+          researchFieldImageUrl = fieldImageMap.get(fieldName);
         }
       }
       
