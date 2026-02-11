@@ -153,3 +153,23 @@
 - [x] 修改无匹配时的显示：不显示虚假的60-85%分数，改为友好提示"Different research area"
 - [x] 重新计算所有现有likes的match scores（11条记录全部更新为NULL）
 - [x] 测试验证修复效果（Match History页面正确显示"Different research area"）
+
+## Profile页面UI和语言修复
+- [ ] 修复Academic Level选择器中的中文选项（"本科"改为"Undergraduate"等）
+- [ ] 删除或翻译中文提示文字（"提示：支持中英文输入，保存时自动转换为英文"）
+- [ ] 优化头像区域尺寸（减小占用空间）
+- [ ] 优化表单字段间距和布局
+- [ ] 测试移动端显示效果
+
+## Profile页面语言和UI修复
+- [ ] 修复Academic Level选择器：高中→High School, 本科→Undergraduate, 硕士→Master's, 博士→PhD
+- [ ] 删除中文提示文字
+- [ ] 优化头像区域尺寸
+- [ ] 测试并保存checkpoint
+
+## Profile页面语言和UI修复
+- [x] 修复Academic Level选择器中文选项（高中→High School, 本科→Undergraduate, 硕士→Master's）
+- [x] 删除中文提示文字（SmartInput组件中的"提示：支持中英文输入"）
+- [x] 优化头像区域尺寸（w-32 h-32 → w-24 h-24）
+- [x] 优化表单字段间距（space-y-6 → space-y-4, 标题text-xl → text-lg）
+- [x] 测试并保存checkpoint（所有修复已验证成功）

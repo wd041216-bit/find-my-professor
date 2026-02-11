@@ -319,9 +319,9 @@ export default function Profile() {
       <div className="max-w-2xl mx-auto px-4 pb-8">
         <Card className="bg-white/90 backdrop-blur-sm shadow-2xl rounded-3xl p-8">
           {/* Avatar Section */}
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex flex-col items-center mb-6">
             <div className="relative group">
-              <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 p-1 shadow-xl">
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 p-1 shadow-xl">
                 {avatarUrl ? (
                   <img
                     src={avatarUrl}
@@ -329,7 +329,7 @@ export default function Profile() {
                     className="w-full h-full rounded-full object-cover bg-white"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-5xl font-black text-gray-300">
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-4xl font-black text-gray-300">
                     {user?.name?.charAt(0).toUpperCase() || '?'}
                   </div>
                 )}
@@ -337,9 +337,9 @@ export default function Profile() {
               <button
                 type="button"
                 onClick={handleAvatarClick}
-                className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
               >
-                <Camera className="w-5 h-5 text-white" />
+                <Camera className="w-4 h-4 text-white" />
               </button>
               <input
                 id="avatar-upload"
@@ -349,7 +349,7 @@ export default function Profile() {
                 className="hidden"
               />
             </div>
-            <p className="mt-4 text-sm text-gray-500 font-medium">
+            <p className="mt-3 text-xs text-gray-500">
               Click the camera icon to upload your photo
             </p>
           </div>
@@ -359,8 +359,8 @@ export default function Profile() {
 
 
               {/* Basic Information */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-800">Academic Info</h3>
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold text-gray-800">Academic Info</h3>
                 
                 <div className="space-y-2">
                   <Label htmlFor="academicLevel" className="text-base font-bold text-gray-700">
@@ -416,8 +416,8 @@ export default function Profile() {
               </div>
 
               {/* Target Majors */}
-              <div className="space-y-4">
-                <Label className="text-xl font-bold text-gray-800">
+              <div className="space-y-3">
+                <Label className="text-lg font-bold text-gray-800">
                   Target Major
                 </Label>
                 <div className="flex gap-2">
@@ -450,8 +450,8 @@ export default function Profile() {
 
 
               {/* Skills */}
-              <div className="space-y-4">
-                <Label className="text-xl font-bold text-gray-800">
+              <div className="space-y-3">
+                <Label className="text-lg font-bold text-gray-800">
                   Skills
                 </Label>
                 <div className="flex gap-2">
@@ -478,9 +478,9 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Research Interests */}
-              <div className="space-y-4">
-                <Label className="text-xl font-bold text-gray-800">
+                   {/* Interests */}
+              <div className="space-y-3">
+                <Label className="text-lg font-bold text-gray-800">
                   Research Interests
                 </Label>
                 <div className="flex gap-2">
@@ -508,8 +508,8 @@ export default function Profile() {
               </div>
 
               {/* Resume Upload */}
-              <div className="space-y-4">
-                <Label className="text-xl font-bold text-gray-800">
+              <div className="space-y-3">
+                <Label className="text-lg font-bold text-gray-800">
                   Resume Upload & Parse
                 </Label>
                 <div className="flex flex-col gap-4">
