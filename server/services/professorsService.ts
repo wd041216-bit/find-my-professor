@@ -212,16 +212,11 @@ export interface MatchedProfessor {
         }
       }
       
-      // Fallback: 如果没有找到任何研究领域图片，使用默认图片
-      if (!researchFieldImageUrl) {
-        // 优先使用华盛顿大学专属图片（任意一张）
-        if (universityFieldImageMap.size > 0) {
-          researchFieldImageUrl = Array.from(universityFieldImageMap.values())[0];
-        } else if (fieldImageMap.size > 0) {
-          // 如果没有华盛顿大学专属图片，使用通用领域图片
-          researchFieldImageUrl = Array.from(fieldImageMap.values())[0];
-        }
-      }
+      // Fallback: 如果没有找到任何研究领域图片，不设置schoolImageUrl
+      // 前端会显示默认渐变色背景，避免图片错配
+      // if (!researchFieldImageUrl) {
+      //   researchFieldImageUrl = null; // 显式设置为null
+      // }
       
       matchedProfessors.push({
         id: prof.id,
