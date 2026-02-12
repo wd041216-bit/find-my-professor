@@ -403,7 +403,7 @@ export function Swipe() {
       </div>
 
       {/* Action Buttons - Tinder style with enhanced feedback */}
-      <div className="p-4 md:p-8 flex items-center justify-center gap-4 md:gap-8">
+      <div className="p-2 md:p-8 flex items-center justify-center gap-4 md:gap-8">
         <Button
           size="lg"
           variant="outline"
