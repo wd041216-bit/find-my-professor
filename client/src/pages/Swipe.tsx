@@ -18,6 +18,7 @@ import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { FilterPanel } from '../components/FilterPanel';
+import { DesktopHeader } from '../components/DesktopHeader';
 
 // Animation variants for card transitions
 const ANIMATION_VARIANTS = [
@@ -298,8 +299,15 @@ export function Swipe() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-16 md:pb-0">
-      {/* Filter & Reset Buttons - Floating on mobile, top-right on desktop */}
-      <div className="absolute top-4 right-4 z-50 flex gap-2">
+      {/* Desktop Header Navigation */}
+      <DesktopHeader
+        onResetClick={handleResetSwipeHistory}
+        onFilterClick={() => setIsFilterPanelOpen(true)}
+        showActions={true}
+      />
+
+      {/* Mobile Filter & Reset Buttons - Floating on mobile only */}
+      <div className="md:hidden absolute top-4 right-4 z-50 flex gap-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
@@ -347,7 +355,7 @@ export function Swipe() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="flex-1 flex items-center justify-center p-2 md:p-6">
+      <div className="flex-1 flex items-center justify-center p-2 md:p-4">
         <div 
           id="card-stack-container"
           className="relative w-full max-w-sm md:max-w-md" 
@@ -403,7 +411,7 @@ export function Swipe() {
       </div>
 
       {/* Action Buttons - Tinder style with enhanced feedback */}
-      <div className="p-2 md:p-8 flex items-center justify-center gap-4 md:gap-8">
+      <div className="p-2 md:p-4 flex items-center justify-center gap-4 md:gap-8">
         <Button
           size="lg"
           variant="outline"
