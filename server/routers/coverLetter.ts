@@ -130,13 +130,35 @@ Write ONLY the letter content, no subject line or additional commentary.`;
         });
       }
 
+      // Ensure project_name is in English (translate if needed)
+      let projectName = professor.research_field || "Research Opportunity";
+      // If project_name contains Chinese characters, use LLM to translate
+      if (/[\u4e00-\u9fff]/.test(projectName)) {
+        const translateResponse = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are a translator. Translate the given Chinese text to English. Output ONLY the English translation, no additional text.",
+            },
+            {
+              role: "user",
+              content: projectName,
+            },
+          ],
+        });
+        const translatedContent = translateResponse.choices[0]?.message?.content;
+        if (translatedContent && typeof translatedContent === 'string') {
+          projectName = translatedContent.trim();
+        }
+      }
+
       // Save to database
       const insertResult = await db
         .insert(coverLetters)
         .values({
           userId: ctx.user.id,
           matchId: null, // No match_id for professor-based letters
-          projectName: professor.research_field || "Research Opportunity",
+          projectName: projectName,
           professorName: professor.name,
           university: professor.universityName,
           content,
@@ -255,6 +277,33 @@ Write ONLY the letter content, no subject line or additional commentary.`;
     }),
 
   /**
+   * Mark a cover letter as viewed
+   */
+  markViewed: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      await db
+        .update(coverLetters)
+        .set({ viewed: true })
+        .where(
+          and(
+            eq(coverLetters.id, input.id),
+            eq(coverLetters.userId, ctx.user.id)
+          )
+        );
+
+      return { success: true };
+    }),
+
+  /**
    * Mark a cover letter as downloaded
    */
   markDownloaded: protectedProcedure
@@ -270,7 +319,7 @@ Write ONLY the letter content, no subject line or additional commentary.`;
 
       await db
         .update(coverLetters)
-        .set({ downloaded: true })
+        .set({ downloaded: true, viewed: true })
         .where(
           and(
             eq(coverLetters.id, input.id),
