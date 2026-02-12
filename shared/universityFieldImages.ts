@@ -63,6 +63,23 @@ export const universityFieldImages: Record<string, Record<string, string>> = {
     "Business & Management": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/EPKLeTTBiybJILNv.webp",
     "History": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/UqBuNBGxBXsjNaqe.webp",
   },
+  "Harvard University": {
+    "Architecture & Planning": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/aoAbZFJAMzQSkhpH.webp",
+    "Arts & Design": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/cQJlgeGsIvQutClC.webp",
+    "Biology": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/PqNkifmUKTWGJLLt.webp",
+    "Chemistry": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/gaxhhVjecBGsBWef.webp",
+    "Computer Science": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/aNgYGAoQYDuKgbyQ.webp",
+    "Economics": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/rZrwGCRxcWEzkDsg.webp",
+    "Engineering": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/swJeJnQvDfjPtdlo.webp",
+    "Environmental Science": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/fvvfCmTScyMqZAzn.webp",
+    "History": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/gFwRvmjdjEVhGPxr.webp",
+    "Literature & Languages": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/ugHPDwZqJYyGlNjK.webp",
+    "Medicine & Health": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/sQGqhrDipObrozdP.webp",
+    "Music & Theater": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/KolvsslVcdorlezj.webp",
+    "Physics": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/GHDNiYpmFFvxVQTS.webp",
+    "Political Science": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/MEwReuWqTHMyExiU.webp",
+    "Sociology & Anthropology": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/xVXWOTUFbqXueSwG.webp",
+  },
 };
 
 /**
