@@ -217,3 +217,9 @@
 - [x] 上传到CDN并更新映射配置（universityFieldImages.ts已更新）
 - [x] 测试所有教授卡片正常显示图像（Kerry Naish等教授图像已正常显示）
 - [x] 保存checkpoint
+
+## 修复DesktopHeader嵌套anchor标签错误
+- [x] 检查DesktopHeader组件中的嵌套`<a>`标签问题（wouter的Link组件已渲染<a>，不需要手动嵌套）
+- [x] 修夏Logo或导航链接的嵌套结构（移除内部<a>标签，直接使用Link的className）
+- [x] 测试修复后没有React DOM警告（浏览器控制台无错误）
+- [x] 保存checkpoint

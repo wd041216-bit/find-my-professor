@@ -22,13 +22,11 @@ export function DesktopHeader({ onResetClick, onFilterClick, showActions = false
     <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">PM</span>
-            </div>
-            <span className="font-semibold text-lg">ProfMatch</span>
-          </a>
+        <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">PM</span>
+          </div>
+          <span className="font-semibold text-lg">ProfMatch</span>
         </Link>
 
         {/* Navigation Links */}
@@ -37,17 +35,17 @@ export function DesktopHeader({ onResetClick, onFilterClick, showActions = false
             const Icon = item.icon;
             const isActive = location === item.path;
             return (
-              <Link key={item.path} href={item.path}>
-                <a
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium">{item.label}</span>
-                </a>
+              <Link
+                key={item.path}
+                href={item.path}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="font-medium">{item.label}</span>
               </Link>
             );
           })}
