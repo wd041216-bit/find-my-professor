@@ -228,3 +228,12 @@
 - [x] 进一步减小桌面端卡片和按钮之间的间距（md:p-4 → md:p-2）
 - [x] 测试桌面端显示效果（布局更加紧凑，卡片占据更多空间）
 - [x] 保存checkpoint
+
+## Mac应用打包
+- [x] 添加PWA manifest配置文件（manifest.json已创建）
+- [x] 生成应用图标（icon-192.png, icon-512.png）
+- [x] 在index.html中添加PWA meta标签
+- [x] 创建Electron打包配置（electron/main.js, electron-builder.json）
+- [x] 创建macOS entitlements文件
+- [x] 创建详细的打包文档（MAC_APP_PACKAGING_GUIDE.md）
+- [x] 保存checkpoint
