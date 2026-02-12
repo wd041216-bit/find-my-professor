@@ -355,7 +355,7 @@ export function Swipe() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="flex-1 flex items-center justify-center p-2 md:p-4">
+      <div className="flex-1 flex items-center justify-center p-2 md:p-2">
         <div 
           id="card-stack-container"
           className="relative w-full max-w-sm md:max-w-md" 
@@ -411,7 +411,7 @@ export function Swipe() {
       </div>
 
       {/* Action Buttons - Tinder style with enhanced feedback */}
-      <div className="p-2 md:p-4 flex items-center justify-center gap-4 md:gap-8">
+      <div className="p-2 md:p-2 flex items-center justify-center gap-4 md:gap-8">
         <Button
           size="lg"
           variant="outline"
