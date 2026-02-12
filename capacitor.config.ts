@@ -1,9 +1,15 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.findmyprofessor.app',
-  appName: 'Find My Professor',
-  webDir: 'dist/public'
+  appId: 'com.profmatch.app',
+  appName: 'ProfMatch',
+  webDir: 'client/dist',
+  server: {
+    androidScheme: 'https'
+  },
+  ios: {
+    contentInset: 'automatic'
+  }
 };
 
 export default config;

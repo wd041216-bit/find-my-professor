@@ -237,3 +237,10 @@
 - [x] 创建macOS entitlements文件
 - [x] 创建详细的打包文档（MAC_APP_PACKAGING_GUIDE.md）
 - [x] 保存checkpoint
+
+## iOS手机应用打包
+- [x] 检查和配置Capacitor（capacitor.config.ts已更新）
+- [x] 配置iOS应用图标和启动画面（使用现有PWA图标）
+- [x] 创建capacitor.config.ts配置文件（已更新为ProfMatch）
+- [x] 编写iOS应用打包指南（IOS_APP_PACKAGING_GUIDE.md已创建）
+- [x] 保存checkpoint
