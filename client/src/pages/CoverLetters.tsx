@@ -34,9 +34,20 @@ export default function CoverLetters() {
   // Mark downloaded mutation
   const markDownloadedMutation = trpc.coverLetter.markDownloaded.useMutation();
 
+  // Mark viewed mutation
+  const markViewedMutation = trpc.coverLetter.markViewed.useMutation({
+    onSuccess: () => {
+      refetch(); // Refresh to remove "New" badge
+    },
+  });
+
   const handleViewLetter = (letter: any) => {
     setSelectedLetter(letter);
     setShowDetailDialog(true);
+    // Mark as viewed when opening the dialog
+    if (!letter.viewed) {
+      markViewedMutation.mutate({ id: letter.id });
+    }
   };
 
   const handleDelete = (letterId: number) => {

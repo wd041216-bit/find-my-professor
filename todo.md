@@ -179,3 +179,10 @@
 - [x] 将"Reset Swipe History"按钮从Profile页面移动到Swipe页面右上角
 - [x] 测试移动端布局（Save按钮不再超出屏幕）
 - [x] 保存checkpoint
+
+## Cover Letter界面修复
+- [x] 调查中文研究领域来源（来自professors表的research_field字段）
+- [x] 修复中文显示问题（数据库中的中文已翻译，添加LLM自动翻译机制）
+- [x] 实现New标签消失机制（点击View Full标记为viewed，Download同时标记viewed和downloaded）
+- [x] 检查是否还有其他可能出现中文的地方（已添加中文检测和自动翻译）
+- [x] 测试并保存checkpoint（所有功能已验证成功）
