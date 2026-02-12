@@ -242,5 +242,6 @@
 - [x] 检查和配置Capacitor（capacitor.config.ts已更新）
 - [x] 配置iOS应用图标和启动画面（使用现有PWA图标）
 - [x] 创建capacitor.config.ts配置文件（已更新为ProfMatch）
-- [x] 编写iOS应用打包指南（IOS_APP_PACKAGING_GUIDE.md已创建）
+- [x] 编写完整的iOS应用打包指南（CAPACITOR_COMPLETE_GUIDE.md已创建，包含打包、更新、支付集成）
+- [x] 创建快速参考卡（QUICK_REFERENCE.md已创建）
 - [x] 保存checkpoint
