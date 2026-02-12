@@ -1,0 +1,410 @@
+{
+  "query": "SELECT DISTINCT university_name, research_field, COUNT(*) as count FROM professors GROUP BY university_name, research_field ORDER BY university_name, research_field;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT DISTINCT university_name, research_field, COUNT(*) as count FROM professors GROUP BY university_name, research_field ORDER BY university_name, research_field;",
+  "rows": [
+    {
+      "university_name": "NULL",
+      "research_field": "Architecture & Planning",
+      "count": "2"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Arts & Design",
+      "count": "9"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Biology",
+      "count": "13"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Chemistry",
+      "count": "4"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Computer Science",
+      "count": "73"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Economics",
+      "count": "2"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Engineering",
+      "count": "2"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Environmental Science",
+      "count": "2"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "History",
+      "count": "23"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Literature & Languages",
+      "count": "17"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Medicine & Health",
+      "count": "8"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Music & Theater",
+      "count": "1"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Other",
+      "count": "54"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Physics",
+      "count": "1"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Political Science",
+      "count": "11"
+    },
+    {
+      "university_name": "NULL",
+      "research_field": "Sociology & Anthropology",
+      "count": "14"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Architecture & Planning",
+      "count": "1"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Arts & Design",
+      "count": "7"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Biology",
+      "count": "8"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Chemistry",
+      "count": "2"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Computer Science",
+      "count": "42"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Economics",
+      "count": "1"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Engineering",
+      "count": "1"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Environmental Science",
+      "count": "1"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "History",
+      "count": "13"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Literature & Languages",
+      "count": "11"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Medicine & Health",
+      "count": "5"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Music & Theater",
+      "count": "1"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Other",
+      "count": "36"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Physics",
+      "count": "1"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Political Science",
+      "count": "6"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field": "Sociology & Anthropology",
+      "count": "9"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Architecture & Planning",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Arts & Design",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Biology",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Business & Management",
+      "count": "6"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Chemistry",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Computer Science",
+      "count": "15"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Economics",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Education",
+      "count": "6"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Engineering",
+      "count": "30"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Environmental Science",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "History",
+      "count": "9"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Literature & Languages",
+      "count": "12"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Mathematics",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Medicine & Health",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Music & Theater",
+      "count": "6"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Philosophy",
+      "count": "6"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Physics",
+      "count": "3"
+    },
+    {
+      "university_name": "MIT",
+      "research_field": "Sociology & Anthropology",
+      "count": "10"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Architecture & Planning",
+      "count": "1"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Arts & Design",
+      "count": "5"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Biology",
+      "count": "15"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Chemistry",
+      "count": "5"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Computer Science",
+      "count": "67"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Economics",
+      "count": "11"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Engineering",
+      "count": "18"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Environmental Science",
+      "count": "4"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "History",
+      "count": "33"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Literature & Languages",
+      "count": "16"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Mathematics",
+      "count": "5"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Medicine & Health",
+      "count": "11"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Music & Theater",
+      "count": "7"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Philosophy",
+      "count": "5"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Physics",
+      "count": "19"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Political Science",
+      "count": "12"
+    },
+    {
+      "university_name": "Princeton University",
+      "research_field": "Sociology & Anthropology",
+      "count": "27"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Architecture & Planning",
+      "count": "3"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Arts & Design",
+      "count": "6"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Biology",
+      "count": "14"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Business & Management",
+      "count": "15"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Computer Science",
+      "count": "50"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Economics",
+      "count": "11"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Education",
+      "count": "21"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Engineering",
+      "count": "29"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Environmental Science",
+      "count": "11"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Medicine & Health",
+      "count": "42"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Physics",
+      "count": "3"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Political Science",
+      "count": "15"
+    },
+    {
+      "university_name": "University of Washington",
+      "research_field": "Sociology & Anthropology",
+      "count": "38"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_name\tresearch_field\tcount\nNULL\tArchitecture & Planning\t2\nNULL\tArts & Design\t9\nNULL\tBiology\t13\nNULL\tChemistry\t4\nNULL\tComputer Science\t73\nNULL\tEconomics\t2\nNULL\tEngineering\t2\nNULL\tEnvironmental Science\t2\nNULL\tHistory\t23\nNULL\tLiterature & Languages\t17\nNULL\tMedicine & Health\t8\nNULL\tMusic & Theater\t1\nNULL\tOther\t54\nNULL\tPhysics\t1\nNULL\tPolitical Science\t11\nNULL\tSociology & Anthropology\t14\nHarvard University\tArchitecture & Planning\t1\nHarvard University\tArts & Design\t7\nHarvard University\tBiology\t8\nHarvard University\tChemistry\t2\nHarvard University\tComputer Science\t42\nHarvard University\tEconomics\t1\nHarvard University\tEngineering\t1\nHarvard University\tEnvironmental Science\t1\nHarvard University\tHistory\t13\nHarvard University\tLiterature & Languages\t11\nHarvard University\tMedicine & Health\t5\nHarvard University\tMusic & Theater\t1\nHarvard University\tOther\t36\nHarvard University\tPhysics\t1\nHarvard University\tPolitical Science\t6\nHarvard University\tSociology & Anthropology\t9\nMIT\tArchitecture & Planning\t3\nMIT\tArts & Design\t3\nMIT\tBiology\t3\nMIT\tBusiness & Management\t6\nMIT\tChemistry\t3\nMIT\tComputer Science\t15\nMIT\tEconomics\t3\nMIT\tEducation\t6\nMIT\tEngineering\t30\nMIT\tEnvironmental Science\t3\nMIT\tHistory\t9\nMIT\tLiterature & Languages\t12\nMIT\tMathematics\t3\nMIT\tMedicine & Health\t3\nMIT\tMusic & Theater\t6\nMIT\tPhilosophy\t6\nMIT\tPhysics\t3\nMIT\tSociology & Anthropology\t10\nPrinceton University\tArchitecture & Planning\t1\nPrinceton University\tArts & Design\t5\nPrinceton University\tBiology\t15\nPrinceton University\tChemistry\t5\nPrinceton University\tComputer Science\t67\nPrinceton University\tEconomics\t11\nPrinceton University\tEngineering\t18\nPrinceton University\tEnvironmental Science\t4\nPrinceton University\tHistory\t33\nPrinceton University\tLiterature & Languages\t16\nPrinceton University\tMathematics\t5\nPrinceton University\tMedicine & Health\t11\nPrinceton University\tMusic & Theater\t7\nPrinceton University\tPhilosophy\t5\nPrinceton University\tPhysics\t19\nPrinceton University\tPolitical Science\t12\nPrinceton University\tSociology & Anthropology\t27\nUniversity of Washington\tArchitecture & Planning\t3\nUniversity of Washington\tArts & Design\t6\nUniversity of Washington\tBiology\t14\nUniversity of Washington\tBusiness & Management\t15\nUniversity of Washington\tComputer Science\t50\nUniversity of Washington\tEconomics\t11\nUniversity of Washington\tEducation\t21\nUniversity of Washington\tEngineering\t29\nUniversity of Washington\tEnvironmental Science\t11\nUniversity of Washington\tMedicine & Health\t42\nUniversity of Washington\tPhysics\t3\nUniversity of Washington\tPolitical Science\t15\nUniversity of Washington\tSociology & Anthropology\t38\n",
+  "stderr": "",
+  "execution_time_ms": 62
+}

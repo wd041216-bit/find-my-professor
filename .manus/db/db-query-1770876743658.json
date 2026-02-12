@@ -1,0 +1,62 @@
+{
+  "query": "SELECT DISTINCT research_field, COUNT(*) as count FROM professors WHERE university_name = 'University of Washington' GROUP BY research_field ORDER BY count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT DISTINCT research_field, COUNT(*) as count FROM professors WHERE university_name = 'University of Washington' GROUP BY research_field ORDER BY count DESC;",
+  "rows": [
+    {
+      "research_field": "Computer Science",
+      "count": "50"
+    },
+    {
+      "research_field": "Medicine & Health",
+      "count": "42"
+    },
+    {
+      "research_field": "Sociology & Anthropology",
+      "count": "38"
+    },
+    {
+      "research_field": "Engineering",
+      "count": "29"
+    },
+    {
+      "research_field": "Education",
+      "count": "21"
+    },
+    {
+      "research_field": "Business & Management",
+      "count": "15"
+    },
+    {
+      "research_field": "Political Science",
+      "count": "15"
+    },
+    {
+      "research_field": "Biology",
+      "count": "14"
+    },
+    {
+      "research_field": "Economics",
+      "count": "11"
+    },
+    {
+      "research_field": "Environmental Science",
+      "count": "11"
+    },
+    {
+      "research_field": "Arts & Design",
+      "count": "6"
+    },
+    {
+      "research_field": "Architecture & Planning",
+      "count": "3"
+    },
+    {
+      "research_field": "Physics",
+      "count": "3"
+    }
+  ],
+  "messages": [],
+  "stdout": "research_field\tcount\nComputer Science\t50\nMedicine & Health\t42\nSociology & Anthropology\t38\nEngineering\t29\nEducation\t21\nBusiness & Management\t15\nPolitical Science\t15\nBiology\t14\nEconomics\t11\nEnvironmental Science\t11\nArts & Design\t6\nArchitecture & Planning\t3\nPhysics\t3\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

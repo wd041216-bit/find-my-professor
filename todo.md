@@ -208,3 +208,12 @@
 - [x] 优化桌面端卡片和按钮间距（减小gap值）
 - [x] 测试桌面端和移动端响应式显示
 - [x] 保存checkpoint
+
+## 修复教授卡片缺失图像问题
+- [x] 查询数据库找出缺失图像的教授（Kerry Naish/Biology, Elaine M Faustman/Environmental & Occupational Health Sciences, Mia Bennett/Geography）
+- [x] 检查这些教授的research_field字段值（通过API查询确认）
+- [x] 对比universityFieldImages.ts映射配置，找出缺失的大学+领域组合（UW: Arts & Design, Environmental Science; Harvard: Other）
+- [x] 生成缺失的大学+领域专属图像（3张WebP格式图像，总大小<3MB）
+- [x] 上传到CDN并更新映射配置（universityFieldImages.ts已更新）
+- [x] 测试所有教授卡片正常显示图像（Kerry Naish等教授图像已正常显示）
+- [x] 保存checkpoint
