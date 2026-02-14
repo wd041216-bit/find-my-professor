@@ -263,3 +263,10 @@
 - [x] 在Profile页面添加Activities展示和编辑UI(已创建ActivitiesSection组件)
 - [x] 简历解析成功后自动保存Activities到数据库(已实现createActivityMutation)
 - [x] 保存checkpoint
+
+## 系统性彻底修复简历解析问题
+- [x] 查看服务器错误日志识别根本原因（500 Internal Server Error: Failed to parse resume file）
+- [x] 修复PDF/DOCX解析库导入问题并本地测试（pdf-parse 2.x API变更，改为使用PDFParse类）
+- [x] 通过浏览器测试简历上传并修复所有错误（PDF和DOCX均测试通过）
+- [x] 验证完整工作流：上传→解析→保存→显示（完整流程验证成功）
+- [x] 保存checkpoint（测试结果已记录在resume_parsing_test_results.md）
