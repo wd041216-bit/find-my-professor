@@ -123,10 +123,14 @@ export default function Profile() {
 
   const parseResumeMutation = trpc.profile.parseResume.useMutation({
     onSuccess: (data: any) => {
+      console.log('[Frontend] Resume parsed successfully!');
+      console.log('[Frontend] Parsed data:', data);
       toast.success('Resume parsed successfully!');
       
       // Save activities from resume
+      console.log('[Frontend] Activities count:', data.activities?.length || 0);
       if (data.activities && data.activities.length > 0) {
+        console.log('[Frontend] Saving activities...');
         toast.info(`Saving ${data.activities.length} activities from resume...`);
         data.activities.forEach((activity: any) => {
           createActivityMutation.mutate({
@@ -137,6 +141,9 @@ export default function Profile() {
       }
       
       // Update form data with parsed information
+      console.log('[Frontend] Updating form data...');
+      console.log('[Frontend] Current skills:', formData.skills);
+      console.log('[Frontend] New skills from resume:', data.skills);
       setFormData(prev => {
         const updated = {
           ...prev,
@@ -146,7 +153,9 @@ export default function Profile() {
           gpa: data.gpa || prev.gpa,
         };
         // Auto-save to profile after parsing
+        console.log('[Frontend] Updated form data:', updated);
         setTimeout(() => {
+          console.log('[Frontend] Auto-saving profile...');
           toast.info('Auto-saving profile with resume information...');
           upsertMutation.mutate({
             ...updated,
@@ -158,6 +167,7 @@ export default function Profile() {
       });
     },
     onError: (error: any) => {
+      console.error('[Frontend] Parse resume error:', error);
       toast.error(`Failed to parse resume: ${error.message}`);
     },
   });
@@ -171,16 +181,19 @@ export default function Profile() {
   };
 
   const handleParseResume = async () => {
+    console.log('[Frontend] Starting resume parsing...');
     if (!resumeFile) {
       toast.error('Please select a resume file first');
       return;
     }
+    console.log('[Frontend] Resume file:', resumeFile.name, 'Size:', resumeFile.size);
 
     try {
       // Convert file to base64
       const reader = new FileReader();
       reader.onload = async (e) => {
         const base64 = e.target?.result as string;
+        console.log('[Frontend] File converted to base64, length:', base64.length);
         await parseResumeMutation.mutateAsync({
           fileContent: base64,
           fileName: resumeFile.name,
