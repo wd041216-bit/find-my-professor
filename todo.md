@@ -245,3 +245,10 @@
 - [x] 编写完整的iOS应用打包指南（CAPACITOR_COMPLETE_GUIDE.md已创建，包含打包、更新、支付集成）
 - [x] 创建快速参考卡（QUICK_REFERENCE.md已创建）
 - [x] 保存checkpoint
+
+## 修复简历上传不同步Profile信息的问题
+- [x] 检查简历上传流程和Profile页面的连接（发现了PDF/DOCX文本提取不完整的问题）
+- [x] 实现简历信息提取到Profile的功能（添加pdf-parse和mammoth依赖，改进ParseResume后端）
+- [x] 改进前端简历解析UX（解析成功后自动保存到Profile）
+- [x] 编写测试用例（parseResume.test.ts已创建）
+- [x] 保存checkpoint

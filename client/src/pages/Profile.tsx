@@ -115,13 +115,25 @@ export default function Profile() {
     onSuccess: (data: any) => {
       toast.success('Resume parsed successfully!');
       // Update form data with parsed information
-      setFormData(prev => ({
-        ...prev,
-        skills: Array.from(new Set([...prev.skills, ...data.skills])),
-        interests: Array.from(new Set([...prev.interests, ...data.interests])),
-        targetMajors: data.targetMajors.length > 0 ? data.targetMajors : prev.targetMajors,
-        gpa: data.gpa || prev.gpa,
-      }));
+      setFormData(prev => {
+        const updated = {
+          ...prev,
+          skills: Array.from(new Set([...prev.skills, ...data.skills])),
+          interests: Array.from(new Set([...prev.interests, ...data.interests])),
+          targetMajors: data.targetMajors.length > 0 ? data.targetMajors : prev.targetMajors,
+          gpa: data.gpa || prev.gpa,
+        };
+        // Auto-save to profile after parsing
+        setTimeout(() => {
+          toast.info('Auto-saving profile with resume information...');
+          upsertMutation.mutate({
+            ...updated,
+            targetUniversities: updated.targetUniversity ? [updated.targetUniversity] : [],
+            academicLevel: updated.academicLevel || undefined,
+          });
+        }, 500);
+        return updated;
+      });
     },
     onError: (error: any) => {
       toast.error(`Failed to parse resume: ${error.message}`);

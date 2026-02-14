@@ -73,21 +73,30 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         const { invokeLLM } = await import("./_core/llm");
+        const pdfParse = await import('pdf-parse');
+        const mammoth = await import('mammoth');
         
         // Extract file content from base64
         const base64Data = input.fileContent.split(',')[1];
         const fileBuffer = Buffer.from(base64Data, 'base64');
         
-        // Convert PDF/DOCX to text (simplified - in production use proper parsers)
+        // Convert PDF/DOCX to text using proper parsers
         let resumeText = '';
-        if (input.fileName.endsWith('.pdf')) {
-          // For PDF, use a simple text extraction (in production use pdf-parse)
-          resumeText = fileBuffer.toString('utf-8');
-        } else if (input.fileName.endsWith('.docx')) {
-          // For DOCX, use a simple text extraction (in production use mammoth)
-          resumeText = fileBuffer.toString('utf-8');
-        } else {
-          throw new Error('Unsupported file format. Please upload PDF or DOCX.');
+        try {
+          if (input.fileName.endsWith('.pdf')) {
+            // Use pdf-parse for PDF files
+            const pdfData = await (pdfParse as any)(fileBuffer);
+            resumeText = pdfData.text;
+          } else if (input.fileName.endsWith('.docx')) {
+            // Use mammoth for DOCX files
+            const result = await mammoth.extractRawText({ buffer: fileBuffer });
+            resumeText = result.value;
+          } else {
+            throw new Error('Unsupported file format. Please upload PDF or DOCX.');
+          }
+        } catch (parseError) {
+          console.error('File parsing error:', parseError);
+          throw new Error('Failed to parse resume file. Please ensure it is a valid PDF or DOCX file.');
         }
         
         // Use LLM to parse resume
