@@ -356,3 +356,4 @@ export async function updateUserTimezone(userId: number, timezone: string) {
   console.log(`[Database] Updated timezone for user ${userId} to ${timezone}`);
   return { success: true };
 }
+

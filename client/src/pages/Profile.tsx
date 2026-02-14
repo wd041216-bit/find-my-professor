@@ -15,6 +15,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SmartInput } from "@/components/SmartInput";
+import { ActivitiesSection } from "@/components/ActivitiesSection";
 import { getUniversitySuggestions, getMajorSuggestions, normalizeUniversity, normalizeMajor } from "@shared/translations";
 import {
   AlertDialog,
@@ -111,9 +112,30 @@ export default function Profile() {
     },
   });
 
+  const createActivityMutation = trpc.activities.create.useMutation({
+    onSuccess: () => {
+      toast.success('Activity saved!');
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to save activity: ${error.message}`);
+    },
+  });
+
   const parseResumeMutation = trpc.profile.parseResume.useMutation({
     onSuccess: (data: any) => {
       toast.success('Resume parsed successfully!');
+      
+      // Save activities from resume
+      if (data.activities && data.activities.length > 0) {
+        toast.info(`Saving ${data.activities.length} activities from resume...`);
+        data.activities.forEach((activity: any) => {
+          createActivityMutation.mutate({
+            ...activity,
+            source: 'resume_upload' as const,
+          });
+        });
+      }
+      
       // Update form data with parsed information
       setFormData(prev => {
         const updated = {
@@ -473,6 +495,14 @@ export default function Profile() {
                     </span>
                   ))}
                 </div>
+              </div>
+
+              {/* Activities Section */}
+              <div className="space-y-4">
+                <Label className="text-lg font-bold text-gray-800">
+                  Your Activities
+                </Label>
+                <ActivitiesSection />
               </div>
 
               {/* Resume Upload */}
