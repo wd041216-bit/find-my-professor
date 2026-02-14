@@ -1,0 +1,87 @@
+{
+  "query": "SELECT id, title, category, organization, role, start_date, end_date, is_current, source FROM activities WHERE user_id = 1 ORDER BY id DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, title, category, organization, role, start_date, end_date, is_current, source FROM activities WHERE user_id = 1 ORDER BY id DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "120007",
+      "title": "PADI Certified Scuba Diver",
+      "category": "other",
+      "organization": "PADI",
+      "role": "Certified Scuba Diver",
+      "start_date": "NULL",
+      "end_date": "NULL",
+      "is_current": "1",
+      "source": "resume_upload"
+    },
+    {
+      "id": "120006",
+      "title": "FAA Student Pilot",
+      "category": "other",
+      "organization": "FAA",
+      "role": "Student Pilot",
+      "start_date": "NULL",
+      "end_date": "NULL",
+      "is_current": "1",
+      "source": "resume_upload"
+    },
+    {
+      "id": "120005",
+      "title": "UW International Student Association",
+      "category": "other",
+      "organization": "UW International Student Association",
+      "role": "Active Member",
+      "start_date": "NULL",
+      "end_date": "NULL",
+      "is_current": "1",
+      "source": "resume_upload"
+    },
+    {
+      "id": "120004",
+      "title": "Adjustable-Focus Lens Prototype",
+      "category": "project",
+      "organization": "NULL",
+      "role": "Independent Inventor",
+      "start_date": "2025-05-01 00:00:00",
+      "end_date": "NULL",
+      "is_current": "1",
+      "source": "resume_upload"
+    },
+    {
+      "id": "120003",
+      "title": "Global Social Media Sentiment & Addiction Study",
+      "category": "project",
+      "organization": "NULL",
+      "role": "Group Leader",
+      "start_date": "2025-03-01 00:00:00",
+      "end_date": "2025-06-01 00:00:00",
+      "is_current": "0",
+      "source": "resume_upload"
+    },
+    {
+      "id": "120002",
+      "title": "AI Teaching Bot",
+      "category": "project",
+      "organization": "NULL",
+      "role": "Independent Developer",
+      "start_date": "2025-09-01 00:00:00",
+      "end_date": "NULL",
+      "is_current": "1",
+      "source": "resume_upload"
+    },
+    {
+      "id": "120001",
+      "title": "AI Engineering Intern",
+      "category": "internship",
+      "organization": "Apob AI",
+      "role": "AI Engineering Intern",
+      "start_date": "2025-12-01 00:00:00",
+      "end_date": "NULL",
+      "is_current": "1",
+      "source": "resume_upload"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tcategory\torganization\trole\tstart_date\tend_date\tis_current\tsource\n120007\tPADI Certified Scuba Diver\tother\tPADI\tCertified Scuba Diver\tNULL\tNULL\t1\tresume_upload\n120006\tFAA Student Pilot\tother\tFAA\tStudent Pilot\tNULL\tNULL\t1\tresume_upload\n120005\tUW International Student Association\tother\tUW International Student Association\tActive Member\tNULL\tNULL\t1\tresume_upload\n120004\tAdjustable-Focus Lens Prototype\tproject\tNULL\tIndependent Inventor\t2025-05-01 00:00:00\tNULL\t1\tresume_upload\n120003\tGlobal Social Media Sentiment & Addiction Study\tproject\tNULL\tGroup Leader\t2025-03-01 00:00:00\t2025-06-01 00:00:00\t0\tresume_upload\n120002\tAI Teaching Bot\tproject\tNULL\tIndependent Developer\t2025-09-01 00:00:00\tNULL\t1\tresume_upload\n120001\tAI Engineering Intern\tinternship\tApob AI\tAI Engineering Intern\t2025-12-01 00:00:00\tNULL\t1\tresume_upload\n",
+  "stderr": "",
+  "execution_time_ms": 77
+}
