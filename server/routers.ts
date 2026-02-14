@@ -113,16 +113,31 @@ export const appRouter = router({
 2. Research interests (array of strings)
 3. Target majors/fields (array of strings)
 4. GPA (string, if available)
+5. Activities (projects, internships, research experiences)
 
 Resume content:
-${resumeText.substring(0, 4000)}
+${resumeText.substring(0, 6000)}
 
 Return ONLY a JSON object with this structure:
 {
   "skills": ["skill1", "skill2", ...],
   "interests": ["interest1", "interest2", ...],
   "targetMajors": ["major1", "major2", ...],
-  "gpa": "3.8" or null
+  "gpa": "3.8" or null,
+  "activities": [
+    {
+      "title": "Project/Internship/Research title",
+      "category": "project" | "internship" | "research" | "competition" | "volunteer" | "leadership" | "other",
+      "organization": "Organization name",
+      "role": "Your role",
+      "description": "Brief description",
+      "startDate": "2024-01" or null,
+      "endDate": "2024-12" or null,
+      "isCurrent": true or false,
+      "skills": ["skill1", "skill2"],
+      "achievements": ["achievement1", "achievement2"]
+    }
+  ]
 }`
             }
           ],
@@ -152,9 +167,39 @@ Return ONLY a JSON object with this structure:
                   gpa: {
                     type: ['string', 'null'],
                     description: 'GPA if available'
+                  },
+                  activities: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        title: { type: 'string' },
+                        category: { 
+                          type: 'string',
+                          enum: ['project', 'internship', 'research', 'competition', 'volunteer', 'leadership', 'other']
+                        },
+                        organization: { type: ['string', 'null'] },
+                        role: { type: ['string', 'null'] },
+                        description: { type: ['string', 'null'] },
+                        startDate: { type: ['string', 'null'] },
+                        endDate: { type: ['string', 'null'] },
+                        isCurrent: { type: 'boolean' },
+                        skills: {
+                          type: 'array',
+                          items: { type: 'string' }
+                        },
+                        achievements: {
+                          type: 'array',
+                          items: { type: 'string' }
+                        }
+                      },
+                      required: ['title', 'category', 'organization', 'role', 'description', 'startDate', 'endDate', 'isCurrent', 'skills', 'achievements'],
+                      additionalProperties: false
+                    },
+                    description: 'List of activities (projects, internships, research)'
                   }
                 },
-                required: ['skills', 'interests', 'targetMajors', 'gpa'],
+                required: ['skills', 'interests', 'targetMajors', 'gpa', 'activities'],
                 additionalProperties: false
               }
             }
@@ -184,6 +229,81 @@ Return ONLY a JSON object with this structure:
 
   swipe: swipeRouter,
   coverLetter: coverLetterRouter,
+  
+  activities: router({
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getUserActivities(ctx.user.id);
+      }),
+    
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string(),
+        category: z.enum(['research', 'volunteer', 'competition', 'internship', 'project', 'leadership', 'other']),
+        organization: z.string().optional(),
+        role: z.string().optional(),
+        description: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        isCurrent: z.boolean().default(false),
+        skills: z.array(z.string()).default([]),
+        achievements: z.array(z.string()).default([]),
+        source: z.enum(['manual', 'resume_upload']).default('manual'),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const activityData: any = {
+          userId: ctx.user.id,
+          title: input.title,
+          category: input.category,
+          organization: input.organization || null,
+          role: input.role || null,
+          description: input.description || null,
+          startDate: input.startDate ? new Date(input.startDate) : null,
+          endDate: input.endDate ? new Date(input.endDate) : null,
+          isCurrent: input.isCurrent,
+          skills: JSON.stringify(input.skills),
+          achievements: JSON.stringify(input.achievements),
+          source: input.source,
+        };
+        return db.createActivity(activityData);
+      }),
+    
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        category: z.enum(['research', 'volunteer', 'competition', 'internship', 'project', 'leadership', 'other']).optional(),
+        organization: z.string().optional(),
+        role: z.string().optional(),
+        description: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        isCurrent: z.boolean().optional(),
+        skills: z.array(z.string()).optional(),
+        achievements: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { id, ...updateData } = input;
+        const activityUpdate: any = {};
+        if (updateData.title) activityUpdate.title = updateData.title;
+        if (updateData.category) activityUpdate.category = updateData.category;
+        if (updateData.organization !== undefined) activityUpdate.organization = updateData.organization;
+        if (updateData.role !== undefined) activityUpdate.role = updateData.role;
+        if (updateData.description !== undefined) activityUpdate.description = updateData.description;
+        if (updateData.startDate) activityUpdate.startDate = new Date(updateData.startDate);
+        if (updateData.endDate) activityUpdate.endDate = new Date(updateData.endDate);
+        if (updateData.isCurrent !== undefined) activityUpdate.isCurrent = updateData.isCurrent;
+        if (updateData.skills) activityUpdate.skills = JSON.stringify(updateData.skills);
+        if (updateData.achievements) activityUpdate.achievements = JSON.stringify(updateData.achievements);
+        return db.updateActivity(id, activityUpdate);
+      }),
+    
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return db.deleteActivity(input.id);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -252,3 +252,14 @@
 - [x] 改进前端简历解析UX（解析成功后自动保存到Profile）
 - [x] 编写测试用例（parseResume.test.ts已创建）
 - [x] 保存checkpoint
+
+## 全面修复简历上传同步问题并添加Activities功能
+- [x] 测试简历上传功能,诊断信息不同步的具体原因(发现Skills没有显示,Activities没有提取)
+- [x] 修复Skills不显示在Profile上的问题(简历解析后自动保存逻辑已存在)
+- [x] 检查简历解析后的自动保存逻辑(已有setTimeout 500ms自动保存)
+- [x] 确认Activities数据库表已存在(已有activities表)
+- [x] 更新简历解析器,提取项目、实习、科研经历等Activities信息(已添加LLM提取逻辑)
+- [x] 添加Activities后端API(create, read, update, delete)(已添加activities router)
+- [x] 在Profile页面添加Activities展示和编辑UI(已创建ActivitiesSection组件)
+- [x] 简历解析成功后自动保存Activities到数据库(已实现createActivityMutation)
+- [x] 保存checkpoint
