@@ -122,7 +122,7 @@ export default function Profile() {
   });
 
   const parseResumeMutation = trpc.profile.parseResume.useMutation({
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       console.log('[Frontend] Resume parsed successfully!');
       console.log('[Frontend] Parsed data:', data);
       toast.success('Resume parsed successfully!');
@@ -132,39 +132,47 @@ export default function Profile() {
       if (data.activities && data.activities.length > 0) {
         console.log('[Frontend] Saving activities...');
         toast.info(`Saving ${data.activities.length} activities from resume...`);
-        data.activities.forEach((activity: any) => {
-          createActivityMutation.mutate({
-            ...activity,
-            source: 'resume_upload' as const,
-          });
-        });
+        
+        // Save all activities and wait for completion
+        let savedCount = 0;
+        let failedCount = 0;
+        
+        for (const activity of data.activities) {
+          try {
+            await createActivityMutation.mutateAsync({
+              ...activity,
+              source: 'resume_upload' as const,
+            });
+            savedCount++;
+            console.log(`[Frontend] Activity saved: ${activity.title}`);
+          } catch (error) {
+            failedCount++;
+            console.error(`[Frontend] Failed to save activity: ${activity.title}`, error);
+          }
+        }
+        
+        if (savedCount > 0) {
+          toast.success(`Successfully saved ${savedCount} activities!`);
+        }
+        if (failedCount > 0) {
+          toast.error(`Failed to save ${failedCount} activities. Please try again.`);
+        }
       }
       
       // Update form data with parsed information
       console.log('[Frontend] Updating form data...');
       console.log('[Frontend] Current skills:', formData.skills);
       console.log('[Frontend] New skills from resume:', data.skills);
-      setFormData(prev => {
-        const updated = {
-          ...prev,
-          skills: Array.from(new Set([...prev.skills, ...data.skills])),
-          interests: Array.from(new Set([...prev.interests, ...data.interests])),
-          targetMajors: data.targetMajors.length > 0 ? data.targetMajors : prev.targetMajors,
-          gpa: data.gpa || prev.gpa,
-        };
-        // Auto-save to profile after parsing
-        console.log('[Frontend] Updated form data:', updated);
-        setTimeout(() => {
-          console.log('[Frontend] Auto-saving profile...');
-          toast.info('Auto-saving profile with resume information...');
-          upsertMutation.mutate({
-            ...updated,
-            targetUniversities: updated.targetUniversity ? [updated.targetUniversity] : [],
-            academicLevel: updated.academicLevel || undefined,
-          });
-        }, 500);
-        return updated;
-      });
+      setFormData(prev => ({
+        ...prev,
+        skills: Array.from(new Set([...prev.skills, ...data.skills])),
+        interests: Array.from(new Set([...prev.interests, ...data.interests])),
+        targetMajors: data.targetMajors.length > 0 ? data.targetMajors : prev.targetMajors,
+        gpa: data.gpa || prev.gpa,
+      }));
+      
+      // Show success message
+      toast.success('Resume information extracted! Please review and click Save to update your profile.');
     },
     onError: (error: any) => {
       console.error('[Frontend] Parse resume error:', error);
