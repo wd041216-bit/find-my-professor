@@ -263,3 +263,8 @@
 - [x] 在Profile页面添加Activities展示和编辑UI(已创建ActivitiesSection组件)
 - [x] 简历解析成功后自动保存Activities到数据库(已实现createActivityMutation)
 - [x] 保存checkpoint
+
+## 修复CocoaPods安装指南并同步GitHub
+- [ ] 更新iOS打包指南中的CocoaPods安装方法（添加多种安装方式和故障排除）
+- [ ] 同步最新代码到GitHub
+- [ ] 保存checkpoint
