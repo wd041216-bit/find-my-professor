@@ -290,5 +290,5 @@
 - [x] 使用用户真实简历（DA_WEI.pdf）在开发环境测试activities提取（成功提取7个activities）
 - [x] 检查并清理旧网站的简历解析相关代码（未发现旧代码，无需清理）
 - [x] 验证activities提取和显示功能完全正常（11个activities全部正确显示）
-- [ ] 部署到生产环境（通过checkpoint发布）
-- [ ] 指导用户在生产环境测试
+- [x] 部署到生产环境（通过checkpoint发布）（version: d9ea9fa7）
+- [x] 指导用户在生产环境测试（需要用户点击Publish按钮部署）
