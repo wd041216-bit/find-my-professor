@@ -139,10 +139,21 @@ export default function Profile() {
         
         for (const activity of data.activities) {
           try {
-            await createActivityMutation.mutateAsync({
-              ...activity,
+            // Convert null values to undefined to satisfy Zod validation
+            const activityData = {
+              title: activity.title,
+              category: activity.category,
+              organization: activity.organization || undefined,
+              role: activity.role || undefined,
+              description: activity.description || undefined,
+              startDate: activity.startDate || undefined,
+              endDate: activity.endDate || undefined,
+              isCurrent: activity.isCurrent || false,
+              skills: activity.skills || [],
+              achievements: activity.achievements || [],
               source: 'resume_upload' as const,
-            });
+            };
+            await createActivityMutation.mutateAsync(activityData);
             savedCount++;
             console.log(`[Frontend] Activity saved: ${activity.title}`);
           } catch (error) {
