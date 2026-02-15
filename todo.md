@@ -278,3 +278,10 @@
 - [x] 改进activities保存流程（使用async/await确保所有activities保存完成）
 - [x] 添加保存成功/失败反馈（显示保存计数和错误信息）
 - [ ] 保存checkpoint
+
+## 彻底修复简历Activities解析和显示问题
+- [x] 检查后端parseResume实现和LLM提取逻辑（后端正常，LLM成功提取activities）
+- [x] 检查前端Profile.tsx的activities保存逻辑（发现null值导致Zod验证失败）
+- [x] 使用真实简历测试并调试完整流程（通过浏览器实时测试定位问题）
+- [x] 修复所有发现的问题并端到端验证（将null转换为undefined，4个activities全部保存并显示成功）
+- [ ] 保存checkpoint
