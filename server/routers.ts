@@ -72,13 +72,8 @@ export const appRouter = router({
         fileName: z.string(),
       }))
       .mutation(async ({ input }) => {
-        console.log('[ParseResume] Starting resume parsing...');
-        console.log('[ParseResume] File name:', input.fileName);
-        console.log('[ParseResume] File content length:', input.fileContent.length);
-        
         const { invokeLLM } = await import("./_core/llm");
-        // pdf-parse v2 uses PDFParse class
-        const { PDFParse } = await import('pdf-parse');
+        const pdfParse = await import('pdf-parse');
         const mammoth = await import('mammoth');
         
         // Extract file content from base64
@@ -87,29 +82,24 @@ export const appRouter = router({
         
         // Convert PDF/DOCX to text using proper parsers
         let resumeText = '';
-        console.log('[ParseResume] Extracting text from file...');
         try {
           if (input.fileName.endsWith('.pdf')) {
-            // Use pdf-parse v2 for PDF files
-            const parser = new PDFParse({ data: fileBuffer });
-            const pdfData = await parser.getText();
+            // Use pdf-parse for PDF files
+            const pdfData = await (pdfParse as any)(fileBuffer);
             resumeText = pdfData.text;
-            console.log('[ParseResume] PDF text extracted, length:', resumeText.length);
           } else if (input.fileName.endsWith('.docx')) {
             // Use mammoth for DOCX files
             const result = await mammoth.extractRawText({ buffer: fileBuffer });
             resumeText = result.value;
-            console.log('[ParseResume] DOCX text extracted, length:', resumeText.length);
           } else {
             throw new Error('Unsupported file format. Please upload PDF or DOCX.');
           }
         } catch (parseError) {
-          console.error('[ParseResume] File parsing error:', parseError);
+          console.error('File parsing error:', parseError);
           throw new Error('Failed to parse resume file. Please ensure it is a valid PDF or DOCX file.');
         }
         
         // Use LLM to parse resume
-        console.log('[ParseResume] Calling LLM to parse resume...');
         const response = await invokeLLM({
           messages: [
             {
@@ -217,11 +207,7 @@ Return ONLY a JSON object with this structure:
         });
         
         const content = response.choices[0].message.content;
-        console.log('[ParseResume] LLM response received');
         const parsed = JSON.parse(typeof content === 'string' ? content : JSON.stringify(content));
-        console.log('[ParseResume] Parsed data:', JSON.stringify(parsed, null, 2));
-        console.log('[ParseResume] Skills count:', parsed.skills?.length || 0);
-        console.log('[ParseResume] Activities count:', parsed.activities?.length || 0);
         return parsed;
       }),
   }),
