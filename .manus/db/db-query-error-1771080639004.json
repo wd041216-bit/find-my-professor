@@ -1,0 +1,22 @@
+{
+  "query": "SHOW TABLES; SELECT * FROM user WHERE id = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SHOW TABLES; SELECT * FROM user WHERE id = 1;",
+  "returncode": 1,
+  "logs": [
+    "Tables_in_hB2F5YxeXakQRcL5WU36Vw",
+    "__drizzle_migrations",
+    "activities",
+    "announcements",
+    "cover_letters",
+    "error_logs",
+    "professors",
+    "research_field_tag_mapping",
+    "research_tags_dictionary",
+    "student_likes",
+    "student_profiles",
+    "student_swipes",
+    "university_field_images",
+    "users",
+    "ERROR 1146 (42S02) at line 1: Table 'hb2f5yxexakqrcl5wu36vw.user' doesn't exist"
+  ]
+}
