@@ -267,4 +267,4 @@
 ## 修复CocoaPods安装指南并同步GitHub
 - [x] 更新iOS打包指南中的CocoaPods安装方法（添加了3种安装方式和详细故障排除）
 - [x] 同步最新代码到GitHub（commit: 66ef76e）
-- [ ] 保存checkpoint
+- [x] 保存checkpoint（version: 53b78c3e）
