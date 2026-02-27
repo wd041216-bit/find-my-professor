@@ -298,7 +298,7 @@ export function Swipe() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-16 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-32 md:pb-24">
       {/* Desktop Header Navigation */}
       <DesktopHeader
         onResetClick={handleResetSwipeHistory}

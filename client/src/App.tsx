@@ -46,9 +46,13 @@ export default function App() {
             <TooltipProvider>
               <StructuredData />
               <TimezoneSync />
-              <Router />
+              <div className="flex flex-col min-h-screen">
+                <div className="flex-1">
+                  <Router />
+                </div>
+                <Footer />
+              </div>
               <BottomNav />
-              <Footer />
             </TooltipProvider>
           </LanguageProvider>
         </ThemeProvider>
