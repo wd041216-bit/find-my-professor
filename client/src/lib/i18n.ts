@@ -472,6 +472,16 @@ export const translations = {
         noAnnouncements: "No announcements yet",
       },
     },
+    // Policy Pages
+    policy: {
+      privacyPolicy: "Privacy Policy",
+      termsOfService: "Terms of Service",
+      professorPolicy: "Professor Policy",
+      version: "Version",
+      effectiveDate: "Effective Date",
+      lastUpdated: "Last Updated",
+      contactEmail: "support@profmatch.com",
+    },
   },
   zh: {
     // Navigation
@@ -940,6 +950,16 @@ export const translations = {
         active: "活跃",
         noAnnouncements: "还没有公告",
       },
+    },
+    // Policy Pages
+    policy: {
+      privacyPolicy: "隐私政策",
+      termsOfService: "服务条款",
+      professorPolicy: "教授政策",
+      version: "版本",
+      effectiveDate: "生效日期",
+      lastUpdated: "最后更新",
+      contactEmail: "support@profmatch.com",
     },
   },
 };

@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Home, Heart, FileText, User, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NavItem {
   icon: React.ElementType;
@@ -8,15 +9,16 @@ interface NavItem {
   path: string;
 }
 
-const navItems: NavItem[] = [
-  { icon: Home, label: "Swipe", path: "/" },
-  { icon: Heart, label: "Matches", path: "/history" },
-  { icon: FileText, label: "Letters", path: "/cover-letters" },
-  { icon: User, label: "Profile", path: "/profile" },
-];
-
 export function BottomNav() {
   const [location] = useLocation();
+  const { language } = useLanguage();
+
+  const navItems: NavItem[] = [
+    { icon: Home, label: language === "en" ? "Swipe" : "滑动", path: "/" },
+    { icon: Heart, label: language === "en" ? "Matches" : "匹配", path: "/history" },
+    { icon: FileText, label: language === "en" ? "Letters" : "文书", path: "/cover-letters" },
+    { icon: User, label: language === "en" ? "Profile" : "资料", path: "/profile" },
+  ];
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
