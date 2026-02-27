@@ -86,14 +86,18 @@ export function Swipe() {
     };
     console.log('[Swipe] processedFilters:', processedFilters);
     
-    setFilters(processedFilters);
-    
-    // Reset state when filters change
+    // Reset state FIRST before updating filters
     setAllProfessors([]);
     setCurrentBatch(0);
     setCurrentIndex(0);
     setIsLoadingMore(false);
-  }, []);
+
+    // Update filters (this triggers query key change → automatic refetch)
+    setFilters(processedFilters);
+
+    // Also invalidate the query cache to force fresh data regardless of key equality
+    utils.swipe.getProfessorsToSwipe.invalidate();
+  }, [utils]);
 
   // Fetch professors from API - infinite batches with filters
   const { data: professorsData, isLoading: professorsLoading } = trpc.swipe.getProfessorsToSwipe.useQuery(
