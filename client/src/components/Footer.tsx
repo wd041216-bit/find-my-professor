@@ -16,20 +16,14 @@ export function Footer() {
 
           {/* Policy Links */}
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            <Link href="/privacy-policy">
-              <a className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                {t.policy.privacyPolicy}
-              </a>
+            <Link href="/privacy-policy" className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
+              {t.policy.privacyPolicy}
             </Link>
-            <Link href="/terms-of-service">
-              <a className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                {t.policy.termsOfService}
-              </a>
+            <Link href="/terms-of-service" className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
+              {t.policy.termsOfService}
             </Link>
-            <Link href="/professor-policy">
-              <a className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
-                {t.policy.professorPolicy}
-              </a>
+            <Link href="/professor-policy" className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
+              {t.policy.professorPolicy}
             </Link>
           </div>
 

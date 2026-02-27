@@ -329,4 +329,10 @@
 - [x] 添加语言切换按钮到导航栏（DesktopHeader中已添加）
 - [x] 测试语言切换功能（中英文切换正常）
 - [x] 测试所有页面的中英文显示（导航、页脚、政策页面均正常）
+- [x] 保存checkpoint（version: 79a35119）
+
+## 修复Footer嵌套anchor标签错误
+- [x] 检查Footer组件中的Link使用方式（发现Link内部嵌套了<a>标签）
+- [x] 移除Link内部的嵌套<a>标签（直接将className移至Link组件）
+- [x] 测试修复后没有React DOM警告（浏览器控制台无错误）
 - [ ] 保存checkpoint
