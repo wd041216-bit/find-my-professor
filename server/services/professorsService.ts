@@ -261,7 +261,7 @@ export async function getProfessorsForSwipe(
     // Major is optional - if not provided, search all professors at the university
 
     // 如果用户通过Filter选择了university，使用Filter的university；否则使用profile的target university
-    const university = filterUniversity || targetUniversities[0];
+    const university = filterUniversity && filterUniversity !== '__all__' ? filterUniversity : (targetUniversities[0] || null);
     
     // 如果用户通过Filter选择了research field，忽略profile的targetMajors，查询全校教授然后通过filter过滤
     // 否则使用profile的targetMajors
@@ -270,10 +270,58 @@ export async function getProfessorsForSwipe(
 
     console.log('[Professors] Querying with university:', university, 'major:', major, 'filterResearchField:', filterResearchField);
 
-    // 优化：如果用户选择了research field，查询更多教授以确保有足够的结果
-    // 因为research field筛选会大幅减少结果数量
+    // 优化：如果用户只选择了research field（没有选university），从全库查询该领域教授
     const queryLimit = filterResearchField ? 1000 : Math.min(limit * 3, 300);
-    let allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, undefined);
+    
+    let allProfessors: ProfessorWithScore[];
+    if (filterResearchField && !filterUniversity) {
+      // 只有research field filter时，直接按research_field从全库查询，不限制大学
+      console.log('[Professors] Research field only filter - querying all universities for field:', filterResearchField);
+      const rawDb = await getDb();
+      if (!rawDb) return [];
+      const fieldProfs = await rawDb
+        .select()
+        .from(professors)
+        .where(sql`LOWER(research_field) = LOWER(${filterResearchField})`)
+        .limit(queryLimit);
+      
+      // Build a map of university -> image_url for this research field from university_field_images
+      const uniImageMap = new Map<string, string>();
+      try {
+        const escapedField = filterResearchField.replace(/'/g, "''");
+        const imgQuery = sql.raw(`SELECT university_name, image_url FROM university_field_images WHERE LOWER(research_field_name) = LOWER('${escapedField}')`);
+        const imgResult = await rawDb.execute(imgQuery);
+        const imgRows = imgResult[0] as unknown as any[];
+        if (imgRows) {
+          for (const row of imgRows) {
+            const uniName = row.university_name || row[0];
+            const imgUrl = row.image_url || row[1];
+            if (uniName && imgUrl) uniImageMap.set(uniName.toLowerCase(), imgUrl);
+          }
+        }
+      } catch (e) {
+        console.error('[Professors] Failed to fetch field images:', e);
+      }
+      
+      // Map to ProfessorWithScore format (Drizzle uses camelCase)
+      allProfessors = fieldProfs.map(prof => ({
+        id: prof.id,
+        name: prof.name,
+        title: prof.title || '',
+        department: prof.department || '',
+        universityName: prof.universityName || '',
+        researchAreas: prof.researchAreas ? (typeof prof.researchAreas === 'string' ? (() => { try { return JSON.parse(prof.researchAreas as string); } catch { return [prof.researchAreas as string]; } })() : prof.researchAreas) : [],
+        tags: prof.tags ? (typeof prof.tags === 'string' ? JSON.parse(prof.tags) : prof.tags) : [],
+        research_field: prof.research_field || '',
+        schoolImageUrl: uniImageMap.get((prof.universityName || '').toLowerCase()) || prof.imageUrl || undefined,
+        matchScore: undefined,
+        displayScore: undefined,
+        matchedTags: [],
+        imageUrl: prof.imageUrl || undefined,
+      }));
+    } else {
+      allProfessors = await getProfessorsFromDatabase(university || targetUniversities[0], major, queryLimit, undefined);
+    }
     
     console.log('[Professors] Query returned:', allProfessors.length, 'professors');
 
