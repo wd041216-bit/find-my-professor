@@ -178,7 +178,7 @@ export function Swipe() {
               <div className="w-10 h-10 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xl font-bold">🔥</span>
               </div>
-              <span className="text-xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">Find My Professor</span>
+              <span className="text-xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">ProfMatch</span>
             </a>
           </div>
         </header>
@@ -220,19 +220,9 @@ export function Swipe() {
     );
   }
 
-  const getRandomAnimation = (direction: 'left' | 'right'): AnimationVariant => {
-    return ANIMATION_VARIANTS[Math.floor(Math.random() * ANIMATION_VARIANTS.length)];
-  };
-
   const handleSwipe = (direction: 'left' | 'right', professor: Professor) => {
     const action = direction === 'right' ? 'like' : 'pass';
     setLastAction(action);
-
-    // Set random animation
-    setCardAnimation({
-      variant: getRandomAnimation(direction),
-      direction,
-    });
 
     // Save swipe to database
     swipeMutation.mutate({
@@ -240,12 +230,12 @@ export function Swipe() {
       liked: action === 'like',
     });
 
-    // Move to next professor after animation completes
+    // Move to next professor after animation completes (ProfessorCard handles its own exit animation)
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
       setLastAction(null);
       setCardAnimation(null);
-    }, 1000); // Increased from 600ms to 1000ms for more visible animation
+    }, 550);
   };
 
   const handleButtonClick = (action: 'pass' | 'like') => {
@@ -254,9 +244,9 @@ export function Swipe() {
     const direction: 'left' | 'right' = action === 'like' ? 'right' : 'left';
     setLastAction(action);
 
-    // Set random animation
+    // Trigger card exit animation via the animation prop
     setCardAnimation({
-      variant: getRandomAnimation(direction),
+      variant: direction === 'right' ? 'fly-right' : 'fly-left',
       direction,
     });
 
@@ -271,7 +261,7 @@ export function Swipe() {
       setCurrentIndex(currentIndex + 1);
       setLastAction(null);
       setCardAnimation(null);
-    }, 1000); // Increased from 600ms to 1000ms for more visible animation
+    }, 600);
   };
 
   const handleUndo = () => {
@@ -355,19 +345,24 @@ export function Swipe() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="flex-1 flex items-center justify-center p-1 md:p-2">
+      <div className="flex-1 flex items-center justify-center p-2 md:p-4">
         <div 
           id="card-stack-container"
-          className="relative w-full max-w-sm md:max-w-md" 
+          className="relative w-full max-w-sm md:max-w-lg lg:max-w-xl" 
           style={{ 
-            height: 'min(420px, 55vh)' // Mobile: optimized height for one-screen display
+            height: 'min(460px, 58vh)' // Mobile: optimized height for one-screen display
           }}
         >
           {/* Desktop/Tablet: use larger height via media query */}
           <style>{`
             @media (min-width: 768px) {
               #card-stack-container {
-                height: min(580px, 75vh) !important;
+                height: min(640px, 78vh) !important;
+              }
+            }
+            @media (min-width: 1024px) {
+              #card-stack-container {
+                height: min(700px, 80vh) !important;
               }
             }
           `}</style>

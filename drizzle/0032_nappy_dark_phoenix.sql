@@ -1,0 +1,1 @@
+ALTER TABLE `professors` ADD `image_url` text;

@@ -1,6 +1,6 @@
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { Sparkles, Info } from 'lucide-react';
-import { useState } from 'react';
+import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from 'framer-motion';
+import { Info } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
 
 export interface Professor {
@@ -8,7 +8,7 @@ export interface Professor {
   name: string;
   universityName: string;
   department: string;
-  researchField?: string; // Standardized research field
+  researchField?: string;
   title?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
@@ -29,167 +29,257 @@ interface ProfessorCardProps {
   professor: Professor;
   onSwipe: (direction: 'left' | 'right', professor: Professor) => void;
   style?: React.CSSProperties;
-  isMinimalProfile?: boolean; // Whether user has minimal profile
-  animation?: CardAnimation | null; // Animation to play
+  isMinimalProfile?: boolean;
+  animation?: CardAnimation | null;
 }
 
-export function ProfessorCard({ professor, onSwipe, style, isMinimalProfile = false, animation = null }: ProfessorCardProps) {
-  const x = useMotionValue(0);
-  const [exitX, setExitX] = useState(0);
-  const [showInfo, setShowInfo] = useState(false);
-  
-  // Get animation config based on variant
-  const getAnimationConfig = (anim: CardAnimation | null) => {
-    if (!anim) return {};
-    
-    const animations = {
-      'fly-left': { x: -1500, rotate: -60, scale: 0.5, opacity: 0 },
-      'fly-right': { x: 1500, rotate: 60, scale: 0.5, opacity: 0 },
-      'rotate-fade': { rotate: 720, scale: 0, opacity: 0 },
-      'scale-fade': { scale: 0, opacity: 0 },
-      'flip-out': { rotateY: 180, scale: 0.1, opacity: 0 },
-      'explode': { scale: 0, rotate: 540, opacity: 0 },
-    };
-    
-    return animations[anim.variant] || {};
-  };
-  
-  // Tinder-like rotation (more subtle)
-  const rotate = useTransform(x, [-200, 200], [-15, 15]);
-  
-  // Smooth opacity transitions for indicators
-  const likeOpacity = useTransform(x, [10, 100], [0, 1]);
-  const nopeOpacity = useTransform(x, [-100, -10], [1, 0]);
+// LIKE exit: flies RIGHT, tilts clockwise — joyful, energetic
+const LIKE_EXIT = {
+  x: 1600,
+  y: -100,
+  rotate: 28,
+  scale: 0.88,
+  opacity: 0,
+};
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    // Lower threshold for easier swiping (like Tinder)
-    const threshold = 100;
-    const velocity = Math.abs(info.velocity.x);
-    
-    // Consider both distance and velocity (Tinder-like behavior)
-    if (Math.abs(info.offset.x) > threshold || velocity > 500) {
-      const direction = info.offset.x > 0 ? 'right' : 'left';
-      setExitX(info.offset.x > 0 ? 1000 : -1000);
-      onSwipe(direction, professor);
+// NOPE exit: flies LEFT, tilts counter-clockwise — dismissive
+const NOPE_EXIT = {
+  x: -1600,
+  y: -100,
+  rotate: -28,
+  scale: 0.88,
+  opacity: 0,
+};
+
+const EXIT_TRANSITION = {
+  duration: 0.52,
+  ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+};
+
+export function ProfessorCard({
+  professor,
+  onSwipe,
+  style,
+  animation = null,
+}: ProfessorCardProps) {
+  const x = useMotionValue(0);
+  const [showInfo, setShowInfo] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
+
+  // Tinder-like rotation while dragging
+  const rotate = useTransform(x, [-250, 250], [-18, 18]);
+
+  // LIKE / NOPE stamp opacity tied to drag position
+  const likeOpacity = useTransform(x, [20, 120], [0, 1]);
+  const nopeOpacity = useTransform(x, [-120, -20], [1, 0]);
+
+  // Colored glow overlays tied to drag
+  const likeGlowOpacity = useTransform(x, [0, 150], [0, 1]);
+  const nopeGlowOpacity = useTransform(x, [-150, 0], [1, 0]);
+
+  // Respond to external animation prop (button clicks from parent)
+  useEffect(() => {
+    if (animation && !isExiting) {
+      const dir = animation.direction;
+      setIsExiting(true);
+      setExitDirection(dir);
+      // Parent already advances the index; no need to call onSwipe here
     }
+  }, [animation]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleDragEnd = (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (isExiting) return;
+    const threshold = 100;
+    if (Math.abs(info.offset.x) > threshold || Math.abs(info.velocity.x) > 500) {
+      const dir = info.offset.x > 0 ? 'right' : 'left';
+      setIsExiting(true);
+      setExitDirection(dir);
+      setTimeout(() => onSwipe(dir, professor), 480);
+    }
+  };
+
+  const exitTarget = isExiting
+    ? exitDirection === 'right' ? LIKE_EXIT : NOPE_EXIT
+    : { x: 0 };
+
+  const exitTransition = isExiting ? EXIT_TRANSITION : {
+    type: 'spring' as const,
+    stiffness: 300,
+    damping: 25,
+    mass: 0.7,
   };
 
   return (
     <motion.div
       style={{
-        // Only apply drag styles when no animation is playing
-        ...(animation ? {} : { x, rotate }),
+        x: isExiting ? undefined : x,
+        rotate: isExiting ? undefined : rotate,
         ...style,
       }}
-      drag={animation ? false : "x"}
+      drag={isExiting ? false : 'x'}
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.7}
+      dragElastic={0.75}
       onDragEnd={handleDragEnd}
-      animate={animation ? getAnimationConfig(animation) : { x: exitX }}
-      transition={animation ? {
-        duration: 0.6,
-        ease: 'easeInOut'
-      } : { 
-        type: 'spring', 
-        stiffness: 200, 
-        damping: 20,
-        mass: 0.8
-      }}
-      className="absolute w-full h-full cursor-grab active:cursor-grabbing"
+      animate={exitTarget}
+      transition={exitTransition}
+      className="absolute w-full h-full cursor-grab active:cursor-grabbing select-none"
     >
       <div className="relative w-full h-full rounded-3xl shadow-2xl overflow-hidden">
-        {/* Like/Nope Indicators - Tinder style */}
+
+        {/* ── Green glow (drag right) ── */}
         <motion.div
-          style={{ opacity: likeOpacity }}
-          className="absolute top-12 right-12 z-10 px-8 py-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white font-black text-3xl rounded-2xl rotate-12 shadow-lg border-4 border-white"
-        >
-          LIKE
-        </motion.div>
+          className="absolute inset-0 z-10 pointer-events-none rounded-3xl"
+          style={{
+            background: 'radial-gradient(circle at 50% 40%, rgba(34,197,94,0.38) 0%, transparent 65%)',
+            opacity: isExiting && exitDirection === 'right' ? 0 : likeGlowOpacity,
+          }}
+        />
+        {/* ── Red glow (drag left) ── */}
         <motion.div
-          style={{ opacity: nopeOpacity }}
-          className="absolute top-12 left-12 z-10 px-8 py-4 bg-gradient-to-r from-red-400 to-pink-500 text-white font-black text-3xl rounded-2xl -rotate-12 shadow-lg border-4 border-white"
+          className="absolute inset-0 z-10 pointer-events-none rounded-3xl"
+          style={{
+            background: 'radial-gradient(circle at 50% 40%, rgba(239,68,68,0.38) 0%, transparent 65%)',
+            opacity: isExiting && exitDirection === 'left' ? 0 : nopeGlowOpacity,
+          }}
+        />
+
+        {/* ── Green flash on LIKE exit ── */}
+        {isExiting && exitDirection === 'right' && (
+          <motion.div
+            className="absolute inset-0 z-10 pointer-events-none rounded-3xl"
+            initial={{ opacity: 0.55 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{ background: 'radial-gradient(circle at 50% 40%, rgba(34,197,94,0.55) 0%, transparent 70%)' }}
+          />
+        )}
+        {/* ── Red flash on NOPE exit ── */}
+        {isExiting && exitDirection === 'left' && (
+          <motion.div
+            className="absolute inset-0 z-10 pointer-events-none rounded-3xl"
+            initial={{ opacity: 0.55 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{ background: 'radial-gradient(circle at 50% 40%, rgba(239,68,68,0.55) 0%, transparent 70%)' }}
+          />
+        )}
+
+        {/* ── LIKE stamp — top-right, clockwise tilt ── */}
+        <motion.div
+          className="absolute top-10 right-7 z-20 pointer-events-none"
+          style={{
+            opacity: isExiting && exitDirection === 'right' ? 1 : (likeOpacity as any),
+            background: 'linear-gradient(135deg, #22c55e, #15803d)',
+            color: 'white',
+            padding: '10px 24px',
+            borderRadius: '12px',
+            border: '3px solid rgba(255,255,255,0.9)',
+            transform: 'rotate(14deg)',
+            fontWeight: 900,
+            fontSize: '22px',
+            letterSpacing: '2px',
+            boxShadow: '0 6px 24px rgba(34,197,94,0.55)',
+          }}
         >
-          NOPE
+          LIKE ❤️
         </motion.div>
 
-        {/* School Image Background - Fills entire card like Tinder */}
+        {/* ── NOPE stamp — top-left, counter-clockwise tilt ── */}
+        <motion.div
+          className="absolute top-10 left-7 z-20 pointer-events-none"
+          style={{
+            opacity: isExiting && exitDirection === 'left' ? 1 : (nopeOpacity as any),
+            background: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+            color: 'white',
+            padding: '10px 24px',
+            borderRadius: '12px',
+            border: '3px solid rgba(255,255,255,0.9)',
+            transform: 'rotate(-14deg)',
+            fontWeight: 900,
+            fontSize: '22px',
+            letterSpacing: '2px',
+            boxShadow: '0 6px 24px rgba(239,68,68,0.55)',
+          }}
+        >
+          NOPE 👎
+        </motion.div>
+
+        {/* ── Background image ── */}
         <div className="absolute inset-0">
           {(() => {
-            // Try to get university-specific field image first
-            const fieldImage = professor.researchField 
+            const fieldImage = professor.researchField
               ? getProfessorBackgroundImage(professor.universityName, professor.researchField)
               : null;
-            
-            // Fallback to schoolImageUrl, then generic gradient
             const imageUrl = fieldImage || professor.schoolImageUrl;
-            
             return imageUrl ? (
-              <img 
-                src={imageUrl} 
+              <img
+                src={imageUrl}
                 alt={`${professor.universityName} ${professor.researchField || professor.department}`}
                 className="w-full h-full object-cover"
+                draggable={false}
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400" />
             );
           })()}
-          
-          {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+          {/* Dark gradient for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
         </div>
 
-        {/* Info Toggle Button - Top Right */}
+        {/* ── Info toggle ── */}
         <button
-          onClick={() => setShowInfo(!showInfo)}
-          className="absolute top-6 right-6 z-20 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all"
+          onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
+          className="absolute top-5 right-5 z-30 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all active:scale-95"
         >
-          <Info className="w-6 h-6 text-purple-600" />
+          <Info className="w-5 h-5 text-purple-600" />
         </button>
 
-        {/* Bottom Info Overlay - Tinder style */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-          {/* Name and Basic Info */}
-          <div className="mb-4">
-            <h2 className="text-4xl font-black text-white mb-2 drop-shadow-lg">
+        {/* ── Bottom info ── */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-20">
+          <div className="mb-3">
+            <h2 className="text-3xl font-black text-white mb-1 drop-shadow-lg leading-tight">
               {professor.name}
-              {/* Match score removed from swipe cards - only shown in Match History */}
             </h2>
-            <p className="text-lg text-white/90 drop-shadow-md">{professor.department}</p>
-            <p className="text-lg text-white/85 drop-shadow-md">{professor.universityName}</p>
+            <p className="text-base text-white/90 drop-shadow-md">{professor.department}</p>
+            <p className="text-base text-white/80 drop-shadow-md font-medium">{professor.universityName}</p>
           </div>
 
-          {/* Research Interests - Expandable */}
-          {showInfo && professor.tags && professor.tags.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl"
-            >
-              <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Research Interests</h3>
-              <div className="flex flex-wrap gap-2">
-                {professor.tags.slice(0, 6).map((tag, index) => {
-                  const colors = [
-                    'bg-gradient-to-r from-blue-400 to-blue-600',
-                    'bg-gradient-to-r from-purple-400 to-purple-600',
-                    'bg-gradient-to-r from-pink-400 to-pink-600',
-                    'bg-gradient-to-r from-orange-400 to-orange-600',
-                    'bg-gradient-to-r from-teal-400 to-teal-600',
-                    'bg-gradient-to-r from-indigo-400 to-indigo-600',
-                  ];
-                  const colorClass = colors[index % colors.length];
-                  
-                  return (
-                    <span
-                      key={index}
-                      className={`px-3 py-1.5 ${colorClass} text-white rounded-full text-sm font-semibold shadow-md`}
-                    >
-                      {tag}
-                    </span>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {showInfo && professor.tags && professor.tags.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl"
+              >
+                <h3 className="text-xs font-bold text-gray-600 mb-2.5 uppercase tracking-wider">
+                  Research Interests
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {professor.tags.slice(0, 6).map((tag, i) => {
+                    const colors = [
+                      'from-blue-500 to-blue-700',
+                      'from-purple-500 to-purple-700',
+                      'from-pink-500 to-pink-700',
+                      'from-orange-500 to-orange-700',
+                      'from-teal-500 to-teal-700',
+                      'from-indigo-500 to-indigo-700',
+                    ];
+                    return (
+                      <span
+                        key={i}
+                        className={`px-2.5 py-1 bg-gradient-to-r ${colors[i % colors.length]} text-white rounded-full text-xs font-semibold shadow`}
+                      >
+                        {tag}
+                      </span>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.div>

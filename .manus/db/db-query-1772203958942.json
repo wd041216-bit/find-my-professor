@@ -1,0 +1,232 @@
+{
+  "query": "\nSELECT \n  university_name,\n  COUNT(*) as total_professors,\n  SUM(CASE WHEN image_url IS NOT NULL THEN 1 ELSE 0 END) as with_image,\n  ROUND(SUM(CASE WHEN image_url IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*) * 100, 1) as image_pct\nFROM professors\nGROUP BY university_name\nORDER BY total_professors DESC;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute \nSELECT \n  university_name,\n  COUNT(*) as total_professors,\n  SUM(CASE WHEN image_url IS NOT NULL THEN 1 ELSE 0 END) as with_image,\n  ROUND(SUM(CASE WHEN image_url IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*) * 100, 1) as image_pct\nFROM professors\nGROUP BY university_name\nORDER BY total_professors DESC;\n",
+  "rows": [
+    {
+      "university_name": "University of Pennsylvania",
+      "total_professors": "525",
+      "with_image": "525",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Washington",
+      "total_professors": "403",
+      "with_image": "145",
+      "image_pct": "36.0"
+    },
+    {
+      "university_name": "Princeton University",
+      "total_professors": "332",
+      "with_image": "71",
+      "image_pct": "21.4"
+    },
+    {
+      "university_name": "Harvard University",
+      "total_professors": "267",
+      "with_image": "118",
+      "image_pct": "44.2"
+    },
+    {
+      "university_name": "Stanford University",
+      "total_professors": "256",
+      "with_image": "103",
+      "image_pct": "40.2"
+    },
+    {
+      "university_name": "University of Chicago",
+      "total_professors": "246",
+      "with_image": "245",
+      "image_pct": "99.6"
+    },
+    {
+      "university_name": "University of California, Santa Barbara",
+      "total_professors": "236",
+      "with_image": "235",
+      "image_pct": "99.6"
+    },
+    {
+      "university_name": "Tufts University",
+      "total_professors": "234",
+      "with_image": "234",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Washington University in St. Louis",
+      "total_professors": "208",
+      "with_image": "208",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Yale University",
+      "total_professors": "198",
+      "with_image": "198",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Notre Dame",
+      "total_professors": "195",
+      "with_image": "195",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Florida",
+      "total_professors": "179",
+      "with_image": "179",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Southern California",
+      "total_professors": "168",
+      "with_image": "168",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "MIT",
+      "total_professors": "164",
+      "with_image": "37",
+      "image_pct": "22.6"
+    },
+    {
+      "university_name": "University of California, Los Angeles",
+      "total_professors": "157",
+      "with_image": "157",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Northwestern University",
+      "total_professors": "156",
+      "with_image": "156",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Virginia",
+      "total_professors": "154",
+      "with_image": "132",
+      "image_pct": "85.7"
+    },
+    {
+      "university_name": "University of North Carolina at Chapel Hill",
+      "total_professors": "147",
+      "with_image": "147",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Ohio State University",
+      "total_professors": "141",
+      "with_image": "0",
+      "image_pct": "0.0"
+    },
+    {
+      "university_name": "Georgetown University",
+      "total_professors": "133",
+      "with_image": "133",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Columbia University",
+      "total_professors": "126",
+      "with_image": "98",
+      "image_pct": "77.8"
+    },
+    {
+      "university_name": "Johns Hopkins University",
+      "total_professors": "126",
+      "with_image": "78",
+      "image_pct": "61.9"
+    },
+    {
+      "university_name": "Duke University",
+      "total_professors": "113",
+      "with_image": "113",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Vanderbilt University",
+      "total_professors": "108",
+      "with_image": "108",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Carnegie Mellon University",
+      "total_professors": "94",
+      "with_image": "94",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Texas at Dallas",
+      "total_professors": "88",
+      "with_image": "0",
+      "image_pct": "0.0"
+    },
+    {
+      "university_name": "Northeastern University",
+      "total_professors": "86",
+      "with_image": "0",
+      "image_pct": "0.0"
+    },
+    {
+      "university_name": "Villanova University",
+      "total_professors": "79",
+      "with_image": "79",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Brown University",
+      "total_professors": "78",
+      "with_image": "78",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Miami",
+      "total_professors": "74",
+      "with_image": "74",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Rensselaer Polytechnic Institute",
+      "total_professors": "72",
+      "with_image": "72",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Rice University",
+      "total_professors": "72",
+      "with_image": "46",
+      "image_pct": "63.9"
+    },
+    {
+      "university_name": "Lehigh University",
+      "total_professors": "69",
+      "with_image": "68",
+      "image_pct": "98.6"
+    },
+    {
+      "university_name": "California Institute of Technology",
+      "total_professors": "67",
+      "with_image": "67",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "University of Michigan",
+      "total_professors": "36",
+      "with_image": "36",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Dartmouth College",
+      "total_professors": "15",
+      "with_image": "15",
+      "image_pct": "100.0"
+    },
+    {
+      "university_name": "Pepperdine University",
+      "total_professors": "4",
+      "with_image": "0",
+      "image_pct": "0.0"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_name\ttotal_professors\twith_image\timage_pct\nUniversity of Pennsylvania\t525\t525\t100.0\nUniversity of Washington\t403\t145\t36.0\nPrinceton University\t332\t71\t21.4\nHarvard University\t267\t118\t44.2\nStanford University\t256\t103\t40.2\nUniversity of Chicago\t246\t245\t99.6\nUniversity of California, Santa Barbara\t236\t235\t99.6\nTufts University\t234\t234\t100.0\nWashington University in St. Louis\t208\t208\t100.0\nYale University\t198\t198\t100.0\nUniversity of Notre Dame\t195\t195\t100.0\nUniversity of Florida\t179\t179\t100.0\nUniversity of Southern California\t168\t168\t100.0\nMIT\t164\t37\t22.6\nUniversity of California, Los Angeles\t157\t157\t100.0\nNorthwestern University\t156\t156\t100.0\nUniversity of Virginia\t154\t132\t85.7\nUniversity of North Carolina at Chapel Hill\t147\t147\t100.0\nOhio State University\t141\t0\t0.0\nGeorgetown University\t133\t133\t100.0\nColumbia University\t126\t98\t77.8\nJohns Hopkins University\t126\t78\t61.9\nDuke University\t113\t113\t100.0\nVanderbilt University\t108\t108\t100.0\nCarnegie Mellon University\t94\t94\t100.0\nUniversity of Texas at Dallas\t88\t0\t0.0\nNortheastern University\t86\t0\t0.0\nVillanova University\t79\t79\t100.0\nBrown University\t78\t78\t100.0\nUniversity of Miami\t74\t74\t100.0\nRensselaer Polytechnic Institute\t72\t72\t100.0\nRice University\t72\t46\t63.9\nLehigh University\t69\t68\t98.6\nCalifornia Institute of Technology\t67\t67\t100.0\nUniversity of Michigan\t36\t36\t100.0\nDartmouth College\t15\t15\t100.0\nPepperdine University\t4\t0\t0.0\n",
+  "stderr": "",
+  "execution_time_ms": 1537
+}
