@@ -18,6 +18,9 @@ import { Privacy } from "./pages/Privacy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import ProfessorPolicy from "./pages/ProfessorPolicy";
+import PrivacyPolicyZh from "./pages/PrivacyPolicyZh";
+import TermsOfServiceZh from "./pages/TermsOfServiceZh";
+import ProfessorPolicyZh from "./pages/ProfessorPolicyZh";
 
 function Router() {
   return (
@@ -29,8 +32,11 @@ function Router() {
       <Route path={"/cover-letters"} component={CoverLetters} />
       <Route path={"/privacy"} component={Privacy} />
       <Route path={"/privacy-policy"} component={PrivacyPolicy} />
+      <Route path={"/privacy-policy-zh"} component={PrivacyPolicyZh} />
       <Route path={"/terms-of-service"} component={TermsOfService} />
+      <Route path={"/terms-of-service-zh"} component={TermsOfServiceZh} />
       <Route path={"/professor-policy"} component={ProfessorPolicy} />
+      <Route path={"/professor-policy-zh"} component={ProfessorPolicyZh} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
