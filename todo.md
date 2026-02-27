@@ -343,4 +343,17 @@
 - [x] 为所有页面添加底部padding（pb-32 md:pb-24）
 - [x] 测试Complete Profile按钮跳转功能（按钮已有正确逻辑）
 - [x] 测试页脚在不同页面的显示效果（Profile页面页脚正常显示）
+- [x] 保存checkpoint（version: e5bf4d3a）
+
+## 修复所有页面页脚并添加政策页面中英文切换
+- [x] 检查所有页面组件（NotFound、Privacy、PrivacyPolicy、TermsOfService、ProfessorPolicy）
+- [x] 为缺少底部padding的页面添加pb-32 md:pb-24
+- [x] 创建PrivacyPolicyZh页面（完整的中文内容）
+- [x] 创建TermsOfServiceZh页面（完整的中文内容）
+- [x] 创建ProfessorPolicyZh页面（完整的中文内容）
+- [x] 在App.tsx中添加中文政策页面路由
+- [x] 修改Footer组件，根据语言链接到对应页面
+- [x] 在英文政策页面添加中文链接
+- [x] 测试所有页面的页脚显示效果（所有页面均有充足的底部padding）
+- [x] 测试政策页面的中英文切换功能（中英文页面切换正常）
 - [ ] 保存checkpoint

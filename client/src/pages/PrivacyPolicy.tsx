@@ -1,14 +1,20 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "wouter";
 
 export default function PrivacyPolicy() {
   const { language, t } = useLanguage();
   const isEnglish = language === "en";
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">
-        {isEnglish ? "Privacy Policy" : "隐私政策"}
-      </h1>
+    <div className="container max-w-4xl mx-auto px-4 py-8 pb-32 md:pb-24">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">
+          {isEnglish ? "Privacy Policy" : "隐私政策"}
+        </h1>
+        <Link href="/privacy-policy-zh" className="text-blue-600 hover:underline">
+          中文
+        </Link>
+      </div>
       
       <div className="prose prose-slate max-w-none">
         <p className="text-sm text-gray-600 mb-6">
