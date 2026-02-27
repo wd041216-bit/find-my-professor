@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
-import { Home, Heart, FileText, User, RotateCcw, Filter } from "lucide-react";
+import { Home, Heart, FileText, User, RotateCcw, Filter, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DesktopHeaderProps {
   onResetClick?: () => void;
@@ -10,12 +11,13 @@ interface DesktopHeaderProps {
 
 export function DesktopHeader({ onResetClick, onFilterClick, showActions = false }: DesktopHeaderProps) {
   const [location] = useLocation();
+  const { language, setLanguage, t } = useLanguage();
 
   const navItems = [
-    { path: "/", label: "Swipe", icon: Home },
-    { path: "/history", label: "Matches", icon: Heart },
-    { path: "/cover-letters", label: "Letters", icon: FileText },
-    { path: "/profile", label: "Profile", icon: User },
+    { path: "/", label: language === "en" ? "Swipe" : "滑动", icon: Home },
+    { path: "/history", label: language === "en" ? "Matches" : "匹配", icon: Heart },
+    { path: "/cover-letters", label: language === "en" ? "Letters" : "文书", icon: FileText },
+    { path: "/profile", label: language === "en" ? "Profile" : "资料", icon: User },
   ];
 
   return (
@@ -51,33 +53,45 @@ export function DesktopHeader({ onResetClick, onFilterClick, showActions = false
           })}
         </nav>
 
-        {/* Action Buttons (Reset & Filter) */}
-        {showActions && (
-          <div className="flex items-center space-x-2">
-            {onResetClick && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onResetClick}
-                className="flex items-center space-x-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span>Reset</span>
-              </Button>
-            )}
-            {onFilterClick && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onFilterClick}
-                className="flex items-center space-x-2"
-              >
-                <Filter className="w-4 h-4" />
-                <span>Filter</span>
-              </Button>
-            )}
-          </div>
-        )}
+        {/* Language Switcher & Action Buttons */}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLanguage(language === "en" ? "zh" : "en")}
+            className="flex items-center space-x-2"
+          >
+            <Languages className="w-4 h-4" />
+            <span>{language === "en" ? "中文" : "EN"}</span>
+          </Button>
+          
+          {showActions && (
+            <>
+              {onResetClick && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onResetClick}
+                  className="flex items-center space-x-2"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reset</span>
+                </Button>
+              )}
+              {onFilterClick && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onFilterClick}
+                  className="flex items-center space-x-2"
+                >
+                  <Filter className="w-4 h-4" />
+                  <span>Filter</span>
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

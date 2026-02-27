@@ -1,13 +1,20 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function PrivacyPolicy() {
+  const { language, t } = useLanguage();
+  const isEnglish = language === "en";
+
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {isEnglish ? "Privacy Policy" : "隐私政策"}
+      </h1>
       
       <div className="prose prose-slate max-w-none">
         <p className="text-sm text-gray-600 mb-6">
-          <strong>Version:</strong> 1.0<br />
-          <strong>Effective Date:</strong> February 26, 2026<br />
-          <strong>Last Updated:</strong> February 26, 2026
+          <strong>{isEnglish ? "Version" : "版本"}:</strong> 1.0<br />
+          <strong>{isEnglish ? "Effective Date" : "生效日期"}:</strong> {isEnglish ? "February 26, 2026" : "2026年2月26日"}<br />
+          <strong>{isEnglish ? "Last Updated" : "最后更新"}:</strong> {isEnglish ? "February 26, 2026" : "2026年2月26日"}
         </p>
 
         <section className="mb-8">
