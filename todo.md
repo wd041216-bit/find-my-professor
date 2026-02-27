@@ -304,3 +304,11 @@
 - [x] 测试移动端显示效果
 - [x] 确保不需要滚动即可看到所有功能
 >>>>>>> Stashed changes
+
+## 隐私权益政策页面
+- [x] 创建Privacy Policy页面组件
+- [x] 创建Terms of Service页面组件
+- [x] 创建Professor Policy页面组件
+- [x] 添加路由配置
+- [x] 在页脚添加导航链接
+- [x] 测试页面显示效果
