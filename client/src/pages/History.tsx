@@ -153,13 +153,22 @@ export default function History() {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      {match.matchScore ? (
-                        <Badge variant="secondary" className="self-start whitespace-nowrap bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-bold">
-                          {match.matchScore}% Match
+                      {match.matchScore != null ? (
+                        <Badge
+                          variant="secondary"
+                          className={`self-start whitespace-nowrap font-bold ${
+                            match.matchScore >= 80
+                              ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'
+                              : match.matchScore >= 60
+                              ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700'
+                              : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700'
+                          }`}
+                        >
+                          {match.matchScore >= 80 ? '🔥' : match.matchScore >= 60 ? '✨' : '💡'} {match.matchScore}% Match
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="self-start whitespace-nowrap text-gray-500 text-xs">
-                          Different research area
+                        <Badge variant="outline" className="self-start whitespace-nowrap text-gray-400 text-xs border-gray-200">
+                          🔍 Explore Match
                         </Badge>
                       )}
                       <p className="text-xs text-muted-foreground">

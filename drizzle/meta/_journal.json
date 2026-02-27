@@ -225,6 +225,13 @@
       "when": 1770804234038,
       "tag": "0031_noisy_amazoness",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1772198949676,
+      "tag": "0032_nappy_dark_phoenix",
+      "breakpoints": true
     }
   ]
 }

@@ -78,6 +78,7 @@ export const professors = mysqlTable("professors", {
   researchAreas: text("research_areas"), // JSON array of research areas
   tags: json("tags").$type<string[]>(), // Research tags for matching algorithm
   research_field: varchar("research_field", { length: 255 }), // Research field category
+  imageUrl: text("image_url"), // University/department branded image URL
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
