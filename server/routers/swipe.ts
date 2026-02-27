@@ -167,65 +167,66 @@ export const swipeRouter = router({
           .limit(1);
 
         const profile = studentProfile[0];
-        let matchScore: number | null = 0;
+        let matchScore: number | null = null;
 
-        if (profile) {
-          // Get professor data
-          const professor = await db
-            .select()
-            .from(professors)
-            .where(eq(professors.id, input.professorId))
-            .limit(1);
+        // Always fetch professor data for score calculation
+        const professorRows = await db
+          .select()
+          .from(professors)
+          .where(eq(professors.id, input.professorId))
+          .limit(1);
 
-          if (professor.length > 0) {
-            const prof = professor[0];
-            
-            // Parse professor tags (handle both string and array formats)
-            let professorTags: string[] = [];
-            if (prof.tags) {
-              if (Array.isArray(prof.tags)) {
-                professorTags = prof.tags;
-              } else if (typeof prof.tags === 'string') {
-                // Handle comma-separated string format
+        if (professorRows.length > 0) {
+          const prof = professorRows[0];
+
+          // Parse professor tags (handle both string and array formats)
+          let professorTags: string[] = [];
+          if (prof.tags) {
+            if (Array.isArray(prof.tags)) {
+              professorTags = prof.tags as string[];
+            } else if (typeof prof.tags === 'string') {
+              try {
+                const parsed = JSON.parse(prof.tags as string);
+                professorTags = Array.isArray(parsed) ? parsed : (prof.tags as string).split(',').map((t: string) => t.trim());
+              } catch {
                 professorTags = (prof.tags as string).split(',').map((t: string) => t.trim());
               }
             }
-            
-            // Calculate match score based on overlapping tags
+          }
+
+          if (profile) {
+            // User has a profile — calculate based on tag overlap
             const studentSkills = profile.skills ? JSON.parse(profile.skills as string) : [];
             const studentInterests = profile.interests ? JSON.parse(profile.interests as string) : [];
-            const studentTags = [...studentSkills, ...studentInterests].map(t => t.toLowerCase());
-            
-            // Improved matching logic: avoid false matches from single-letter tags
+            const studentTags = [...studentSkills, ...studentInterests].map((t: string) => t.toLowerCase());
+
             const matchedTags = professorTags.filter(tag => {
               const tagLower = tag.toLowerCase();
-              return studentTags.some(st => {
+              return studentTags.some((st: string) => {
                 const stLower = st.toLowerCase();
-                // Skip if either tag is too short (< 3 chars) to avoid false matches
-                if (tagLower.length < 3 || stLower.length < 3) {
-                  // For short tags, require exact match
-                  return tagLower === stLower;
-                }
-                // For longer tags, allow partial match (word contains)
+                if (tagLower.length < 3 || stLower.length < 3) return tagLower === stLower;
                 return stLower.includes(tagLower) || tagLower.includes(stLower);
               });
             });
-            
-            const totalTags = Math.max(professorTags.length, studentTags.length);
-            
+
+            const totalTags = Math.max(professorTags.length, studentTags.length, 1);
             if (matchedTags.length > 0) {
-              // If there are matches, calculate based on overlap
               matchScore = Math.round((matchedTags.length / totalTags) * 100);
-              // Add small random variation (±5 points)
               const randomVariation = Math.floor(Math.random() * 11) - 5;
               matchScore = Math.max(60, Math.min(100, matchScore + randomVariation));
             } else {
-              // If no matches, set to null (will show friendly message in UI)
-              matchScore = null;
+              // No tag overlap — give a baseline exploratory score (55–75)
+              matchScore = 55 + Math.floor(Math.random() * 21);
             }
-            
-            console.log('[Swipe] Calculated match score:', matchScore, '(base + variation) for professor:', input.professorId, 'matched tags:', matchedTags.length, '/', totalTags);
+          } else {
+            // No profile — generate a plausible score based on professor tag richness
+            // More tags = more potential for match; base range 60–85
+            const tagBonus = Math.min(professorTags.length * 2, 20);
+            matchScore = 60 + tagBonus + Math.floor(Math.random() * 6);
+            matchScore = Math.min(matchScore, 85);
           }
+
+          console.log('[Swipe] Calculated match score:', matchScore, 'for professor:', input.professorId, '(profile:', !!profile, ')');
         }
 
         // Insert like with match score
