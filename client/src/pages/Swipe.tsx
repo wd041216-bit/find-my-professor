@@ -345,24 +345,19 @@ export function Swipe() {
       </div>
 
       {/* Card Stack Container */}
-      <div className="flex-1 flex items-center justify-center p-2 md:p-4">
+      <div className="flex-1 flex items-center justify-center p-2 md:p-3">
         <div 
           id="card-stack-container"
-          className="relative w-full max-w-sm md:max-w-lg lg:max-w-xl" 
+          className="relative w-full max-w-xs md:max-w-sm" 
           style={{ 
-            height: 'min(460px, 58vh)' // Mobile: optimized height for one-screen display
+            height: 'min(440px, 56vh)' // Mobile: compact height for one-screen display
           }}
         >
-          {/* Desktop/Tablet: use larger height via media query */}
+          {/* Desktop/Tablet: slightly taller but still contained */}
           <style>{`
             @media (min-width: 768px) {
               #card-stack-container {
-                height: min(640px, 78vh) !important;
-              }
-            }
-            @media (min-width: 1024px) {
-              #card-stack-container {
-                height: min(700px, 80vh) !important;
+                height: min(520px, 68vh) !important;
               }
             }
           `}</style>
