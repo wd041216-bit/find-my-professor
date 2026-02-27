@@ -1,0 +1,31 @@
+{
+  "query": "SELECT COUNT(*) as total FROM professors WHERE name LIKE '%Professor%' OR name LIKE '%Individualized%'; SELECT id, name, department, university_name FROM professors WHERE name LIKE '%Professor%' OR name LIKE '%Individualized%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT COUNT(*) as total FROM professors WHERE name LIKE '%Professor%' OR name LIKE '%Individualized%'; SELECT id, name, department, university_name FROM professors WHERE name LIKE '%Professor%' OR name LIKE '%Individualized%' LIMIT 5;",
+  "rows": [
+    {
+      "total": "1364"
+    },
+    {
+      "total": "id\tname\tdepartment\tuniversity_name"
+    },
+    {
+      "total": "331033\tProfessor Gary Mamon\tAstrophysics\tLehigh University"
+    },
+    {
+      "total": "331326\tProfessor AerospaceEngineering1\tAerospace Engineering\tOhio State University"
+    },
+    {
+      "total": "331327\tProfessor AfricanAmericanandAfricanStudies1\tAfrican American and African Studies\tOhio State University"
+    },
+    {
+      "total": "331328\tProfessor AgriculturalSystemsManagement1\tAgricultural Systems Management\tOhio State University"
+    },
+    {
+      "total": "331329\tProfessor AgriscienceEducation1\tAgriscience Education\tOhio State University"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n1364\nid\tname\tdepartment\tuniversity_name\n331033\tProfessor Gary Mamon\tAstrophysics\tLehigh University\n331326\tProfessor AerospaceEngineering1\tAerospace Engineering\tOhio State University\n331327\tProfessor AfricanAmericanandAfricanStudies1\tAfrican American and African Studies\tOhio State University\n331328\tProfessor AgriculturalSystemsManagement1\tAgricultural Systems Management\tOhio State University\n331329\tProfessor AgriscienceEducation1\tAgriscience Education\tOhio State University\n",
+  "stderr": "",
+  "execution_time_ms": 1872
+}

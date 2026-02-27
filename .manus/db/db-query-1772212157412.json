@@ -1,0 +1,31 @@
+{
+  "query": "SELECT * FROM university_field_images LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT * FROM university_field_images LIMIT 3;",
+  "rows": [
+    {
+      "id": "60001",
+      "university_name": "University of Washington",
+      "research_field_name": "AI & Machine Learning",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/FXQxKqwdwQCmkpVb.png",
+      "created_at": "2026-02-11 02:22:26"
+    },
+    {
+      "id": "60002",
+      "university_name": "University of Washington",
+      "research_field_name": "Architecture & Urban Studies",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/GkBNNWfWDPrxPaQJ.png",
+      "created_at": "2026-02-11 02:22:26"
+    },
+    {
+      "id": "60003",
+      "university_name": "University of Washington",
+      "research_field_name": "Business & Marketing",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/KMKaKDUfXkQHFKoGabwC.png",
+      "created_at": "2026-02-11 02:22:26"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuniversity_name\tresearch_field_name\timage_url\tcreated_at\n60001\tUniversity of Washington\tAI & Machine Learning\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/FXQxKqwdwQCmkpVb.png\t2026-02-11 02:22:26\n60002\tUniversity of Washington\tArchitecture & Urban Studies\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/GkBNNWfWDPrxPaQJ.png\t2026-02-11 02:22:26\n60003\tUniversity of Washington\tBusiness & Marketing\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/KMKaKDUfXkQHFKoGabwC.png\t2026-02-11 02:22:26\n",
+  "stderr": "",
+  "execution_time_ms": 1592
+}

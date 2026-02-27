@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, name, university_name, research_field, image_url FROM professors WHERE research_field = 'Data Science' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, name, university_name, research_field, image_url FROM professors WHERE research_field = 'Data Science' LIMIT 5;",
+  "rows": [
+    {
+      "id": "330292",
+      "name": "Cosma Shalizi",
+      "university_name": "Carnegie Mellon University",
+      "research_field": "Data Science",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jLMdiPMDzGsBoAYu.png"
+    },
+    {
+      "id": "330293",
+      "name": "Kathryn Roeder",
+      "university_name": "Carnegie Mellon University",
+      "research_field": "Data Science",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jLMdiPMDzGsBoAYu.png"
+    },
+    {
+      "id": "330294",
+      "name": "Larry Wasserman",
+      "university_name": "Carnegie Mellon University",
+      "research_field": "Data Science",
+      "image_url": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jLMdiPMDzGsBoAYu.png"
+    },
+    {
+      "id": "330406",
+      "name": "Andrew Gelman",
+      "university_name": "Columbia University",
+      "research_field": "Data Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Data_Science.png"
+    },
+    {
+      "id": "330407",
+      "name": "Andrew Gordon Wilson",
+      "university_name": "Columbia University",
+      "research_field": "Data Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Data_Science.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tuniversity_name\tresearch_field\timage_url\n330292\tCosma Shalizi\tCarnegie Mellon University\tData Science\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jLMdiPMDzGsBoAYu.png\n330293\tKathryn Roeder\tCarnegie Mellon University\tData Science\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jLMdiPMDzGsBoAYu.png\n330294\tLarry Wasserman\tCarnegie Mellon University\tData Science\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/jLMdiPMDzGsBoAYu.png\n330406\tAndrew Gelman\tColumbia University\tData Science\thttps://cdn.manus.im/harvard_images/Data_Science.png\n330407\tAndrew Gordon Wilson\tColumbia University\tData Science\thttps://cdn.manus.im/harvard_images/Data_Science.png\n",
+  "stderr": "",
+  "execution_time_ms": 1597
+}

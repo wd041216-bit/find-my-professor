@@ -1,0 +1,154 @@
+{
+  "query": "SELECT university_name, research_field_name FROM university_field_images WHERE image_url LIKE '%harvard_images%' ORDER BY university_name, research_field_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT university_name, research_field_name FROM university_field_images WHERE image_url LIKE '%harvard_images%' ORDER BY university_name, research_field_name;",
+  "rows": [
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Arts & Humanities"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Biology"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Chemistry"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Computer Science"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Data Science"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Economics"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Environmental Science"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Mathematics"
+    },
+    {
+      "university_name": "Columbia University",
+      "research_field_name": "Neuroscience"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Arts & Humanities"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Biology"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Chemistry"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Computer Science"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Data Science"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Economics"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Engineering"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Environmental Science"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Materials Science"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Mathematics"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Neuroscience"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Physics"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Psychology"
+    },
+    {
+      "university_name": "Harvard University",
+      "research_field_name": "Social Sciences"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Arts & Humanities"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Biology"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Chemistry"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Computer Science"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Data Science"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Engineering"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Environmental Science"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Materials Science"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Mathematics"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Neuroscience"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Physics"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Psychology"
+    },
+    {
+      "university_name": "Ohio State University",
+      "research_field_name": "Social Sciences"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_name\tresearch_field_name\nColumbia University\tArts & Humanities\nColumbia University\tBiology\nColumbia University\tChemistry\nColumbia University\tComputer Science\nColumbia University\tData Science\nColumbia University\tEconomics\nColumbia University\tEnvironmental Science\nColumbia University\tMathematics\nColumbia University\tNeuroscience\nHarvard University\tArts & Humanities\nHarvard University\tBiology\nHarvard University\tChemistry\nHarvard University\tComputer Science\nHarvard University\tData Science\nHarvard University\tEconomics\nHarvard University\tEngineering\nHarvard University\tEnvironmental Science\nHarvard University\tMaterials Science\nHarvard University\tMathematics\nHarvard University\tNeuroscience\nHarvard University\tPhysics\nHarvard University\tPsychology\nHarvard University\tSocial Sciences\nOhio State University\tArts & Humanities\nOhio State University\tBiology\nOhio State University\tChemistry\nOhio State University\tComputer Science\nOhio State University\tData Science\nOhio State University\tEngineering\nOhio State University\tEnvironmental Science\nOhio State University\tMaterials Science\nOhio State University\tMathematics\nOhio State University\tNeuroscience\nOhio State University\tPhysics\nOhio State University\tPsychology\nOhio State University\tSocial Sciences\n",
+  "stderr": "",
+  "execution_time_ms": 1541
+}

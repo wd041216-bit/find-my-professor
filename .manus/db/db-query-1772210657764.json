@@ -1,0 +1,150 @@
+{
+  "query": "SELECT id, name, department, university_name, research_field FROM professors WHERE name LIKE '%Professor%' OR name LIKE '%Test%' OR name LIKE '%Individualized%' OR name LIKE '%Major%' LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, name, department, university_name, research_field FROM professors WHERE name LIKE '%Professor%' OR name LIKE '%Test%' OR name LIKE '%Individualized%' OR name LIKE '%Major%' LIMIT 20;",
+  "rows": [
+    {
+      "id": "331033",
+      "name": "Professor Gary Mamon",
+      "department": "Astrophysics",
+      "university_name": "Lehigh University",
+      "research_field": "Physics"
+    },
+    {
+      "id": "331326",
+      "name": "Professor AerospaceEngineering1",
+      "department": "Aerospace Engineering",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331327",
+      "name": "Professor AfricanAmericanandAfricanStudies1",
+      "department": "African American and African Studies",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331328",
+      "name": "Professor AgriculturalSystemsManagement1",
+      "department": "Agricultural Systems Management",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331329",
+      "name": "Professor AgriscienceEducation1",
+      "department": "Agriscience Education",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331330",
+      "name": "Professor AnimalSciences1",
+      "department": "Animal Sciences",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331331",
+      "name": "Professor Arabic1",
+      "department": "Arabic",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331332",
+      "name": "Professor Biochemistry1",
+      "department": "Biochemistry",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331333",
+      "name": "Professor BusinessManagement1",
+      "department": "Business Management",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331334",
+      "name": "Professor Chinese1",
+      "department": "Chinese",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331335",
+      "name": "Professor CityandRegionalPlanning1",
+      "department": "City and Regional Planning",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331336",
+      "name": "Professor Classics1",
+      "department": "Classics",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331337",
+      "name": "Professor Communication1",
+      "department": "Communication",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331338",
+      "name": "Professor ComparativeStudies1",
+      "department": "Comparative Studies",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331339",
+      "name": "Professor ComputerScienceandEngineering1",
+      "department": "Computer Science and Engineering",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331340",
+      "name": "Professor DataAnalytics1",
+      "department": "Data Analytics",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331341",
+      "name": "Professor EngineeringPhysics1",
+      "department": "Engineering Physics",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331342",
+      "name": "Professor Entomology1",
+      "department": "Entomology",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331343",
+      "name": "Professor Food,AgriculturalandBiologicalEngineering1",
+      "department": "Food, Agricultural and Biological Engineering",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    },
+    {
+      "id": "331344",
+      "name": "Professor ForensicAnthropology1",
+      "department": "Forensic Anthropology",
+      "university_name": "Ohio State University",
+      "research_field": "Arts & Humanities"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tdepartment\tuniversity_name\tresearch_field\n331033\tProfessor Gary Mamon\tAstrophysics\tLehigh University\tPhysics\n331326\tProfessor AerospaceEngineering1\tAerospace Engineering\tOhio State University\tArts & Humanities\n331327\tProfessor AfricanAmericanandAfricanStudies1\tAfrican American and African Studies\tOhio State University\tArts & Humanities\n331328\tProfessor AgriculturalSystemsManagement1\tAgricultural Systems Management\tOhio State University\tArts & Humanities\n331329\tProfessor AgriscienceEducation1\tAgriscience Education\tOhio State University\tArts & Humanities\n331330\tProfessor AnimalSciences1\tAnimal Sciences\tOhio State University\tArts & Humanities\n331331\tProfessor Arabic1\tArabic\tOhio State University\tArts & Humanities\n331332\tProfessor Biochemistry1\tBiochemistry\tOhio State University\tArts & Humanities\n331333\tProfessor BusinessManagement1\tBusiness Management\tOhio State University\tArts & Humanities\n331334\tProfessor Chinese1\tChinese\tOhio State University\tArts & Humanities\n331335\tProfessor CityandRegionalPlanning1\tCity and Regional Planning\tOhio State University\tArts & Humanities\n331336\tProfessor Classics1\tClassics\tOhio State University\tArts & Humanities\n331337\tProfessor Communication1\tCommunication\tOhio State University\tArts & Humanities\n331338\tProfessor ComparativeStudies1\tComparative Studies\tOhio State University\tArts & Humanities\n331339\tProfessor ComputerScienceandEngineering1\tComputer Science and Engineering\tOhio State University\tArts & Humanities\n331340\tProfessor DataAnalytics1\tData Analytics\tOhio State University\tArts & Humanities\n331341\tProfessor EngineeringPhysics1\tEngineering Physics\tOhio State University\tArts & Humanities\n331342\tProfessor Entomology1\tEntomology\tOhio State University\tArts & Humanities\n331343\tProfessor Food,AgriculturalandBiologicalEngineering1\tFood, Agricultural and Biological Engineering\tOhio State University\tArts & Humanities\n331344\tProfessor ForensicAnthropology1\tForensic Anthropology\tOhio State University\tArts & Humanities\n",
+  "stderr": "",
+  "execution_time_ms": 1552
+}

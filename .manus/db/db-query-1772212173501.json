@@ -1,0 +1,226 @@
+{
+  "query": "SELECT id, university_name, research_field_name, image_url FROM university_field_images WHERE image_url LIKE '%harvard_images%' ORDER BY university_name, research_field_name LIMIT 50;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT id, university_name, research_field_name, image_url FROM university_field_images WHERE image_url LIKE '%harvard_images%' ORDER BY university_name, research_field_name LIMIT 50;",
+  "rows": [
+    {
+      "id": "120505",
+      "university_name": "Columbia University",
+      "research_field_name": "Arts & Humanities",
+      "image_url": "https://cdn.manus.im/harvard_images/Arts_and_Humanities.png"
+    },
+    {
+      "id": "120495",
+      "university_name": "Columbia University",
+      "research_field_name": "Biology",
+      "image_url": "https://cdn.manus.im/harvard_images/Biology.png"
+    },
+    {
+      "id": "120497",
+      "university_name": "Columbia University",
+      "research_field_name": "Chemistry",
+      "image_url": "https://cdn.manus.im/harvard_images/Chemistry.png"
+    },
+    {
+      "id": "120496",
+      "university_name": "Columbia University",
+      "research_field_name": "Computer Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Computer_Science.png"
+    },
+    {
+      "id": "120501",
+      "university_name": "Columbia University",
+      "research_field_name": "Data Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Data_Science.png"
+    },
+    {
+      "id": "120498",
+      "university_name": "Columbia University",
+      "research_field_name": "Economics",
+      "image_url": "https://cdn.manus.im/harvard_images/Economics.png"
+    },
+    {
+      "id": "120506",
+      "university_name": "Columbia University",
+      "research_field_name": "Environmental Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Environmental_Science.png"
+    },
+    {
+      "id": "120499",
+      "university_name": "Columbia University",
+      "research_field_name": "Mathematics",
+      "image_url": "https://cdn.manus.im/harvard_images/Mathematics.png"
+    },
+    {
+      "id": "120504",
+      "university_name": "Columbia University",
+      "research_field_name": "Neuroscience",
+      "image_url": "https://cdn.manus.im/harvard_images/Neuroscience.png"
+    },
+    {
+      "id": "120105",
+      "university_name": "Harvard University",
+      "research_field_name": "Arts & Humanities",
+      "image_url": "https://cdn.manus.im/harvard_images/Arts_and_Humanities.png"
+    },
+    {
+      "id": "120106",
+      "university_name": "Harvard University",
+      "research_field_name": "Biology",
+      "image_url": "https://cdn.manus.im/harvard_images/Biology.png"
+    },
+    {
+      "id": "120107",
+      "university_name": "Harvard University",
+      "research_field_name": "Chemistry",
+      "image_url": "https://cdn.manus.im/harvard_images/Chemistry.png"
+    },
+    {
+      "id": "120108",
+      "university_name": "Harvard University",
+      "research_field_name": "Computer Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Computer_Science.png"
+    },
+    {
+      "id": "120109",
+      "university_name": "Harvard University",
+      "research_field_name": "Data Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Data_Science.png"
+    },
+    {
+      "id": "120110",
+      "university_name": "Harvard University",
+      "research_field_name": "Economics",
+      "image_url": "https://cdn.manus.im/harvard_images/Economics.png"
+    },
+    {
+      "id": "120111",
+      "university_name": "Harvard University",
+      "research_field_name": "Engineering",
+      "image_url": "https://cdn.manus.im/harvard_images/Engineering.png"
+    },
+    {
+      "id": "120112",
+      "university_name": "Harvard University",
+      "research_field_name": "Environmental Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Environmental_Science.png"
+    },
+    {
+      "id": "120113",
+      "university_name": "Harvard University",
+      "research_field_name": "Materials Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Materials_Science.png"
+    },
+    {
+      "id": "120114",
+      "university_name": "Harvard University",
+      "research_field_name": "Mathematics",
+      "image_url": "https://cdn.manus.im/harvard_images/Mathematics.png"
+    },
+    {
+      "id": "120115",
+      "university_name": "Harvard University",
+      "research_field_name": "Neuroscience",
+      "image_url": "https://cdn.manus.im/harvard_images/Neuroscience.png"
+    },
+    {
+      "id": "120116",
+      "university_name": "Harvard University",
+      "research_field_name": "Physics",
+      "image_url": "https://cdn.manus.im/harvard_images/Physics.png"
+    },
+    {
+      "id": "120117",
+      "university_name": "Harvard University",
+      "research_field_name": "Psychology",
+      "image_url": "https://cdn.manus.im/harvard_images/Psychology.png"
+    },
+    {
+      "id": "120118",
+      "university_name": "Harvard University",
+      "research_field_name": "Social Sciences",
+      "image_url": "https://cdn.manus.im/harvard_images/Social_Sciences.png"
+    },
+    {
+      "id": "120546",
+      "university_name": "Ohio State University",
+      "research_field_name": "Arts & Humanities",
+      "image_url": "https://cdn.manus.im/harvard_images/Arts_and_Humanities.png"
+    },
+    {
+      "id": "120544",
+      "university_name": "Ohio State University",
+      "research_field_name": "Biology",
+      "image_url": "https://cdn.manus.im/harvard_images/Biology.png"
+    },
+    {
+      "id": "120539",
+      "university_name": "Ohio State University",
+      "research_field_name": "Chemistry",
+      "image_url": "https://cdn.manus.im/harvard_images/Chemistry.png"
+    },
+    {
+      "id": "120540",
+      "university_name": "Ohio State University",
+      "research_field_name": "Computer Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Computer_Science.png"
+    },
+    {
+      "id": "120550",
+      "university_name": "Ohio State University",
+      "research_field_name": "Data Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Data_Science.png"
+    },
+    {
+      "id": "120542",
+      "university_name": "Ohio State University",
+      "research_field_name": "Engineering",
+      "image_url": "https://cdn.manus.im/harvard_images/Engineering.png"
+    },
+    {
+      "id": "120536",
+      "university_name": "Ohio State University",
+      "research_field_name": "Environmental Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Environmental_Science.png"
+    },
+    {
+      "id": "120543",
+      "university_name": "Ohio State University",
+      "research_field_name": "Materials Science",
+      "image_url": "https://cdn.manus.im/harvard_images/Materials_Science.png"
+    },
+    {
+      "id": "120541",
+      "university_name": "Ohio State University",
+      "research_field_name": "Mathematics",
+      "image_url": "https://cdn.manus.im/harvard_images/Mathematics.png"
+    },
+    {
+      "id": "120545",
+      "university_name": "Ohio State University",
+      "research_field_name": "Neuroscience",
+      "image_url": "https://cdn.manus.im/harvard_images/Neuroscience.png"
+    },
+    {
+      "id": "120549",
+      "university_name": "Ohio State University",
+      "research_field_name": "Physics",
+      "image_url": "https://cdn.manus.im/harvard_images/Physics.png"
+    },
+    {
+      "id": "120535",
+      "university_name": "Ohio State University",
+      "research_field_name": "Psychology",
+      "image_url": "https://cdn.manus.im/harvard_images/Psychology.png"
+    },
+    {
+      "id": "120537",
+      "university_name": "Ohio State University",
+      "research_field_name": "Social Sciences",
+      "image_url": "https://cdn.manus.im/harvard_images/Social_Sciences.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuniversity_name\tresearch_field_name\timage_url\n120505\tColumbia University\tArts & Humanities\thttps://cdn.manus.im/harvard_images/Arts_and_Humanities.png\n120495\tColumbia University\tBiology\thttps://cdn.manus.im/harvard_images/Biology.png\n120497\tColumbia University\tChemistry\thttps://cdn.manus.im/harvard_images/Chemistry.png\n120496\tColumbia University\tComputer Science\thttps://cdn.manus.im/harvard_images/Computer_Science.png\n120501\tColumbia University\tData Science\thttps://cdn.manus.im/harvard_images/Data_Science.png\n120498\tColumbia University\tEconomics\thttps://cdn.manus.im/harvard_images/Economics.png\n120506\tColumbia University\tEnvironmental Science\thttps://cdn.manus.im/harvard_images/Environmental_Science.png\n120499\tColumbia University\tMathematics\thttps://cdn.manus.im/harvard_images/Mathematics.png\n120504\tColumbia University\tNeuroscience\thttps://cdn.manus.im/harvard_images/Neuroscience.png\n120105\tHarvard University\tArts & Humanities\thttps://cdn.manus.im/harvard_images/Arts_and_Humanities.png\n120106\tHarvard University\tBiology\thttps://cdn.manus.im/harvard_images/Biology.png\n120107\tHarvard University\tChemistry\thttps://cdn.manus.im/harvard_images/Chemistry.png\n120108\tHarvard University\tComputer Science\thttps://cdn.manus.im/harvard_images/Computer_Science.png\n120109\tHarvard University\tData Science\thttps://cdn.manus.im/harvard_images/Data_Science.png\n120110\tHarvard University\tEconomics\thttps://cdn.manus.im/harvard_images/Economics.png\n120111\tHarvard University\tEngineering\thttps://cdn.manus.im/harvard_images/Engineering.png\n120112\tHarvard University\tEnvironmental Science\thttps://cdn.manus.im/harvard_images/Environmental_Science.png\n120113\tHarvard University\tMaterials Science\thttps://cdn.manus.im/harvard_images/Materials_Science.png\n120114\tHarvard University\tMathematics\thttps://cdn.manus.im/harvard_images/Mathematics.png\n120115\tHarvard University\tNeuroscience\thttps://cdn.manus.im/harvard_images/Neuroscience.png\n120116\tHarvard University\tPhysics\thttps://cdn.manus.im/harvard_images/Physics.png\n120117\tHarvard University\tPsychology\thttps://cdn.manus.im/harvard_images/Psychology.png\n120118\tHarvard University\tSocial Sciences\thttps://cdn.manus.im/harvard_images/Social_Sciences.png\n120546\tOhio State University\tArts & Humanities\thttps://cdn.manus.im/harvard_images/Arts_and_Humanities.png\n120544\tOhio State University\tBiology\thttps://cdn.manus.im/harvard_images/Biology.png\n120539\tOhio State University\tChemistry\thttps://cdn.manus.im/harvard_images/Chemistry.png\n120540\tOhio State University\tComputer Science\thttps://cdn.manus.im/harvard_images/Computer_Science.png\n120550\tOhio State University\tData Science\thttps://cdn.manus.im/harvard_images/Data_Science.png\n120542\tOhio State University\tEngineering\thttps://cdn.manus.im/harvard_images/Engineering.png\n120536\tOhio State University\tEnvironmental Science\thttps://cdn.manus.im/harvard_images/Environmental_Science.png\n120543\tOhio State University\tMaterials Science\thttps://cdn.manus.im/harvard_images/Materials_Science.png\n120541\tOhio State University\tMathematics\thttps://cdn.manus.im/harvard_images/Mathematics.png\n120545\tOhio State University\tNeuroscience\thttps://cdn.manus.im/harvard_images/Neuroscience.png\n120549\tOhio State University\tPhysics\thttps://cdn.manus.im/harvard_images/Physics.png\n120535\tOhio State University\tPsychology\thttps://cdn.manus.im/harvard_images/Psychology.png\n120537\tOhio State University\tSocial Sciences\thttps://cdn.manus.im/harvard_images/Social_Sciences.png\n",
+  "stderr": "",
+  "execution_time_ms": 1624
+}
