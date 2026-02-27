@@ -88,7 +88,7 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 pb-16 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 pb-32 md:pb-24">
       {/* Header */}
       <div className="p-4 md:p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
         <div className="flex items-center gap-2 md:gap-4">
