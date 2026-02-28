@@ -427,3 +427,6 @@
 - [x] Update ProfessorCard to display Chinese department and tags in zh mode
 - [x] Add departmentTranslation utility for keyword-based department translation
 - [x] Extend LanguageSwitcher to History and CoverLetters pages
+- [x] Add university name Chinese translation utility and apply to ProfessorCard
+- [x] Localize Matches (History) page card UI to Chinese
+- [x] Localize Letters (CoverLetters) page card UI to Chinese (keep letter content in English)
