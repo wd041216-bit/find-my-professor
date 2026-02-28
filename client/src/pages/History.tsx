@@ -8,9 +8,12 @@ import { Link, useLocation } from "wouter";
 import { ArrowLeft, Loader2, Heart, Mail, Globe, FlaskConical, Sparkles, X, ExternalLink, Trash2, Search } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function History() {
   const { user, loading: authLoading } = useAuth();
+  const { language } = useLanguage();
   const [, setLocation] = useLocation();
   const [selectedProfessor, setSelectedProfessor] = useState<any>(null);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -105,13 +108,16 @@ export default function History() {
           <div className="flex items-center gap-2">
             <Heart className="w-6 h-6 md:w-7 md:h-7 text-pink-500 fill-pink-500" />
             <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Match History
+              {language === 'en' ? 'Match History' : '匹配记录'}
             </h1>
           </div>
         </div>
-        <Badge variant="secondary" className="text-sm font-semibold">
-          {likedProfessors.length} {likedProfessors.length === 1 ? "Match" : "Matches"}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <Badge variant="secondary" className="text-sm font-semibold">
+            {likedProfessors.length} {likedProfessors.length === 1 ? (language === 'en' ? 'Match' : '匹配') : (language === 'en' ? 'Matches' : '匹配')}
+          </Badge>
+        </div>
       </div>
 
       {/* Main Content */}

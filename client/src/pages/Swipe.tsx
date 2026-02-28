@@ -19,6 +19,8 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { FilterPanel } from '../components/FilterPanel';
 import { DesktopHeader } from '../components/DesktopHeader';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
 
 // Animation variants for card transitions
 const ANIMATION_VARIANTS = [
@@ -39,6 +41,7 @@ interface CardAnimation {
 
 export function Swipe() {
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const utils = trpc.useUtils();
   const [, setLocation] = useLocation();
   
@@ -157,6 +160,21 @@ export function Swipe() {
   });
 
   const currentProfessor = professors[currentIndex];
+
+  // Preload images for the next 3 professors to reduce visible loading
+  useEffect(() => {
+    const nextProfessors = professors.slice(currentIndex + 1, currentIndex + 4);
+    nextProfessors.forEach((prof) => {
+      const fieldImage = prof.researchField
+        ? getProfessorBackgroundImage(prof.universityName, prof.researchField)
+        : null;
+      const imageUrl = fieldImage || prof.schoolImageUrl;
+      if (imageUrl) {
+        const img = new Image();
+        img.src = imageUrl;
+      }
+    });
+  }, [currentIndex, professors]);
 
   // Count active filters
   const activeFilterCount = [filters.university, filters.researchField].filter(Boolean).length;
@@ -310,12 +328,12 @@ export function Swipe() {
               className="bg-white/90 hover:bg-white text-gray-700 shadow-lg"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              Reset
+              {t.swipe.reset}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Reset Swipe History?</AlertDialogTitle>
+              <AlertDialogTitle>{t.swipe.reset} Swipe History?</AlertDialogTitle>
               <AlertDialogDescription>
                 This will clear all your swipe records, allowing you to re-swipe professors you've already seen. This action cannot be undone.
               </AlertDialogDescription>
@@ -326,7 +344,7 @@ export function Swipe() {
                 onClick={handleResetSwipeHistory}
                 className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700"
               >
-                Reset
+                {t.swipe.reset}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -339,7 +357,7 @@ export function Swipe() {
           className="relative bg-white/90 hover:bg-white text-gray-700 shadow-lg"
         >
           <Filter className="w-4 h-4 mr-2" />
-          Filter
+          {t.swipe.filter}
           {activeFilterCount > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 text-white text-xs rounded-full flex items-center justify-center">
               {activeFilterCount}

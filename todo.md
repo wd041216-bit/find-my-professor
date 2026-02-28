@@ -401,3 +401,11 @@
 - [ ] 为每个新大学生成品牌图像（大学×研究领域组合）
 - [ ] 验证数据完整性并保存到数据库
 - [ ] 报告收集结果
+
+## 修复Filter/Reset汉化和语言切换全局化
+- [ ] 修复Filter/Reset按钮在中文模式下未汉化（DesktopHeader + FilterPanel + Swipe移动端）
+- [ ] 将语言切换按钮扩展到所有页面（History, CoverLetters, Profile）
+- [ ] 优化教授卡片加载速度（下一张卡片图片预加载）
+- [x] Fix Filter/Reset buttons missing i18n (hardcoded English in DesktopHeader and FilterPanel)
+- [x] Extend language switcher to History and CoverLetters pages
+- [x] Optimize professor card image loading (eager loading + preload next 3 images)

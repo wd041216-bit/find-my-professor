@@ -472,6 +472,19 @@ export const translations = {
         noAnnouncements: "No announcements yet",
       },
     },
+    // Swipe page
+    swipe: {
+      reset: "Reset",
+      filter: "Filter",
+      filterProfessors: "Filter Professors",
+      university: "University",
+      researchField: "Research Field",
+      allUniversities: "All Universities",
+      allResearchFields: "All Research Fields",
+      clearFilters: "Clear Filters",
+      applyFilters: "Apply Filters",
+      activeFilters: "Active filters",
+    },
     // Policy Pages
     policy: {
       privacyPolicy: "Privacy Policy",
@@ -950,6 +963,19 @@ export const translations = {
         active: "活跃",
         noAnnouncements: "还没有公告",
       },
+    },
+    // Swipe page
+    swipe: {
+      reset: "重置",
+      filter: "筛选",
+      filterProfessors: "筛选教授",
+      university: "大学",
+      researchField: "研究领域",
+      allUniversities: "所有大学",
+      allResearchFields: "所有研究领域",
+      clearFilters: "清除筛选",
+      applyFilters: "应用筛选",
+      activeFilters: "当前筛选",
     },
     // Policy Pages
     policy: {
