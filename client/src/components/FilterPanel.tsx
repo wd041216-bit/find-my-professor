@@ -10,21 +10,22 @@ import {
 } from '@/components/ui/select';
 import { trpc } from '@/lib/trpc';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocale } from '@/hooks/useLocale';
 
 interface FilterPanelProps {
   onFilterChange: (filters: { university?: string; researchField?: string }) => void;
   isOpen: boolean;
   onClose: () => void;
-  isProfileComplete: boolean; // Whether user has complete profile (GPA, skills, etc.)
-  currentFilters: { university?: string; researchField?: string }; // Current filter values
+  isProfileComplete: boolean;
+  currentFilters: { university?: string; researchField?: string };
 }
 
 export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete, currentFilters }: FilterPanelProps) {
   const { t } = useLanguage();
+  const { isZh } = useLocale();
   const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>(currentFilters.university);
   const [selectedResearchField, setSelectedResearchField] = useState<string | undefined>(currentFilters.researchField);
 
-  // Sync local state with currentFilters when panel opens
   useEffect(() => {
     if (isOpen) {
       setSelectedUniversity(currentFilters.university);
@@ -32,20 +33,16 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
     }
   }, [isOpen, currentFilters]);
 
-  // Get filter options (使用5分钟缓存)
   const { data: filterOptions } = trpc.swipe.getFilterOptions.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000, // 5分钟缓存，期间不会重新请求
+    staleTime: 5 * 60 * 1000,
   });
   
-  // Research fields are independent of university selection
+  const universities = filterOptions?.universities || [];
+  const universitiesZh = (filterOptions as any)?.universitiesZh || universities;
   const researchFields = filterOptions?.researchFields || [];
+  const researchFieldsZh = (filterOptions as any)?.researchFieldsZh || researchFields;
 
-  // Apply filters only when user clicks "Apply Filters" button
   const handleApplyFilters = () => {
-    console.log('[FilterPanel] Apply Filters clicked:', {
-      selectedUniversity,
-      selectedResearchField,
-    });
     onFilterChange({
       university: selectedUniversity,
       researchField: selectedResearchField,
@@ -60,68 +57,68 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
 
   const hasActiveFilters = selectedUniversity || selectedResearchField;
 
+  const getUniversityLabel = (value: string | undefined) => {
+    if (!value || value === '__all__') return undefined;
+    if (!isZh) return value;
+    const idx = universities.indexOf(value);
+    return idx >= 0 ? (universitiesZh[idx] || value) : value;
+  };
+
+  const getFieldLabel = (value: string | undefined) => {
+    if (!value || value === '__all__') return undefined;
+    if (!isZh) return value;
+    const idx = researchFields.indexOf(value);
+    return idx >= 0 ? (researchFieldsZh[idx] || value) : value;
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-lg shadow-xl max-w-md w-full p-6 space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-semibold">{t.swipe.filterProfessors}</h2>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="rounded-full"
-          >
+          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
             <X className="w-5 h-5" />
           </Button>
         </div>
 
-        {/* Filters */}
         <div className="space-y-4">
-          {/* University Filter */}
           <div className="space-y-2">
             <label className="text-sm font-medium">{t.swipe.university}</label>
-            <Select
-              value={selectedUniversity}
-              onValueChange={(value) => {
-                setSelectedUniversity(value);
-                // Research fields are now independent of university, no need to reset
-              }}
-            >
+            <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
               <SelectTrigger>
-                <SelectValue placeholder={t.swipe.allUniversities} />
+                <SelectValue placeholder={t.swipe.allUniversities}>
+                  {getUniversityLabel(selectedUniversity) || t.swipe.allUniversities}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">{t.swipe.allUniversities}</SelectItem>
-                {filterOptions?.universities.map((uni) => (
-                  <SelectItem key={uni!} value={uni!}>
-                    {uni}
+                {universities.map((uni: string, idx: number) => (
+                  <SelectItem key={uni} value={uni}>
+                    {isZh ? (universitiesZh[idx] || uni) : uni}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Research Field Filter */}
           <div className="space-y-2">
             <label className="text-sm font-medium">{t.swipe.researchField}</label>
-            <Select
-              value={selectedResearchField}
-              onValueChange={setSelectedResearchField}
-            >
+            <Select value={selectedResearchField} onValueChange={setSelectedResearchField}>
               <SelectTrigger>
-                <SelectValue placeholder={t.swipe.allResearchFields} />
+                <SelectValue placeholder={t.swipe.allResearchFields}>
+                  {getFieldLabel(selectedResearchField) || t.swipe.allResearchFields}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">{t.swipe.allResearchFields}</SelectItem>
-                {researchFields.map((field) => (
-                  <SelectItem key={field!} value={field!}>
-                    {field}
+                {researchFields.map((field: string, idx: number) => (
+                  <SelectItem key={field} value={field}>
+                    {isZh ? (researchFieldsZh[idx] || field) : field}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -129,34 +126,24 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={handleClearFilters}
-            disabled={!hasActiveFilters}
-            className="flex-1"
-          >
+          <Button variant="outline" onClick={handleClearFilters} disabled={!hasActiveFilters} className="flex-1">
             {t.swipe.clearFilters}
           </Button>
-          <Button
-            onClick={handleApplyFilters}
-            className="flex-1"
-          >
+          <Button onClick={handleApplyFilters} className="flex-1">
             {t.swipe.applyFilters}
           </Button>
         </div>
 
-        {/* Active Filters Indicator */}
         {hasActiveFilters && (
           <div className="text-sm text-muted-foreground">
             {t.swipe.activeFilters}:{' '}
             {selectedUniversity && selectedUniversity !== '__all__' && (
-              <span className="font-medium">{selectedUniversity}</span>
+              <span className="font-medium">{getUniversityLabel(selectedUniversity)}</span>
             )}
             {selectedUniversity && selectedUniversity !== '__all__' && selectedResearchField && selectedResearchField !== '__all__' && ' + '}
             {selectedResearchField && selectedResearchField !== '__all__' && (
-              <span className="font-medium">{selectedResearchField}</span>
+              <span className="font-medium">{getFieldLabel(selectedResearchField)}</span>
             )}
           </div>
         )}

@@ -119,7 +119,10 @@ export function Swipe() {
       // Map research_field to researchField for frontend compatibility
       const mappedProfessors = professorsData.professors.map((prof: any) => ({
         ...prof,
-        researchField: prof.research_field, // Map research_field to researchField
+        researchField: prof.research_field,
+        research_field_zh: prof.research_field_zh || null,
+        department_zh: prof.department_zh || null,
+        tags_zh: prof.tags_zh || null,
       }));
       
       setAllProfessors(prev => {

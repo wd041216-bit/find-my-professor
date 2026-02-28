@@ -30,6 +30,12 @@ function Router() {
       <Route path={"/profile"} component={Profile} />
       <Route path={"/history"} component={History} />
       <Route path={"/cover-letters"} component={CoverLetters} />
+      {/* Chinese locale routes */}
+      <Route path={"/zh"} component={Swipe} />
+      <Route path={"/zh/swipe"} component={Swipe} />
+      <Route path={"/zh/profile"} component={Profile} />
+      <Route path={"/zh/history"} component={History} />
+      <Route path={"/zh/cover-letters"} component={CoverLetters} />
       <Route path={"/privacy"} component={Privacy} />
       <Route path={"/privacy-policy"} component={PrivacyPolicy} />
       <Route path={"/privacy-policy-zh"} component={PrivacyPolicyZh} />

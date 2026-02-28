@@ -11,12 +11,17 @@ interface ProfessorWithScore {
   universityName: string;
   department: string;
   research_field?: string | null;
+  research_field_zh?: string | null;
+  department_zh?: string | null;
+  tags_zh?: string[] | null;
   title?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
   matchScore?: number;
   displayScore?: number;
+  matchedTags?: string[];
   schoolImageUrl?: string;
+  imageUrl?: string;
 }
 
 /**
@@ -127,13 +132,15 @@ interface ProfessorWithScore {
         name: prof.name,
         universityName: prof.universityName || university,
         department: prof.department || '',
-        research_field: prof.research_field, // Include research_field for frontend mapping
+        research_field: prof.research_field,
+        research_field_zh: (prof as any).research_field_zh || null,
+        department_zh: (prof as any).department_zh || null,
+        tags_zh: (prof as any).tags_zh ? (typeof (prof as any).tags_zh === 'string' ? JSON.parse((prof as any).tags_zh) : (prof as any).tags_zh) : null,
         title: prof.title,
         researchAreas: prof.researchAreas ? (() => {
           try {
             return JSON.parse(prof.researchAreas as string);
           } catch (e) {
-            // If researchAreas is not valid JSON, treat it as a single string
             return [prof.researchAreas as string];
           }
         })() : null,
@@ -313,6 +320,9 @@ export async function getProfessorsForSwipe(
         researchAreas: prof.researchAreas ? (typeof prof.researchAreas === 'string' ? (() => { try { return JSON.parse(prof.researchAreas as string); } catch { return [prof.researchAreas as string]; } })() : prof.researchAreas) : [],
         tags: prof.tags ? (typeof prof.tags === 'string' ? JSON.parse(prof.tags) : prof.tags) : [],
         research_field: prof.research_field || '',
+        research_field_zh: (prof as any).research_field_zh || null,
+        department_zh: (prof as any).department_zh || null,
+        tags_zh: (prof as any).tags_zh ? (typeof (prof as any).tags_zh === 'string' ? JSON.parse((prof as any).tags_zh) : (prof as any).tags_zh) : null,
         schoolImageUrl: uniImageMap.get((prof.universityName || '').toLowerCase()) || prof.imageUrl || undefined,
         matchScore: undefined,
         displayScore: undefined,

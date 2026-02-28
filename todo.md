@@ -409,3 +409,21 @@
 - [x] Fix Filter/Reset buttons missing i18n (hardcoded English in DesktopHeader and FilterPanel)
 - [x] Extend language switcher to History and CoverLetters pages
 - [x] Optimize professor card image loading (eager loading + preload next 3 images)
+- [ ] Add Chinese fields to professors schema (research_field_zh, department_zh, tags_zh)
+- [ ] Add tag_zh to research_tags_dictionary schema
+- [ ] Populate Chinese translations for all research fields, university names, tags in DB
+- [ ] Create useLocale hook to detect /zh route prefix
+- [ ] Add /zh/* routes to App.tsx (swipe, history, cover-letters, profile)
+- [ ] Update BottomNav and DesktopHeader to use locale-aware paths
+- [ ] Add language selector to homepage/nav
+- [ ] Update Swipe, History, CoverLetters, Profile pages to show Chinese data on /zh routes
+- [x] Add /zh route prefix for Chinese locale (URL-based language switching)
+- [x] Update LanguageContext to sync language with URL prefix
+- [x] Update BottomNav and DesktopHeader to use locale-aware paths
+- [x] Add Chinese fields (research_field_zh, department_zh, tags_zh) to professors table
+- [x] Batch update research_field_zh for all professors via SQL
+- [x] Update getFilterOptions API to return Chinese university and field names
+- [x] Update FilterPanel to display Chinese names in zh mode
+- [x] Update ProfessorCard to display Chinese department and tags in zh mode
+- [x] Add departmentTranslation utility for keyword-based department translation
+- [x] Extend LanguageSwitcher to History and CoverLetters pages
