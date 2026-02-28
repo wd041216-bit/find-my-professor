@@ -45,16 +45,56 @@ export const swipeRouter = router({
         .where(sql`university_name IS NOT NULL AND university_name != ''`)
         .orderBy(sql`university_name`);
 
-      // Get unique research fields
-      const researchFields = await db
-        .selectDistinct({ field: professors.research_field })
-        .from(professors)
-        .where(sql`${professors.research_field} IS NOT NULL AND ${professors.research_field} != ''`)
-        .orderBy(professors.research_field);
+      // Get unique research fields with Chinese names
+      const researchFieldsRaw = await db.execute(
+        sql`SELECT DISTINCT research_field, research_field_zh FROM professors WHERE research_field IS NOT NULL AND research_field != '' ORDER BY research_field`
+      );
+      const researchFieldRows = (researchFieldsRaw[0] as unknown as any[]);
+      const researchFields = researchFieldRows.map((r: any) => r.research_field).filter(Boolean) as string[];
+      const researchFieldsZh = researchFieldRows.map((r: any) => r.research_field_zh || r.research_field).filter(Boolean) as string[];
+
+      // Get university names with Chinese names from UNIVERSITY_ZH mapping
+      const UNIVERSITY_ZH: Record<string, string> = {
+        "Brown University": "布朗大学",
+        "California Institute of Technology": "加州理工学院",
+        "Carnegie Mellon University": "卡内基梅隆大学",
+        "Columbia University": "哥伦比亚大学",
+        "Dartmouth College": "达特茅斯学院",
+        "Duke University": "杜克大学",
+        "Georgetown University": "乔治城大学",
+        "Harvard University": "哈佛大学",
+        "Johns Hopkins University": "约翰斯·霍普金斯大学",
+        "Lehigh University": "里海大学",
+        "MIT": "麻省理工学院",
+        "Northeastern University": "东北大学",
+        "Northwestern University": "西北大学",
+        "Pepperdine University": "佩珀代因大学",
+        "Princeton University": "普林斯顿大学",
+        "Rice University": "莱斯大学",
+        "Stanford University": "斯坦福大学",
+        "University of California, Los Angeles": "加州大学洛杉矶分校",
+        "University of California, Santa Barbara": "加州大学圣巴巴拉分校",
+        "University of Chicago": "芝加哥大学",
+        "University of Florida": "佛罗里达大学",
+        "University of Miami": "迈阿密大学",
+        "University of Michigan": "密歇根大学",
+        "University of North Carolina at Chapel Hill": "北卡罗来纳大学教堂山分校",
+        "University of Southern California": "南加州大学",
+        "University of Virginia": "弗吉尼亚大学",
+        "University of Washington": "华盛顿大学",
+        "Villanova University": "维拉诺瓦大学",
+        "Washington University in St. Louis": "圣路易斯华盛顿大学",
+        "Yale University": "耶鲁大学",
+      };
+
+      const universitiesList = universities.map((u) => u.university).filter((u): u is string => !!u);
+      const universitiesZh = universitiesList.map(u => UNIVERSITY_ZH[u] || u);
 
       const result = {
-        universities: universities.map((u) => u.university).filter((u): u is string => !!u),
-        researchFields: researchFields.map((f) => f.field).filter((f): f is string => !!f),
+        universities: universitiesList,
+        universitiesZh,
+        researchFields,
+        researchFieldsZh,
       };
       
       // 缓存结果（5分钟）- reuse departments key for backward compatibility

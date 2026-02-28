@@ -232,6 +232,13 @@
       "when": 1772198949676,
       "tag": "0032_nappy_dark_phoenix",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1772248229497,
+      "tag": "0033_spotty_harpoon",
+      "breakpoints": true
     }
   ]
 }

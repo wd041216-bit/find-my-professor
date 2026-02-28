@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Language, getTranslation, getBrowserLanguage, TranslationKeys } from "@/lib/i18n";
+import { useLocation } from "wouter";
+import { Language, getTranslation, TranslationKeys } from "@/lib/i18n";
 
 interface LanguageContextType {
   language: Language;
@@ -9,24 +10,49 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const LANGUAGE_STORAGE_KEY = "find-my-professor-language";
-
+/**
+ * LanguageProvider
+ * - Source of truth: URL prefix (/zh/* → Chinese, else English)
+ * - setLanguage navigates to the equivalent /zh or English route
+ * - Falls back to localStorage only on the root path "/"
+ */
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    // Check localStorage first
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      if (stored === "en" || stored === "zh") {
-        return stored;
+  const [location, navigate] = useLocation();
+
+  // Derive language from URL
+  const urlLanguage: Language = location.startsWith("/zh") ? "zh" : "en";
+
+  // Internal state mirrors URL (needed for React re-renders)
+  const [language, setLanguageState] = useState<Language>(urlLanguage);
+
+  // Keep state in sync when URL changes (e.g., browser back/forward)
+  useEffect(() => {
+    setLanguageState(urlLanguage);
+  }, [urlLanguage]);
+
+  /**
+   * Switch language by navigating to the equivalent path in the other locale.
+   * /swipe → /zh/swipe  (en→zh)
+   * /zh/swipe → /swipe  (zh→en)
+   */
+  const setLanguage = (lang: Language) => {
+    if (lang === language) return;
+
+    if (lang === "zh") {
+      // Add /zh prefix
+      if (location === "/" || location === "/swipe") {
+        navigate("/zh/swipe");
+      } else if (!location.startsWith("/zh")) {
+        navigate(`/zh${location}`);
+      }
+    } else {
+      // Remove /zh prefix
+      if (location === "/zh" || location === "/zh/swipe") {
+        navigate("/");
+      } else if (location.startsWith("/zh")) {
+        navigate(location.slice(3) || "/");
       }
     }
-    // Fall back to browser language
-    return getBrowserLanguage();
-  });
-
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
   };
 
   const t = getTranslation(language);

@@ -1,0 +1,90 @@
+{
+  "query": "SELECT research_field, COUNT(*) as cnt FROM professors WHERE research_field IS NOT NULL GROUP BY research_field ORDER BY research_field;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT research_field, COUNT(*) as cnt FROM professors WHERE research_field IS NOT NULL GROUP BY research_field ORDER BY research_field;",
+  "rows": [
+    {
+      "research_field": "Arts & Humanities",
+      "cnt": "1381"
+    },
+    {
+      "research_field": "Biology",
+      "cnt": "185"
+    },
+    {
+      "research_field": "Biomedical Engineering",
+      "cnt": "61"
+    },
+    {
+      "research_field": "Business",
+      "cnt": "120"
+    },
+    {
+      "research_field": "Chemistry",
+      "cnt": "91"
+    },
+    {
+      "research_field": "Computer Science",
+      "cnt": "273"
+    },
+    {
+      "research_field": "Data Science",
+      "cnt": "59"
+    },
+    {
+      "research_field": "Economics",
+      "cnt": "143"
+    },
+    {
+      "research_field": "Education",
+      "cnt": "73"
+    },
+    {
+      "research_field": "Engineering",
+      "cnt": "299"
+    },
+    {
+      "research_field": "Environmental Science",
+      "cnt": "261"
+    },
+    {
+      "research_field": "Law",
+      "cnt": "17"
+    },
+    {
+      "research_field": "Materials Science",
+      "cnt": "47"
+    },
+    {
+      "research_field": "Mathematics",
+      "cnt": "121"
+    },
+    {
+      "research_field": "Medicine & Health",
+      "cnt": "161"
+    },
+    {
+      "research_field": "Neuroscience",
+      "cnt": "94"
+    },
+    {
+      "research_field": "Philosophy",
+      "cnt": "14"
+    },
+    {
+      "research_field": "Physics",
+      "cnt": "161"
+    },
+    {
+      "research_field": "Psychology",
+      "cnt": "92"
+    },
+    {
+      "research_field": "Social Sciences",
+      "cnt": "713"
+    }
+  ],
+  "messages": [],
+  "stdout": "research_field\tcnt\nArts & Humanities\t1381\nBiology\t185\nBiomedical Engineering\t61\nBusiness\t120\nChemistry\t91\nComputer Science\t273\nData Science\t59\nEconomics\t143\nEducation\t73\nEngineering\t299\nEnvironmental Science\t261\nLaw\t17\nMaterials Science\t47\nMathematics\t121\nMedicine & Health\t161\nNeuroscience\t94\nPhilosophy\t14\nPhysics\t161\nPsychology\t92\nSocial Sciences\t713\n",
+  "stderr": "",
+  "execution_time_ms": 1517
+}

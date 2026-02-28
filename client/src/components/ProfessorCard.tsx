@@ -2,6 +2,8 @@ import { motion, useMotionValue, useTransform, PanInfo, AnimatePresence } from '
 import { Info } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
+import { useLocale } from '@/hooks/useLocale';
+import { translateDepartment } from '@/lib/departmentTranslation';
 
 export interface Professor {
   id: number;
@@ -9,6 +11,9 @@ export interface Professor {
   universityName: string;
   department: string;
   researchField?: string;
+  research_field_zh?: string | null;
+  department_zh?: string | null;
+  tags_zh?: string[] | null;
   title?: string | null;
   researchAreas?: string[] | null;
   tags?: string[] | null;
@@ -63,6 +68,7 @@ export function ProfessorCard({
   animation = null,
 }: ProfessorCardProps) {
   const x = useMotionValue(0);
+  const { isZh } = useLocale();
   const [showInfo, setShowInfo] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
@@ -243,7 +249,9 @@ export function ProfessorCard({
             <h2 className="text-3xl font-black text-white mb-1 drop-shadow-lg leading-tight">
               {professor.name}
             </h2>
-            <p className="text-base text-white/90 drop-shadow-md">{professor.department}</p>
+            <p className="text-base text-white/90 drop-shadow-md">
+              {isZh ? (professor.department_zh || translateDepartment(professor.department)) : professor.department}
+            </p>
             <p className="text-base text-white/80 drop-shadow-md font-medium">{professor.universityName}</p>
           </div>
 
@@ -257,10 +265,10 @@ export function ProfessorCard({
                 className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl"
               >
                 <h3 className="text-xs font-bold text-gray-600 mb-2.5 uppercase tracking-wider">
-                  Research Interests
+                  {isZh ? '研究方向' : 'Research Interests'}
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {professor.tags.slice(0, 6).map((tag, i) => {
+                  {(isZh && professor.tags_zh?.length ? professor.tags_zh : professor.tags)!.slice(0, 6).map((tag, i) => {
                     const colors = [
                       'from-blue-500 to-blue-700',
                       'from-purple-500 to-purple-700',

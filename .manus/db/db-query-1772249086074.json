@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, SUM(CASE WHEN research_field_zh IS NOT NULL AND research_field_zh != '' THEN 1 ELSE 0 END) as zh_count FROM professors",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT COUNT(*) as total, SUM(CASE WHEN research_field_zh IS NOT NULL AND research_field_zh != '' THEN 1 ELSE 0 END) as zh_count FROM professors",
+  "rows": [
+    {
+      "total": "4366",
+      "zh_count": "4366"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tzh_count\n4366\t4366\n",
+  "stderr": "",
+  "execution_time_ms": 1655
+}

@@ -1,23 +1,46 @@
 import { Link, useLocation } from "wouter";
-import { Home, Heart, FileText, User, Globe } from "lucide-react";
+import { Home, Heart, FileText, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocale } from "@/hooks/useLocale";
 
 interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
+  matchPaths: string[];
 }
 
 export function BottomNav() {
   const [location] = useLocation();
   const { language } = useLanguage();
+  const { localePath } = useLocale();
 
   const navItems: NavItem[] = [
-    { icon: Home, label: language === "en" ? "Swipe" : "滑动", path: "/" },
-    { icon: Heart, label: language === "en" ? "Matches" : "匹配", path: "/history" },
-    { icon: FileText, label: language === "en" ? "Letters" : "文书", path: "/cover-letters" },
-    { icon: User, label: language === "en" ? "Profile" : "资料", path: "/profile" },
+    {
+      icon: Home,
+      label: language === "en" ? "Swipe" : "滑动",
+      path: localePath("/"),
+      matchPaths: ["/", "/swipe", "/zh", "/zh/swipe"],
+    },
+    {
+      icon: Heart,
+      label: language === "en" ? "Matches" : "匹配",
+      path: localePath("/history"),
+      matchPaths: ["/history", "/zh/history"],
+    },
+    {
+      icon: FileText,
+      label: language === "en" ? "Letters" : "文书",
+      path: localePath("/cover-letters"),
+      matchPaths: ["/cover-letters", "/zh/cover-letters"],
+    },
+    {
+      icon: User,
+      label: language === "en" ? "Profile" : "资料",
+      path: localePath("/profile"),
+      matchPaths: ["/profile", "/zh/profile"],
+    },
   ];
 
   return (
@@ -25,8 +48,9 @@ export function BottomNav() {
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location === item.path || (item.path !== "/" && location.startsWith(item.path));
-
+          const isActive = item.matchPaths.some(
+            (p) => location === p || (p !== "/" && p !== "/zh" && location.startsWith(p))
+          );
           return (
             <Link key={item.path} href={item.path}>
               <button

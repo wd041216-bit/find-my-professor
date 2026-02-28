@@ -78,6 +78,9 @@ export const professors = mysqlTable("professors", {
   researchAreas: text("research_areas"), // JSON array of research areas
   tags: json("tags").$type<string[]>(), // Research tags for matching algorithm
   research_field: varchar("research_field", { length: 255 }), // Research field category
+  research_field_zh: varchar("research_field_zh", { length: 255 }), // Chinese research field name
+  department_zh: text("department_zh"), // Chinese department/school name
+  tags_zh: json("tags_zh").$type<string[]>(), // Chinese research tags
   imageUrl: text("image_url"), // University/department branded image URL
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -175,6 +178,7 @@ export const researchTagsDictionary = mysqlTable("research_tags_dictionary", {
   universityName: varchar("university_name", { length: 255 }).notNull(),
   majorName: varchar("major_name", { length: 255 }).notNull(),
   tag: varchar("tag", { length: 100 }).notNull(),
+  tag_zh: varchar("tag_zh", { length: 100 }), // Chinese translation of the tag
   category: varchar("category", { length: 50 }), // methodology, domain, technology, etc.
   frequency: int("frequency").default(1), // How many professors use this tag
   createdAt: timestamp("created_at").defaultNow(),
@@ -228,6 +232,7 @@ export const universityFieldImages = mysqlTable("university_field_images", {
   id: int("id").autoincrement().primaryKey(),
   universityName: varchar("university_name", { length: 255 }).notNull(),
   researchFieldName: varchar("research_field_name", { length: 255 }).notNull(),
+  researchFieldNameZh: varchar("research_field_name_zh", { length: 255 }), // Chinese research field name
   imageUrl: text("image_url").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({

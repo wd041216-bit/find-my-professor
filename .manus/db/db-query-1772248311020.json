@@ -1,0 +1,9 @@
+{
+  "query": "\nALTER TABLE `professors` ADD COLUMN IF NOT EXISTS `research_field_zh` varchar(255);\nALTER TABLE `professors` ADD COLUMN IF NOT EXISTS `department_zh` text;\nALTER TABLE `professors` ADD COLUMN IF NOT EXISTS `tags_zh` json;\nALTER TABLE `research_tags_dictionary` ADD COLUMN IF NOT EXISTS `tag_zh` varchar(100);\nALTER TABLE `university_field_images` ADD COLUMN IF NOT EXISTS `research_field_name_zh` varchar(255);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute \nALTER TABLE `professors` ADD COLUMN IF NOT EXISTS `research_field_zh` varchar(255);\nALTER TABLE `professors` ADD COLUMN IF NOT EXISTS `department_zh` text;\nALTER TABLE `professors` ADD COLUMN IF NOT EXISTS `tags_zh` json;\nALTER TABLE `research_tags_dictionary` ADD COLUMN IF NOT EXISTS `tag_zh` varchar(100);\nALTER TABLE `university_field_images` ADD COLUMN IF NOT EXISTS `research_field_name_zh` varchar(255);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 5965
+}
