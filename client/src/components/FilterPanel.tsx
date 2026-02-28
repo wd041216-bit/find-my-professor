@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { trpc } from '@/lib/trpc';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FilterPanelProps {
   onFilterChange: (filters: { university?: string; researchField?: string }) => void;
@@ -19,6 +20,7 @@ interface FilterPanelProps {
 }
 
 export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete, currentFilters }: FilterPanelProps) {
+  const { t } = useLanguage();
   const [selectedUniversity, setSelectedUniversity] = useState<string | undefined>(currentFilters.university);
   const [selectedResearchField, setSelectedResearchField] = useState<string | undefined>(currentFilters.researchField);
 
@@ -67,7 +69,7 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-semibold">Filter Professors</h2>
+            <h2 className="text-xl font-semibold">{t.swipe.filterProfessors}</h2>
           </div>
           <Button
             variant="ghost"
@@ -83,7 +85,7 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
         <div className="space-y-4">
           {/* University Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">University</label>
+            <label className="text-sm font-medium">{t.swipe.university}</label>
             <Select
               value={selectedUniversity}
               onValueChange={(value) => {
@@ -92,10 +94,10 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All Universities" />
+                <SelectValue placeholder={t.swipe.allUniversities} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">All Universities</SelectItem>
+                <SelectItem value="__all__">{t.swipe.allUniversities}</SelectItem>
                 {filterOptions?.universities.map((uni) => (
                   <SelectItem key={uni!} value={uni!}>
                     {uni}
@@ -107,16 +109,16 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
 
           {/* Research Field Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Research Field</label>
+            <label className="text-sm font-medium">{t.swipe.researchField}</label>
             <Select
               value={selectedResearchField}
               onValueChange={setSelectedResearchField}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All Research Fields" />
+                <SelectValue placeholder={t.swipe.allResearchFields} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">All Research Fields</SelectItem>
+                <SelectItem value="__all__">{t.swipe.allResearchFields}</SelectItem>
                 {researchFields.map((field) => (
                   <SelectItem key={field!} value={field!}>
                     {field}
@@ -135,20 +137,20 @@ export function FilterPanel({ onFilterChange, isOpen, onClose, isProfileComplete
             disabled={!hasActiveFilters}
             className="flex-1"
           >
-            Clear Filters
+            {t.swipe.clearFilters}
           </Button>
           <Button
             onClick={handleApplyFilters}
             className="flex-1"
           >
-            Apply Filters
+            {t.swipe.applyFilters}
           </Button>
         </div>
 
         {/* Active Filters Indicator */}
         {hasActiveFilters && (
           <div className="text-sm text-muted-foreground">
-            Active filters:{' '}
+            {t.swipe.activeFilters}:{' '}
             {selectedUniversity && selectedUniversity !== '__all__' && (
               <span className="font-medium">{selectedUniversity}</span>
             )}

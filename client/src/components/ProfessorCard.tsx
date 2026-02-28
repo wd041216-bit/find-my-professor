@@ -218,6 +218,8 @@ export function ProfessorCard({
                 alt={`${professor.universityName} ${professor.researchField || professor.department}`}
                 className="w-full h-full object-cover"
                 draggable={false}
+                loading="eager"
+                fetchPriority="high"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400" />

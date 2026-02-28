@@ -75,7 +75,7 @@ export function DesktopHeader({ onResetClick, onFilterClick, showActions = false
                   className="flex items-center space-x-2"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  <span>Reset</span>
+                  <span>{t.swipe.reset}</span>
                 </Button>
               )}
               {onFilterClick && (
@@ -86,7 +86,7 @@ export function DesktopHeader({ onResetClick, onFilterClick, showActions = false
                   className="flex items-center space-x-2"
                 >
                   <Filter className="w-4 h-4" />
-                  <span>Filter</span>
+                  <span>{t.swipe.filter}</span>
                 </Button>
               )}
             </>
