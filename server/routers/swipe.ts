@@ -236,9 +236,21 @@ export const swipeRouter = router({
 
           if (profile) {
             // User has a profile — calculate based on tag overlap
-            const studentSkills = profile.skills ? JSON.parse(profile.skills as string) : [];
-            const studentInterests = profile.interests ? JSON.parse(profile.interests as string) : [];
-            const studentTags = [...studentSkills, ...studentInterests].map((t: string) => t.toLowerCase());
+            // Priority: use LLM-normalized tags if available, fall back to raw skills+interests
+            let studentTags: string[];
+            if ((profile as any).normalizedTags) {
+              // Use LLM-normalized tags (aligned with professor vocabulary — better match quality)
+              const raw = (profile as any).normalizedTags;
+              const normalized = typeof raw === 'string' ? JSON.parse(raw) : raw;
+              studentTags = Array.isArray(normalized) ? normalized.map((t: string) => t.toLowerCase()) : [];
+              console.log('[Swipe] Using normalized_tags for match score, count:', studentTags.length);
+            } else {
+              // Fallback: raw skills + interests
+              const studentSkills = profile.skills ? JSON.parse(profile.skills as string) : [];
+              const studentInterests = profile.interests ? JSON.parse(profile.interests as string) : [];
+              studentTags = [...studentSkills, ...studentInterests].map((t: string) => t.toLowerCase());
+              console.log('[Swipe] Using raw skills+interests for match score, count:', studentTags.length);
+            }
 
             const matchedTags = professorTags.filter(tag => {
               const tagLower = tag.toLowerCase();

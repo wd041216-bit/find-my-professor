@@ -6,6 +6,7 @@ import { z } from "zod";
 import * as db from "./db";
 import { swipeRouter } from "./routers/swipe";
 import { coverLetterRouter } from "./routers/coverLetter";
+import { normalizeStudentTags } from "./services/tagNormalizationService";
 
 export const appRouter = router({
   system: systemRouter,
@@ -61,7 +62,16 @@ export const appRouter = router({
           bio: input.bio || null,
         });
         
-        // matchScore is now calculated in real-time during swipe
+        // Asynchronously normalize student tags against professor vocabulary
+        // This runs in the background and does NOT block the profile save response
+        const skillsForNorm = input.skills && input.skills.length > 0 ? input.skills : [];
+        const interestsForNorm = input.interests && input.interests.length > 0 ? input.interests : [];
+        const majorsForNorm = input.targetMajors && input.targetMajors.length > 0 ? input.targetMajors : [];
+        if (skillsForNorm.length > 0 || interestsForNorm.length > 0 || majorsForNorm.length > 0) {
+          // Fire-and-forget: do not await, never throws to caller
+          normalizeStudentTags(ctx.user.id, skillsForNorm, interestsForNorm, majorsForNorm, input.bio)
+            .catch(err => console.error('[Profile] Tag normalization error (non-fatal):', err));
+        }
         
         return result;
       }),

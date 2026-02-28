@@ -35,6 +35,7 @@ export const studentProfiles = mysqlTable("student_profiles", {
   interests: text("interests"), // JSON array
   bio: text("bio"),
   resumeUrl: text("resume_url"), // URL to uploaded resume file
+  normalizedTags: text("normalized_tags"), // JSON array — LLM-normalized tags aligned with professor vocabulary
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

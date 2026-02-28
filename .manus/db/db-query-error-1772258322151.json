@@ -1,0 +1,15 @@
+{
+  "query": "INSERT IGNORE INTO research_field_tag_mapping (tag, research_field)\nSELECT \n  TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))) as tag,\n  research_field\nFROM (\n  SELECT \n    p.research_field,\n    p.tags,\n    JSON_LENGTH(p.tags) as tag_count\n  FROM professors p\n  WHERE p.tags IS NOT NULL \n    AND p.tags != 'null' \n    AND p.tags != '[]'\n    AND p.research_field IS NOT NULL\n) prof_data\nJOIN JSON_TABLE(\n  prof_data.tags,\n  '$[*]' COLUMNS (tag_value VARCHAR(200) PATH '$')\n) tags_expanded\nWHERE TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))) != ''\nGROUP BY TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))), research_field\nHAVING COUNT(*) >= 2\nLIMIT 5000;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute INSERT IGNORE INTO research_field_tag_mapping (tag, research_field)\nSELECT \n  TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))) as tag,\n  research_field\nFROM (\n  SELECT \n    p.research_field,\n    p.tags,\n    JSON_LENGTH(p.tags) as tag_count\n  FROM professors p\n  WHERE p.tags IS NOT NULL \n    AND p.tags != 'null' \n    AND p.tags != '[]'\n    AND p.research_field IS NOT NULL\n) prof_data\nJOIN JSON_TABLE(\n  prof_data.tags,\n  '$[*]' COLUMNS (tag_value VARCHAR(200) PATH '$')\n) tags_expanded\nWHERE TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))) != ''\nGROUP BY TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))), research_field\nHAVING COUNT(*) >= 2\nLIMIT 5000;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 16 column 17 near \"(",
+    "  prof_data.tags,",
+    "  '$[*]' COLUMNS (tag_value VARCHAR(200) PATH '$')",
+    ") tags_expanded",
+    "WHERE TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))) != ''",
+    "GROUP BY TRIM(JSON_UNQUOTE(JSON_EXTRACT(tags_expanded.tag_value, '$'))), research_field",
+    "HAVING COUNT(*) >= 2",
+    "LIMIT 5000\""
+  ]
+}

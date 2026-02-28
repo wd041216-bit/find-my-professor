@@ -239,6 +239,13 @@
       "when": 1772248229497,
       "tag": "0033_spotty_harpoon",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1772258547576,
+      "tag": "0034_nostalgic_nightshade",
+      "breakpoints": true
     }
   ]
 }
