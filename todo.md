@@ -430,3 +430,9 @@
 - [x] Add university name Chinese translation utility and apply to ProfessorCard
 - [x] Localize Matches (History) page card UI to Chinese
 - [x] Localize Letters (CoverLetters) page card UI to Chinese (keep letter content in English)
+
+- [x] Rebuild research_tags_dictionary from all professor tags (2799 canonical tags, freq>=2)
+- [x] Add normalized_tags field to student_profiles table
+- [x] Create tagNormalizationService.ts - LLM normalizes student skills/interests to professor vocabulary
+- [x] Trigger tag normalization asynchronously on profile.upsert (fire-and-forget, non-blocking)
+- [x] Update swipe.ts match score to prefer normalized_tags over raw skills+interests

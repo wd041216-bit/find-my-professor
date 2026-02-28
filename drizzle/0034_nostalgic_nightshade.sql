@@ -1,0 +1,1 @@
+ALTER TABLE `student_profiles` ADD `normalized_tags` text;
