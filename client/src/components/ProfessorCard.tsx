@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
 import { useLocale } from '@/hooks/useLocale';
 import { translateDepartment } from '@/lib/departmentTranslation';
+import { translateUniversity } from '@/lib/universityTranslation';
 
 export interface Professor {
   id: number;
@@ -252,7 +253,9 @@ export function ProfessorCard({
             <p className="text-base text-white/90 drop-shadow-md">
               {isZh ? (professor.department_zh || translateDepartment(professor.department)) : professor.department}
             </p>
-            <p className="text-base text-white/80 drop-shadow-md font-medium">{professor.universityName}</p>
+            <p className="text-base text-white/80 drop-shadow-md font-medium">
+              {isZh ? translateUniversity(professor.universityName) : professor.universityName}
+            </p>
           </div>
 
           <AnimatePresence>

@@ -5,11 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, Heart, Mail, Globe, FlaskConical, Sparkles, X, ExternalLink, Trash2, Search } from "lucide-react";
+import { ArrowLeft, Loader2, Heart, FlaskConical, Sparkles, ExternalLink, Trash2, Search } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { translateUniversity } from "@/lib/universityTranslation";
 
 export default function History() {
   const { user, loading: authLoading } = useAuth();
@@ -21,6 +22,8 @@ export default function History() {
   const [generatingLetter, setGeneratingLetter] = useState(false);
   const [coverLetterContent, setCoverLetterContent] = useState("");
 
+  const isZh = language === 'zh';
+
   // Fetch liked professors
   const { data: likedProfessors = [], isLoading, refetch } = trpc.swipe.getLikedProfessors.useQuery(undefined, {
     enabled: !!user,
@@ -29,11 +32,11 @@ export default function History() {
   // Unlike professor mutation
   const unlikeMutation = trpc.swipe.unlike.useMutation({
     onSuccess: () => {
-      toast.success("Removed from matches");
+      toast.success(isZh ? "已从匹配中移除" : "Removed from matches");
       refetch();
     },
     onError: () => {
-      toast.error("Failed to remove match");
+      toast.error(isZh ? "移除失败，请重试" : "Failed to remove match");
     },
   });
 
@@ -56,10 +59,9 @@ export default function History() {
         professorId: match.professor.id,
         tone: "formal",
       });
-
       setCoverLetterContent(result.content);
     } catch (error: any) {
-      toast.error("Failed to generate cover letter");
+      toast.error(isZh ? "生成申请信失败" : "Failed to generate cover letter");
       setShowCoverLetterDialog(false);
     } finally {
       setGeneratingLetter(false);
@@ -67,14 +69,14 @@ export default function History() {
   };
 
   const handleUnlike = (professorId: number) => {
-    if (confirm("Remove this professor from your matches?")) {
+    if (confirm(isZh ? "确定要从匹配中移除该教授吗？" : "Remove this professor from your matches?")) {
       unlikeMutation.mutate({ professorId });
     }
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
+    toast.success(isZh ? "已复制到剪贴板！" : "Copied to clipboard!");
   };
 
   if (authLoading || isLoading) {
@@ -95,27 +97,23 @@ export default function History() {
       {/* Header */}
       <div className="p-4 md:p-6 flex items-center justify-between bg-white/80 backdrop-blur-sm shadow-md">
         <div className="flex items-center gap-2 md:gap-4">
-          <Link href="/">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover:bg-purple-100 transition-colors"
-            >
+          <Link href={isZh ? "/zh/swipe" : "/"}>
+            <Button variant="ghost" size="sm" className="hover:bg-purple-100 transition-colors">
               <ArrowLeft className="w-5 h-5 md:mr-2" />
-              <span className="hidden md:inline">Back</span>
+              <span className="hidden md:inline">{isZh ? "返回" : "Back"}</span>
             </Button>
           </Link>
           <div className="flex items-center gap-2">
             <Heart className="w-6 h-6 md:w-7 md:h-7 text-pink-500 fill-pink-500" />
             <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {language === 'en' ? 'Match History' : '匹配记录'}
+              {isZh ? '匹配记录' : 'Match History'}
             </h1>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Badge variant="secondary" className="text-sm font-semibold">
-            {likedProfessors.length} {likedProfessors.length === 1 ? (language === 'en' ? 'Match' : '匹配') : (language === 'en' ? 'Matches' : '匹配')}
+            {likedProfessors.length} {isZh ? '匹配' : (likedProfessors.length === 1 ? 'Match' : 'Matches')}
           </Badge>
         </div>
       </div>
@@ -126,14 +124,16 @@ export default function History() {
           <Card className="border-2 border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12 md:py-16">
               <Heart className="h-16 w-16 text-gray-300 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No matches yet</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {isZh ? '还没有匹配记录' : 'No matches yet'}
+              </h3>
               <p className="text-muted-foreground mb-6 text-center max-w-md">
-                Start swiping to find professors that match your research interests!
+                {isZh ? '开始滑动，找到与你研究方向匹配的教授！' : 'Start swiping to find professors that match your research interests!'}
               </p>
-              <Link href="/swipe">
+              <Link href={isZh ? "/zh/swipe" : "/swipe"}>
                 <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
                   <Heart className="w-4 h-4 mr-2" />
-                  Start Swiping
+                  {isZh ? '开始滑动' : 'Start Swiping'}
                 </Button>
               </Link>
             </CardContent>
@@ -154,8 +154,12 @@ export default function History() {
                         )}
                       </CardTitle>
                       <div className="space-y-0.5 text-sm text-muted-foreground">
-                        {match.professor.majorName && <p>{match.professor.majorName}</p>}
-                        <p className="font-semibold text-purple-600">{match.professor.university}</p>
+                        {match.professor.majorName && (
+                          <p>{isZh ? (match.professor.department_zh || match.professor.majorName) : match.professor.majorName}</p>
+                        )}
+                        <p className="font-semibold text-purple-600">
+                          {isZh ? translateUniversity(match.professor.university) : match.professor.university}
+                        </p>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -170,15 +174,15 @@ export default function History() {
                               : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700'
                           }`}
                         >
-                          {match.matchScore >= 80 ? '🔥' : match.matchScore >= 60 ? '✨' : '💡'} {match.matchScore}% Match
+                          {match.matchScore >= 80 ? '🔥' : match.matchScore >= 60 ? '✨' : '💡'} {match.matchScore}% {isZh ? '匹配度' : 'Match'}
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="self-start whitespace-nowrap text-gray-400 text-xs border-gray-200">
-                          🔍 Explore Match
+                          🔍 {isZh ? '探索匹配' : 'Explore Match'}
                         </Badge>
                       )}
                       <p className="text-xs text-muted-foreground">
-                        Liked {new Date(match.createdAt).toLocaleDateString()}
+                        {isZh ? '喜欢于 ' : 'Liked '}{new Date(match.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -189,10 +193,10 @@ export default function History() {
                     <div>
                       <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                         <FlaskConical className="h-4 w-4 text-purple-600" />
-                        Research Field
+                        {isZh ? '研究领域' : 'Research Field'}
                       </h4>
                       <Badge variant="outline" className="text-sm">
-                        {match.professor.research_field}
+                        {isZh ? (match.professor.research_field_zh || match.professor.research_field) : match.professor.research_field}
                       </Badge>
                     </div>
                   )}
@@ -200,7 +204,9 @@ export default function History() {
                   {/* Research Tags */}
                   {match.professor.tags && match.professor.tags.length > 0 && (
                     <div>
-                      <h4 className="font-semibold text-sm mb-2">Research Interests</h4>
+                      <h4 className="font-semibold text-sm mb-2">
+                        {isZh ? '研究方向' : 'Research Interests'}
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {match.professor.tags.slice(0, 5).map((tag: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
@@ -209,7 +215,7 @@ export default function History() {
                         ))}
                         {match.professor.tags.length > 5 && (
                           <Badge variant="secondary" className="text-xs">
-                            +{match.professor.tags.length - 5} more
+                            +{match.professor.tags.length - 5} {isZh ? '更多' : 'more'}
                           </Badge>
                         )}
                       </div>
@@ -225,7 +231,7 @@ export default function History() {
                       className="gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     >
                       <ExternalLink className="h-4 w-4" />
-                      View Details
+                      {isZh ? '查看详情' : 'View Details'}
                     </Button>
                     <Button
                       size="sm"
@@ -234,7 +240,7 @@ export default function History() {
                       className="gap-2 border-purple-300 hover:bg-purple-50"
                     >
                       <Sparkles className="h-4 w-4" />
-                      Generate Cover Letter
+                      {isZh ? '生成申请信' : 'Generate Cover Letter'}
                     </Button>
                     <Button
                       size="sm"
@@ -243,7 +249,7 @@ export default function History() {
                       className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />
-                      Remove
+                      {isZh ? '移除' : 'Remove'}
                     </Button>
                   </div>
                 </CardContent>
@@ -264,30 +270,30 @@ export default function History() {
           {selectedProfessor && (
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-2">Institution</h4>
+                <h4 className="font-semibold mb-2">{isZh ? '所在机构' : 'Institution'}</h4>
                 <p className="text-muted-foreground">
                   {selectedProfessor.professor.majorName && (
-                    <>{selectedProfessor.professor.majorName}, </>
+                    <>{isZh ? (selectedProfessor.professor.department_zh || selectedProfessor.professor.majorName) : selectedProfessor.professor.majorName}, </>
                   )}
-                  {selectedProfessor.professor.university}
+                  {isZh ? translateUniversity(selectedProfessor.professor.university) : selectedProfessor.professor.university}
                 </p>
               </div>
 
               {selectedProfessor.professor.research_field && (
                 <div>
-                  <h4 className="font-semibold mb-2">Research Field</h4>
-                  <Badge>{selectedProfessor.professor.research_field}</Badge>
+                  <h4 className="font-semibold mb-2">{isZh ? '研究领域' : 'Research Field'}</h4>
+                  <Badge>
+                    {isZh ? (selectedProfessor.professor.research_field_zh || selectedProfessor.professor.research_field) : selectedProfessor.professor.research_field}
+                  </Badge>
                 </div>
               )}
 
               {selectedProfessor.professor.tags && selectedProfessor.professor.tags.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Research Interests</h4>
+                  <h4 className="font-semibold mb-2">{isZh ? '研究方向' : 'Research Interests'}</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedProfessor.professor.tags.map((tag: string, index: number) => (
-                      <Badge key={index} variant="secondary">
-                        {tag}
-                      </Badge>
+                      <Badge key={index} variant="secondary">{tag}</Badge>
                     ))}
                   </div>
                 </div>
@@ -295,7 +301,7 @@ export default function History() {
 
               {selectedProfessor.professor.bio && (
                 <div>
-                  <h4 className="font-semibold mb-2">Bio</h4>
+                  <h4 className="font-semibold mb-2">{isZh ? '简介' : 'Bio'}</h4>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                     {selectedProfessor.professor.bio}
                   </p>
@@ -307,15 +313,11 @@ export default function History() {
                   onClick={() => {
                     const professorName = selectedProfessor.professor.name;
                     const university = selectedProfessor.professor.university;
-                    
-                    // Copy professor name to clipboard
                     navigator.clipboard.writeText(professorName).then(() => {
-                      toast.success("Professor name copied to clipboard!");
+                      toast.success(isZh ? "教授姓名已复制到剪贴板！" : "Professor name copied to clipboard!");
                     }).catch(() => {
-                      toast.error("Failed to copy to clipboard");
+                      toast.error(isZh ? "复制失败" : "Failed to copy to clipboard");
                     });
-                    
-                    // Open Google search in new tab
                     const searchQuery = encodeURIComponent(`${professorName} ${university}`);
                     window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
                   }}
@@ -323,7 +325,7 @@ export default function History() {
                   variant="default"
                 >
                   <Search className="h-4 w-4 mr-2" />
-                  Find This Professor on Google
+                  {isZh ? '在 Google 上搜索该教授' : 'Find This Professor on Google'}
                 </Button>
               </div>
             </div>
@@ -337,13 +339,15 @@ export default function History() {
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-yellow-500" />
-              AI-Generated Cover Letter
+              {isZh ? 'AI 生成的申请信' : 'AI-Generated Cover Letter'}
             </DialogTitle>
           </DialogHeader>
           {generatingLetter ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="h-12 w-12 animate-spin text-purple-600 mb-4" />
-              <p className="text-muted-foreground">Generating your personalized cover letter...</p>
+              <p className="text-muted-foreground">
+                {isZh ? '正在为您生成个性化申请信...' : 'Generating your personalized cover letter...'}
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -353,17 +357,11 @@ export default function History() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button
-                  onClick={() => copyToClipboard(coverLetterContent)}
-                  className="flex-1"
-                >
-                  Copy to Clipboard
+                <Button onClick={() => copyToClipboard(coverLetterContent)} className="flex-1">
+                  {isZh ? '复制到剪贴板' : 'Copy to Clipboard'}
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCoverLetterDialog(false)}
-                >
-                  Close
+                <Button variant="outline" onClick={() => setShowCoverLetterDialog(false)}>
+                  {isZh ? '关闭' : 'Close'}
                 </Button>
               </div>
             </div>
