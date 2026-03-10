@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2741_c49229e0.PNG" width="280" alt="ProfMatch Swipe Screen" />
+
 # 💘 ProfMatch — 科研相亲网站
 
 **把找导师做成了 Tinder。因为有趣，才能坚持找下去。**
@@ -26,13 +28,59 @@
 
 ---
 
+## 使用流程
+
+整个流程只有四步：
+
+<div align="center">
+
+| | | | |
+|:---:|:---:|:---:|:---:|
+| <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2744_76ad4945.PNG" width="180" alt="Step 1 - Complete Profile" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2745_f7bfc984.PNG" width="180" alt="Step 2 - Explore Professors" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2746_04fa9418.PNG" width="180" alt="Step 3 - Review Matches" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2747_e7bb3edd.PNG" width="180" alt="Step 4 - Generate Cover Letters" /> |
+| **Step 1** 填写学术背景 | **Step 2** 滑动探索教授 | **Step 3** 查看心仪名单 | **Step 4** 一键生成套磁信 |
+
+</div>
+
+---
+
+## 核心界面展示
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="50%">
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2740_3051937b.PNG" width="260" alt="Professor card with research tags" /><br/>
+<sub><b>教授卡片 · 展开研究标签</b></sub>
+</td>
+<td align="center" width="50%">
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2742_5291847f.PNG" width="260" alt="Match history with score" /><br/>
+<sub><b>匹配历史 · 实时匹配分数</b></sub>
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2743_c6af5b5c.PNG" width="260" alt="Cover letters list" /><br/>
+<sub><b>套磁信管理 · 支持下载</b></sub>
+</td>
+<td align="center" width="50%">
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2748_125471fc.PNG" width="260" alt="FAQ page" /><br/>
+<sub><b>常见问题 · 内置使用指南</b></sub>
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
 ## 核心功能
 
 **滑动发现，而不是翻表格。** 每张教授卡片展示研究方向、所在大学、代表性标签，一眼判断是否值得深入了解。右滑保存，左滑跳过，后悔了还能撤回。
 
 **实时匹配打分。** 填写你的专业背景、技能和研究兴趣后，系统会用 LLM 把你的描述映射到与教授相同的学术词汇体系，计算真实的语义匹配度，而不是简单的关键词重叠。
 
-**一键生成套磁信。** 对保存的教授满意了？点一下，AI 根据你的 Profile 和教授的研究方向，生成一封个性化的申请文书。告别对着空白文档发愁。
+**一键生成套磁信。** 对保存的教授满意了？点一下，AI 根据你的 Profile 和教授的研究方向，生成一封个性化的申请文书，支持 Formal / Casual / Enthusiastic 三种语气，可直接复制或下载。
 
 **简历一键解析。** 上传 PDF/DOCX 简历，LLM 自动提取技能、经历、目标专业，填入你的 Profile。
 
