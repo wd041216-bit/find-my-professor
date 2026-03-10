@@ -88,7 +88,7 @@ export default function History() {
   }
 
   if (!user) {
-    setLocation("/");
+    setLocation(isZh ? "/zh/swipe" : "/");
     return null;
   }
 

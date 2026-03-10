@@ -21,6 +21,7 @@ import ProfessorPolicy from "./pages/ProfessorPolicy";
 import PrivacyPolicyZh from "./pages/PrivacyPolicyZh";
 import TermsOfServiceZh from "./pages/TermsOfServiceZh";
 import ProfessorPolicyZh from "./pages/ProfessorPolicyZh";
+import Tutorial from "./pages/Tutorial";
 
 function Router() {
   return (
@@ -36,6 +37,8 @@ function Router() {
       <Route path={"/zh/profile"} component={Profile} />
       <Route path={"/zh/history"} component={History} />
       <Route path={"/zh/cover-letters"} component={CoverLetters} />
+      <Route path={"/tutorial"} component={Tutorial} />
+      <Route path={"/zh/tutorial"} component={Tutorial} />
       <Route path={"/privacy"} component={Privacy} />
       <Route path={"/privacy-policy"} component={PrivacyPolicy} />
       <Route path={"/privacy-policy-zh"} component={PrivacyPolicyZh} />
