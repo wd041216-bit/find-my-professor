@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { getLoginUrl } from '@/const';
 import { ProfessorCard, Professor } from '../components/ProfessorCard';
 import { ProfessorCardSkeleton } from '../components/ProfessorCardSkeleton';
 import { X, Heart, RotateCcw, Sparkles, User, MessageCircle, Globe, Filter } from 'lucide-react';
@@ -21,6 +22,7 @@ import { FilterPanel } from '../components/FilterPanel';
 import { DesktopHeader } from '../components/DesktopHeader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
+import { useLocale } from '@/hooks/useLocale';
 
 // Animation variants for card transitions
 const ANIMATION_VARIANTS = [
@@ -42,6 +44,7 @@ interface CardAnimation {
 export function Swipe() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
+  const { isZh, localePath } = useLocale();
   const utils = trpc.useUtils();
   const [, setLocation] = useLocation();
   
@@ -216,6 +219,35 @@ export function Swipe() {
     );
   }
 
+  // Not logged in - show login prompt
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
+        <div className="max-w-md text-center">
+          <div className="mb-8">
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+              <User className="w-16 h-16 text-white" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
+            {isZh ? '登录以开始匹配' : 'Sign In to Get Started'}
+          </h2>
+          <p className="text-xl text-gray-700 mb-8 font-medium">
+            {isZh ? '登录后即可浏览教授资料，找到最适合你的导师。' : 'Sign in to browse professor profiles and find your perfect research advisor.'}
+          </p>
+          <Button
+            size="lg"
+            onClick={() => { window.location.href = getLoginUrl(); }}
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+          >
+            <User className="w-6 h-6 mr-2" />
+            {isZh ? '立即登录' : 'Sign In'}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Profile incomplete - show guidance
   if (!isProfileComplete) {
     return (
@@ -227,18 +259,18 @@ export function Swipe() {
             </div>
           </div>
           <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
-            Complete Your Profile First!
+            {isZh ? '先完善你的资料！' : 'Complete Your Profile First!'}
           </h2>
           <p className="text-xl text-gray-700 mb-8 font-medium">
-            To get the best professor matches, please tell us about your academic background and research interests.
+            {isZh ? '填写你的学术背景和研究兴趣，获得最精准的教授匹配。' : 'To get the best professor matches, please tell us about your academic background and research interests.'}
           </p>
           <Button
             size="lg"
-            onClick={() => setLocation('/profile')}
+            onClick={() => setLocation(localePath('/profile'))}
             className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
           >
             <User className="w-6 h-6 mr-2" />
-            Complete Profile
+            {isZh ? '完善资料' : 'Complete Profile'}
           </Button>
         </div>
       </div>
