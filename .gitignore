@@ -115,8 +115,8 @@ rebuild_*.mjs
 update_*.mjs
 seed_*.mjs
 
-# Local screenshots
-screenshots/
+# Local screenshots (root-level only, not docs/screenshots/)
+/screenshots/
 
 # Manus dev logs (contain request details)
 .manus-logs/
