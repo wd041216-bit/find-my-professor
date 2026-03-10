@@ -2,48 +2,47 @@
 
 <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2741_c49229e0.PNG" width="280" alt="ProfMatch Swipe Screen" />
 
-# 💘 ProfMatch — 科研相亲网站
+# 💘 ProfMatch — Academic Research Matchmaker
 
-**把找导师做成了 Tinder。因为有趣，才能坚持找下去。**
+**Finding your research advisor, Tinder-style. Because it should be fun.**
 
 [![Live](https://img.shields.io/badge/🌐_Live_Site-findmyprofessor.xyz-8b5cf6?style=for-the-badge)](https://www.findmyprofessor.xyz)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/wd041216-bit/find-my-professor?style=for-the-badge&color=yellow)](https://github.com/wd041216-bit/find-my-professor/stargazers)
+
+[中文版 README →](./README_zh.md)
 
 </div>
 
 ---
 
-## 为什么要做这个？
+## Why This Exists
 
-找导师这件事，本质上是一场**双向选择**。
+Finding a research advisor is fundamentally a **two-way match** — yet most students spend hours scrolling through faculty pages, reading papers one by one, and staring at a blank document wondering how to write a cold email.
 
-但现实是：大多数同学对着学校官网的教授列表，一页一页地翻，一篇一篇地读 paper，最后对着空白文档发愁，不知道怎么写套磁信。
+There's a better way. You should be able to browse professors the same way you'd swipe through a dating app: go with your gut first, let the match score guide you, and dive deeper only when something clicks.
 
-**这不对。** 找导师应该像找对象一样——直觉先行，匹配度说话，喜欢了再深入了解。
+So that's exactly what this is.
 
-所以我把它做成了 Tinder 的样子。
-
-> 👉 右滑 = 感兴趣 &nbsp;/&nbsp; 左滑 = 跳过 &nbsp;/&nbsp; 查看匹配分数 &nbsp;/&nbsp; 一键生成套磁信
+> 👉 Swipe right = interested &nbsp;/&nbsp; Swipe left = skip &nbsp;/&nbsp; See your match score &nbsp;/&nbsp; Generate a cover letter in one click
 
 ---
 
-## 使用流程
+## How It Works
 
-整个流程只有四步：
+Four steps from zero to a personalized cold email:
 
 <div align="center">
 
 | | | | |
 |:---:|:---:|:---:|:---:|
 | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2744_76ad4945.PNG" width="180" alt="Step 1 - Complete Profile" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2745_f7bfc984.PNG" width="180" alt="Step 2 - Explore Professors" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2746_04fa9418.PNG" width="180" alt="Step 3 - Review Matches" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2747_e7bb3edd.PNG" width="180" alt="Step 4 - Generate Cover Letters" /> |
-| **Step 1** 填写学术背景 | **Step 2** 滑动探索教授 | **Step 3** 查看心仪名单 | **Step 4** 一键生成套磁信 |
+| **Step 1** Complete your profile | **Step 2** Swipe through professors | **Step 3** Review your shortlist | **Step 4** Generate cover letters |
 
 </div>
 
 ---
 
-## 核心界面展示
+## Screenshots
 
 <div align="center">
 
@@ -51,21 +50,21 @@
 <tr>
 <td align="center" width="50%">
 <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2740_3051937b.PNG" width="260" alt="Professor card with research tags" /><br/>
-<sub><b>教授卡片 · 展开研究标签</b></sub>
+<sub><b>Professor card · Research tags expanded</b></sub>
 </td>
 <td align="center" width="50%">
 <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2742_5291847f.PNG" width="260" alt="Match history with score" /><br/>
-<sub><b>匹配历史 · 实时匹配分数</b></sub>
+<sub><b>Match history · Live match score badge</b></sub>
 </td>
 </tr>
 <tr>
 <td align="center" width="50%">
 <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2743_c6af5b5c.PNG" width="260" alt="Cover letters list" /><br/>
-<sub><b>套磁信管理 · 支持下载</b></sub>
+<sub><b>Cover letters · View, download, or delete</b></sub>
 </td>
 <td align="center" width="50%">
 <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/IMG_2748_125471fc.PNG" width="260" alt="FAQ page" /><br/>
-<sub><b>常见问题 · 内置使用指南</b></sub>
+<sub><b>FAQ · Built-in usage guide</b></sub>
 </td>
 </tr>
 </table>
@@ -74,94 +73,94 @@
 
 ---
 
-## 核心功能
+## Features
 
-**滑动发现，而不是翻表格。** 每张教授卡片展示研究方向、所在大学、代表性标签，一眼判断是否值得深入了解。右滑保存，左滑跳过，后悔了还能撤回。
+**Swipe-based discovery** — Browse professor cards showing research field, university, and representative tags. Swipe right to save, left to skip, or undo the last swipe at any time.
 
-**实时匹配打分。** 填写你的专业背景、技能和研究兴趣后，系统会用 LLM 把你的描述映射到与教授相同的学术词汇体系，计算真实的语义匹配度，而不是简单的关键词重叠。
+**Semantic match scoring** — After filling in your academic background, skills, and research interests, an LLM maps your descriptions into the same vocabulary as professor research tags, producing a meaningful semantic match score rather than simple keyword overlap.
 
-**一键生成套磁信。** 对保存的教授满意了？点一下，AI 根据你的 Profile 和教授的研究方向，生成一封个性化的申请文书，支持 Formal / Casual / Enthusiastic 三种语气，可直接复制或下载。
+**One-click cover letter generation** — Saved a professor you like? One click generates a personalized cold email tailored to that professor's specific research. Choose from Formal, Casual, or Enthusiastic tone. Copy or download instantly.
 
-**简历一键解析。** 上传 PDF/DOCX 简历，LLM 自动提取技能、经历、目标专业，填入你的 Profile。
+**Resume parsing** — Upload a PDF or DOCX résumé and let the LLM auto-fill your profile with extracted skills, experience, and academic goals.
 
-**中英双语。** `/zh/*` 路由前缀切换中文界面，大学名称、研究领域、所有 UI 文字全部翻译。套磁信正文保持英文。
-
----
-
-## 数据规模
-
-| 指标 | 数量 |
-|------|------|
-| 覆盖美国顶尖大学 | 32 所（MIT、Harvard、Stanford、Columbia 等） |
-| 教授档案 | 4,000+ 位 |
-| 研究标签词典 | 2,799 个规范化标签 |
-| 大学 × 领域封面图 | 全部 CDN 托管 |
+**Bilingual (中文 / English)** — A `/zh/*` URL prefix switches the entire UI to Simplified Chinese. University names, research fields, and all interface strings are fully translated. Cover letter content stays in English for professional use.
 
 ---
 
-## 技术栈
+## Data
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | React 19 · Tailwind CSS 4 · shadcn/ui |
-| API | tRPC 11（端到端类型安全） |
-| 后端 | Express 4 · Node.js |
-| 数据库 | MySQL / TiDB（Drizzle ORM） |
-| 认证 | Manus OAuth（session cookie + JWT） |
-| AI | LLM via Manus Forge API（标签规范化 + 文书生成） |
-| 存储 | S3 兼容对象存储 |
-| 构建 | Vite 6 |
+| Metric | Count |
+|--------|-------|
+| Top US research universities | 32 (MIT, Harvard, Stanford, Columbia, and more) |
+| Professor profiles | 4,000+ |
+| Canonical research tags | 2,799 |
+| University × field cover images | All CDN-hosted |
 
 ---
 
-## 项目结构
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19 · Tailwind CSS 4 · shadcn/ui |
+| API | tRPC 11 (end-to-end type safety) |
+| Backend | Express 4 · Node.js |
+| Database | MySQL / TiDB (Drizzle ORM) |
+| Auth | Manus OAuth (session cookie + JWT) |
+| AI | LLM via Manus Forge API (tag normalization + letter generation) |
+| Storage | S3-compatible object storage |
+| Build | Vite 6 |
+
+---
+
+## Project Structure
 
 ```
 client/
   src/
-    pages/          ← Swipe、Matches、CoverLetters、Profile、Tutorial ...
-    components/     ← ProfessorCard、FilterPanel、BottomNav、DesktopHeader ...
-    contexts/       ← LanguageContext（zh/en 状态）
+    pages/          ← Swipe, Matches, CoverLetters, Profile, Tutorial ...
+    components/     ← ProfessorCard, FilterPanel, BottomNav, DesktopHeader ...
+    contexts/       ← LanguageContext (zh/en state)
     lib/
-      i18n.ts                  ← 所有 UI 字符串（中英文）
-      universityTranslation.ts ← 大学名称中英文对照（80+ 所）
-      departmentTranslation.ts ← 院系名称关键词翻译
+      i18n.ts                  ← All UI strings (English + Chinese)
+      universityTranslation.ts ← University name zh/en map (80+ schools)
+      departmentTranslation.ts ← Department keyword-based translation
 drizzle/
-  schema.ts         ← 数据库 Schema（professors、students、likes、letters ...）
-  *.sql             ← 迁移文件（仅 DDL，不含数据）
+  schema.ts         ← Database schema (professors, students, likes, letters ...)
+  *.sql             ← Migration files (DDL only, no data)
 server/
-  routers/          ← tRPC 路由（swipe、profile、letters、activities ...）
+  routers/          ← tRPC procedures (swipe, profile, letters, activities ...)
   services/
-    professorsService.ts       ← 匹配分数计算
-    tagNormalizationService.ts ← LLM 标签规范化
-  db.ts             ← Drizzle 查询封装
+    professorsService.ts       ← Match score calculation
+    tagNormalizationService.ts ← LLM-based student tag normalization
+  db.ts             ← Drizzle query helpers
 shared/
-  universityFieldImages.ts     ← 大学 × 领域 → CDN 图片 URL 映射
+  universityFieldImages.ts     ← University × field → CDN image URL lookup
 ```
 
 ---
 
-## 本地运行
+## Getting Started
 
-**环境要求：** Node.js ≥ 22、pnpm ≥ 9、MySQL 兼容数据库（TiDB Cloud 免费版可用）、Manus 平台账号（OAuth + LLM + 存储 API）。
+**Prerequisites:** Node.js ≥ 22, pnpm ≥ 9, a MySQL-compatible database (TiDB Cloud free tier works), and a Manus platform account for OAuth, LLM, and storage APIs.
 
 ```bash
-# 1. 安装依赖
+# 1. Install dependencies
 pnpm install
 
-# 2. 配置环境变量（参考 env.example）
+# 2. Configure environment variables
 cp env.example .env
-# 填写 DATABASE_URL、JWT_SECRET、Manus API Keys 等
+# Fill in DATABASE_URL, JWT_SECRET, and Manus API keys
 
-# 3. 推送数据库 Schema
+# 3. Push the database schema
 pnpm db:push
 
-# 4. 启动开发服务器
+# 4. Start the dev server
 pnpm dev
 # → http://localhost:3000
 ```
 
-运行测试：
+Run the test suite:
 
 ```bash
 pnpm test
@@ -169,56 +168,52 @@ pnpm test
 
 ---
 
-## 数据库核心表
+## Database Schema (Key Tables)
 
-| 表名 | 用途 |
-|------|------|
-| `professors` | 教授档案（研究方向、标签、大学、联系方式） |
-| `student_profiles` | 学生背景（目标大学、专业、技能、规范化标签） |
-| `student_likes` | 滑动记录（like / pass，含匹配分数） |
-| `cover_letters` | AI 生成的套磁信 |
-| `research_tags_dictionary` | 规范化标签词典（2,799 个，来自教授数据） |
-| `university_field_images` | 大学 × 研究领域封面图 CDN URL |
-| `activities` | 学生课外经历（手动填写 + 简历解析） |
-
----
-
-## 双语路由
-
-| 路由 | 语言 |
-|------|------|
-| `/swipe`、`/history`、`/profile` ... | English |
-| `/zh/swipe`、`/zh/history`、`/zh/profile` ... | 中文 |
-
-顶部导航栏可随时切换语言。大学名称、研究领域、所有界面文字均已翻译。教授姓名和套磁信正文保持英文。
+| Table | Purpose |
+|-------|---------|
+| `professors` | Professor profiles with research fields, tags, university, contact info |
+| `student_profiles` | Student background, target universities, skills, normalized tags |
+| `student_likes` | Swipe history (like / pass) with match score per pair |
+| `cover_letters` | AI-generated application letters |
+| `research_tags_dictionary` | Canonical tag vocabulary built from professor data (2,799 tags) |
+| `university_field_images` | CDN image URLs per university × research field combination |
+| `activities` | Student extracurricular activities (manual entry + resume-parsed) |
 
 ---
 
-## 隐私说明
+## Localization
 
-本仓库**不包含任何用户数据或教授数据**。`drizzle/*.sql` 迁移文件只有 DDL（建表语句），没有 INSERT 数据。数据库连接信息和 API Key 通过 `.gitignore` 排除。
+The app supports **English** (default) and **Simplified Chinese** via URL prefix routing:
+
+| Route | Language |
+|-------|----------|
+| `/swipe`, `/history`, `/profile` ... | English |
+| `/zh/swipe`, `/zh/history`, `/zh/profile` ... | Chinese |
+
+The language switcher is available in the top navigation bar on all pages. University names, research fields, and all UI strings are fully translated. Professor names and cover letter content remain in English.
 
 ---
 
-## 贡献
+## Privacy
 
-欢迎 PR。重大改动请先开 Issue 讨论。
+This repository contains **no user data and no professor data**. The `drizzle/*.sql` migration files contain only DDL (schema definitions, no INSERT statements). Database credentials and API keys are excluded via `.gitignore`.
+
+---
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
 
 ```bash
 git checkout -b feature/your-idea
 git commit -m 'Add your idea'
 git push origin feature/your-idea
-# 然后开 Pull Request
+# Then open a Pull Request
 ```
 
 ---
 
-## License
-
-MIT — 随便用，记得 star ⭐
-
----
-
-## 联系
+## Contact
 
 **s20316.wei@stu.scie.com.cn**
