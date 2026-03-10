@@ -198,7 +198,7 @@ export default function ProfessorPolicy() {
             <li><strong>Opt-Out Requests:</strong> professor-optout@profmatch.com</li>
             <li><strong>Corrections:</strong> professor-corrections@profmatch.com</li>
             <li><strong>Updates:</strong> professor-updates@profmatch.com</li>
-            <li><strong>General Inquiries:</strong> support@profmatch.com</li>
+            <li><strong>General Inquiries:</strong> s20316.wei@stu.scie.com.cn</li>
           </ul>
           <p className="mt-6 font-semibold">
             Response Time: We aim to respond to all professor inquiries within 3-5 business days.

@@ -32,10 +32,10 @@ export function Footer() {
           {/* Contact */}
           <div className="text-center md:text-right">
             <a 
-              href="mailto:support@profmatch.com" 
+              href="mailto:s20316.wei@stu.scie.com.cn" 
               className="text-sm text-gray-600 hover:text-purple-600 transition-colors"
             >
-              support@profmatch.com
+              s20316.wei@stu.scie.com.cn
             </a>
           </div>
         </div>

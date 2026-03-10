@@ -168,11 +168,11 @@ export default function PrivacyPolicyZh() {
 
           <h3 className="text-xl font-semibold mb-3 mt-4">5.3 删除权（"被遗忘权"）</h3>
           <p>您有权要求删除您的个人数据。</p>
-          <p className="font-semibold">如何行使：在应用中，前往"个人资料" → "删除账号"，或发送邮件至 support@profmatch.com</p>
+          <p className="font-semibold">如何行使：在应用中，前往"个人资料" → "删除账号"，或发送邮件至 s20316.wei@stu.scie.com.cn</p>
 
           <h3 className="text-xl font-semibold mb-3 mt-4">5.4 数据可携带权</h3>
           <p>您有权以结构化、常用和机器可读的格式接收您的个人数据。</p>
-          <p className="font-semibold">如何行使：发送邮件至 support@profmatch.com 请求数据导出</p>
+          <p className="font-semibold">如何行使：发送邮件至 s20316.wei@stu.scie.com.cn 请求数据导出</p>
 
           <h3 className="text-xl font-semibold mb-3 mt-4">5.5 反对权</h3>
           <p>您有权反对我们出于营销目的处理您的个人数据。</p>
@@ -237,7 +237,7 @@ export default function PrivacyPolicyZh() {
           <h2 className="text-2xl font-semibold mb-4">10. 联系我们</h2>
           <p>如果您对本隐私政策有任何疑问或疑虑，请通过以下方式联系我们：</p>
           <ul className="list-none mt-4">
-            <li><strong>电子邮件：</strong> support@profmatch.com</li>
+            <li><strong>电子邮件：</strong> s20316.wei@stu.scie.com.cn</li>
             <li><strong>应用内反馈：</strong> "个人资料" → "帮助与反馈"</li>
           </ul>
           <p className="mt-4">
