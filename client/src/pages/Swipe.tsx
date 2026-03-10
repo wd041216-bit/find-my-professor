@@ -20,6 +20,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { FilterPanel } from '../components/FilterPanel';
 import { DesktopHeader } from '../components/DesktopHeader';
+import { BookOpen } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getProfessorBackgroundImage } from '@/../../shared/universityFieldImages';
 import { useLocale } from '@/hooks/useLocale';
@@ -43,7 +44,7 @@ interface CardAnimation {
 
 export function Swipe() {
   const { user, loading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isZh, localePath } = useLocale();
   const utils = trpc.useUtils();
   const [, setLocation] = useLocation();
@@ -355,6 +356,16 @@ export function Swipe() {
 
       {/* Mobile Filter & Reset Buttons - Floating on mobile only */}
       <div className="md:hidden absolute top-4 right-4 z-50 flex gap-2">
+        <Link href={localePath('/tutorial')}>
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-white/90 hover:bg-white text-gray-700 shadow-lg"
+          >
+            <BookOpen className="w-4 h-4 mr-2" />
+            {language === 'zh' ? '指南' : 'Guide'}
+          </Button>
+        </Link>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button

@@ -436,3 +436,9 @@
 - [x] Create tagNormalizationService.ts - LLM normalizes student skills/interests to professor vocabulary
 - [x] Trigger tag normalization asynchronously on profile.upsert (fire-and-forget, non-blocking)
 - [x] Update swipe.ts match score to prefer normalized_tags over raw skills+interests
+- [ ] Generate permanent OG image and PWA screenshots
+- [x] Fix OG image URL in index.html to use permanent CDN link
+- [ ] Fix PWA manifest to include real screenshot files
+- [ ] Fix History/Letters pages: redirect unauthenticated Chinese users to /zh/swipe
+- [ ] Localize Profile page to Chinese (all form labels, placeholders, buttons)
+- [ ] Build user tutorial/guide page (/guide and /zh/guide) with Chinese + English content

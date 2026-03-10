@@ -89,7 +89,7 @@ export default function CoverLetters() {
   }
 
   if (!user) {
-    setLocation("/");
+    setLocation(isZh ? "/zh/swipe" : "/");
     return null;
   }
 

@@ -24,15 +24,15 @@
   "categories": ["education", "productivity"],
   "screenshots": [
     {
-      "src": "/screenshot-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/profmatch_screenshot_mobile-NniMtTmbxa7t66bvUrcMHP.webp",
+      "sizes": "1536x2752",
+      "type": "image/webp",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshot-desktop.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/profmatch_screenshot_desktop-hTTjSCrrwdbrDuGPqcGK2K.webp",
+      "sizes": "2752x1536",
+      "type": "image/webp",
       "form_factor": "wide"
     }
   ]

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Heart, FileText, User, RotateCcw, Filter, Languages } from "lucide-react";
+import { Home, Heart, FileText, User, RotateCcw, Filter, Languages, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/hooks/useLocale";
@@ -39,6 +39,12 @@ export function DesktopHeader({ onResetClick, onFilterClick, showActions = false
       matchPaths: ["/profile", "/zh/profile"],
       label: language === "en" ? "Profile" : "资料",
       icon: User,
+    },
+    {
+      path: localePath("/tutorial"),
+      matchPaths: ["/tutorial", "/zh/tutorial"],
+      label: language === "en" ? "Guide" : "指南",
+      icon: BookOpen,
     },
   ];
 
