@@ -1,102 +1,119 @@
-# ProfMatch — Smart Academic Research Matcher
+<div align="center">
 
-> **Swipe to find your ideal research advisor.** ProfMatch is a Tinder-style web app that matches graduate school applicants with professors based on research interests, academic background, and AI-powered tag normalization.
+# 💘 ProfMatch — 科研相亲网站
 
-🌐 **Live site:** [findmyprofessor.xyz](https://findmyprofessor.xyz)
+**把找导师做成了 Tinder。因为有趣，才能坚持找下去。**
 
----
+[![Live](https://img.shields.io/badge/🌐_Live_Site-findmyprofessor.xyz-8b5cf6?style=for-the-badge)](https://www.findmyprofessor.xyz)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/wd041216-bit/find-my-professor?style=for-the-badge&color=yellow)](https://github.com/wd041216-bit/find-my-professor/stargazers)
 
-## Features
-
-- **Swipe-based discovery** — Browse professor cards, swipe right to save, left to skip, undo the last swipe
-- **Smart matching** — LLM-powered tag normalization maps student skills/interests to the same vocabulary as professor research tags, producing meaningful match scores
-- **32 universities, 4,000+ professors** — Covers top US research institutions (MIT, Harvard, Stanford, Columbia, etc.)
-- **Filter by university & research field** — Narrow down professors by school and discipline
-- **AI cover letter generation** — One-click generation of personalized application letters for saved professors
-- **Bilingual (中文 / English)** — Full Chinese and English UI via `/zh/*` route prefix; all professor research fields and university names are translated
-- **Resume parsing** — Upload a PDF/DOCX résumé and let the LLM auto-fill your profile
-- **Responsive design** — Works on mobile and desktop; bottom nav on mobile, sidebar nav on desktop
+</div>
 
 ---
 
-## Tech Stack
+## 为什么要做这个？
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 19, Tailwind CSS 4, shadcn/ui |
-| API | tRPC 11 (end-to-end type safety) |
-| Backend | Express 4, Node.js |
-| Database | MySQL / TiDB (via Drizzle ORM) |
-| Auth | Manus OAuth (session cookies + JWT) |
-| AI | LLM via Manus Forge API (chat completion + structured JSON) |
-| File Storage | S3-compatible object storage |
-| Build | Vite 6 |
+找导师这件事，本质上是一场**双向选择**。
+
+但现实是：大多数同学对着学校官网的教授列表，一页一页地翻，一篇一篇地读 paper，最后对着空白文档发愁，不知道怎么写套磁信。
+
+**这不对。** 找导师应该像找对象一样——直觉先行，匹配度说话，喜欢了再深入了解。
+
+所以我把它做成了 Tinder 的样子。
+
+> 👉 右滑 = 感兴趣 &nbsp;/&nbsp; 左滑 = 跳过 &nbsp;/&nbsp; 查看匹配分数 &nbsp;/&nbsp; 一键生成套磁信
 
 ---
 
-## Project Structure
+## 核心功能
+
+**滑动发现，而不是翻表格。** 每张教授卡片展示研究方向、所在大学、代表性标签，一眼判断是否值得深入了解。右滑保存，左滑跳过，后悔了还能撤回。
+
+**实时匹配打分。** 填写你的专业背景、技能和研究兴趣后，系统会用 LLM 把你的描述映射到与教授相同的学术词汇体系，计算真实的语义匹配度，而不是简单的关键词重叠。
+
+**一键生成套磁信。** 对保存的教授满意了？点一下，AI 根据你的 Profile 和教授的研究方向，生成一封个性化的申请文书。告别对着空白文档发愁。
+
+**简历一键解析。** 上传 PDF/DOCX 简历，LLM 自动提取技能、经历、目标专业，填入你的 Profile。
+
+**中英双语。** `/zh/*` 路由前缀切换中文界面，大学名称、研究领域、所有 UI 文字全部翻译。套磁信正文保持英文。
+
+---
+
+## 数据规模
+
+| 指标 | 数量 |
+|------|------|
+| 覆盖美国顶尖大学 | 32 所（MIT、Harvard、Stanford、Columbia 等） |
+| 教授档案 | 4,000+ 位 |
+| 研究标签词典 | 2,799 个规范化标签 |
+| 大学 × 领域封面图 | 全部 CDN 托管 |
+
+---
+
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 前端 | React 19 · Tailwind CSS 4 · shadcn/ui |
+| API | tRPC 11（端到端类型安全） |
+| 后端 | Express 4 · Node.js |
+| 数据库 | MySQL / TiDB（Drizzle ORM） |
+| 认证 | Manus OAuth（session cookie + JWT） |
+| AI | LLM via Manus Forge API（标签规范化 + 文书生成） |
+| 存储 | S3 兼容对象存储 |
+| 构建 | Vite 6 |
+
+---
+
+## 项目结构
 
 ```
 client/
   src/
-    pages/          ← Swipe, History (Matches), CoverLetters, Profile, Tutorial, ...
-    components/     ← ProfessorCard, FilterPanel, BottomNav, DesktopHeader, ...
-    contexts/       ← LanguageContext (zh/en state)
-    hooks/          ← useLocale (route-based locale detection)
+    pages/          ← Swipe、Matches、CoverLetters、Profile、Tutorial ...
+    components/     ← ProfessorCard、FilterPanel、BottomNav、DesktopHeader ...
+    contexts/       ← LanguageContext（zh/en 状态）
     lib/
-      i18n.ts       ← All UI strings (English + Chinese)
-      universityTranslation.ts  ← University name zh/en map
-      departmentTranslation.ts  ← Department keyword-based translation
+      i18n.ts                  ← 所有 UI 字符串（中英文）
+      universityTranslation.ts ← 大学名称中英文对照（80+ 所）
+      departmentTranslation.ts ← 院系名称关键词翻译
 drizzle/
-  schema.ts         ← Database schema (professors, students, likes, letters, tags, ...)
-  *.sql             ← Migration files (schema only, no data)
+  schema.ts         ← 数据库 Schema（professors、students、likes、letters ...）
+  *.sql             ← 迁移文件（仅 DDL，不含数据）
 server/
-  routers/          ← tRPC procedures (swipe, profile, letters, activities, ...)
+  routers/          ← tRPC 路由（swipe、profile、letters、activities ...）
   services/
-    professorsService.ts      ← Match score calculation
-    tagNormalizationService.ts ← LLM-based student tag normalization
-  db.ts             ← Drizzle query helpers
+    professorsService.ts       ← 匹配分数计算
+    tagNormalizationService.ts ← LLM 标签规范化
+  db.ts             ← Drizzle 查询封装
 shared/
-  universityFieldImages.ts    ← University × field → CDN image URL lookup
-  translations.ts             ← Shared university/major normalization helpers
+  universityFieldImages.ts     ← 大学 × 领域 → CDN 图片 URL 映射
 ```
 
 ---
 
-## Getting Started
+## 本地运行
 
-### Prerequisites
-
-- Node.js ≥ 22
-- pnpm ≥ 9
-- A MySQL-compatible database (TiDB Cloud free tier works)
-- Manus platform account (for OAuth + LLM + storage APIs)
-
-### Environment Variables
-
-Copy `.env.example` to `.env` and fill in the values:
-
-```env
-DATABASE_URL=mysql://user:password@host:port/dbname
-JWT_SECRET=your-secret-key
-VITE_APP_ID=your-manus-app-id
-OAUTH_SERVER_URL=https://api.manus.im
-VITE_OAUTH_PORTAL_URL=https://manus.im
-BUILT_IN_FORGE_API_URL=https://...
-BUILT_IN_FORGE_API_KEY=your-key
-VITE_FRONTEND_FORGE_API_KEY=your-frontend-key
-VITE_FRONTEND_FORGE_API_URL=https://...
-```
-
-### Install & Run
+**环境要求：** Node.js ≥ 22、pnpm ≥ 9、MySQL 兼容数据库（TiDB Cloud 免费版可用）、Manus 平台账号（OAuth + LLM + 存储 API）。
 
 ```bash
+# 1. 安装依赖
 pnpm install
-pnpm db:push      # Apply database schema migrations
-pnpm dev          # Start dev server at http://localhost:3000
+
+# 2. 配置环境变量（参考 env.example）
+cp env.example .env
+# 填写 DATABASE_URL、JWT_SECRET、Manus API Keys 等
+
+# 3. 推送数据库 Schema
+pnpm db:push
+
+# 4. 启动开发服务器
+pnpm dev
+# → http://localhost:3000
 ```
 
-### Run Tests
+运行测试：
 
 ```bash
 pnpm test
@@ -104,60 +121,56 @@ pnpm test
 
 ---
 
-## Database Schema (Key Tables)
+## 数据库核心表
 
-| Table | Purpose |
-|-------|---------|
-| `professors` | Professor profiles with research fields, tags, university, contact info |
-| `student_profiles` | Student academic background, target universities, skills, interests, normalized_tags |
-| `student_likes` | Swipe history (like / pass) per student–professor pair |
-| `cover_letters` | AI-generated application letters |
-| `research_tags_dictionary` | Canonical tag vocabulary built from professor data (2,799 tags) |
-| `university_field_images` | CDN image URLs per university × research field combination |
-| `activities` | Student extracurricular activities (manual + resume-parsed) |
-
----
-
-## Localization
-
-The app supports **English** (default) and **Simplified Chinese** via URL prefix routing:
-
-| Route | Language |
-|-------|----------|
-| `/swipe`, `/history`, `/profile`, ... | English |
-| `/zh/swipe`, `/zh/history`, `/zh/profile`, ... | Chinese |
-
-Language switching is available in the top navigation bar on all pages. University names, research fields, and all UI strings are fully translated. Professor names and letter content remain in English.
+| 表名 | 用途 |
+|------|------|
+| `professors` | 教授档案（研究方向、标签、大学、联系方式） |
+| `student_profiles` | 学生背景（目标大学、专业、技能、规范化标签） |
+| `student_likes` | 滑动记录（like / pass，含匹配分数） |
+| `cover_letters` | AI 生成的套磁信 |
+| `research_tags_dictionary` | 规范化标签词典（2,799 个，来自教授数据） |
+| `university_field_images` | 大学 × 研究领域封面图 CDN URL |
+| `activities` | 学生课外经历（手动填写 + 简历解析） |
 
 ---
 
-## Privacy & Data
+## 双语路由
 
-- **Professor data** is stored in the database and is not included in this repository. The schema migrations contain only DDL (no INSERT statements).
-- **User data** (student profiles, swipe history, generated letters) is stored in the database and is not included in this repository.
-- **Environment secrets** (database credentials, API keys) are excluded via `.gitignore`.
-- The `.manus/` directory (internal platform logs containing DB connection strings) is excluded via `.gitignore`.
+| 路由 | 语言 |
+|------|------|
+| `/swipe`、`/history`、`/profile` ... | English |
+| `/zh/swipe`、`/zh/history`、`/zh/profile` ... | 中文 |
+
+顶部导航栏可随时切换语言。大学名称、研究领域、所有界面文字均已翻译。教授姓名和套磁信正文保持英文。
 
 ---
 
-## Contributing
+## 隐私说明
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+本仓库**不包含任何用户数据或教授数据**。`drizzle/*.sql` 迁移文件只有 DDL（建表语句），没有 INSERT 数据。数据库连接信息和 API Key 通过 `.gitignore` 排除。
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+---
+
+## 贡献
+
+欢迎 PR。重大改动请先开 Issue 讨论。
+
+```bash
+git checkout -b feature/your-idea
+git commit -m 'Add your idea'
+git push origin feature/your-idea
+# 然后开 Pull Request
+```
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT — 随便用，记得 star ⭐
 
 ---
 
-## Contact
+## 联系
 
 **s20316.wei@stu.scie.com.cn**
