@@ -586,6 +586,26 @@ export default function Profile() {
         </Card>
       </div>
 
+      {/* Mobile-only footer links - shown here since footer is hidden on mobile */}
+      <div className="md:hidden mt-4 pb-24 text-center space-y-3 px-4">
+        <p className="text-xs text-gray-400">
+          {isZh ? '© 2026 ProfMatch. 保留所有权利。' : '© 2026 ProfMatch. All rights reserved.'}
+        </p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href={isZh ? '/privacy-policy-zh' : '/privacy-policy'} className="text-xs text-gray-500 hover:text-purple-600 transition-colors">
+            {t.policy.privacyPolicy}
+          </Link>
+          <Link href={isZh ? '/terms-of-service-zh' : '/terms-of-service'} className="text-xs text-gray-500 hover:text-purple-600 transition-colors">
+            {t.policy.termsOfService}
+          </Link>
+          <Link href={isZh ? '/professor-policy-zh' : '/professor-policy'} className="text-xs text-gray-500 hover:text-purple-600 transition-colors">
+            {t.policy.professorPolicy}
+          </Link>
+        </div>
+        <a href="mailto:s20316.wei@stu.scie.com.cn" className="text-xs text-gray-400 hover:text-purple-600 transition-colors block">
+          s20316.wei@stu.scie.com.cn
+        </a>
+      </div>
     </div>
   );
 }
