@@ -1,9 +1,0 @@
-{
-  "query": "\nCREATE TABLE IF NOT EXISTS university_mascots (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  university_name VARCHAR(255) NOT NULL UNIQUE,\n  mascot_name VARCHAR(255) NOT NULL COMMENT '吉祥物名称，如Husky',\n  mascot_description TEXT NOT NULL COMMENT '吉祥物描述，用于AI图片生成',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_university_name (university_name)\n) COMMENT='大学吉祥物数据库';\n",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute \nCREATE TABLE IF NOT EXISTS university_mascots (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  university_name VARCHAR(255) NOT NULL UNIQUE,\n  mascot_name VARCHAR(255) NOT NULL COMMENT '吉祥物名称，如Husky',\n  mascot_description TEXT NOT NULL COMMENT '吉祥物描述，用于AI图片生成',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_university_name (university_name)\n) COMMENT='大学吉祥物数据库';\n",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 433
-}

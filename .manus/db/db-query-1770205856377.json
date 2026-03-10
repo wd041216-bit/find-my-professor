@@ -1,9 +1,0 @@
-{
-  "query": "ALTER TABLE `student_profiles` \n  ADD COLUMN IF NOT EXISTS `current_university_id` INT AFTER `current_university`,\n  ADD COLUMN IF NOT EXISTS `current_major_id` INT AFTER `current_major`,\n  ADD COLUMN IF NOT EXISTS `target_university_ids` TEXT AFTER `target_universities`,\n  ADD COLUMN IF NOT EXISTS `target_major_ids` TEXT AFTER `target_majors`;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute ALTER TABLE `student_profiles` \n  ADD COLUMN IF NOT EXISTS `current_university_id` INT AFTER `current_university`,\n  ADD COLUMN IF NOT EXISTS `current_major_id` INT AFTER `current_major`,\n  ADD COLUMN IF NOT EXISTS `target_university_ids` TEXT AFTER `target_universities`,\n  ADD COLUMN IF NOT EXISTS `target_major_ids` TEXT AFTER `target_majors`;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 2979
-}

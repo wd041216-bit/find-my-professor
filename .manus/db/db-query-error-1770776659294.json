@@ -1,8 +1,0 @@
-{
-  "query": "SELECT \n  p.name, \n  p.tags,\n  m.research_field_name,\n  u.research_field_name as uw_field,\n  u.image_url as uw_image\nFROM professors p\nLEFT JOIN research_field_tag_mapping m ON JSON_CONTAINS(p.tags, JSON_QUOTE(m.tag_name))\nLEFT JOIN university_field_images u ON u.research_field_name = m.research_field_name AND u.university_name = 'University of Washington'\nWHERE p.name = 'Nam-Joo Cin'\nLIMIT 10;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT \n  p.name, \n  p.tags,\n  m.research_field_name,\n  u.research_field_name as uw_field,\n  u.image_url as uw_image\nFROM professors p\nLEFT JOIN research_field_tag_mapping m ON JSON_CONTAINS(p.tags, JSON_QUOTE(m.tag_name))\nLEFT JOIN university_field_images u ON u.research_field_name = m.research_field_name AND u.university_name = 'University of Washington'\nWHERE p.name = 'Nam-Joo Cin'\nLIMIT 10;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 1: Unknown column 'm.tag_name' in 'on clause'"
-  ]
-}

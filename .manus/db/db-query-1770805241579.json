@@ -1,9 +1,0 @@
-{
-  "query": "SELECT research_field_name, image_url FROM university_field_images \nWHERE university_name = 'University of Washington' \nAND research_field_name IN ('Social Sciences & Humanities', 'Theoretical Computer Science & Algorithms');",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT research_field_name, image_url FROM university_field_images \nWHERE university_name = 'University of Washington' \nAND research_field_name IN ('Social Sciences & Humanities', 'Theoretical Computer Science & Algorithms');",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 126
-}

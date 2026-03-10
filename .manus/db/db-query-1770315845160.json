@@ -1,9 +1,0 @@
-{
-  "query": "SELECT * FROM university_major_cache \nWHERE university_name LIKE '%Yale%' AND major_name LIKE '%Chemical%';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT * FROM university_major_cache \nWHERE university_name LIKE '%Yale%' AND major_name LIKE '%Chemical%';",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1540
-}

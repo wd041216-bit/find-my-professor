@@ -105,3 +105,18 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+
+# Manus internal files (contain DB credentials, connection strings, and query logs with sensitive data)
+.manus/
+
+# Temporary data population/migration scripts (may contain real data logic)
+populate_*.mjs
+rebuild_*.mjs
+update_*.mjs
+seed_*.mjs
+
+# Local screenshots
+screenshots/
+
+# Manus dev logs (contain request details)
+.manus-logs/

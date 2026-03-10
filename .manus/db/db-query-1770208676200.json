@@ -1,9 +1,0 @@
-{
-  "query": "-- 优化university_normalization表的查询\nCREATE INDEX IF NOT EXISTS idx_uni_norm_raw_input ON university_normalization (raw_input, last_used_at);\n\n-- 优化major_normalization表的查询  \nCREATE INDEX IF NOT EXISTS idx_major_norm_raw_input ON major_normalization (raw_input, last_used_at);\n\n-- 优化university_major_cache表的查询\nCREATE INDEX IF NOT EXISTS idx_cache_lookup ON university_major_cache (university_name, major_name, degree_level, expires_at);\n\n-- 优化scraping_tasks表的查询\nCREATE INDEX IF NOT EXISTS idx_scraping_task_lookup ON scraping_tasks (university_name, major_name, degree_level, status);\n\n-- 优化scraped_projects表的查询\nCREATE INDEX IF NOT EXISTS idx_scraped_projects_lookup ON scraped_projects (university_name, major_name, degree_level, expires_at);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute -- 优化university_normalization表的查询\nCREATE INDEX IF NOT EXISTS idx_uni_norm_raw_input ON university_normalization (raw_input, last_used_at);\n\n-- 优化major_normalization表的查询  \nCREATE INDEX IF NOT EXISTS idx_major_norm_raw_input ON major_normalization (raw_input, last_used_at);\n\n-- 优化university_major_cache表的查询\nCREATE INDEX IF NOT EXISTS idx_cache_lookup ON university_major_cache (university_name, major_name, degree_level, expires_at);\n\n-- 优化scraping_tasks表的查询\nCREATE INDEX IF NOT EXISTS idx_scraping_task_lookup ON scraping_tasks (university_name, major_name, degree_level, status);\n\n-- 优化scraped_projects表的查询\nCREATE INDEX IF NOT EXISTS idx_scraped_projects_lookup ON scraped_projects (university_name, major_name, degree_level, expires_at);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 6025
-}

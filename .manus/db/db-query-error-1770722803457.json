@@ -1,8 +1,0 @@
-{
-  "query": "\n-- 为university_name添加索引\nCREATE INDEX IF NOT EXISTS idx_professors_university ON professors(university_name);\n\n-- 为department添加索引\nCREATE INDEX IF NOT EXISTS idx_professors_department ON professors(department);\n\n-- 为major_name添加索引\nCREATE INDEX IF NOT EXISTS idx_professors_major ON professors(major_name);\n\n-- 为university_name和major_name的组合添加复合索引（最常用的查询组合）\nCREATE INDEX IF NOT EXISTS idx_professors_uni_major ON professors(university_name, major_name);\n",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute \n-- 为university_name添加索引\nCREATE INDEX IF NOT EXISTS idx_professors_university ON professors(university_name);\n\n-- 为department添加索引\nCREATE INDEX IF NOT EXISTS idx_professors_department ON professors(department);\n\n-- 为major_name添加索引\nCREATE INDEX IF NOT EXISTS idx_professors_major ON professors(major_name);\n\n-- 为university_name和major_name的组合添加复合索引（最常用的查询组合）\nCREATE INDEX IF NOT EXISTS idx_professors_uni_major ON professors(university_name, major_name);\n",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1170 (42000) at line 6: BLOB/TEXT column 'department' used in key specification without a key length"
-  ]
-}

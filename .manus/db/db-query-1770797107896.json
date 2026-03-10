@@ -1,9 +1,0 @@
-{
-  "query": "-- 删除索引\nDROP INDEX idx_professors_major ON professors;\nDROP INDEX idx_professors_uni_major ON professors;\n\n-- 删除废弃字段\nALTER TABLE professors \nDROP COLUMN university_id,\nDROP COLUMN email,\nDROP COLUMN lab_name,\nDROP COLUMN lab_website,\nDROP COLUMN personal_website,\nDROP COLUMN bio,\nDROP COLUMN accepting_students,\nDROP COLUMN major_name,\nDROP COLUMN source_url;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute -- 删除索引\nDROP INDEX idx_professors_major ON professors;\nDROP INDEX idx_professors_uni_major ON professors;\n\n-- 删除废弃字段\nALTER TABLE professors \nDROP COLUMN university_id,\nDROP COLUMN email,\nDROP COLUMN lab_name,\nDROP COLUMN lab_website,\nDROP COLUMN personal_website,\nDROP COLUMN bio,\nDROP COLUMN accepting_students,\nDROP COLUMN major_name,\nDROP COLUMN source_url;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 3626
-}

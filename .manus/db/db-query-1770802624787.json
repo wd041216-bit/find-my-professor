@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO research_field_images (field_name, image_url) VALUES\n('Chemistry & Chemical Engineering', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/BhPRUHdinkDRvSmw.png'),\n('Computer Systems & Networks', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/TZMhocHJhRnWbSMW.png'),\n('Earth Sciences & Oceanography', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/XlXAKOMWMhCQoSZk.png'),\n('Electrical Engineering & Robotics', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/VdPmyaHNjHwKqvEW.png');",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute INSERT INTO research_field_images (field_name, image_url) VALUES\n('Chemistry & Chemical Engineering', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/BhPRUHdinkDRvSmw.png'),\n('Computer Systems & Networks', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/TZMhocHJhRnWbSMW.png'),\n('Earth Sciences & Oceanography', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/XlXAKOMWMhCQoSZk.png'),\n('Electrical Engineering & Robotics', 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/VdPmyaHNjHwKqvEW.png');",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 167
-}
