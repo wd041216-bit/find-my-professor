@@ -1,0 +1,138 @@
+{
+  "query": "SELECT COUNT(DISTINCT university_name) as university_count, COUNT(*) as total_professors FROM professors WHERE university_name IS NOT NULL AND university_name != '';\nSELECT university_name, COUNT(*) as professor_count FROM professors WHERE university_name IS NOT NULL GROUP BY university_name ORDER BY university_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2w6DdBww2bzwyZZ.root --database hB2F5YxeXakQRcL5WU36Vw --execute SELECT COUNT(DISTINCT university_name) as university_count, COUNT(*) as total_professors FROM professors WHERE university_name IS NOT NULL AND university_name != '';\nSELECT university_name, COUNT(*) as professor_count FROM professors WHERE university_name IS NOT NULL GROUP BY university_name ORDER BY university_name;",
+  "rows": [
+    {
+      "university_count": "30",
+      "total_professors": "4366"
+    },
+    {
+      "university_count": "university_name",
+      "total_professors": "professor_count"
+    },
+    {
+      "university_count": "Brown University",
+      "total_professors": "78"
+    },
+    {
+      "university_count": "California Institute of Technology",
+      "total_professors": "67"
+    },
+    {
+      "university_count": "Carnegie Mellon University",
+      "total_professors": "94"
+    },
+    {
+      "university_count": "Columbia University",
+      "total_professors": "126"
+    },
+    {
+      "university_count": "Dartmouth College",
+      "total_professors": "15"
+    },
+    {
+      "university_count": "Duke University",
+      "total_professors": "113"
+    },
+    {
+      "university_count": "Georgetown University",
+      "total_professors": "133"
+    },
+    {
+      "university_count": "Harvard University",
+      "total_professors": "258"
+    },
+    {
+      "university_count": "Johns Hopkins University",
+      "total_professors": "126"
+    },
+    {
+      "university_count": "Lehigh University",
+      "total_professors": "68"
+    },
+    {
+      "university_count": "MIT",
+      "total_professors": "156"
+    },
+    {
+      "university_count": "Northeastern University",
+      "total_professors": "86"
+    },
+    {
+      "university_count": "Northwestern University",
+      "total_professors": "156"
+    },
+    {
+      "university_count": "Pepperdine University",
+      "total_professors": "4"
+    },
+    {
+      "university_count": "Princeton University",
+      "total_professors": "289"
+    },
+    {
+      "university_count": "Rice University",
+      "total_professors": "72"
+    },
+    {
+      "university_count": "Stanford University",
+      "total_professors": "250"
+    },
+    {
+      "university_count": "University of California, Los Angeles",
+      "total_professors": "157"
+    },
+    {
+      "university_count": "University of California, Santa Barbara",
+      "total_professors": "236"
+    },
+    {
+      "university_count": "University of Chicago",
+      "total_professors": "246"
+    },
+    {
+      "university_count": "University of Florida",
+      "total_professors": "179"
+    },
+    {
+      "university_count": "University of Miami",
+      "total_professors": "74"
+    },
+    {
+      "university_count": "University of Michigan",
+      "total_professors": "36"
+    },
+    {
+      "university_count": "University of North Carolina at Chapel Hill",
+      "total_professors": "147"
+    },
+    {
+      "university_count": "University of Southern California",
+      "total_professors": "168"
+    },
+    {
+      "university_count": "University of Virginia",
+      "total_professors": "154"
+    },
+    {
+      "university_count": "University of Washington",
+      "total_professors": "393"
+    },
+    {
+      "university_count": "Villanova University",
+      "total_professors": "79"
+    },
+    {
+      "university_count": "Washington University in St. Louis",
+      "total_professors": "208"
+    },
+    {
+      "university_count": "Yale University",
+      "total_professors": "198"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_count\ttotal_professors\n30\t4366\nuniversity_name\tprofessor_count\nBrown University\t78\nCalifornia Institute of Technology\t67\nCarnegie Mellon University\t94\nColumbia University\t126\nDartmouth College\t15\nDuke University\t113\nGeorgetown University\t133\nHarvard University\t258\nJohns Hopkins University\t126\nLehigh University\t68\nMIT\t156\nNortheastern University\t86\nNorthwestern University\t156\nPepperdine University\t4\nPrinceton University\t289\nRice University\t72\nStanford University\t250\nUniversity of California, Los Angeles\t157\nUniversity of California, Santa Barbara\t236\nUniversity of Chicago\t246\nUniversity of Florida\t179\nUniversity of Miami\t74\nUniversity of Michigan\t36\nUniversity of North Carolina at Chapel Hill\t147\nUniversity of Southern California\t168\nUniversity of Virginia\t154\nUniversity of Washington\t393\nVillanova University\t79\nWashington University in St. Louis\t208\nYale University\t198\n",
+  "stderr": "",
+  "execution_time_ms": 1768
+}

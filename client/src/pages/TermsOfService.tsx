@@ -194,7 +194,7 @@ export default function TermsOfService() {
           <h2 className="text-2xl font-semibold mb-4">13. Contact Us</h2>
           <p>If you have any questions about these Terms, please contact us:</p>
           <ul className="list-disc pl-6 mt-4">
-            <li><strong>Email:</strong> support@profmatch.com</li>
+            <li><strong>Email:</strong> s20316.wei@stu.scie.com.cn</li>
             <li><strong>In-App:</strong> Profile → Legal & Support → Contact Us</li>
           </ul>
         </section>

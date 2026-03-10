@@ -113,7 +113,7 @@ export default function ProfessorPolicyZh() {
           <p>如果您发现教授信息有误，请通过以下方式报告：</p>
           <ul className="list-disc pl-6 mb-4">
             <li>在应用中点击"Report Inaccuracy"</li>
-            <li>发送邮件至 support@profmatch.com</li>
+            <li>发送邮件至 s20316.wei@stu.scie.com.cn</li>
           </ul>
         </section>
 
@@ -155,7 +155,7 @@ export default function ProfessorPolicyZh() {
 
           <h3 className="text-xl font-semibold mb-3 mt-4">6.2 更正权</h3>
           <p>教授有权要求更正不准确的信息。</p>
-          <p className="font-semibold">如何行使：发送邮件至 support@profmatch.com，并提供正确的信息</p>
+          <p className="font-semibold">如何行使：发送邮件至 s20316.wei@stu.scie.com.cn，并提供正确的信息</p>
 
           <h3 className="text-xl font-semibold mb-3 mt-4">6.3 删除权</h3>
           <p>教授有权要求删除您的所有信息（见"教授退出机制"）。</p>
@@ -200,7 +200,7 @@ export default function ProfessorPolicyZh() {
           <h2 className="text-2xl font-semibold mb-4">9. 联系我们</h2>
           <p>如果您对本教授政策有任何疑问或疑虑，请通过以下方式联系我们：</p>
           <ul className="list-none mt-4">
-            <li><strong>一般咨询：</strong> support@profmatch.com</li>
+            <li><strong>一般咨询：</strong> s20316.wei@stu.scie.com.cn</li>
             <li><strong>信息移除：</strong> optout@profmatch.com</li>
             <li><strong>滥用举报：</strong> abuse@profmatch.com</li>
           </ul>

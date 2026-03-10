@@ -493,7 +493,7 @@ export const translations = {
       version: "Version",
       effectiveDate: "Effective Date",
       lastUpdated: "Last Updated",
-      contactEmail: "support@profmatch.com",
+      contactEmail: "s20316.wei@stu.scie.com.cn",
     },
   },
   zh: {
@@ -985,7 +985,7 @@ export const translations = {
       version: "版本",
       effectiveDate: "生效日期",
       lastUpdated: "最后更新",
-      contactEmail: "support@profmatch.com",
+      contactEmail: "s20316.wei@stu.scie.com.cn",
     },
   },
 };

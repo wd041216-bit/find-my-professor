@@ -176,11 +176,11 @@ export default function PrivacyPolicy() {
 
           <h3 className="text-xl font-semibold mb-3 mt-4">5.3 Right to Erasure ("Right to be Forgotten")</h3>
           <p>You have the right to request deletion of your personal data.</p>
-          <p className="font-semibold">How to exercise: In the app, go to "Profile" → "Delete Account", or email support@profmatch.com</p>
+          <p className="font-semibold">How to exercise: In the app, go to "Profile" → "Delete Account", or email s20316.wei@stu.scie.com.cn</p>
 
           <h3 className="text-xl font-semibold mb-3 mt-4">5.4 Right to Data Portability</h3>
           <p>You have the right to receive your personal data in a structured, commonly used, and machine-readable format.</p>
-          <p className="font-semibold">How to exercise: Email support@profmatch.com to request data export</p>
+          <p className="font-semibold">How to exercise: Email s20316.wei@stu.scie.com.cn to request data export</p>
 
           <h3 className="text-xl font-semibold mb-3 mt-4">5.5 Right to Object</h3>
           <p>You have the right to object to our processing of your personal data for marketing purposes.</p>
@@ -220,7 +220,7 @@ export default function PrivacyPolicy() {
             We do not knowingly collect personal information from children under 18. If we discover we have inadvertently collected children's data, we will delete it immediately.
           </p>
           <p className="font-semibold mt-4">
-            Parent Notice: If you believe your child has provided us with personal information, please contact support@profmatch.com.
+            Parent Notice: If you believe your child has provided us with personal information, please contact s20316.wei@stu.scie.com.cn.
           </p>
         </section>
 
@@ -228,7 +228,7 @@ export default function PrivacyPolicy() {
           <h2 className="text-2xl font-semibold mb-4">8. Contact Us</h2>
           <p>If you have any privacy questions or concerns, please contact us:</p>
           <ul className="list-disc pl-6 mt-4">
-            <li><strong>Email:</strong> support@profmatch.com</li>
+            <li><strong>Email:</strong> s20316.wei@stu.scie.com.cn</li>
             <li><strong>In-App:</strong> Profile → Legal & Support → Contact Us</li>
           </ul>
         </section>

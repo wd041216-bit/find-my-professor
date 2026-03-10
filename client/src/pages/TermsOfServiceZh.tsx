@@ -197,7 +197,7 @@ export default function TermsOfServiceZh() {
           <h3 className="text-xl font-semibold mb-3 mt-4">9.2 争议解决方式</h3>
           <p>如果发生争议，我们鼓励您首先通过以下方式联系我们：</p>
           <ul className="list-disc pl-6 mb-4">
-            <li>发送邮件至 support@profmatch.com</li>
+            <li>发送邮件至 s20316.wei@stu.scie.com.cn</li>
             <li>在应用内提交反馈</li>
           </ul>
           <p className="mt-4">
@@ -219,7 +219,7 @@ export default function TermsOfServiceZh() {
           <h2 className="text-2xl font-semibold mb-4">11. 联系我们</h2>
           <p>如果您对本服务条款有任何疑问，请通过以下方式联系我们：</p>
           <ul className="list-none mt-4">
-            <li><strong>电子邮件：</strong> support@profmatch.com</li>
+            <li><strong>电子邮件：</strong> s20316.wei@stu.scie.com.cn</li>
             <li><strong>应用内反馈：</strong> "个人资料" → "帮助与反馈"</li>
           </ul>
         </section>
