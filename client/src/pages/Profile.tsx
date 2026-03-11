@@ -16,7 +16,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SmartInput } from "@/components/SmartInput";
 import { ActivitiesSection } from "@/components/ActivitiesSection";
-import { getUniversitySuggestions, getMajorSuggestions, normalizeUniversity, normalizeMajor } from "@shared/translations";
+import { getMajorSuggestions, normalizeMajor } from "@shared/translations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +42,6 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     academicLevel: "" as "high_school" | "undergraduate" | "graduate" | "",
     gpa: "",
-    targetUniversity: "" as string,
     targetMajors: [] as string[],
     skills: [] as string[],
     interests: [] as string[],
@@ -62,14 +61,6 @@ export default function Profile() {
       setFormData({
         academicLevel: profile.academicLevel || "",
         gpa: profile.gpa || "",
-        targetUniversity: (() => {
-          try {
-            const universities = profile.targetUniversities ? JSON.parse(profile.targetUniversities) : [];
-            return Array.isArray(universities) && universities.length > 0 ? universities[0] : "";
-          } catch (e) {
-            return "";
-          }
-        })(),
         targetMajors: (() => {
           try {
             const parsed = profile.targetMajors ? JSON.parse(profile.targetMajors) : [];
@@ -228,18 +219,6 @@ export default function Profile() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation: Target university is required
-    if (!formData.targetUniversity || formData.targetUniversity.trim() === "") {
-      toast.error(t.profile.validationRequired);
-      return;
-    }
-    
-    // Friendly reminder: Multiple universities
-    if (formData.targetUniversity && !formData.targetUniversity.includes(",")) {
-      // Show info toast for single university (non-blocking)
-      toast.info(t.profile.validationMultipleUniversities, { duration: 5000 });
-    }
-    
     // Friendly reminder: Target majors
     if (formData.targetMajors.length === 0) {
       toast.info(t.profile.validationMajorRequired, { duration: 5000 });
@@ -252,7 +231,6 @@ export default function Profile() {
     
     const submitData = {
       ...formData,
-      targetUniversities: formData.targetUniversity ? [formData.targetUniversity] : [],
       academicLevel: formData.academicLevel || undefined,
     };
     upsertMutation.mutate(submitData);
@@ -420,22 +398,6 @@ export default function Profile() {
                     />
                   </div>
                 )}
-              </div>
-
-              {/* Target University */}
-              <div className="space-y-4">
-                <Label htmlFor="targetUniversity" className="text-xl font-bold text-gray-800">
-                  {isZh ? '目标大学 *' : 'Target University *'}
-                </Label>
-                <SmartInput
-                  value={formData.targetUniversity}
-                  onChange={(value) => setFormData(prev => ({ ...prev, targetUniversity: value }))}
-                  placeholder={isZh ? '例：Stanford University' : 'e.g., Stanford University'}
-                  type="university"
-                  className="h-12 text-lg rounded-xl border-2 border-gray-200 focus:border-purple-500"
-                  getSuggestions={getUniversitySuggestions}
-                  normalize={normalizeUniversity}
-                />
               </div>
 
               {/* Target Majors */}

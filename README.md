@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/screenshots/swipe-card.PNG" width="280" alt="ProfMatch Swipe Screen" />
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/swipe-card_3b71048c.PNG" width="280" alt="ProfMatch Swipe Screen" />
 
 # 💘 ProfMatch — Academic Research Matchmaker
 
@@ -35,7 +35,7 @@ Four steps from zero to a personalized cold email:
 
 | | | | |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/step1-profile.PNG" width="180" alt="Step 1 - Complete Profile" /> | <img src="docs/screenshots/step2-explore.PNG" width="180" alt="Step 2 - Explore Professors" /> | <img src="docs/screenshots/step3-matches.PNG" width="180" alt="Step 3 - Review Matches" /> | <img src="docs/screenshots/step4-letters.PNG" width="180" alt="Step 4 - Generate Cover Letters" /> |
+| <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step1-profile_740415bd.PNG" width="180" alt="Step 1 - Complete Profile" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step2-explore_9e091a6e.PNG" width="180" alt="Step 2 - Explore Professors" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step3-matches_c1bb103c.PNG" width="180" alt="Step 3 - Review Matches" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step4-letters_7ccdb0ca.PNG" width="180" alt="Step 4 - Generate Cover Letters" /> |
 | **Step 1** Complete your profile | **Step 2** Swipe through professors | **Step 3** Review your shortlist | **Step 4** Generate cover letters |
 
 </div>
@@ -49,21 +49,21 @@ Four steps from zero to a personalized cold email:
 <table>
 <tr>
 <td align="center" width="50%">
-<img src="docs/screenshots/swipe-tags.PNG" width="260" alt="Professor card with research tags" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/swipe-tags_8e8ee509.PNG" width="260" alt="Professor card with research tags" /><br/>
 <sub><b>Professor card · Research tags expanded</b></sub>
 </td>
 <td align="center" width="50%">
-<img src="docs/screenshots/matches.PNG" width="260" alt="Match history with score" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/matches_05db939e.PNG" width="260" alt="Match history with score" /><br/>
 <sub><b>Match history · Live match score badge</b></sub>
 </td>
 </tr>
 <tr>
 <td align="center" width="50%">
-<img src="docs/screenshots/letters.PNG" width="260" alt="Cover letters list" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/letters_b5283a3b.PNG" width="260" alt="Cover letters list" /><br/>
 <sub><b>Cover letters · View, download, or delete</b></sub>
 </td>
 <td align="center" width="50%">
-<img src="docs/screenshots/faq.PNG" width="260" alt="FAQ page" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/faq_24032cee.PNG" width="260" alt="FAQ page" /><br/>
 <sub><b>FAQ · Built-in usage guide</b></sub>
 </td>
 </tr>
@@ -136,8 +136,6 @@ server/
   db.ts             ← Drizzle query helpers
 shared/
   universityFieldImages.ts     ← University × field → CDN image URL lookup
-docs/
-  screenshots/      ← App screenshots used in this README
 ```
 
 ---

@@ -33,7 +33,6 @@ export interface UserProfileAnalysis {
   profileCompleteness: number; // 0-100
   strengths: string[];
   researchInterests: string[];
-  targetUniversities: string[];
   targetMajors: string[];
 }
 
@@ -47,7 +46,6 @@ export async function analyzeUserProfile(userId: number): Promise<UserProfileAna
   let completeness = 0;
   const strengths: string[] = [];
   const researchInterests: string[] = [];
-  let targetUniversities: string[] = [];
   let targetMajors: string[] = [];
   
   // Check profile fields
@@ -77,15 +75,6 @@ export async function analyzeUserProfile(userId: number): Promise<UserProfileAna
       } catch (e) {}
     }
     
-    if (profile.targetUniversities) {
-      try {
-        targetUniversities = JSON.parse(profile.targetUniversities);
-        if (Array.isArray(targetUniversities) && targetUniversities.length > 0) {
-          completeness += 10;
-        }
-      } catch (e) {}
-    }
-    
     if (profile.targetMajors) {
       try {
         targetMajors = JSON.parse(profile.targetMajors);
@@ -109,7 +98,6 @@ export async function analyzeUserProfile(userId: number): Promise<UserProfileAna
     profileCompleteness: Math.min(completeness, 100),
     strengths,
     researchInterests,
-    targetUniversities,
     targetMajors,
   };
 }
@@ -177,7 +165,7 @@ export async function recommendProjectsWithLLM(
 ): Promise<{ projectIds: number[]; reasoning: string }> {
   // Get available projects from database
   const availableProjects = await getAvailableProjects(
-    analysis.targetUniversities,
+    [],
     analysis.targetMajors
   );
   

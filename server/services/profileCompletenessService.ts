@@ -2,7 +2,7 @@ import type { StudentProfile } from "../../drizzle/schema";
 
 /**
  * 检测学生profile是否只填写了最低限度的信息
- * 最低限度信息：academicLevel, targetUniversities, targetMajors
+ * 最低限度信息：academicLevel, targetMajors
  * 完整信息还包括：skills, gpa, interests等
  */
 export function isMinimalProfile(student: StudentProfile): boolean {
@@ -25,7 +25,6 @@ export function isMinimalProfile(student: StudentProfile): boolean {
 export function getProfileCompleteness(student: StudentProfile): number {
   const fields = [
     !!student.academicLevel,
-    !!student.targetUniversities,
     !!student.targetMajors,
     !!student.skills && student.skills.trim().length > 0,
     !!student.gpa,

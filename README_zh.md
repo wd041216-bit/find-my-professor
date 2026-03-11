@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/screenshots/swipe-card.PNG" width="280" alt="ProfMatch 滑动界面" />
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/swipe-card_3b71048c.PNG" width="280" alt="ProfMatch 滑动界面" />
 
 # 💘 ProfMatch — 科研相亲网站
 
@@ -37,7 +37,7 @@
 
 | | | | |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/step1-profile.PNG" width="180" alt="Step 1 - 填写背景" /> | <img src="docs/screenshots/step2-explore.PNG" width="180" alt="Step 2 - 探索教授" /> | <img src="docs/screenshots/step3-matches.PNG" width="180" alt="Step 3 - 查看匹配" /> | <img src="docs/screenshots/step4-letters.PNG" width="180" alt="Step 4 - 生成套磁信" /> |
+| <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step1-profile_740415bd.PNG" width="180" alt="Step 1 - 填写背景" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step2-explore_9e091a6e.PNG" width="180" alt="Step 2 - 探索教授" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step3-matches_c1bb103c.PNG" width="180" alt="Step 3 - 查看匹配" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step4-letters_7ccdb0ca.PNG" width="180" alt="Step 4 - 生成套磁信" /> |
 | **Step 1** 填写学术背景 | **Step 2** 滑动探索教授 | **Step 3** 查看心仪名单 | **Step 4** 一键生成套磁信 |
 
 </div>
@@ -51,21 +51,21 @@
 <table>
 <tr>
 <td align="center" width="50%">
-<img src="docs/screenshots/swipe-tags.PNG" width="260" alt="教授卡片研究标签" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/swipe-tags_8e8ee509.PNG" width="260" alt="教授卡片研究标签" /><br/>
 <sub><b>教授卡片 · 展开研究标签</b></sub>
 </td>
 <td align="center" width="50%">
-<img src="docs/screenshots/matches.PNG" width="260" alt="匹配历史与分数" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/matches_05db939e.PNG" width="260" alt="匹配历史与分数" /><br/>
 <sub><b>匹配历史 · 实时匹配分数</b></sub>
 </td>
 </tr>
 <tr>
 <td align="center" width="50%">
-<img src="docs/screenshots/letters.PNG" width="260" alt="套磁信管理" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/letters_b5283a3b.PNG" width="260" alt="套磁信管理" /><br/>
 <sub><b>套磁信管理 · 支持下载</b></sub>
 </td>
 <td align="center" width="50%">
-<img src="docs/screenshots/faq.PNG" width="260" alt="常见问题" /><br/>
+<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/faq_24032cee.PNG" width="260" alt="常见问题" /><br/>
 <sub><b>常见问题 · 内置使用指南</b></sub>
 </td>
 </tr>
@@ -138,8 +138,6 @@ server/
   db.ts             ← Drizzle 查询封装
 shared/
   universityFieldImages.ts     ← 大学 × 领域 → CDN 图片 URL 映射
-docs/
-  screenshots/      ← README 中使用的截图
 ```
 
 ---

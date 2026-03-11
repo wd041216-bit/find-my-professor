@@ -53,17 +53,10 @@ export function Swipe() {
     enabled: !!user,
   });
 
-  // Check if profile is complete (only need target university)
+  // Check if profile is complete (need at least academicLevel)
   const isProfileComplete = useMemo(() => {
-    if (!profile || !profile.targetUniversities) return false;
-    try {
-      const universities = typeof profile.targetUniversities === 'string' 
-        ? JSON.parse(profile.targetUniversities)
-        : profile.targetUniversities;
-      return Array.isArray(universities) && universities.length > 0;
-    } catch {
-      return false;
-    }
+    if (!profile) return false;
+    return !!profile.academicLevel;
   }, [profile]);
 
   // Filter state
@@ -347,6 +340,8 @@ export function Swipe() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-32 md:pb-24">
+      {/* SEO: visually hidden H1 for screen readers and search engines */}
+      <h1 className="sr-only">{isZh ? 'ProfMatch — 滑动匹配教授，找到你的研究导师' : 'ProfMatch — Swipe to Match Professors and Find Your Research Advisor'}</h1>
       {/* Desktop Header Navigation */}
       <DesktopHeader
         onResetClick={handleResetSwipeHistory}
