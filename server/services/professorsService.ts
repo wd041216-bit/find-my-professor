@@ -231,7 +231,7 @@ export async function getProfessorById(professorId: number): Promise<ProfessorWi
  * @returns 带匹配分数的教授列表
  */
 export async function getProfessorsForSwipe(
-  userId: number,
+  userId: number | null,
   limit: number = 10,
   excludeIds: number[] = [],
   offset: number = 0,
@@ -246,18 +246,16 @@ export async function getProfessorsForSwipe(
       return [];
     }
 
-    // Import here to avoid circular dependency
-    const { getStudentProfile } = await import('../db');
-
-    // Get student profile
-    const profile = await getStudentProfile(userId);
-    if (!profile) {
-      console.error('[Professors] Student profile not found');
-      return [];
+    // Guest users: no profile, treat as empty profile
+    let profile: any = null;
+    if (userId !== null) {
+      // Import here to avoid circular dependency
+      const { getStudentProfile } = await import('../db');
+      profile = await getStudentProfile(userId);
     }
 
     // Get target major from profile (university no longer required)
-    const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors as string) : [];
+    const targetMajors = profile?.targetMajors ? JSON.parse(profile.targetMajors as string) : [];
 
     // Major is optional - if not provided, search all professors
     // 如果用户通过Filter选择了university，使用Filter的university；否则不限制大学

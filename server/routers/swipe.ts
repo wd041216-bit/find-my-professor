@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../_core/trpc";
+import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { studentLikes, studentSwipes, professors, studentProfiles } from "../../drizzle/schema";
@@ -19,7 +19,7 @@ export const swipeRouter = router({
   /**
    * Get filter options (universities and research fields)
    */
-  getFilterOptions: protectedProcedure
+  getFilterOptions: publicProcedure
     .query(async () => {
       // 检查缓存
       const cached = getCachedFilterOptions();
@@ -103,7 +103,7 @@ export const swipeRouter = router({
       return result;
     }),
 
-  getProfessorsToSwipe: protectedProcedure
+  getProfessorsToSwipe: publicProcedure
     .input(
       z.object({
         limit: z.number().default(20),
@@ -113,7 +113,6 @@ export const swipeRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const userId = ctx.user.id;
       const db = await getDb();
       if (!db) {
         throw new TRPCError({
@@ -122,25 +121,38 @@ export const swipeRouter = router({
         });
       }
 
-      // Check if user profile is complete
+      // Guest users: return professors without personalized match scores
+      if (!ctx.user) {
+        const guestProfessors = await getProfessorsForSwipe(
+          null,
+          input.limit,
+          [],
+          input.offset,
+          input.university,
+          input.researchField,
+          undefined
+        );
+        return {
+          professors: guestProfessors,
+          hasMore: guestProfessors.length === input.limit,
+          isMinimalProfile: true,
+          isGuest: true,
+        };
+      }
+
+      const userId = ctx.user.id;
+
+      // Check if user has a profile (optional now)
       const profile = await db
         .select()
         .from(studentProfiles)
         .where(eq(studentProfiles.userId, userId))
         .limit(1);
 
-      if (!profile || profile.length === 0) {
-        throw new TRPCError({
-          code: "PRECONDITION_FAILED",
-          message: "Please complete your profile first",
-        });
-      }
-
-      // Check if profile is minimal (only target university)
-      const cached = getCachedProfileCompleteness(userId);
-      const isMinimal = cached !== null ? cached : isMinimalProfile(profile[0]);
-      
-      if (cached === null) {
+      // Check if profile is minimal
+      const cached = profile.length > 0 ? getCachedProfileCompleteness(userId) : null;
+      const isMinimal = profile.length === 0 ? true : (cached !== null ? cached : isMinimalProfile(profile[0]));
+      if (profile.length > 0 && cached === null) {
         setCachedProfileCompleteness(userId, isMinimal);
       }
 
@@ -161,13 +173,14 @@ export const swipeRouter = router({
         input.offset,
         input.university,
         input.researchField,
-        undefined // minMatchScore removed - no longer filter by match score
+        undefined
       );
 
       return {
         professors: matchedProfessors,
         hasMore: matchedProfessors.length === input.limit,
         isMinimalProfile: isMinimal,
+        isGuest: false,
       };
     }),
 

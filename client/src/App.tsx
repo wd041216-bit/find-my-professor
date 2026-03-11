@@ -22,6 +22,7 @@ import PrivacyPolicyZh from "./pages/PrivacyPolicyZh";
 import TermsOfServiceZh from "./pages/TermsOfServiceZh";
 import ProfessorPolicyZh from "./pages/ProfessorPolicyZh";
 import Tutorial from "./pages/Tutorial";
+import { FeedbackDialog } from "./components/FeedbackDialog";
 
 function Router() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
             <TooltipProvider>
               <StructuredData />
               <TimezoneSync />
+              <FeedbackDialog />
               <div className="flex flex-col min-h-screen">
                 <div className="flex-1">
                   <Router />

@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Save, Loader2, GraduationCap, Camera, RotateCcw } from "lucide-react";
+import { ArrowLeft, Save, Loader2, GraduationCap, Camera, RotateCcw, User } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { SmartInput } from "@/components/SmartInput";
 import { ActivitiesSection } from "@/components/ActivitiesSection";
 import { getMajorSuggestions, normalizeMajor } from "@shared/translations";
+import { getLoginUrl } from '@/const';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -268,8 +269,31 @@ export default function Profile() {
   }
 
   if (!user) {
-    setLocation(isZh ? "/zh/swipe" : "/");
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
+        <div className="max-w-md text-center">
+          <div className="mb-8">
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+              <User className="w-16 h-16 text-white" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
+            {isZh ? '登录后才能管理资料' : 'Sign In to Manage Your Profile'}
+          </h2>
+          <p className="text-xl text-gray-700 mb-8 font-medium">
+            {isZh ? '登录后可以填写学术背景和研究兴趣，获得更精准的教授匹配。' : 'Sign in to fill in your academic background and research interests for better professor matches.'}
+          </p>
+          <Button
+            size="lg"
+            onClick={() => { window.location.href = getLoginUrl(); }}
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+          >
+            <User className="w-6 h-6 mr-2" />
+            {isZh ? '立即登录' : 'Sign In'}
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const handleAvatarClick = () => {
