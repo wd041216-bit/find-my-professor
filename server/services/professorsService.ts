@@ -256,19 +256,12 @@ export async function getProfessorsForSwipe(
       return [];
     }
 
-    // Get target university and major
-    const targetUniversities = profile.targetUniversities ? JSON.parse(profile.targetUniversities as string) : [];
+    // Get target major from profile (university no longer required)
     const targetMajors = profile.targetMajors ? JSON.parse(profile.targetMajors as string) : [];
 
-    if (targetUniversities.length === 0) {
-      console.error('[Professors] No target university specified');
-      return [];
-    }
-
-    // Major is optional - if not provided, search all professors at the university
-
-    // 如果用户通过Filter选择了university，使用Filter的university；否则使用profile的target university
-    const university = filterUniversity && filterUniversity !== '__all__' ? filterUniversity : (targetUniversities[0] || null);
+    // Major is optional - if not provided, search all professors
+    // 如果用户通过Filter选择了university，使用Filter的university；否则不限制大学
+    const university = filterUniversity && filterUniversity !== '__all__' ? filterUniversity : null;
     
     // 如果用户通过Filter选择了research field，忽略profile的targetMajors，查询全校教授然后通过filter过滤
     // 否则使用profile的targetMajors
@@ -330,7 +323,35 @@ export async function getProfessorsForSwipe(
         imageUrl: prof.imageUrl || undefined,
       }));
     } else {
-      allProfessors = await getProfessorsFromDatabase(university || targetUniversities[0], major, queryLimit, undefined);
+      if (university) {
+        allProfessors = await getProfessorsFromDatabase(university, major, queryLimit, undefined);
+      } else {
+        // No university filter: query all professors from DB, optionally filtered by major
+        const rawDb = await getDb();
+        if (!rawDb) return [];
+        const allProfs = await rawDb
+          .select()
+          .from(professors)
+          .limit(queryLimit);
+        allProfessors = allProfs.map(prof => ({
+          id: prof.id,
+          name: prof.name,
+          title: prof.title || '',
+          department: prof.department || '',
+          universityName: prof.universityName || '',
+          researchAreas: prof.researchAreas ? (typeof prof.researchAreas === 'string' ? (() => { try { return JSON.parse(prof.researchAreas as string); } catch { return [prof.researchAreas as string]; } })() : prof.researchAreas) : [],
+          tags: prof.tags ? (typeof prof.tags === 'string' ? JSON.parse(prof.tags) : prof.tags) : [],
+          research_field: prof.research_field || null,
+          research_field_zh: (prof as any).research_field_zh || null,
+          department_zh: (prof as any).department_zh || null,
+          tags_zh: (prof as any).tags_zh ? (typeof (prof as any).tags_zh === 'string' ? JSON.parse((prof as any).tags_zh) : (prof as any).tags_zh) : null,
+          schoolImageUrl: prof.imageUrl || undefined,
+          matchScore: undefined,
+          displayScore: undefined,
+          matchedTags: [],
+          imageUrl: prof.imageUrl || undefined,
+        }));
+      }
     }
     
     console.log('[Professors] Query returned:', allProfessors.length, 'professors');
