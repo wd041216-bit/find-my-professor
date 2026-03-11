@@ -288,7 +288,7 @@ export function Swipe() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-32 md:pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex flex-col pb-32 md:pb-24 md:pt-16">
       {/* SEO: visually hidden H1 for screen readers and search engines */}
       <h1 className="sr-only">{isZh ? 'ProfMatch — 滑动匹配教授，找到你的研究导师' : 'ProfMatch — Swipe to Match Professors and Find Your Research Advisor'}</h1>
       {/* Desktop Header Navigation */}

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Star, MessageSquare, X } from "lucide-react";
 
-const FEEDBACK_DELAY_MS = 60 * 1000; // 1 minute
+const FEEDBACK_DELAY_MS = 2 * 60 * 1000; // 2 minutes
 const STORAGE_KEY = "profmatch_feedback_submitted";
 
 export function FeedbackDialog() {
@@ -76,7 +76,7 @@ export function FeedbackDialog() {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-      <DialogContent className="max-w-md mx-4 rounded-2xl border-0 shadow-2xl bg-white p-0 overflow-hidden">
+      <DialogContent className="max-w-md mx-4 rounded-2xl border-0 shadow-2xl bg-white p-0 overflow-hidden [&>button]:hidden">
         {/* Gradient header */}
         <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 p-6 text-white">
           <div className="flex items-center justify-between mb-1">
