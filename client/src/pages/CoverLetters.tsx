@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, FileText, Download, Trash2, Eye, Calendar } from "lucide-react";
+import { ArrowLeft, Loader2, FileText, Download, Trash2, Eye, Calendar, User } from "lucide-react";
+import { getLoginUrl } from '@/const';
 import { useState } from "react";
 import { toast } from "sonner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -89,8 +90,31 @@ export default function CoverLetters() {
   }
 
   if (!user) {
-    setLocation(isZh ? "/zh/swipe" : "/");
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
+        <div className="max-w-md text-center">
+          <div className="mb-8">
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+              <FileText className="w-16 h-16 text-white" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
+            {isZh ? '登录后查看套磁信' : 'Sign In to View Your Cover Letters'}
+          </h2>
+          <p className="text-xl text-gray-700 mb-8 font-medium">
+            {isZh ? '登录后可以管理所有 AI 生成的套磁信，随时复制和下载。' : 'Sign in to manage all your AI-generated cover letters, copy and download anytime.'}
+          </p>
+          <Button
+            size="lg"
+            onClick={() => { window.location.href = getLoginUrl(); }}
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
+          >
+            <User className="w-6 h-6 mr-2" />
+            {isZh ? '立即登录' : 'Sign In'}
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -100,6 +100,7 @@ export function Swipe() {
   }, [utils]);
 
   // Fetch professors from API - infinite batches with filters
+  // Available for all users (guests and logged-in)
   const { data: professorsData, isLoading: professorsLoading } = trpc.swipe.getProfessorsToSwipe.useQuery(
     { 
       limit: 20, 
@@ -107,7 +108,7 @@ export function Swipe() {
       university: filters.university,
       researchField: filters.researchField,
     },
-    { enabled: !!user && !!isProfileComplete }
+    { enabled: !authLoading }
   );
 
   // Append new professors to the list
@@ -190,7 +191,7 @@ export function Swipe() {
   }, [currentIndex, professors.length, isLoadingMore, professorsLoading, professorsData?.hasMore]);
 
   // Loading state - show skeleton
-  if (authLoading || profileLoading || (isProfileComplete && professorsLoading && professors.length === 0)) {
+  if (authLoading || (professorsLoading && professors.length === 0)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100">
         {/* Header */}
@@ -213,73 +214,19 @@ export function Swipe() {
     );
   }
 
-  // Not logged in - show login prompt
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
-        <div className="max-w-md text-center">
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
-              <User className="w-16 h-16 text-white" />
-            </div>
-          </div>
-          <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
-            {isZh ? '登录以开始匹配' : 'Sign In to Get Started'}
-          </h2>
-          <p className="text-xl text-gray-700 mb-8 font-medium">
-            {isZh ? '登录后即可浏览教授资料，找到最适合你的导师。' : 'Sign in to browse professor profiles and find your perfect research advisor.'}
-          </p>
-          <Button
-            size="lg"
-            onClick={() => { window.location.href = getLoginUrl(); }}
-            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
-          >
-            <User className="w-6 h-6 mr-2" />
-            {isZh ? '立即登录' : 'Sign In'}
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
-  // Profile incomplete - show guidance
-  if (!isProfileComplete) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 flex items-center justify-center p-4">
-        <div className="max-w-md text-center">
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
-              <User className="w-16 h-16 text-white" />
-            </div>
-          </div>
-          <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
-            {isZh ? '先完善你的资料！' : 'Complete Your Profile First!'}
-          </h2>
-          <p className="text-xl text-gray-700 mb-8 font-medium">
-            {isZh ? '填写你的学术背景和研究兴趣，获得最精准的教授匹配。' : 'To get the best professor matches, please tell us about your academic background and research interests.'}
-          </p>
-          <Button
-            size="lg"
-            onClick={() => setLocation(localePath('/profile'))}
-            className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white font-bold text-lg px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all"
-          >
-            <User className="w-6 h-6 mr-2" />
-            {isZh ? '完善资料' : 'Complete Profile'}
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const handleSwipe = (direction: 'left' | 'right', professor: Professor) => {
     const action = direction === 'right' ? 'like' : 'pass';
     setLastAction(action);
 
-    // Save swipe to database
-    swipeMutation.mutate({
-      professorId: professor.id,
-      liked: action === 'like',
-    });
+    // Only save swipe to database if user is logged in
+    if (user) {
+      swipeMutation.mutate({
+        professorId: professor.id,
+        liked: action === 'like',
+      });
+    }
 
     // Move to next professor after animation completes (ProfessorCard handles its own exit animation)
     setTimeout(() => {
@@ -301,11 +248,13 @@ export function Swipe() {
       direction,
     });
 
-    // Save swipe to database
-    swipeMutation.mutate({
-      professorId: currentProfessor.id,
-      liked: action === 'like',
-    });
+    // Only save swipe to database if user is logged in
+    if (user) {
+      swipeMutation.mutate({
+        professorId: currentProfessor.id,
+        liked: action === 'like',
+      });
+    }
 
     // Move to next professor after animation completes
     setTimeout(() => {
@@ -499,6 +448,22 @@ export function Swipe() {
           <Heart className="w-10 h-10 text-green-500 fill-green-500" strokeWidth={0} />
         </Button>
       </div>
+
+      {/* Guest login prompt banner */}
+      {!user && (
+        <div className="mx-4 mb-2 p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-purple-100 flex items-center justify-between gap-3">
+          <p className="text-sm text-gray-700 font-medium">
+            {isZh ? '登录后可保存匹配记录 & 生成套磁信' : 'Sign in to save matches & generate cover letters'}
+          </p>
+          <Button
+            size="sm"
+            onClick={() => { window.location.href = getLoginUrl(); }}
+            className="shrink-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-3 py-1 rounded-full"
+          >
+            {isZh ? '登录' : 'Sign In'}
+          </Button>
+        </div>
+      )}
 
       {/* Custom CSS for animations */}
       <style>{`

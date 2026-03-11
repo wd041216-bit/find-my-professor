@@ -6,6 +6,7 @@ import { z } from "zod";
 import * as db from "./db";
 import { swipeRouter } from "./routers/swipe";
 import { coverLetterRouter } from "./routers/coverLetter";
+import { feedbackRouter } from "./routers/feedback";
 import { normalizeStudentTags } from "./services/tagNormalizationService";
 
 export const appRouter = router({
@@ -251,6 +252,7 @@ Return ONLY a JSON object with this structure:
 
   swipe: swipeRouter,
   coverLetter: coverLetterRouter,
+  feedback: feedbackRouter,
   
   activities: router({
     list: protectedProcedure
