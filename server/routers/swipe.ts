@@ -54,6 +54,61 @@ export const swipeRouter = router({
       const researchFieldsZh = researchFieldRows.map((r: any) => r.research_field_zh || r.research_field).filter(Boolean) as string[];
 
       // Get university names with Chinese names from UNIVERSITY_ZH mapping
+      // Region mapping for universities
+      const UNIVERSITY_REGION: Record<string, 'North America' | 'Europe' | 'Asia'> = {
+        // North America
+        "Brown University": "North America",
+        "California Institute of Technology": "North America",
+        "Carnegie Mellon University": "North America",
+        "Columbia University": "North America",
+        "Dartmouth College": "North America",
+        "Duke University": "North America",
+        "Georgetown University": "North America",
+        "Harvard University": "North America",
+        "Johns Hopkins University": "North America",
+        "Lehigh University": "North America",
+        "MIT": "North America",
+        "Northeastern University": "North America",
+        "Northwestern University": "North America",
+        "Pepperdine University": "North America",
+        "Princeton University": "North America",
+        "Rice University": "North America",
+        "Stanford University": "North America",
+        "University of California, Los Angeles": "North America",
+        "University of California, Santa Barbara": "North America",
+        "University of Chicago": "North America",
+        "University of Florida": "North America",
+        "University of Miami": "North America",
+        "University of Michigan": "North America",
+        "University of North Carolina at Chapel Hill": "North America",
+        "University of Southern California": "North America",
+        "University of Virginia": "North America",
+        "University of Washington": "North America",
+        "Villanova University": "North America",
+        "Washington University in St. Louis": "North America",
+        "Yale University": "North America",
+        "New York University": "North America",
+        // Europe
+        "University of Oxford": "Europe",
+        "University of Cambridge": "Europe",
+        "Imperial College London": "Europe",
+        "ETH Zurich": "Europe",
+        "University College London": "Europe",
+        "University of Edinburgh": "Europe",
+        "Technical University of Munich": "Europe",
+        "Delft University of Technology": "Europe",
+        "King's College London": "Europe",
+        "University of Manchester": "Europe",
+        // Asia
+        "National University of Singapore": "Asia",
+        "Peking University": "Asia",
+        "Tsinghua University": "Asia",
+        "University of Sydney": "Asia",
+        "Seoul National University": "Asia",
+        "University of Tokyo": "Asia",
+        "University of Hong Kong": "Asia",
+      };
+
       const UNIVERSITY_ZH: Record<string, string> = {
         "Brown University": "布朗大学",
         "California Institute of Technology": "加州理工学院",
@@ -85,14 +140,43 @@ export const swipeRouter = router({
         "Villanova University": "维拉诺瓦大学",
         "Washington University in St. Louis": "圣路易斯华盛顿大学",
         "Yale University": "耶鲁大学",
+        // New QS Top 50 universities
+        "University of Oxford": "牛津大学",
+        "University of Cambridge": "剑桥大学",
+        "Imperial College London": "帝国理工学院",
+        "ETH Zurich": "苏黎世联邦理工学院",
+        "University College London": "伦敦大学学院",
+        "University of Edinburgh": "爱丁堡大学",
+        "National University of Singapore": "新加坡国立大学",
+        "Peking University": "北京大学",
+        "Tsinghua University": "清华大学",
+        "University of Sydney": "悉尼大学",
+        "Seoul National University": "首尔国立大学",
+        "University of Tokyo": "东京大学",
+        "Technical University of Munich": "慕尼黑工业大学",
+        "Delft University of Technology": "代尔夫特理工大学",
+        "University of Hong Kong": "香港大学",
+        "King's College London": "伦敦国王学院",
+        "University of Manchester": "曼彻斯特大学",
+        "New York University": "纽约大学",
       };
 
       const universitiesList = universities.map((u) => u.university).filter((u): u is string => !!u);
       const universitiesZh = universitiesList.map(u => UNIVERSITY_ZH[u] || u);
+      const universitiesRegion = universitiesList.map(u => UNIVERSITY_REGION[u] || 'North America');
+
+      // Build region -> universities map
+      const regionMap: Record<string, string[]> = { 'North America': [], 'Europe': [], 'Asia': [] };
+      universitiesList.forEach((u, idx) => {
+        const region = universitiesRegion[idx];
+        if (regionMap[region]) regionMap[region].push(u);
+      });
 
       const result = {
         universities: universitiesList,
         universitiesZh,
+        universitiesRegion,
+        regionMap,
         researchFields,
         researchFieldsZh,
       };

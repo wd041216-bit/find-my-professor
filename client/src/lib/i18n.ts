@@ -479,6 +479,11 @@ export const translations = {
       clearFilters: "Clear Filters",
       applyFilters: "Apply Filters",
       activeFilters: "Active filters",
+      region: "Region",
+      allRegions: "All Regions",
+      regionNorthAmerica: "North America",
+      regionEurope: "Europe",
+      regionAsia: "Asia",
     },
     // Policy Pages
     policy: {
@@ -966,6 +971,11 @@ export const translations = {
       clearFilters: "清除筛选",
       applyFilters: "应用筛选",
       activeFilters: "当前筛选",
+      region: "大区",
+      allRegions: "全部地区",
+      regionNorthAmerica: "北美",
+      regionEurope: "欧洲",
+      regionAsia: "亚洲",
     },
     // Policy Pages
     policy: {
