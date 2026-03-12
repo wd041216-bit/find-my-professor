@@ -7,6 +7,9 @@
 interface FilterOptions {
   universities: string[];
   departments: string[];
+  universitiesZh: string[];
+  universitiesRegion: string[];
+  regionMap: Record<string, string[]>;
   timestamp: number;
 }
 
@@ -32,10 +35,19 @@ export function getCachedFilterOptions(): FilterOptions | null {
 /**
  * 设置filter options缓存
  */
-export function setCachedFilterOptions(universities: string[], departments: string[]): void {
+export function setCachedFilterOptions(
+  universities: string[],
+  departments: string[],
+  universitiesZh: string[] = [],
+  universitiesRegion: string[] = [],
+  regionMap: Record<string, string[]> = {}
+): void {
   filterOptionsCache = {
     universities,
     departments,
+    universitiesZh,
+    universitiesRegion,
+    regionMap,
     timestamp: Date.now(),
   };
 }

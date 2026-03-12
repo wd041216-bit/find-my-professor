@@ -26,6 +26,9 @@ export const swipeRouter = router({
       if (cached) {
         return {
           universities: cached.universities,
+          universitiesZh: cached.universitiesZh || [],
+          universitiesRegion: cached.universitiesRegion || [],
+          regionMap: cached.regionMap || {},
           researchFields: cached.departments, // Reuse departments cache key for backward compatibility
         };
       }
@@ -182,7 +185,7 @@ export const swipeRouter = router({
       };
       
       // 缓存结果（5分钟）- reuse departments key for backward compatibility
-      setCachedFilterOptions(result.universities, result.researchFields);
+      setCachedFilterOptions(result.universities, result.researchFields, result.universitiesZh, result.universitiesRegion, result.regionMap);
       
       return result;
     }),
