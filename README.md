@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/swipe-card_3b71048c.PNG" width="280" alt="ProfMatch Swipe Screen" />
+<img src="./docs/images/swipe-card.png" width="280" alt="ProfMatch Swipe Screen" />
 
 # 💘 ProfMatch — Academic Research Matchmaker
 
@@ -35,7 +35,7 @@ Four steps from zero to a personalized cold email:
 
 | | | | |
 |:---:|:---:|:---:|:---:|
-| <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step1-profile_740415bd.PNG" width="180" alt="Step 1 - Complete Profile" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step2-explore_9e091a6e.PNG" width="180" alt="Step 2 - Explore Professors" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step3-matches_c1bb103c.PNG" width="180" alt="Step 3 - Review Matches" /> | <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/step4-letters_7ccdb0ca.PNG" width="180" alt="Step 4 - Generate Cover Letters" /> |
+| <img src="./docs/images/step1-profile.png" width="180" alt="Step 1 - Complete Profile" /> | <img src="./docs/images/step2-explore.png" width="180" alt="Step 2 - Explore Professors" /> | <img src="./docs/images/step3-matches.png" width="180" alt="Step 3 - Review Matches" /> | <img src="./docs/images/step4-letters.png" width="180" alt="Step 4 - Generate Cover Letters" /> |
 | **Step 1** Complete your profile | **Step 2** Swipe through professors | **Step 3** Review your shortlist | **Step 4** Generate cover letters |
 
 </div>
@@ -49,21 +49,21 @@ Four steps from zero to a personalized cold email:
 <table>
 <tr>
 <td align="center" width="50%">
-<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/swipe-tags_8e8ee509.PNG" width="260" alt="Professor card with research tags" /><br/>
+<img src="./docs/images/swipe-tags.png" width="260" alt="Professor card with research tags" /><br/>
 <sub><b>Professor card · Research tags expanded</b></sub>
 </td>
 <td align="center" width="50%">
-<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/matches_05db939e.PNG" width="260" alt="Match history with score" /><br/>
+<img src="./docs/images/matches.png" width="260" alt="Match history with score" /><br/>
 <sub><b>Match history · Live match score badge</b></sub>
 </td>
 </tr>
 <tr>
 <td align="center" width="50%">
-<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/letters_b5283a3b.PNG" width="260" alt="Cover letters list" /><br/>
+<img src="./docs/images/letters.png" width="260" alt="Cover letters list" /><br/>
 <sub><b>Cover letters · View, download, or delete</b></sub>
 </td>
 <td align="center" width="50%">
-<img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663312383643/hB2F5YxeXakQRcL5WU36Vw/faq_24032cee.PNG" width="260" alt="FAQ page" /><br/>
+<img src="./docs/images/faq.png" width="260" alt="FAQ page" /><br/>
 <sub><b>FAQ · Built-in usage guide</b></sub>
 </td>
 </tr>
@@ -83,6 +83,8 @@ Four steps from zero to a personalized cold email:
 
 **Resume parsing** — Upload a PDF or DOCX résumé and let the LLM auto-fill your profile with extracted skills, experience, and academic goals.
 
+**Region-based filtering** — Filter professors by region (North America / Europe / Asia), then drill down to a specific university. Cascade selection keeps the UI clean and the results relevant.
+
 **Bilingual (中文 / English)** — A `/zh/*` URL prefix switches the entire UI to Simplified Chinese. University names, research fields, and all interface strings are fully translated. Cover letter content stays in English for professional use.
 
 ---
@@ -91,10 +93,10 @@ Four steps from zero to a personalized cold email:
 
 | Metric | Count |
 |--------|-------|
-| Top US research universities | 32 (MIT, Harvard, Stanford, Columbia, and more) |
-| Professor profiles | 4,000+ |
-| Canonical research tags | 2,799 |
-| University × field cover images | All CDN-hosted |
+| Universities covered | 48 (QS Top 50 — MIT, Oxford, NUS, Tsinghua, ETH Zürich, and more) |
+| Professor profiles | 4,978 |
+| Canonical research tags | 5,837 |
+| University × field cover images | 860 (all CDN-hosted) |
 
 ---
 
@@ -136,6 +138,8 @@ server/
   db.ts             ← Drizzle query helpers
 shared/
   universityFieldImages.ts     ← University × field → CDN image URL lookup
+docs/
+  images/           ← README screenshots (stored in-repo for reliable rendering)
 ```
 
 ---
@@ -176,7 +180,7 @@ pnpm test
 | `student_profiles` | Student background, target universities, skills, normalized tags |
 | `student_likes` | Swipe history (like / pass) with match score per pair |
 | `cover_letters` | AI-generated application letters |
-| `research_tags_dictionary` | Canonical tag vocabulary built from professor data (2,799 tags) |
+| `research_tags_dictionary` | Canonical tag vocabulary built from professor data (5,837 tags) |
 | `university_field_images` | CDN image URLs per university × research field combination |
 | `activities` | Student extracurricular activities (manual entry + resume-parsed) |
 
