@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Loader2, Heart, FlaskConical, Sparkles, ExternalLink, Trash2, Search, User } from "lucide-react";
+import { ArrowLeft, Loader2, Heart, FlaskConical, Sparkles, ExternalLink, Trash2, Search, User, ChevronDown } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { getLoginUrl } from '@/const';
 import { useState } from "react";
 import { toast } from "sonner";
@@ -333,24 +334,50 @@ export default function History() {
               )}
 
               <div className="pt-4 border-t">
-                <Button
-                  onClick={() => {
-                    const professorName = selectedProfessor.professor.name;
-                    const university = selectedProfessor.professor.university;
-                    navigator.clipboard.writeText(professorName).then(() => {
-                      toast.success(isZh ? "教授姓名已复制到剪贴板！" : "Professor name copied to clipboard!");
-                    }).catch(() => {
-                      toast.error(isZh ? "复制失败" : "Failed to copy to clipboard");
-                    });
-                    const searchQuery = encodeURIComponent(`${professorName} ${university}`);
-                    window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
-                  }}
-                  className="w-full"
-                  variant="default"
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  {isZh ? '在 Google 上搜索该教授' : 'Find This Professor on Google'}
-                </Button>
+                <div className="flex w-full rounded-md overflow-hidden border border-primary">
+                  <Button
+                    onClick={() => {
+                      const professorName = selectedProfessor.professor.name;
+                      const university = selectedProfessor.professor.university;
+                      const searchQuery = encodeURIComponent(`${professorName} ${university}`);
+                      window.open(`https://www.bing.com/search?q=${searchQuery}`, '_blank');
+                    }}
+                    className="flex-1 rounded-none border-0"
+                    variant="default"
+                  >
+                    <Search className="h-4 w-4 mr-2" />
+                    {isZh ? '搜索该教授' : 'Search This Professor'}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="default"
+                        className="px-2 rounded-none border-0 border-l border-primary-foreground/30"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {[
+                        { label: isZh ? '用 Bing 搜索（默认）' : 'Search with Bing (default)', url: (q: string) => `https://www.bing.com/search?q=${q}` },
+                        { label: isZh ? '用百度搜索' : 'Search with Baidu', url: (q: string) => `https://www.baidu.com/s?wd=${q}` },
+                        { label: isZh ? '用 Google 搜索' : 'Search with Google', url: (q: string) => `https://www.google.com/search?q=${q}` },
+                      ].map(({ label, url }) => (
+                        <DropdownMenuItem
+                          key={label}
+                          onClick={() => {
+                            const professorName = selectedProfessor.professor.name;
+                            const university = selectedProfessor.professor.university;
+                            const searchQuery = encodeURIComponent(`${professorName} ${university}`);
+                            window.open(url(searchQuery), '_blank');
+                          }}
+                        >
+                          {label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </div>
           )}
