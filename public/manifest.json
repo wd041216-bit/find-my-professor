@@ -1,0 +1,27 @@
+{
+  "name": "ProfMatch - Academic Research Matchmaker",
+  "short_name": "ProfMatch",
+  "description": "Find your research advisor the modern way. Swipe, match, and connect with professors worldwide.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#9333ea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663312383643/sUdxkcoJWfwlIXYH.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}
